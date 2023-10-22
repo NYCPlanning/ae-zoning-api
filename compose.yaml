@@ -1,0 +1,9 @@
+services:
+  db:
+    image: "postgis/postgis:15-3.4-alpine"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=zoning
+    ports:
+      - '5432:5432'
