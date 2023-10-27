@@ -22,9 +22,14 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@mikro-orm/core": "^5.9.0",
+    "@mikro-orm/nestjs": "^5.2.2",
+    "@mikro-orm/postgresql": "^5.9.0",
     "@nestjs/common": "^10.0.0",
+    "@nestjs/config": "^3.1.1",
     "@nestjs/core": "^10.0.0",
     "@nestjs/platform-express": "^10.0.0",
+    "joi": "^17.11.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1"
   },
@@ -71,6 +76,9 @@
     "testEnvironment": "node"
   },
   "lint-staged": {
-    "*.{ts,tsx}": ["bash -c 'npm run typecheck'", "npm run lint"]
+    "*.{ts,tsx}": [
+      "bash -c 'npm run typecheck'",
+      "npm run lint"
+    ]
   }
 }
