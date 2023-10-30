@@ -1,0 +1,42 @@
+openapi: 3.0.0
+info:
+  title: Zoning API
+  description: |-
+    An API for serving data related to the zoning of New York City.
+  version: 0.1.0
+servers:
+  - url: https://zoning-api.planningdigital.com
+paths:
+  /boroughs:
+    get:
+      summary: Returns a list of boroughs.
+      operationId: getBoroughs
+      responses:
+        '200':
+          description: An array of borough objects.
+          content:
+            application/json:
+              schema: 
+                type: array
+                items: 
+                  $ref: '#/components/schemas/Borough'
+components:
+  schemas:
+    Borough:
+      type: object
+      properties:
+        id:
+          type: string
+          description: A single character numeric string containing the common number used to refer to the borough. Possible values are 1-5.
+          pattern: \b[1-9]\b
+          example: 2
+        title:
+          type: string
+          description: The full name of the borough.
+          example: Manhattan
+        abbr:
+          type: string
+          description: The two character abbrevation for the borough.
+          minLength: 2
+          maxLength: 2
+          example: MN
