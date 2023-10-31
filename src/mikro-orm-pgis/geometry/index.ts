@@ -1,0 +1,1 @@
+export { MultiPolygonGeomType } from "./MultiPolygon";
