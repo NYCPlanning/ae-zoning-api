@@ -95,6 +95,122 @@
       ],
       "checks": [],
       "foreignKeys": {}
+    },
+    {
+      "columns": {
+        "bbl": {
+          "name": "bbl",
+          "type": "char(10)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "unknown"
+        },
+        "borough_id": {
+          "name": "borough_id",
+          "type": "char(1)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "unknown"
+        },
+        "block": {
+          "name": "block",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "text"
+        },
+        "lot": {
+          "name": "lot",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "text"
+        },
+        "address": {
+          "name": "address",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "text"
+        },
+        "land_use_id": {
+          "name": "land_use_id",
+          "type": "char(2)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "unknown"
+        },
+        "wgs84": {
+          "name": "wgs84",
+          "type": "geography(MultiPolygon, 4326)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "unknown"
+        },
+        "li_ft": {
+          "name": "li_ft",
+          "type": "geometry(MultiPolygon, 2263)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "unknown"
+        }
+      },
+      "name": "tax_lot",
+      "schema": "public",
+      "indexes": [
+        {
+          "keyName": "tax_lot_pkey",
+          "columnNames": [
+            "bbl"
+          ],
+          "composite": false,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {
+        "tax_lot_borough_id_foreign": {
+          "constraintName": "tax_lot_borough_id_foreign",
+          "columnNames": [
+            "borough_id"
+          ],
+          "localTableName": "public.tax_lot",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.borough",
+          "updateRule": "cascade"
+        },
+        "tax_lot_land_use_id_foreign": {
+          "constraintName": "tax_lot_land_use_id_foreign",
+          "columnNames": [
+            "land_use_id"
+          ],
+          "localTableName": "public.tax_lot",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.land_use",
+          "updateRule": "cascade"
+        }
+      }
     }
   ]
 }
