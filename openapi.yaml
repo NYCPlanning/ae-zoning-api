@@ -5,12 +5,16 @@ info:
     An API for serving data related to the zoning of New York City.
   version: 0.1.0
 servers:
-  - url: https://zoning-api.planningdigital.com
+  - url: https://zoning.planningdigital.com/api
+tags:
+  - name: Boroughs
 paths:
   /boroughs:
-    get:
-      summary: Returns a list of boroughs.
+    get: 
+      summary: List boroughs
       operationId: getBoroughs
+      tags:
+      - Boroughs
       responses:
         '200':
           description: An array of borough objects.
@@ -40,3 +44,7 @@ components:
           minLength: 2
           maxLength: 2
           example: MN
+      required:
+        - id
+        - title
+        - abbr
