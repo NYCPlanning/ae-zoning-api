@@ -2,6 +2,9 @@
 /dist
 /node_modules
 
+# temporary directory
+/temp
+
 # Logs
 logs
 *.log
