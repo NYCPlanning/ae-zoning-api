@@ -1,0 +1,40 @@
+import { Entity, PrimaryKey, Property, types } from "@mikro-orm/core";
+import { MultiPolygonGeogType, MultiPolygonGeomType } from "../mikro-orm-pgis";
+import { MultiPolygon } from "geojson";
+
+@Entity()
+export class TaxLot {
+  @PrimaryKey({ columnType: "char(10)" })
+  bbl: string;
+
+  @Property({ type: types.text })
+  block: string;
+
+  @Property({ type: types.text })
+  lot: string;
+
+  @Property({ type: types.text })
+  address: string;
+
+  @Property({ type: new MultiPolygonGeogType(4326) })
+  wgs84: MultiPolygon;
+
+  @Property({ type: new MultiPolygonGeomType(2263) })
+  liFt: MultiPolygon;
+
+  constructor(
+    bbl: string,
+    block: string,
+    lot: string,
+    address: string,
+    wgs84: MultiPolygon,
+    liFt: MultiPolygon,
+  ) {
+    this.bbl = bbl;
+    this.block = block;
+    this.lot = lot;
+    this.address = address;
+    this.wgs84 = wgs84;
+    this.liFt = liFt;
+  }
+}
