@@ -4,6 +4,7 @@ import { AppService } from "./app.service";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { MikroOrmModule } from "@mikro-orm/nestjs";
 import * as Joi from "joi";
+import { BoroughModule } from "./borough/borough.module";
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import * as Joi from "joi";
         entitiesTs: ["src/**/*.entity.ts"],
       }),
     }),
+    BoroughModule,
   ],
   controllers: [AppController],
   providers: [AppService],
