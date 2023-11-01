@@ -40,7 +40,7 @@ components:
           example: Manhattan
         abbr:
           type: string
-          description: The two character abbrevation for the borough.
+          description: The two character abbreviation for the borough.
           minLength: 2
           maxLength: 2
           example: MN
