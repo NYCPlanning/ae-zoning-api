@@ -6,6 +6,7 @@ import { MikroOrmModule } from "@mikro-orm/nestjs";
 import { ServeStaticModule } from "@nestjs/serve-static";
 import * as Joi from "joi";
 import { join } from "path";
+import { BoroughModule } from "./borough/borough.module";
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { join } from "path";
       rootPath: join(__dirname, "..", "openapi"),
       exclude: ["/api/(.*)"],
     }),
+    BoroughModule,
   ],
   controllers: [AppController],
   providers: [AppService],
