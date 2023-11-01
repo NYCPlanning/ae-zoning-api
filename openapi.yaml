@@ -33,7 +33,7 @@ components:
           type: string
           description: A single character numeric string containing the common number used to refer to the borough. Possible values are 1-5.
           pattern: \b[1-9]\b
-          example: 2
+          example: 1
         title:
           type: string
           description: The full name of the borough.
