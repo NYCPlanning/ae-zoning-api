@@ -3,7 +3,9 @@ import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { MikroOrmModule } from "@mikro-orm/nestjs";
+import { ServeStaticModule } from "@nestjs/serve-static";
 import * as Joi from "joi";
+import { join } from "path";
 
 @Module({
   imports: [
@@ -34,6 +36,10 @@ import * as Joi from "joi";
         entities: ["dist/**/*.entity.js"],
         entitiesTs: ["src/**/*.entity.ts"],
       }),
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, "..", "openapi"),
+      exclude: ["/api/(.*)"],
     }),
   ],
   controllers: [AppController],
