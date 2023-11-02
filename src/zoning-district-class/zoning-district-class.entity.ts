@@ -11,6 +11,9 @@ export class ZoningDistrictClass {
   @Property({ type: types.text })
   description: string;
 
+  @Property({ type: types.text, nullable: true })
+  url: string;
+
   @Property({ columnType: "char(9)" })
   color: string;
 
@@ -18,11 +21,13 @@ export class ZoningDistrictClass {
     id: string,
     category: ZoningDistrictClassCategory,
     description: string,
+    url: string,
     color: string,
   ) {
     this.id = id;
     this.category = category;
     this.description = description;
+    this.url = url;
     this.color = color;
   }
 }

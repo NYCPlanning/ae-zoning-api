@@ -1,10 +1,18 @@
-import { Entity, PrimaryKey, Property, types, UuidType } from "@mikro-orm/core";
+import {
+  Entity,
+  PrimaryKey,
+  Property,
+  types,
+  ManyToMany,
+  Collection,
+} from "@mikro-orm/core";
 import { MultiPolygonGeogType, MultiPolygonGeomType } from "../mikro-orm-pgis";
 import { MultiPolygon } from "geojson";
+import { ZoningDistrictClass } from "../zoning-district-class/zoning-district-class.entity";
 
 @Entity()
 export class ZoningDistrict {
-  @PrimaryKey({ type: UuidType })
+  @PrimaryKey({ type: types.uuid, defaultRaw: "gen_random_uuid()" })
   id: string;
 
   @Property({ type: types.text })
@@ -16,13 +24,11 @@ export class ZoningDistrict {
   @Property({ type: new MultiPolygonGeomType(2263) })
   liFt: MultiPolygon;
 
-  constructor(
-    id: string,
-    label: string,
-    wgs84: MultiPolygon,
-    liFt: MultiPolygon,
-  ) {
-    this.id = id;
+  @ManyToMany(() => ZoningDistrictClass)
+  classes: Collection<ZoningDistrictClass> =
+    new Collection<ZoningDistrictClass>(this);
+
+  constructor(label: string, wgs84: MultiPolygon, liFt: MultiPolygon) {
     this.label = label;
     this.wgs84 = wgs84;
     this.liFt = liFt;
