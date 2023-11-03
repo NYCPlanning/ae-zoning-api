@@ -8,7 +8,10 @@ servers:
   - url: https://zoning.planningdigital.com/api
 tags:
   - name: Boroughs
-  - name: ZoningDistricts
+  - name: Land Uses
+  - name: Tax Lots
+  - name: Zoning Districts
+  - name: GeoJSON
 paths:
   /boroughs:
     get: 
@@ -25,12 +28,94 @@ paths:
                 type: array
                 items: 
                   $ref: '#/components/schemas/Borough'
+  /land-uses:
+    get: 
+      summary: List land uses
+      operationId: getLandUses
+      tags:
+      - Land Uses
+      responses:
+        '200':
+          description: An array of land use objects.
+          content:
+            application/json:
+              schema: 
+                type: array
+                items: 
+                  $ref: '#/components/schemas/LandUse'
+  /tax-lots/{bbl}:
+    get: 
+      summary: Non-spatial details for a specific tax lot
+      operationId: getTaxLotByBbl
+      tags:
+      - Tax Lots
+      parameters:
+        - name: bbl
+          in: path
+          required: true  
+          schema:
+            type: string
+            minLength: 10
+            maxLength: 10
+      responses:
+        '200':
+          description: A tax lot object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaxLot'
+  /tax-lots/{bbl}/geojson:
+    get: 
+      summary: GeoJSON for a specific tax lot
+      operationId: getTaxLotGeoJsonByBbl
+      tags:
+      - Tax Lots
+      - GeoJSON
+      parameters:
+        - name: bbl
+          in: path
+          required: true  
+          schema:
+            type: string
+            minLength: 10
+            maxLength: 10
+      responses:
+        '200':
+          description: A tax lot geojson object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaxLotGeoJson'
+  /tax-lots/{bbl}/zoning-districts:
+    get: 
+      summary: Non-spatial details for zoning districts that spatially intersect a tax lot.
+      operationId: getZoningDistrictsByTaxLotBbl
+      tags:
+      - Tax Lots
+      - Zoning Districts
+      parameters:
+        - name: bbl
+          in: path
+          required: true  
+          schema:
+            type: string
+            minLength: 10
+            maxLength: 10
+      responses:
+        '200':
+          description: An array of zoning district objects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ZoningDistrict'
   /zoning-districts/{id}:
     get:
       summary: Non-spatial details for a specific zoning district
       operationId: getZoningDistrictById
       tags:
-      - ZoningDistricts
+      - Zoning Districts
       parameters:
         - name: id
           in: path
@@ -69,6 +154,81 @@ components:
         - id
         - title
         - abbr
+    LandUse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The two character code to represent the land use. Possible values are 01-11.
+          minLength: 2
+          maxLength: 2
+          example: '05'
+        description:
+          type: string
+          description: The description of the land use.
+          example: Commercial and Office Buildings
+        color:
+          type: string
+          description: Hex-style color code to represent the land use.
+          pattern: '^#([A-Fa-f0-9]{6})$'
+          example: '#fc2929'
+      required:
+        - id
+        - description
+        - color
+    TaxLot:
+      type: object
+      properties:
+        bbl:
+          type: string
+          description: The ten character code compromised of a one character borough, five character block, and four character lot codes.
+          minLength: 10
+          maxLength: 10
+          example: '1000477501'
+        borough:
+          $ref: '#/components/schemas/Borough'
+        block:
+          type: string
+          description: The block code, without its padding zeros.
+          minLength: 1
+          maxLength: 5
+          example: 47
+        lot:
+          type: string
+          description: The lot code, without its padding zeros.
+          minLength: 1
+          maxLength: 4
+          example: 7501
+        address:
+          type: string
+          description: The street address.
+          example: 120 BROADWAY
+        landUse:
+          $ref: '#/components/schemas/LandUse'
+      required:
+        - bbl
+        - borough
+        - block
+        - lot
+        - address
+        - landUse
+    TaxLotGeoJson:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The bbl of the tax lot.
+          minLength: 10
+          maxLength: 10
+          example: '1000477501'
+        type:
+          type: string
+          enum:
+            - Feature
+        geometry:
+          $ref: '#/components/schemas/MultiPolygon'
+        properties:
+          $ref: '#/components/schemas/TaxLot'
     ZoningDistrict:
       type: object
       properties:
@@ -84,3 +244,28 @@ components:
       required:
         - id
         - label
+    Position:
+      type: array
+      description: The fundamental spatial construct
+      minItems: 2
+      maxItems: 3
+      items:
+        type: number
+      example: [-74.010835, 40.708442]
+    MultiPolygon:
+      type: object
+      description: A geojson implementation of a MultiPolygon Simple Feature
+      properties:
+        type: 
+          type: string
+          enum:
+            - "MultiPolygon"
+        coordinates:
+          type: array
+          description: Array of polygon coordinate arrays.
+          items:
+            type: array
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/Position'
