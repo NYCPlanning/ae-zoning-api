@@ -8,6 +8,7 @@ servers:
   - url: https://zoning.planningdigital.com/api
 tags:
   - name: Boroughs
+  - name: ZoningDistricts
 paths:
   /boroughs:
     get: 
@@ -24,6 +25,26 @@ paths:
                 type: array
                 items: 
                   $ref: '#/components/schemas/Borough'
+  /zoning-districts/{id}:
+    get:
+      summary: Non-spatial details for a specific zoning district
+      operationId: getZoningDistrictById
+      tags:
+      - ZoningDistricts
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: A zoning district object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZoningDistrict'
 components:
   schemas:
     Borough:
@@ -48,3 +69,18 @@ components:
         - id
         - title
         - abbr
+    ZoningDistrict:
+      type: object
+      properties:
+        id:
+          type: string
+          description: An automatically generated uuid.
+          format: uuid
+          example: d1c09f3a-553b-4574-811e-abd59d19e01b
+        label:
+          type: string
+          description: The zoning codes that apply to the district. Multiple codes are concatenated with a slash.
+          example: M1-5/R7-3
+      required:
+        - id
+        - label
