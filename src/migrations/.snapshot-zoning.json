@@ -211,6 +211,196 @@
           "updateRule": "cascade"
         }
       }
+    },
+    {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "gen_random_uuid()",
+          "mappedType": "uuid"
+        },
+        "label": {
+          "name": "label",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "text"
+        },
+        "wgs84": {
+          "name": "wgs84",
+          "type": "geography(MultiPolygon, 4326)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "unknown"
+        },
+        "li_ft": {
+          "name": "li_ft",
+          "type": "geometry(MultiPolygon, 2263)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "unknown"
+        }
+      },
+      "name": "zoning_district",
+      "schema": "public",
+      "indexes": [
+        {
+          "keyName": "zoning_district_pkey",
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {}
+    },
+    {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "text"
+        },
+        "category": {
+          "name": "category",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "enumItems": [
+            "Residential",
+            "Commercial",
+            "Manufacturing"
+          ],
+          "mappedType": "enum"
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "text"
+        },
+        "url": {
+          "name": "url",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "text"
+        },
+        "color": {
+          "name": "color",
+          "type": "char(9)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "unknown"
+        }
+      },
+      "name": "zoning_district_class",
+      "schema": "public",
+      "indexes": [
+        {
+          "keyName": "zoning_district_class_pkey",
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {}
+    },
+    {
+      "columns": {
+        "zoning_district_id": {
+          "name": "zoning_district_id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "uuid"
+        },
+        "zoning_district_class_id": {
+          "name": "zoning_district_class_id",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "text"
+        }
+      },
+      "name": "zoning_district_classes",
+      "schema": "public",
+      "indexes": [
+        {
+          "keyName": "zoning_district_classes_pkey",
+          "columnNames": [
+            "zoning_district_id",
+            "zoning_district_class_id"
+          ],
+          "composite": true,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {
+        "zoning_district_classes_zoning_district_id_foreign": {
+          "constraintName": "zoning_district_classes_zoning_district_id_foreign",
+          "columnNames": [
+            "zoning_district_id"
+          ],
+          "localTableName": "public.zoning_district_classes",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.zoning_district",
+          "deleteRule": "cascade",
+          "updateRule": "cascade"
+        },
+        "zoning_district_classes_zoning_district_class_id_foreign": {
+          "constraintName": "zoning_district_classes_zoning_district_class_id_foreign",
+          "columnNames": [
+            "zoning_district_class_id"
+          ],
+          "localTableName": "public.zoning_district_classes",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.zoning_district_class",
+          "deleteRule": "cascade",
+          "updateRule": "cascade"
+        }
+      }
     }
   ]
 }
