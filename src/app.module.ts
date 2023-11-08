@@ -9,6 +9,7 @@ import { join } from "path";
 import { BoroughModule } from "./borough/borough.module";
 import { LandUseModule } from "./land-use/land-use.module";
 import { TaxLotModule } from "./tax-lot/tax-lot.module";
+import { ZoningDistrictModule } from "./zoning-district/zoning-district.module";
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { TaxLotModule } from "./tax-lot/tax-lot.module";
     BoroughModule,
     LandUseModule,
     TaxLotModule,
+    ZoningDistrictModule,
   ],
   controllers: [AppController],
   providers: [AppService],
