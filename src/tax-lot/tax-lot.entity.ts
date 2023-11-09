@@ -24,10 +24,10 @@ export class TaxLot {
   @Property({ type: types.text })
   lot: string;
 
-  @Property({ type: types.text })
+  @Property({ type: types.text, nullable: true })
   address: string;
 
-  @ManyToOne({ entity: () => LandUse })
+  @ManyToOne({ entity: () => LandUse, nullable: true })
   landUse: LandUse;
 
   @Property({ type: new MultiPolygonGeogType(4326) })
