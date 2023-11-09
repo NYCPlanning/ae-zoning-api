@@ -140,7 +140,7 @@
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": false,
+          "nullable": true,
           "mappedType": "text"
         },
         "land_use_id": {
@@ -149,7 +149,7 @@
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": false,
+          "nullable": true,
           "mappedType": "unknown"
         },
         "wgs84": {
@@ -208,6 +208,7 @@
             "id"
           ],
           "referencedTableName": "public.land_use",
+          "deleteRule": "set null",
           "updateRule": "cascade"
         }
       }
