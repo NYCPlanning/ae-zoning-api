@@ -11,7 +11,8 @@ export class TaxLotService {
   ) {}
 
   async findTaxLotByBbl(bbl: string): Promise<TaxLot | null> {
-    return this.taxLotRepository.findOne(bbl);
+    console.log("the bbl is", bbl);
+    return this.taxLotRepository.findOne({ bbl });
   }
 
   // async findGeoJsonByBbl(bbl: string): Promise<TaxLot | null> {
