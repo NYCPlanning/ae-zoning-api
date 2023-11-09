@@ -7,6 +7,8 @@ import { ServeStaticModule } from "@nestjs/serve-static";
 import * as Joi from "joi";
 import { join } from "path";
 import { BoroughModule } from "./borough/borough.module";
+import { LandUseModule } from "./land-use/land-use.module";
+import { TaxLotModule } from "./tax-lot/tax-lot.module";
 
 @Module({
   imports: [
@@ -43,6 +45,8 @@ import { BoroughModule } from "./borough/borough.module";
       exclude: ["/api/(.*)"],
     }),
     BoroughModule,
+    LandUseModule,
+    TaxLotModule,
   ],
   controllers: [AppController],
   providers: [AppService],
