@@ -11,11 +11,16 @@ export class TaxLotService {
   ) {}
 
   async findTaxLotByBbl(bbl: string): Promise<TaxLot | null> {
-    console.log("the bbl is", bbl);
-    return this.taxLotRepository.findOne({ bbl });
+    return this.taxLotRepository.findOne(
+      { bbl },
+      {
+        fields: ["bbl", "borough", "landUse", "block", "lot", "address"],
+        populate: ["borough", "landUse"],
+      },
+    );
   }
 
-  // async findGeoJsonByBbl(bbl: string): Promise<TaxLot | null> {
-  //   return this.taxlotRepository.findOne(bbl);
-  // }
+  async findTaxLotByBblGeoJson(bbl: string): Promise<TaxLot | null> {
+    return this.taxLotRepository.findOne({ bbl });
+  }
 }

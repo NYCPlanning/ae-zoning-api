@@ -10,8 +10,8 @@ export class TaxLotController {
     return this.taxLotService.findTaxLotByBbl(params.bbl);
   }
 
-  // @Get("/:bbl/geojson")
-  // async findGeoJsonByBbl(@Param() bbl: string) {
-  //   return this.taxlotService.findGeoJsonByBbl(bbl);
-  // }
+  @Get("/:bbl/geojson")
+  async findTaxLotByBblGeoJson(@Param() params: { bbl: string }) {
+    return this.taxLotService.findTaxLotByBbl(params.bbl);
+  }
 }
