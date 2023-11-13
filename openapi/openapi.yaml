@@ -110,6 +110,30 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ZoningDistrict'
+  /tax-lots/{bbl}/zoning-districts/classes:
+    get:
+      summary: Class schemas for all zoning districts that spatially intersect the tax lot
+      operationId: getZoningDistrictClassesByTaxLotBbl
+      tags:
+        - Tax Lots
+        - Zoning Districts
+      parameters:
+        - name: bbl
+          in: path
+          required: true
+          schema:
+            type: string
+            minLength: 10
+            maxLength: 10
+      responses:
+        '200':
+          description: An array of zoning district class schemas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ZoningDistrictClass'
   /zoning-districts/{id}:
     get:
       summary: Non-spatial details for a specific zoning district
@@ -130,6 +154,43 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ZoningDistrict'
+  /zoning-districts/{uuid}/classes:
+    get:
+      summary: Class schemas for the specified zoning district
+      operationId: getZoningDistrictClassesByUuid
+      tags:
+      - Zoning Districts
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: An array of class schemas for the zoning district
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ZoningDistrictClass'
+  /zoning-district-classes:
+    get:
+      summary: Class schemas for all zoning districts
+      operationId: getAllZoningDistrictClasses
+      tags:
+      - Zoning Districts
+      responses:
+        '200': 
+          description: An array of all zoning district class schemas
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                  $ref: "#/components/schemas/ZoningDistrictClass"
 components:
   schemas:
     Borough:
@@ -244,6 +305,31 @@ components:
       required:
         - id
         - label
+    ZoningDistrictClass:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The code associated with the Zoning class.
+          # format: 
+          example: M1
+        category:
+          type: string
+          enum:
+            - "Residential"
+            - "Commercial"
+            - "Manufacturing"
+          description: The type of zoning district.
+          # format:
+          # example:
+        description:
+          type: string
+          description: Zoning class descriptions from Zola.
+        color:
+          type: string
+          description: Zoning classes from the existing Zola layer groups.
+          minLength: 9
+          maxLength: 9
     Position:
       type: array
       description: The fundamental spatial construct
