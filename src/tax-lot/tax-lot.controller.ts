@@ -14,4 +14,13 @@ export class TaxLotController {
   async findTaxLotByBblGeoJson(@Param() params: { bbl: string }) {
     return this.taxLotService.findTaxLotByBblGeoJson(params.bbl);
   }
+
+  @Get("/:bbl/zoning-districts")
+  async findZoningDistrictByTaxLotIntersection(
+    @Param() params: { bbl: string },
+  ) {
+    return this.taxLotService.findZoningDistrictByTaxLotIntersection(
+      params.bbl,
+    );
+  }
 }
