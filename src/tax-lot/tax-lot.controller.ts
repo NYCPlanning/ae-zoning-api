@@ -12,6 +12,6 @@ export class TaxLotController {
 
   @Get("/:bbl/geojson")
   async findTaxLotByBblGeoJson(@Param() params: { bbl: string }) {
-    return this.taxLotService.findTaxLotByBbl(params.bbl);
+    return this.taxLotService.findTaxLotByBblGeoJson(params.bbl);
   }
 }

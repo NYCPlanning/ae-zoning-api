@@ -14,6 +14,10 @@ export class MultiPolygonGeogType extends Type<MultiPolygon, string> {
     return `ST_AsGeoJSON(${key})`;
   }
 
+  convertToJSValue(value: string) {
+    return JSON.parse(value);
+  }
+
   getColumnType(): string {
     return `geography(${SimpleFeature.MultiPolygon}, ${this.srid})`;
   }

@@ -4,6 +4,7 @@ import { TaxLot } from "./tax-lot.entity";
 import { TaxLotRepository } from "./tax-lot.repository";
 import { FeatureFlagConfig } from "src/config";
 import { ConfigType } from "@nestjs/config";
+import { Feature, MultiPolygon } from "geojson";
 
 @Injectable()
 export class TaxLotService {
@@ -27,9 +28,41 @@ export class TaxLotService {
     );
   }
 
-  async findTaxLotByBblGeoJson(bbl: string): Promise<TaxLot | null> {
-    if (this.featureFlagConfig.useDrizzle)
-      throw new Error("Tax lot geojson route not support in drizzle");
-    return this.taxLotRepository.findOne({ bbl });
+  async findTaxLotByBblGeoJson(
+    bbl: string,
+  ): Promise<Feature<MultiPolygon, Omit<TaxLot, "wgs84" | "liFt">> | null> {
+    const taxLotByBblGeoJson = await this.taxLotRepository.findOne(
+      { bbl },
+      {
+        fields: [
+          "bbl",
+          "borough",
+          "landUse",
+          "block",
+          "lot",
+          "address",
+          "wgs84",
+        ],
+        populate: ["borough", "landUse"],
+      },
+    );
+
+    if (taxLotByBblGeoJson === null) {
+      return null;
+    }
+
+    return {
+      id: taxLotByBblGeoJson.bbl,
+      type: "Feature",
+      geometry: taxLotByBblGeoJson.wgs84,
+      properties: {
+        bbl: taxLotByBblGeoJson.bbl,
+        borough: taxLotByBblGeoJson.borough,
+        block: taxLotByBblGeoJson.block,
+        lot: taxLotByBblGeoJson.lot,
+        address: taxLotByBblGeoJson.address,
+        landUse: taxLotByBblGeoJson.landUse,
+      },
+    };
   }
 }
