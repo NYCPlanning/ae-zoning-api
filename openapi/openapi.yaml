@@ -191,6 +191,43 @@ paths:
                 type: array
                 items: 
                   $ref: "#/components/schemas/ZoningDistrictClass"
+  /zoning-district-classes/category-colors:
+    get:
+      summary: List of color and class category
+      operationId: getZoningDistrictClassesCategoryColors
+      tags:
+      - Zoning Districts
+    responses:
+      '200':
+        # description: 
+        # content:
+        #   application/json:
+        #     schema:
+        #       type:
+        #       items:
+        #         $ref: "#/components/schemas/"
+  /zoning-district-classes/<id>:
+    get:
+      summary: All class schemas for the specified class
+      operationId: getZoningDistrictClassesById
+      tags:
+      - Zoning Districts
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: An array of zoning district class schemas for a zoning district
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ZoningDistrictClass"
 components:
   schemas:
     Borough:
