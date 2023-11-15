@@ -199,14 +199,18 @@ paths:
       - Zoning Districts
     responses:
       '200':
-        # description: 
-        # content:
-        #   application/json:
-        #     schema:
-        #       type:
-        #       items:
-        #         $ref: "#/components/schemas/"
-  /zoning-district-classes/<id>:
+          description: An array of all zoning district category colors.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  additionalProperties:
+                    type: string
+                  example:
+                    Manufacturing: '#f3b3ff'
+  /zoning-district-classes/{id}:
     get:
       summary: All class schemas for the specified class
       operationId: getZoningDistrictClassesById
@@ -348,7 +352,7 @@ components:
         id:
           type: string
           description: The code associated with the Zoning class.
-          # format: 
+          pattern:  '^((C[1-8])|(M[1-3])|(R([1-9]|10)))$'
           example: M1
         category:
           type: string
@@ -357,16 +361,14 @@ components:
             - "Commercial"
             - "Manufacturing"
           description: The type of zoning district.
-          # format:
-          # example:
         description:
           type: string
-          description: Zoning class descriptions from Zola.
+          description: Zoning class descriptions.
         color:
           type: string
-          description: Zoning classes from the existing Zola layer groups.
-          minLength: 9
-          maxLength: 9
+          description: Zoning classes from layer groups.
+          pattern: '^#([A-Fa-f0-9]{6})$'
+          example: '#f3b3ff'
     Position:
       type: array
       description: The fundamental spatial construct
