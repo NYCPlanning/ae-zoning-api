@@ -5,7 +5,7 @@ info:
     An API for serving data related to the zoning of New York City.
   version: 0.1.0
 servers:
-  - url: https://zoning.planningdigital.com/api
+  - url: http://localhost:3000/api/
 tags:
   - name: Boroughs
   - name: Land Uses

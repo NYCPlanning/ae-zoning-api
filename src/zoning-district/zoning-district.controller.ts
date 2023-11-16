@@ -9,4 +9,9 @@ export class ZoningDistrictController {
   async findById(@Param() params: { id: string }) {
     return this.zoningDistrictService.findById(params.id);
   }
+
+  @Get("/:uuid/classes")
+  async findClassesByZoningDistrictId(@Param() params: { uuid: string }) {
+    return this.zoningDistrictService.findClassesByZoningDistrictId(params.uuid);
+  }
 }
