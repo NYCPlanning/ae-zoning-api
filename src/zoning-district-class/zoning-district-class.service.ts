@@ -9,4 +9,14 @@ export class ZoningDistrictClassService {
     @InjectRepository(ZoningDistrictClass)
     private readonly zoningDistrictClassRepository: ZoningDistrictClassRepository,
   ) {}
+
+  async findAllZoningDistrictClasses(): Promise<Array<ZoningDistrictClass>> {
+    return this.zoningDistrictClassRepository.findAll();
+  }
+
+  async findZoningDistrictClassById(
+    id: string,
+  ): Promise<ZoningDistrictClass | null> {
+    return this.zoningDistrictClassRepository.findOne(id);
+  }
 }

@@ -10,5 +10,4 @@ import { ZoningDistrictClassController } from "./zoning-district-class.controlle
   providers: [ZoningDistrictClassService],
   controllers: [ZoningDistrictClassController],
 })
-
-export class ZoningDistrictModule {}
+export class ZoningDistrictClassModule {}

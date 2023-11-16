@@ -10,6 +10,7 @@ import { BoroughModule } from "./borough/borough.module";
 import { LandUseModule } from "./land-use/land-use.module";
 import { TaxLotModule } from "./tax-lot/tax-lot.module";
 import { ZoningDistrictModule } from "./zoning-district/zoning-district.module";
+import { ZoningDistrictClassModule } from "./zoning-district-class/zoning-district-class.module";
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { ZoningDistrictModule } from "./zoning-district/zoning-district.module";
     LandUseModule,
     TaxLotModule,
     ZoningDistrictModule,
+    ZoningDistrictClassModule,
   ],
   controllers: [AppController],
   providers: [AppService],
