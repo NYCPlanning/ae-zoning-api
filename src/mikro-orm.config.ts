@@ -16,5 +16,4 @@ export default defineConfig({
   // @ts-expect-error nestjs adapter option
   registerRequestContext: false,
   extensions: [Migrator],
-  driverOptions: { connection: { ssl: { rejectUnauthorized: false } } },
 });
