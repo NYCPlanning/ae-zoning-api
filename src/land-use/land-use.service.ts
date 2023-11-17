@@ -2,6 +2,7 @@ import { InjectRepository } from "@mikro-orm/nestjs";
 import { Inject, Injectable } from "@nestjs/common";
 import { LandUse } from "./land-use.entity";
 import { LandUseRepository } from "./land-use.repository";
+import { DB, DbType } from "src/global/providers/db.provider";
 import { FeatureFlagConfig } from "src/config";
 import { ConfigType } from "@nestjs/config";
 
@@ -11,13 +12,18 @@ export class LandUseService {
     @InjectRepository(LandUse)
     private readonly landUseRepository: LandUseRepository,
 
+    @Inject(DB)
+    private readonly db: DbType,
+
     @Inject(FeatureFlagConfig.KEY)
     private featureFlagConfig: ConfigType<typeof FeatureFlagConfig>,
   ) {}
 
-  async findAll(): Promise<LandUse[]> {
-    if (this.featureFlagConfig.useDrizzle)
-      throw new Error("Land uses route not support in drizzle");
-    return this.landUseRepository.findAll();
+  async findAll() {
+    if (this.featureFlagConfig.useDrizzle) {
+      return this.db.query.landUse.findMany();
+    } else {
+      return this.landUseRepository.findAll();
+    }
   }
 }
