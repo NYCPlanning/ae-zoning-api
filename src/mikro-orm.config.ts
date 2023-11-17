@@ -17,7 +17,4 @@ export default defineConfig({
   registerRequestContext: false,
   extensions: [Migrator],
   driverOptions: { connection: { ssl: { rejectUnauthorized: false } } },
-  migrations: {
-    disableForeignKeys: false,
-  },
 });
