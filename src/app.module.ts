@@ -10,10 +10,14 @@ import { BoroughModule } from "./borough/borough.module";
 import { LandUseModule } from "./land-use/land-use.module";
 import { TaxLotModule } from "./tax-lot/tax-lot.module";
 import { ZoningDistrictModule } from "./zoning-district/zoning-district.module";
+import { DbConfig, FeatureFlagConfig } from "./config";
+import { GlobalModule } from "./global/global.module";
 
 @Module({
   imports: [
     ConfigModule.forRoot({
+      isGlobal: true,
+      load: [DbConfig, FeatureFlagConfig],
       validationSchema: Joi.object({
         NODE_ENV: Joi.string().valid("development", "production", "test"),
         DATABASE_HOST: Joi.string(),
@@ -45,6 +49,7 @@ import { ZoningDistrictModule } from "./zoning-district/zoning-district.module";
       rootPath: join(__dirname, "..", "openapi"),
       exclude: ["/api/(.*)"],
     }),
+    GlobalModule,
     BoroughModule,
     LandUseModule,
     TaxLotModule,
