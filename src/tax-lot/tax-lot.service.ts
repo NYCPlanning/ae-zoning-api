@@ -58,7 +58,9 @@ export class TaxLotService {
           address: true,
         },
         extras: {
-          geometry: sql<string>`ST_AsGeoJSON(${taxLot.wgs84})`.as("geometry"),
+          geometry: sql<string>`ST_AsGeoJSON(${taxLot.wgs84}, 6)`.as(
+            "geometry",
+          ),
         },
         where: (taxLot, { eq }) => eq(taxLot.bbl, bbl),
         with: {
