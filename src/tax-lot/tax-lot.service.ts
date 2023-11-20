@@ -5,6 +5,8 @@ import { DB, DbType } from "src/global/providers/db.provider";
 import { TaxLotRepository } from "./tax-lot.repository";
 import { FeatureFlagConfig } from "src/config";
 import { ConfigType } from "@nestjs/config";
+import { taxLot } from "src/schema";
+import { sql } from "drizzle-orm";
 
 @Injectable()
 export class TaxLotService {
@@ -46,9 +48,42 @@ export class TaxLotService {
     }
   }
 
-  async findTaxLotByBblGeoJson(bbl: string): Promise<TaxLot | null> {
-    if (this.featureFlagConfig.useDrizzle)
-      throw new Error("Tax lot geojson route not support in drizzle");
-    return this.taxLotRepository.findOne({ bbl });
+  async findTaxLotByBblGeoJson(bbl: string) {
+    if (this.featureFlagConfig.useDrizzle) {
+      const result = await this.db.query.taxLot.findMany({
+        columns: {
+          bbl: true,
+          block: true,
+          lot: true,
+          address: true,
+        },
+        extras: {
+          geometry: sql<string>`ST_AsGeoJSON(${taxLot.wgs84})`.as("geometry"),
+        },
+        where: (taxLot, { eq }) => eq(taxLot.bbl, bbl),
+        with: {
+          borough: true,
+          landUse: true,
+        },
+      });
+      if (result.length === 0) return null;
+      const taxLotResult = result[0];
+      const geometry = JSON.parse(taxLotResult.geometry);
+      return {
+        type: "Feature",
+        id: taxLotResult.bbl,
+        properties: {
+          bbl: taxLotResult.bbl,
+          borough: taxLotResult.borough,
+          block: taxLotResult.block,
+          lot: taxLotResult.lot,
+          address: taxLotResult.address,
+          landUse: taxLotResult.landUse,
+        },
+        geometry,
+      };
+    } else {
+      return this.taxLotRepository.findOne({ bbl });
+    }
   }
 }
