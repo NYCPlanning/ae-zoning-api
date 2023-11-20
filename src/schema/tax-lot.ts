@@ -1,6 +1,7 @@
 import { char, pgTable, text } from "drizzle-orm/pg-core";
 import { borough, landUse } from "../schema";
 import { multiPolygonGeog, multiPolygonGeom } from "../drizzle-pgis";
+import { relations } from "drizzle-orm";
 
 export const taxLot = pgTable("tax_lot", {
   bbl: char("bbl", { length: 10 }).primaryKey(),
@@ -14,3 +15,14 @@ export const taxLot = pgTable("tax_lot", {
   wgs84: multiPolygonGeog("wgs84", 4326).notNull(),
   liFt: multiPolygonGeom("li_ft", 2263).notNull(),
 });
+
+export const taxLotRelations = relations(taxLot, ({ one }) => ({
+  borough: one(borough, {
+    fields: [taxLot.boroughId],
+    references: [borough.id],
+  }),
+  landUse: one(landUse, {
+    fields: [taxLot.landUseId],
+    references: [landUse.id],
+  }),
+}));
