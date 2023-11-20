@@ -23,7 +23,7 @@ export class TaxLotService {
 
   async findTaxLotByBbl(bbl: string) {
     if (this.featureFlagConfig.useDrizzle) {
-      const results = await this.db.query.taxLot.findMany({
+      const result = await this.db.query.taxLot.findFirst({
         columns: {
           boroughId: false,
           landUseId: false,
@@ -36,7 +36,7 @@ export class TaxLotService {
           landUse: true,
         },
       });
-      return results.length > 0 ? results[0] : null;
+      return result !== undefined ? result : null;
     } else {
       return this.taxLotRepository.findOne(
         { bbl },
@@ -50,7 +50,7 @@ export class TaxLotService {
 
   async findTaxLotByBblGeoJson(bbl: string) {
     if (this.featureFlagConfig.useDrizzle) {
-      const result = await this.db.query.taxLot.findMany({
+      const result = await this.db.query.taxLot.findFirst({
         columns: {
           bbl: true,
           block: true,
@@ -68,19 +68,18 @@ export class TaxLotService {
           landUse: true,
         },
       });
-      if (result.length === 0) return null;
-      const taxLotResult = result[0];
-      const geometry = JSON.parse(taxLotResult.geometry);
+      if (result === undefined) return null;
+      const geometry = JSON.parse(result.geometry);
       return {
         type: "Feature",
-        id: taxLotResult.bbl,
+        id: result.bbl,
         properties: {
-          bbl: taxLotResult.bbl,
-          borough: taxLotResult.borough,
-          block: taxLotResult.block,
-          lot: taxLotResult.lot,
-          address: taxLotResult.address,
-          landUse: taxLotResult.landUse,
+          bbl: result.bbl,
+          borough: result.borough,
+          block: result.block,
+          lot: result.lot,
+          address: result.address,
+          landUse: result.landUse,
         },
         geometry,
       };
