@@ -13,3 +13,20 @@ BEGIN;
 		CSV HEADER;
 
 COMMIT;
+
+BEGIN;
+	COPY tax_lot (
+		"bbl",
+		"borough_id",
+		"block",
+		"lot",
+		"address",
+		"land_use_id",
+		"wgs84",
+		"li_ft"
+	)
+		FROM '../tax_lot.csv'
+		DELIMITER ','
+		CSV HEADER;
+
+COMMIT;
