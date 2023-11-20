@@ -1,4 +1,3 @@
-import { InferSelectModel } from "drizzle-orm";
 import { char, pgTable, text } from "drizzle-orm/pg-core";
 
 export const borough = pgTable("borough", {
@@ -6,5 +5,3 @@ export const borough = pgTable("borough", {
   title: text("title").notNull(),
   abbr: text("abbr").notNull(),
 });
-
-export type SelectBorough = InferSelectModel<typeof borough>;
