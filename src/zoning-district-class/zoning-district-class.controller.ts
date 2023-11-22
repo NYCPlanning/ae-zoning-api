@@ -12,6 +12,11 @@ export class ZoningDistrictClassController {
     return this.zoningDistrictService.findAllZoningDistrictClasses();
   }
 
+  @Get("/category-colors")
+  async findZoningDistrictClassCategoryColors() {
+    return this.zoningDistrictService.findZoningDistrictClassCategoryColors();
+  }
+
   @Get("/:id")
   async findZoningDistrictClassById(@Param() params: { id: string }) {
     return this.zoningDistrictService.findZoningDistrictClassById(params.id);
