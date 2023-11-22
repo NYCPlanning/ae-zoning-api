@@ -30,3 +30,43 @@ BEGIN;
 		CSV HEADER;
 
 COMMIT;
+
+
+BEGIN;
+	COPY zoning_district (
+		"id",
+		"label",
+		"wgs84",
+		"li_ft"
+	)
+		FROM '../zoning_district.csv'
+		DELIMITER ','
+		CSV HEADER;
+
+COMMIT;
+
+
+BEGIN;
+	COPY zoning_district_class (
+		"id",
+		"category",
+		"description",
+		"url",
+		"color"
+	)
+		FROM '../zoning_district_class.csv'
+		DELIMITER ','
+		CSV HEADER;
+
+COMMIT;
+
+BEGIN;
+	COPY zoning_district_zoning_district_class (
+		"zoning_district_id",
+		"zoning_district_class_id"
+	)
+		FROM '../zoning_district_zoning_district_class.csv'
+		DELIMITER ','
+		CSV HEADER;
+
+COMMIT;
