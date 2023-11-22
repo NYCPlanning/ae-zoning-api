@@ -19,9 +19,16 @@ export class ZoningDistrictController {
     private storageConfig: ConfigType<typeof StorageConfig>,
   ) {}
 
-  @Get("/:id")
-  async findById(@Param() params: { id: string }) {
-    return this.zoningDistrictService.findById(params.id);
+  @Get("/:uuid")
+  async findZoningDistrictByUuid(@Param() params: { uuid: string }) {
+    return this.zoningDistrictService.findZoningDistrictByUuid(params.uuid);
+  }
+
+  @Get("/:uuid/classes")
+  async findClassesByZoningDistrictUuid(@Param() params: { uuid: string }) {
+    return this.zoningDistrictService.findClassesByZoningDistrictUuid(
+      params.uuid,
+    );
   }
 
   @Get("/:z/:x/:y.pbf")

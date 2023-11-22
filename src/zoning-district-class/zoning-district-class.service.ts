@@ -37,4 +37,19 @@ export class ZoningDistrictClassService {
       );
     }
   }
+
+  async findZoningDistrictClassCategoryColors() {
+    if (this.featureFlagConfig.useDrizzle) {
+      return await this.db
+        .selectDistinctOn([zoningDistrictClass.category], {
+          category: zoningDistrictClass.category,
+          color: zoningDistrictClass.color,
+        })
+        .from(zoningDistrictClass);
+    } else {
+      throw new Error(
+        "Zoning District Classes route not supported in Mikro ORM",
+      );
+    }
+  }
 }
