@@ -10,14 +10,14 @@ import { BoroughModule } from "./borough/borough.module";
 import { LandUseModule } from "./land-use/land-use.module";
 import { TaxLotModule } from "./tax-lot/tax-lot.module";
 import { ZoningDistrictModule } from "./zoning-district/zoning-district.module";
-import { DbConfig, FeatureFlagConfig } from "./config";
+import { DbConfig, FeatureFlagConfig, StorageConfig } from "./config";
 import { GlobalModule } from "./global/global.module";
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [DbConfig, FeatureFlagConfig],
+      load: [DbConfig, FeatureFlagConfig, StorageConfig],
       validationSchema: Joi.object({
         NODE_ENV: Joi.string().valid("development", "production", "test"),
         DATABASE_HOST: Joi.string(),
