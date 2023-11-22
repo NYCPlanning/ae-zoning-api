@@ -12,6 +12,7 @@ import { TaxLotModule } from "./tax-lot/tax-lot.module";
 import { ZoningDistrictModule } from "./zoning-district/zoning-district.module";
 import { DbConfig, FeatureFlagConfig, StorageConfig } from "./config";
 import { GlobalModule } from "./global/global.module";
+import { ZoningDistrictClassModule } from "./zoning-district-class/zoning-district-class.module";
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { GlobalModule } from "./global/global.module";
     LandUseModule,
     TaxLotModule,
     ZoningDistrictModule,
+    ZoningDistrictClassModule,
   ],
   controllers: [AppController],
   providers: [AppService],
