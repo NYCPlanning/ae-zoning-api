@@ -29,6 +29,16 @@ export class TaxLotController {
     return this.taxLotService.findTaxLotByBblGeoJson(params.bbl);
   }
 
+  @Get("/:bbl/zoning-districts")
+  async findZoningDistrictByTaxLotBbl(@Param() params: { bbl: string }) {
+    return this.taxLotService.findZoningDistrictByTaxLotBbl(params.bbl);
+  }
+
+  @Get("/:bbl/zoning-districts/classes")
+  async findZoningDistrictClassByTaxLotBbl(@Param() params: { bbl: string }) {
+    return this.taxLotService.findZoningDistrictClassByTaxLotBbl(params.bbl);
+  }
+
   @Get("/:z/:x/:y.pbf")
   @Redirect()
   findTaxLotTilesets(@Param() params: { z: number; x: number; y: number }) {

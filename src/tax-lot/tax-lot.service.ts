@@ -5,8 +5,13 @@ import { DB, DbType } from "src/global/providers/db.provider";
 import { TaxLotRepository } from "./tax-lot.repository";
 import { FeatureFlagConfig } from "src/config";
 import { ConfigType } from "@nestjs/config";
-import { taxLot } from "src/schema";
-import { sql } from "drizzle-orm";
+import {
+  taxLot,
+  zoningDistrict,
+  zoningDistrictClass,
+  zoningDistrictZoningDistrictClass,
+} from "src/schema";
+import { eq, sql } from "drizzle-orm";
 
 @Injectable()
 export class TaxLotService {
@@ -85,6 +90,63 @@ export class TaxLotService {
       };
     } else {
       return this.taxLotRepository.findOne({ bbl });
+    }
+  }
+
+  async findZoningDistrictByTaxLotBbl(bbl: string) {
+    if (this.featureFlagConfig.useDrizzle) {
+      return this.db
+        .select({
+          id: zoningDistrict.id,
+          label: zoningDistrict.label,
+        })
+        .from(zoningDistrict)
+        .leftJoin(
+          taxLot,
+          sql`ST_Intersects(${taxLot.liFt}, ${zoningDistrict.liFt})`,
+        )
+        .where(eq(taxLot.bbl, bbl));
+    } else {
+      throw new Error(
+        "Zoning district by tax lot bbl route not implemented in Mikro orm",
+      );
+    }
+  }
+
+  async findZoningDistrictClassByTaxLotBbl(bbl: string) {
+    if (this.featureFlagConfig.useDrizzle) {
+      return this.db
+        .select({
+          id: zoningDistrictClass.id,
+          category: zoningDistrictClass.category,
+          description: zoningDistrictClass.description,
+          url: zoningDistrictClass.url,
+          color: zoningDistrictClass.color,
+        })
+        .from(zoningDistrictClass)
+        .leftJoin(
+          zoningDistrictZoningDistrictClass,
+          eq(
+            zoningDistrictZoningDistrictClass.zoningDistrictClassId,
+            zoningDistrictClass.id,
+          ),
+        )
+        .leftJoin(
+          zoningDistrict,
+          eq(
+            zoningDistrictZoningDistrictClass.zoningDistrictId,
+            zoningDistrict.id,
+          ),
+        )
+        .leftJoin(
+          taxLot,
+          sql`ST_Intersects(${taxLot.liFt}, ${zoningDistrict.liFt})`,
+        )
+        .where(eq(taxLot.bbl, bbl));
+    } else {
+      throw new Error(
+        "Zoning district class by tax lot bbl route not implemented in Mikro orm",
+      );
     }
   }
 }
