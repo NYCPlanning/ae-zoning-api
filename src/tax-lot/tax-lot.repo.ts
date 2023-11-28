@@ -3,9 +3,9 @@ import {
   Injectable,
   InternalServerErrorException,
 } from "@nestjs/common";
-import { sql } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { DB, DbType } from "src/global/providers/db.provider";
-import { taxLot } from "src/schema";
+import { taxLot, zoningDistrict } from "src/schema";
 
 @Injectable()
 export class TaxLotRepo {
@@ -53,6 +53,24 @@ export class TaxLotRepo {
           landUse: true,
         },
       });
+    } catch {
+      throw new InternalServerErrorException("Error retrieving data");
+    }
+  }
+
+  async findZoningDistrictByTaxLotBbl(bbl: string) {
+    try {
+      return await this.db
+        .select({
+          id: zoningDistrict.id,
+          label: zoningDistrict.label,
+        })
+        .from(zoningDistrict)
+        .leftJoin(
+          taxLot,
+          sql`ST_Intersects(${taxLot.liFt}, ${zoningDistrict.liFt})`,
+        )
+        .where(eq(taxLot.bbl, bbl));
     } catch {
       throw new InternalServerErrorException("Error retrieving data");
     }

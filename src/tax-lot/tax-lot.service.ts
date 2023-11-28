@@ -83,18 +83,18 @@ export class TaxLotService {
   }
 
   async findZoningDistrictByTaxLotBbl(bbl: string) {
+    if (typeof bbl !== "string" || bbl.length !== 10)
+      throw new BadRequestException(
+        "Invalid data type or format for request parameter",
+      );
     if (this.featureFlagConfig.useDrizzle) {
-      return this.db
-        .select({
-          id: zoningDistrict.id,
-          label: zoningDistrict.label,
-        })
-        .from(zoningDistrict)
-        .leftJoin(
-          taxLot,
-          sql`ST_Intersects(${taxLot.liFt}, ${zoningDistrict.liFt})`,
-        )
-        .where(eq(taxLot.bbl, bbl));
+      const resultTaxLot = await this.taxLotRepo.findTaxLotByBbl(bbl);
+      if (resultTaxLot === undefined) throw new NotFoundException();
+      const resultZoningDistricts =
+        await this.taxLotRepo.findZoningDistrictByTaxLotBbl(bbl);
+      return {
+        zoningDistricts: resultZoningDistricts,
+      };
     } else {
       throw new Error(
         "Zoning district by tax lot bbl route not implemented in Mikro orm",
