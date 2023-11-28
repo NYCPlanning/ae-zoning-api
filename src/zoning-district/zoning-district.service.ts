@@ -1,3 +1,5 @@
+import { MikroORM } from "@mikro-orm/core";
+import { EntityManager } from "@mikro-orm/postgresql";
 import { InjectRepository } from "@mikro-orm/nestjs";
 import { Inject, Injectable } from "@nestjs/common";
 import { ZoningDistrict } from "./zoning-district.entity";
@@ -12,6 +14,9 @@ import {
 } from "src/schema";
 import { eq } from "drizzle-orm";
 
+// import { ZoningDistrictClass } from "../zoning-district-class/zoning-district-class.entity";
+import { ZoningDistrictClassRepository } from "../zoning-district-class/zoning-district-class.repository";
+
 @Injectable()
 export class ZoningDistrictService {
   constructor(
@@ -23,6 +28,9 @@ export class ZoningDistrictService {
 
     @Inject(FeatureFlagConfig.KEY)
     private featureFlagConfig: ConfigType<typeof FeatureFlagConfig>,
+    private readonly zoningDistrictClassRepository: ZoningDistrictClassRepository,
+    private readonly orm: MikroORM,
+    private readonly em: EntityManager,
   ) {}
 
   async findZoningDistrictByUuid(uuid: string) {

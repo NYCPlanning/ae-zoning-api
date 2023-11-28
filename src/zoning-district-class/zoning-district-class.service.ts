@@ -4,6 +4,9 @@ import { DB, DbType } from "src/global/providers/db.provider";
 import { ConfigType } from "@nestjs/config";
 import { zoningDistrictClass } from "src/schema";
 import { eq } from "drizzle-orm";
+import { InjectRepository } from "@mikro-orm/nestjs";
+import { ZoningDistrictClass } from "./zoning-district-class.entity";
+import { ZoningDistrictClassRepository } from "./zoning-district-class.repository";
 
 @Injectable()
 export class ZoningDistrictClassService {
@@ -13,6 +16,9 @@ export class ZoningDistrictClassService {
 
     @Inject(FeatureFlagConfig.KEY)
     private featureFlagConfig: ConfigType<typeof FeatureFlagConfig>,
+
+    @InjectRepository(ZoningDistrictClass)
+    private readonly zoningDistrictClassRepository: ZoningDistrictClassRepository,
   ) {}
 
   async findAllZoningDistrictClasses() {
