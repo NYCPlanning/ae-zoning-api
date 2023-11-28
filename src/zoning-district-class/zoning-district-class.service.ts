@@ -25,9 +25,7 @@ export class ZoningDistrictClassService {
     if (this.featureFlagConfig.useDrizzle) {
       return await this.db.query.zoningDistrictClass.findMany();
     } else {
-      throw new Error(
-        "Zoning District Classes route not supported in Mikro ORM",
-      );
+      return await this.zoningDistrictClassRepository.findAll();
     }
   }
 
