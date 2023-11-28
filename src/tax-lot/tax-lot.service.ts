@@ -56,26 +56,13 @@ export class TaxLotService {
   }
 
   async findTaxLotByBblGeoJson(bbl: string) {
+    if (typeof bbl !== "string" || bbl.length !== 10)
+      throw new BadRequestException(
+        "Invalid data type or format for request parameter",
+      );
     if (this.featureFlagConfig.useDrizzle) {
-      const result = await this.db.query.taxLot.findFirst({
-        columns: {
-          bbl: true,
-          block: true,
-          lot: true,
-          address: true,
-        },
-        extras: {
-          geometry: sql<string>`ST_AsGeoJSON(${taxLot.wgs84}, 6)`.as(
-            "geometry",
-          ),
-        },
-        where: (taxLot, { eq }) => eq(taxLot.bbl, bbl),
-        with: {
-          borough: true,
-          landUse: true,
-        },
-      });
-      if (result === undefined) return null;
+      const result = await this.taxLotRepo.findTaxLotByBblGeoJson(bbl);
+      if (result === undefined) throw new NotFoundException();
       const geometry = JSON.parse(result.geometry);
       return {
         type: "Feature",
