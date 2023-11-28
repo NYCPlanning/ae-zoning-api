@@ -6,17 +6,9 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { TaxLot } from "./tax-lot.entity";
-import { DB, DbType } from "src/global/providers/db.provider";
 import { TaxLotRepository } from "./tax-lot.repository";
 import { FeatureFlagConfig } from "src/config";
 import { ConfigType } from "@nestjs/config";
-import {
-  taxLot,
-  zoningDistrict,
-  zoningDistrictClass,
-  zoningDistrictZoningDistrictClass,
-} from "src/schema";
-import { eq, sql } from "drizzle-orm";
 import { TaxLotRepo } from "./tax-lot.repo";
 
 @Injectable()
@@ -24,9 +16,6 @@ export class TaxLotService {
   constructor(
     @InjectRepository(TaxLot)
     private readonly taxLotRepository: TaxLotRepository,
-
-    @Inject(DB)
-    private readonly db: DbType,
 
     @Inject(TaxLotRepo)
     private readonly taxLotRepo: TaxLotRepo,
@@ -88,12 +77,12 @@ export class TaxLotService {
         "Invalid data type or format for request parameter",
       );
     if (this.featureFlagConfig.useDrizzle) {
-      const resultTaxLot = await this.taxLotRepo.findTaxLotByBbl(bbl);
-      if (resultTaxLot === undefined) throw new NotFoundException();
-      const resultZoningDistricts =
+      if ((await this.taxLotRepo.findTaxLotByBblGeoJson(bbl)) === undefined)
+        throw new NotFoundException();
+      const zoningDistricts =
         await this.taxLotRepo.findZoningDistrictByTaxLotBbl(bbl);
       return {
-        zoningDistricts: resultZoningDistricts,
+        zoningDistricts,
       };
     } else {
       throw new Error(
@@ -103,35 +92,18 @@ export class TaxLotService {
   }
 
   async findZoningDistrictClassByTaxLotBbl(bbl: string) {
+    if (typeof bbl !== "string" || bbl.length !== 10)
+      throw new BadRequestException(
+        "Invalid data type or format for request parameter",
+      );
     if (this.featureFlagConfig.useDrizzle) {
-      return this.db
-        .select({
-          id: zoningDistrictClass.id,
-          category: zoningDistrictClass.category,
-          description: zoningDistrictClass.description,
-          url: zoningDistrictClass.url,
-          color: zoningDistrictClass.color,
-        })
-        .from(zoningDistrictClass)
-        .leftJoin(
-          zoningDistrictZoningDistrictClass,
-          eq(
-            zoningDistrictZoningDistrictClass.zoningDistrictClassId,
-            zoningDistrictClass.id,
-          ),
-        )
-        .leftJoin(
-          zoningDistrict,
-          eq(
-            zoningDistrictZoningDistrictClass.zoningDistrictId,
-            zoningDistrict.id,
-          ),
-        )
-        .leftJoin(
-          taxLot,
-          sql`ST_Intersects(${taxLot.liFt}, ${zoningDistrict.liFt})`,
-        )
-        .where(eq(taxLot.bbl, bbl));
+      if ((await this.taxLotRepo.findTaxLotByBbl(bbl)) === undefined)
+        throw new NotFoundException();
+      const zoningDistrictClasses =
+        await this.taxLotRepo.findZoningDistrictClassByTaxLotBbl(bbl);
+      return {
+        zoningDistrictClasses,
+      };
     } else {
       throw new Error(
         "Zoning district class by tax lot bbl route not implemented in Mikro orm",

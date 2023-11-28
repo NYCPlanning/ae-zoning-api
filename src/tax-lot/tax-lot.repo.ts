@@ -5,7 +5,12 @@ import {
 } from "@nestjs/common";
 import { eq, sql } from "drizzle-orm";
 import { DB, DbType } from "src/global/providers/db.provider";
-import { taxLot, zoningDistrict } from "src/schema";
+import {
+  taxLot,
+  zoningDistrict,
+  zoningDistrictClass,
+  zoningDistrictZoningDistrictClass,
+} from "src/schema";
 
 @Injectable()
 export class TaxLotRepo {
@@ -66,6 +71,41 @@ export class TaxLotRepo {
           label: zoningDistrict.label,
         })
         .from(zoningDistrict)
+        .leftJoin(
+          taxLot,
+          sql`ST_Intersects(${taxLot.liFt}, ${zoningDistrict.liFt})`,
+        )
+        .where(eq(taxLot.bbl, bbl));
+    } catch {
+      throw new InternalServerErrorException("Error retrieving data");
+    }
+  }
+
+  async findZoningDistrictClassByTaxLotBbl(bbl: string) {
+    try {
+      return this.db
+        .select({
+          id: zoningDistrictClass.id,
+          category: zoningDistrictClass.category,
+          description: zoningDistrictClass.description,
+          url: zoningDistrictClass.url,
+          color: zoningDistrictClass.color,
+        })
+        .from(zoningDistrictClass)
+        .leftJoin(
+          zoningDistrictZoningDistrictClass,
+          eq(
+            zoningDistrictZoningDistrictClass.zoningDistrictClassId,
+            zoningDistrictClass.id,
+          ),
+        )
+        .leftJoin(
+          zoningDistrict,
+          eq(
+            zoningDistrictZoningDistrictClass.zoningDistrictId,
+            zoningDistrict.id,
+          ),
+        )
         .leftJoin(
           taxLot,
           sql`ST_Intersects(${taxLot.liFt}, ${zoningDistrict.liFt})`,
