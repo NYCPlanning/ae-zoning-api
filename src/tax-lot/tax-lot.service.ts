@@ -1,5 +1,10 @@
 import { InjectRepository } from "@mikro-orm/nestjs";
-import { Inject, Injectable } from "@nestjs/common";
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { TaxLot } from "./tax-lot.entity";
 import { DB, DbType } from "src/global/providers/db.provider";
 import { TaxLotRepository } from "./tax-lot.repository";
@@ -12,6 +17,7 @@ import {
   zoningDistrictZoningDistrictClass,
 } from "src/schema";
 import { eq, sql } from "drizzle-orm";
+import { TaxLotRepo } from "./tax-lot.repo";
 
 @Injectable()
 export class TaxLotService {
@@ -22,26 +28,22 @@ export class TaxLotService {
     @Inject(DB)
     private readonly db: DbType,
 
+    @Inject(TaxLotRepo)
+    private readonly taxLotRepo: TaxLotRepo,
+
     @Inject(FeatureFlagConfig.KEY)
     private featureFlagConfig: ConfigType<typeof FeatureFlagConfig>,
   ) {}
 
   async findTaxLotByBbl(bbl: string) {
+    if (typeof bbl !== "string" || bbl.length !== 10)
+      throw new BadRequestException(
+        "Invalid data type or format for request parameter",
+      );
     if (this.featureFlagConfig.useDrizzle) {
-      const result = await this.db.query.taxLot.findFirst({
-        columns: {
-          boroughId: false,
-          landUseId: false,
-          wgs84: false,
-          liFt: false,
-        },
-        where: (taxLot, { eq }) => eq(taxLot.bbl, bbl),
-        with: {
-          borough: true,
-          landUse: true,
-        },
-      });
-      return result !== undefined ? result : null;
+      const result = await this.taxLotRepo.findTaxLotByBbl(bbl);
+      if (result === undefined) throw new NotFoundException();
+      return result;
     } else {
       return this.taxLotRepository.findOne(
         { bbl },
