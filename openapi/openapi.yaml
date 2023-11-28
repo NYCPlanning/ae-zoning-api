@@ -212,8 +212,8 @@ paths:
                       color:
                         type: string
                         description: The color for the zoning district class category.
-                        pattern: '^#([A-Fa-f0-9]{6})$'
-                        example: '#f3b3ff'
+                        pattern: '^#([A-Fa-f0-9]{8})$'
+                        example: '#f3b3ffff'
   /zoning-district-classes/{id}:
     get:
       summary: Class schema for the specified class
@@ -274,8 +274,8 @@ components:
         color:
           type: string
           description: Hex-style color code to represent the land use.
-          pattern: '^#([A-Fa-f0-9]{6})$'
-          example: '#fc2929'
+          pattern: '^#([A-Fa-f0-9]{8})$'
+          example: '#fc2929ff'
       required:
         - id
         - description
@@ -367,8 +367,8 @@ components:
         color:
           type: string
           description: Zoning classes from layer groups.
-          pattern: '^#([A-Fa-f0-9]{6})$'
-          example: '#f3b3ff'
+          pattern: '^#([A-Fa-f0-9]{8})$'
+          example: '#f3b3ffff'
     ZoningDistrictClassCategory:
       type: string
       enum:
