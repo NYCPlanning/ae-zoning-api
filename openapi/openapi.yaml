@@ -25,9 +25,12 @@ paths:
           content:
             application/json:
               schema: 
-                type: array
-                items: 
-                  $ref: '#/components/schemas/Borough'
+                type: object
+                properties: 
+                  boroughs:
+                    type: array
+                    items: 
+                      $ref: '#/components/schemas/Borough'
   /land-uses:
     get: 
       summary: List land uses
@@ -40,9 +43,12 @@ paths:
           content:
             application/json:
               schema: 
-                type: array
-                items: 
-                  $ref: '#/components/schemas/LandUse'
+                type: object
+                properties:
+                  landUses:
+                    type: array
+                    items: 
+                      $ref: '#/components/schemas/LandUse'
   /tax-lots/{bbl}:
     get: 
       summary: Non-spatial details for a specific tax lot
@@ -107,9 +113,12 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ZoningDistrict'
+                type: object
+                properties:
+                  zoningDistricts:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ZoningDistrict'
   /tax-lots/{bbl}/zoning-districts/classes:
     get:
       summary: Class schemas for all zoning districts that spatially intersect the tax lot
@@ -131,9 +140,12 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ZoningDistrictClass'
+                type: object
+                properties:
+                  zoningDistrictClasses:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ZoningDistrictClass'
   /zoning-districts/{id}:
     get:
       summary: Non-spatial details for a specific zoning district
@@ -173,9 +185,12 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ZoningDistrictClass'
+                type: object
+                properties:
+                  zoningDistrictClasses:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ZoningDistrictClass'
   /zoning-district-classes:
     get:
       summary: Class schemas for all zoning districts
@@ -188,9 +203,12 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items: 
-                  $ref: "#/components/schemas/ZoningDistrictClass"
+                type: object
+                properties:
+                  zoningDistrictClasses:
+                    type: array
+                    items: 
+                      $ref: "#/components/schemas/ZoningDistrictClass"
   /zoning-district-classes/category-colors:
     get:
       summary: List of color and class category
@@ -203,17 +221,12 @@ paths:
             content:
               application/json:
                 schema:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      category:
-                        $ref: "#/components/schemas/ZoningDistrictClassCategory"
-                      color:
-                        type: string
-                        description: The color for the zoning district class category.
-                        pattern: '^#([A-Fa-f0-9]{8})$'
-                        example: '#f3b3ffff'
+                  type: object
+                  properties:
+                    zoningDistrictClassCategoryColors:
+                      type: array
+                      items:
+                        $ref: "#/components/schemas/ZoningDistrictClassCategoryColor"
   /zoning-district-classes/{id}:
     get:
       summary: Class schema for the specified class
@@ -376,6 +389,16 @@ components:
         - "Commercial"
         - "Manufacturing"
       description: The type of zoning district.
+    ZoningDistrictClassCategoryColor:
+      type: object
+      properties:
+        category:
+          $ref: "#/components/schemas/ZoningDistrictClassCategory"
+        color:
+          type: string
+          description: The color for the zoning district class category.
+          pattern: '^#([A-Fa-f0-9]{8})$'
+          example: '#f3b3ffff'
     Position:
       type: array
       description: The fundamental spatial construct
