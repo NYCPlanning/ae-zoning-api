@@ -1,3 +1,5 @@
+import { MikroORM } from "@mikro-orm/core";
+import { EntityManager } from "@mikro-orm/postgresql";
 import { Inject, Injectable } from "@nestjs/common";
 import { FeatureFlagConfig } from "src/config";
 import { DB, DbType } from "src/global/providers/db.provider";
@@ -16,6 +18,8 @@ export class ZoningDistrictClassService {
 
     @Inject(FeatureFlagConfig.KEY)
     private featureFlagConfig: ConfigType<typeof FeatureFlagConfig>,
+    private readonly orm: MikroORM,
+    private readonly em: EntityManager,
 
     @InjectRepository(ZoningDistrictClass)
     private readonly zoningDistrictClassRepository: ZoningDistrictClassRepository,
@@ -36,9 +40,9 @@ export class ZoningDistrictClassService {
       });
       return result === undefined ? null : result;
     } else {
-      throw new Error(
-        "Zoning District Classes route not supported in Mikro ORM",
-      );
+      return this.zoningDistrictClassRepository.findOne(id, {
+        fields: ["id", "category", "description", "url", "color"],
+      });
     }
   }
 
