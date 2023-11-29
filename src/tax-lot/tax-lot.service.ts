@@ -1,15 +1,11 @@
 import { InjectRepository } from "@mikro-orm/nestjs";
-import {
-  BadRequestException,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from "@nestjs/common";
+import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { TaxLot } from "./tax-lot.entity";
 import { TaxLotRepository } from "./tax-lot.repository";
 import { FeatureFlagConfig } from "src/config";
 import { ConfigType } from "@nestjs/config";
 import { TaxLotRepo } from "./tax-lot.repo";
+import { InvalidRequestParameterException } from "src/error";
 
 @Injectable()
 export class TaxLotService {
@@ -26,9 +22,7 @@ export class TaxLotService {
 
   async findTaxLotByBbl(bbl: string) {
     if (typeof bbl !== "string" || bbl.length !== 10)
-      throw new BadRequestException(
-        "Invalid data type or format for request parameter",
-      );
+      throw InvalidRequestParameterException;
     if (this.featureFlagConfig.useDrizzle) {
       const result = await this.taxLotRepo.findTaxLotByBbl(bbl);
       if (result === undefined) throw new NotFoundException();
@@ -46,9 +40,7 @@ export class TaxLotService {
 
   async findTaxLotByBblGeoJson(bbl: string) {
     if (typeof bbl !== "string" || bbl.length !== 10)
-      throw new BadRequestException(
-        "Invalid data type or format for request parameter",
-      );
+      throw InvalidRequestParameterException;
     if (this.featureFlagConfig.useDrizzle) {
       const result = await this.taxLotRepo.findTaxLotByBblGeoJson(bbl);
       if (result === undefined) throw new NotFoundException();
@@ -73,9 +65,7 @@ export class TaxLotService {
 
   async findZoningDistrictByTaxLotBbl(bbl: string) {
     if (typeof bbl !== "string" || bbl.length !== 10)
-      throw new BadRequestException(
-        "Invalid data type or format for request parameter",
-      );
+      throw InvalidRequestParameterException;
     if (this.featureFlagConfig.useDrizzle) {
       if ((await this.taxLotRepo.findTaxLotByBblGeoJson(bbl)) === undefined)
         throw new NotFoundException();
@@ -93,9 +83,7 @@ export class TaxLotService {
 
   async findZoningDistrictClassByTaxLotBbl(bbl: string) {
     if (typeof bbl !== "string" || bbl.length !== 10)
-      throw new BadRequestException(
-        "Invalid data type or format for request parameter",
-      );
+      throw InvalidRequestParameterException;
     if (this.featureFlagConfig.useDrizzle) {
       if ((await this.taxLotRepo.findTaxLotByBbl(bbl)) === undefined)
         throw new NotFoundException();
