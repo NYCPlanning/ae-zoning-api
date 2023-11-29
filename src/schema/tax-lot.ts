@@ -29,8 +29,8 @@ export const taxLotRelations = relations(taxLot, ({ one }) => ({
   }),
 }));
 
-export const taxLotSchema = createSelectSchema(taxLot, {
+export const taxLotSchemaD = createSelectSchema(taxLot, {
   bbl: z.string().length(10),
 });
 
-export const taxLotBblSchema = taxLotSchema.pick({ bbl: true });
+export const taxLotBblSchemaD = taxLotSchemaD.pick({ bbl: true });
