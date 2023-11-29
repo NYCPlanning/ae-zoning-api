@@ -361,6 +361,9 @@ components:
         description:
           type: string
           description: Zoning class descriptions.
+        url:
+          type: string
+          description: Planning website page that explains the Zoning District
         color:
           type: string
           description: Zoning classes from layer groups.
