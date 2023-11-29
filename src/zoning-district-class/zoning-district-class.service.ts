@@ -55,9 +55,21 @@ export class ZoningDistrictClassService {
         })
         .from(zoningDistrictClass);
     } else {
-      throw new Error(
-        "Zoning District Classes route not supported in Mikro ORM",
-      );
+      // const qb = this.em.createQueryBuilder(ZoningDistrictClass, "zdc");
+      // console.log("qqqqbbbb", qb);
+      // qb.select(["zdc.category", "zdc.color"]).orderBy({
+      //   category: QueryOrder.ASC,
+      //   color: QueryOrder.ASC,
+      // });
+      const connection = this.em.getConnection();
+      const res = await connection.execute(`
+        SELECT 
+        DISTINCT ON (category) category, color 
+        FROM zoning_district_class 
+        ORDER BY category, color
+      `);
+
+      return res;
     }
   }
 }
