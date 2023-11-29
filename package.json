@@ -39,10 +39,12 @@
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/serve-static": "^4.0.0",
     "drizzle-orm": "^0.29.0",
+    "drizzle-zod": "^0.5.1",
     "joi": "^17.11.0",
     "pg": "^8.11.3",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@mikro-orm/cli": "^5.9.0",

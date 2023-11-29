@@ -2,6 +2,8 @@ import { char, pgTable, text } from "drizzle-orm/pg-core";
 import { borough, landUse } from "../schema";
 import { multiPolygonGeog, multiPolygonGeom } from "../drizzle-pgis";
 import { relations } from "drizzle-orm";
+import { createSelectSchema } from "drizzle-zod";
+import { z } from "zod";
 
 export const taxLot = pgTable("tax_lot", {
   bbl: char("bbl", { length: 10 }).primaryKey(),
@@ -26,3 +28,9 @@ export const taxLotRelations = relations(taxLot, ({ one }) => ({
     references: [landUse.id],
   }),
 }));
+
+export const taxLotSchema = createSelectSchema(taxLot, {
+  bbl: z.string().length(10),
+});
+
+export const taxLotBblSchema = taxLotSchema.pick({ bbl: true });

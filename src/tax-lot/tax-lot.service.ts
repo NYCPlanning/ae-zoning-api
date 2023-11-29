@@ -5,6 +5,7 @@ import { TaxLotRepository } from "./tax-lot.repository";
 import { FeatureFlagConfig } from "src/config";
 import { ConfigType } from "@nestjs/config";
 import { TaxLotRepo } from "./tax-lot.repo";
+import { taxLotBblSchema } from "src/schema/tax-lot";
 import { InvalidRequestParameterException } from "src/error";
 
 @Injectable()
@@ -21,8 +22,9 @@ export class TaxLotService {
   ) {}
 
   async findTaxLotByBbl(bbl: string) {
-    if (typeof bbl !== "string" || bbl.length !== 10)
-      throw InvalidRequestParameterException;
+    const { success } = taxLotBblSchema.safeParse({ bbl });
+    if (!success) throw InvalidRequestParameterException;
+
     if (this.featureFlagConfig.useDrizzle) {
       const result = await this.taxLotRepo.findTaxLotByBbl(bbl);
       if (result === undefined) throw new NotFoundException();
