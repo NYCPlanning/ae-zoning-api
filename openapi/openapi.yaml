@@ -424,3 +424,35 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/Position'
+    Error:
+      type: object
+      properties:
+        statusCode:
+          type: number
+        message:
+          type: string
+        error:
+          type: string
+      required:
+        - statusCode
+        - message
+  responses:
+    BadRequest:
+      description: Invalid client request
+      content:
+        application/json:
+          schema: 
+            $ref: '#/components/schemas/Error'
+    InternalServerError:
+      description: Server side error
+      content:
+        application/json:
+          schema: 
+            $ref: "#/components/schemas/Error"
+    NotFound:
+      description: Requested resource does not exist or is not available
+      content:
+        application/json:
+          schema: 
+            $ref: "#/components/schemas/Error"
+    
