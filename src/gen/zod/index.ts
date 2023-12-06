@@ -1,4 +1,6 @@
+export * from "./badRequestSchema";
 export * from "./boroughSchema";
+export * from "./errorSchema";
 export * from "./getAllZoningDistrictClassesSchema";
 export * from "./getBoroughsSchema";
 export * from "./getLandUsesSchema";
@@ -10,8 +12,10 @@ export * from "./getZoningDistrictClassesByTaxLotBblSchema";
 export * from "./getZoningDistrictClassesByUuidSchema";
 export * from "./getZoningDistrictClassesCategoryColorsSchema";
 export * from "./getZoningDistrictsByTaxLotBblSchema";
+export * from "./internalServerErrorSchema";
 export * from "./landUseSchema";
 export * from "./multiPolygonSchema";
+export * from "./notFoundSchema";
 export * from "./positionSchema";
 export * from "./taxLotGeoJsonSchema";
 export * from "./taxLotSchema";
