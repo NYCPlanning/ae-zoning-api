@@ -1,4 +1,6 @@
+export * from "./BadRequest";
 export * from "./Borough";
+export * from "./Error";
 export * from "./GetAllZoningDistrictClasses";
 export * from "./GetBoroughs";
 export * from "./GetLandUses";
@@ -10,8 +12,10 @@ export * from "./GetZoningDistrictClassesByTaxLotBbl";
 export * from "./GetZoningDistrictClassesByUuid";
 export * from "./GetZoningDistrictClassesCategoryColors";
 export * from "./GetZoningDistrictsByTaxLotBbl";
+export * from "./InternalServerError";
 export * from "./LandUse";
 export * from "./MultiPolygon";
+export * from "./NotFound";
 export * from "./Position";
 export * from "./TaxLot";
 export * from "./TaxLotGeoJson";
