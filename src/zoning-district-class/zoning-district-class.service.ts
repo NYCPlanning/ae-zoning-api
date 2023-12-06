@@ -17,7 +17,11 @@ export class ZoningDistrictClassService {
 
   async findAllZoningDistrictClasses() {
     if (this.featureFlagConfig.useDrizzle) {
-      return await this.db.query.zoningDistrictClass.findMany();
+      const zoningDistrictClasses =
+        await this.db.query.zoningDistrictClass.findMany();
+      return {
+        zoningDistrictClasses,
+      };
     } else {
       throw new Error(
         "Zoning District Classes route not supported in Mikro ORM",
@@ -40,12 +44,16 @@ export class ZoningDistrictClassService {
 
   async findZoningDistrictClassCategoryColors() {
     if (this.featureFlagConfig.useDrizzle) {
-      return await this.db
+      const zoningDistrictClassCategoryColors = await this.db
         .selectDistinctOn([zoningDistrictClass.category], {
           category: zoningDistrictClass.category,
           color: zoningDistrictClass.color,
         })
         .from(zoningDistrictClass);
+
+      return {
+        zoningDistrictClassCategoryColors,
+      };
     } else {
       throw new Error(
         "Zoning District Classes route not supported in Mikro ORM",

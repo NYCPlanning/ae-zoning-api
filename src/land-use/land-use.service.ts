@@ -21,7 +21,10 @@ export class LandUseService {
 
   async findAll() {
     if (this.featureFlagConfig.useDrizzle) {
-      return this.db.query.landUse.findMany();
+      const landUses = await this.db.query.landUse.findMany();
+      return {
+        landUses,
+      };
     } else {
       return this.landUseRepository.findAll();
     }

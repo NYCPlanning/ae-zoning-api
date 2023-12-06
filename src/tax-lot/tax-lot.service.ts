@@ -95,7 +95,7 @@ export class TaxLotService {
 
   async findZoningDistrictByTaxLotBbl(bbl: string) {
     if (this.featureFlagConfig.useDrizzle) {
-      return this.db
+      const zoningDistricts = await this.db
         .select({
           id: zoningDistrict.id,
           label: zoningDistrict.label,
@@ -106,6 +106,10 @@ export class TaxLotService {
           sql`ST_Intersects(${taxLot.liFt}, ${zoningDistrict.liFt})`,
         )
         .where(eq(taxLot.bbl, bbl));
+
+      return {
+        zoningDistricts,
+      };
     } else {
       throw new Error(
         "Zoning district by tax lot bbl route not implemented in Mikro orm",
@@ -115,7 +119,7 @@ export class TaxLotService {
 
   async findZoningDistrictClassByTaxLotBbl(bbl: string) {
     if (this.featureFlagConfig.useDrizzle) {
-      return this.db
+      const zoningDistrictClasses = await this.db
         .select({
           id: zoningDistrictClass.id,
           category: zoningDistrictClass.category,
@@ -143,6 +147,10 @@ export class TaxLotService {
           sql`ST_Intersects(${taxLot.liFt}, ${zoningDistrict.liFt})`,
         )
         .where(eq(taxLot.bbl, bbl));
+
+      return {
+        zoningDistrictClasses,
+      };
     } else {
       throw new Error(
         "Zoning district class by tax lot bbl route not implemented in Mikro orm",
