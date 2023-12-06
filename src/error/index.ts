@@ -1,2 +1,6 @@
 export { INVALID_REQUEST_PARAMETER } from "./message";
-export { InvalidRequestParameterException } from "./exception";
+export {
+  InvalidRequestParameterException,
+  DataRetrievalException,
+} from "./exception";
+export { CatchDataRetrievalException } from "./decorator";
