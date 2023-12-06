@@ -21,7 +21,10 @@ export class BoroughService {
 
   async findAll() {
     if (this.featureFlagConfig.useDrizzle) {
-      return this.db.query.borough.findMany();
+      const boroughs = await this.db.query.borough.findMany();
+      return {
+        boroughs,
+      };
     } else {
       return this.boroughRepository.findAll();
     }

@@ -41,7 +41,7 @@ export class ZoningDistrictService {
 
   async findClassesByZoningDistrictUuid(uuid: string) {
     if (this.featureFlagConfig.useDrizzle) {
-      return await this.db
+      const zoningDistrictClasses = await this.db
         .select({
           id: zoningDistrictClass.id,
           category: zoningDistrictClass.category,
@@ -65,6 +65,10 @@ export class ZoningDistrictService {
           ),
         )
         .where(eq(zoningDistrict.id, uuid));
+
+      return {
+        zoningDistrictClasses,
+      };
     } else {
       throw new Error(
         "Zoning District Classes route not supported in Mikro ORM",
