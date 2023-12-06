@@ -5,10 +5,16 @@ import {
   Injectable,
   Param,
   Redirect,
+  UsePipes,
 } from "@nestjs/common";
 import { ConfigType } from "@nestjs/config";
 import { TaxLotService } from "./tax-lot.service";
 import { StorageConfig } from "src/config";
+import { ZodValidationPipe } from "src/pipes/zod-validation-pipe";
+import {
+  getTaxLotByBblPathParamsSchema,
+  GetTaxLotByBblPathParams,
+} from "../gen";
 
 @Injectable()
 @Controller("tax-lots")
@@ -20,7 +26,8 @@ export class TaxLotController {
   ) {}
 
   @Get("/:bbl")
-  async findDetailsByBbl(@Param() params: { bbl: string }) {
+  @UsePipes(new ZodValidationPipe(getTaxLotByBblPathParamsSchema))
+  async findDetailsByBbl(@Param() params: GetTaxLotByBblPathParams) {
     return this.taxLotService.findTaxLotByBbl(params.bbl);
   }
 

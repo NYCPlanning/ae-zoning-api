@@ -58,3 +58,8 @@ The api serves the documentation on its root path.
   - The api serves the documentation from this html file. It is only updated when it is specifically rebuilt.
 
 For production workflows, `npm run build` includes the command to build the documentation into the html file, ensuring the production site serves the latest api documentation.
+
+### OpenApi code generation
+This project makes use of [Kubb](https://www.kubb.dev) to generate code based on the `openapi.yaml` file. Kubb is configured in the `kubb.config.ts` file to use the `@kubb/swagger-ts` and `@kubb/swagger-zod` plugins to generate typescript types and Zod schemas. These types and schemas can then be used to perform validation on route params, query params, and request bodies via the `ZodValidationPipe` custom Nest pipe.
+
+This code is kept in `/src/gen`. Developers working on this project should never make manual changes to the contents of that folder. To update the generated code to reflect changes to `openapi.yaml`, run `npm run generate`. 
