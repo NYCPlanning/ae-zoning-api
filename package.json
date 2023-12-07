@@ -29,12 +29,6 @@
     "generate": "kubb generate"
   },
   "dependencies": {
-    "@kubb/cli": "^1.14.9",
-    "@kubb/core": "^1.14.9",
-    "@kubb/swagger": "^1.14.9",
-    "@kubb/swagger-client": "^1.14.9",
-    "@kubb/swagger-ts": "^1.14.9",
-    "@kubb/swagger-zod": "^1.14.9",
     "@mikro-orm/core": "^5.9.0",
     "@mikro-orm/migrations": "^5.9.0",
     "@mikro-orm/nestjs": "^5.2.2",
@@ -53,6 +47,12 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@kubb/cli": "^1.14.9",
+    "@kubb/core": "^1.14.9",
+    "@kubb/swagger": "^1.14.9",
+    "@kubb/swagger-client": "^1.14.9",
+    "@kubb/swagger-ts": "^1.14.9",
+    "@kubb/swagger-zod": "^1.14.9",
     "@mikro-orm/cli": "^5.9.0",
     "@nestjs/cli": "^10.0.0",
     "@nestjs/schematics": "^10.0.0",
