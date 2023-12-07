@@ -8,7 +8,9 @@ export class ZodValidationPipe implements PipeTransform {
     try {
       this.schema.parse(value);
     } catch (error) {
-      throw new BadRequestException("Invalid client request");
+      throw new BadRequestException(
+        "Invalid data type or format for request parameter",
+      );
     }
     return value;
   }
