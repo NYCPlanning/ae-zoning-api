@@ -21,7 +21,7 @@ paths:
       - Boroughs
       responses:
         '200':
-          description: An array of borough objects.
+          description: An object containing all boroughs.
           content:
             application/json:
               schema: 
@@ -39,7 +39,7 @@ paths:
       - Land Uses
       responses:
         '200':
-          description: An array of land use objects.
+          description: An object containing all land uses.
           content:
             application/json:
               schema: 
@@ -109,7 +109,7 @@ paths:
             maxLength: 10
       responses:
         '200':
-          description: An array of zoning district objects
+          description: An object containing zoning districts.
           content:
             application/json:
               schema:
@@ -136,7 +136,7 @@ paths:
             maxLength: 10
       responses:
         '200':
-          description: An array of zoning district class schemas
+          description: An object containing zoning district class schemas.
           content:
             application/json:
               schema:
@@ -181,7 +181,7 @@ paths:
             format: uuid
       responses:
         '200':
-          description: An array of class schemas for the zoning district
+          description: An object of class schemas for the zoning district.
           content:
             application/json:
               schema:
@@ -199,7 +199,7 @@ paths:
       - Zoning Districts
       responses:
         '200': 
-          description: An array of all zoning district class schemas
+          description: An object containing all zoning district class schemas.
           content:
             application/json:
               schema:
@@ -217,7 +217,7 @@ paths:
       - Zoning Districts
       responses:
         '200':
-            description: An array of all zoning district category colors.
+            description: An object containing all zoning district category colors.
             content:
               application/json:
                 schema:
