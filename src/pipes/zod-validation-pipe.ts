@@ -1,6 +1,6 @@
-import { PipeTransform, BadRequestException } from "@nestjs/common";
+import { PipeTransform } from "@nestjs/common";
 import { ZodObject } from "zod";
-
+import { InvalidRequestParameterException } from "../error";
 export class ZodValidationPipe implements PipeTransform {
   constructor(private schema: ZodObject<any>) {}
 
@@ -8,9 +8,7 @@ export class ZodValidationPipe implements PipeTransform {
     try {
       this.schema.parse(value);
     } catch (error) {
-      throw new BadRequestException(
-        "Invalid data type or format for request parameter",
-      );
+      throw InvalidRequestParameterException;
     }
     return value;
   }
