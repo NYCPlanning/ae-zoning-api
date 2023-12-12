@@ -82,6 +82,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TaxLot'
+        '400':
+            $ref: "#/components/responses/BadRequest"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
   /tax-lots/{bbl}/geojson:
     get: 
       summary: GeoJSON for a specific tax lot
@@ -104,6 +110,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TaxLotGeoJson'
+        '400':
+            $ref: "#/components/responses/BadRequest"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
   /tax-lots/{bbl}/zoning-districts:
     get: 
       summary: Non-spatial details for zoning districts that spatially intersect a tax lot.
@@ -133,6 +145,12 @@ paths:
                       $ref: '#/components/schemas/ZoningDistrict'
                 required: 
                   -  zoningDistricts
+        '400':
+            $ref: "#/components/responses/BadRequest"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
   /tax-lots/{bbl}/zoning-districts/classes:
     get:
       summary: Class schemas for all zoning districts that spatially intersect the tax lot
@@ -162,6 +180,12 @@ paths:
                       $ref: '#/components/schemas/ZoningDistrictClass'
                 required:
                   - zoningDistrictClasses
+        '400':
+            $ref: "#/components/responses/BadRequest"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
   /zoning-districts/{id}:
     get:
       summary: Non-spatial details for a specific zoning district
