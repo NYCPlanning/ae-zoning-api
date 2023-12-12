@@ -33,6 +33,10 @@ paths:
                       $ref: '#/components/schemas/Borough'
                 required:
                   - boroughs
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
   /land-uses:
     get: 
       summary: List land uses
@@ -53,6 +57,10 @@ paths:
                       $ref: '#/components/schemas/LandUse'
                 required:
                   - landUses
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
   /tax-lots/{bbl}:
     get: 
       summary: Non-spatial details for a specific tax lot
