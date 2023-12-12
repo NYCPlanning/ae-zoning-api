@@ -22,6 +22,7 @@ import {
   getZoningDistrictClassesByTaxLotBblPathParamsSchema,
   GetZoningDistrictClassesByTaxLotBblPathParams,
 } from "../gen";
+import { Point } from "geojson";
 
 @Injectable()
 @Controller("tax-lots")
@@ -33,9 +34,25 @@ export class TaxLotController {
   ) {}
 
   @Get()
-  async findAllTaxLots(@Query() query: { afterBbl?: string; limit?: number }) {
+  async findAllTaxLots(
+    @Query()
+    query: {
+      afterBbl?: string;
+      limit?: number;
+      feature: string;
+      buffer: number;
+    },
+  ) {
+    const { afterBbl, limit, feature, buffer } = query;
+    console.log("feature", feature);
     // Limitation of this POC. It treats the limit as a number. However, it never explicitly converts it to a number. In the production version, we will need to use zod to parse it into a number
-    return this.taxLotService.findAllTaxLots(query);
+    // http://localhost:3000/api/tax-lots?feature={%22type%22:%22Point%22,%22coordinates%22:[-74.01082033320586,40.70849589282993]}
+    return this.taxLotService.findAllTaxLots({
+      afterBbl,
+      limit,
+      feature: JSON.parse(feature) as Point,
+      buffer,
+    });
   }
 
   @Get("/:bbl")

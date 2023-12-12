@@ -19,6 +19,7 @@ import {
   SelectTaxLotSpatial,
 } from "src/schema/tax-lot";
 import { MultiPolygon } from "geojson";
+import { LineString, Point, Polygon } from "geojson";
 
 @Injectable()
 export class TaxLotService {
@@ -43,42 +44,23 @@ export class TaxLotService {
     .prepare("checkTaxLotByBbl");
 
   async findAllTaxLots({
-    afterBbl,
     limit = 100,
+    feature,
   }: {
     afterBbl?: string;
     limit?: number;
+    feature: Point | LineString | Polygon;
+    buffer: number; // Buffer will be in feet, as the intersection should be done on long island state plane, meters
   }) {
-    const taxLots = afterBbl
-      ? await this.db.query.taxLot.findMany({
-          columns: {
-            boroughId: false,
-            landUseId: false,
-            wgs84: false,
-            liFt: false,
-          },
-          with: {
-            borough: true,
-            landUse: true,
-          },
-          where: (taxLot, { gt }) => gt(taxLot.bbl, afterBbl),
-          limit: Math.min(100, limit),
-          orderBy: taxLot.bbl,
-        })
-      : await this.db.query.taxLot.findMany({
-          columns: {
-            boroughId: false,
-            landUseId: false,
-            wgs84: false,
-            liFt: false,
-          },
-          with: {
-            borough: true,
-            landUse: true,
-          },
-          limit: Math.min(100, limit),
-          orderBy: taxLot.bbl,
-        });
+    const taxLots = await this.db
+      .select({
+        bbl: taxLot.bbl,
+      })
+      .from(taxLot)
+      .where(
+        sql`ST_Intersects(ST_Transform(ST_GeomFromGeoJSON(${feature}), 2263), ${taxLot.liFt})`,
+      )
+      .limit(limit);
     const count = taxLots.length;
     const lastBbl = taxLots[count - 1].bbl;
     return {
