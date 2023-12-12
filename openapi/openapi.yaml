@@ -224,7 +224,7 @@ paths:
   /zoning-district-classes/category-colors:
     get:
       summary: List of color and class category
-      operationId: getZoningDistrictClassesCategoryColors
+      operationId: getZoningDistrictClassCategoryColors
       tags:
       - Zoning Districts
       responses:
