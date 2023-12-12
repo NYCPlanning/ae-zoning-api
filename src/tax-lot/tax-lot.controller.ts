@@ -4,6 +4,7 @@ import {
   Inject,
   Injectable,
   Param,
+  Query,
   Redirect,
   UsePipes,
 } from "@nestjs/common";
@@ -30,6 +31,12 @@ export class TaxLotController {
     @Inject(StorageConfig.KEY)
     private storageConfig: ConfigType<typeof StorageConfig>,
   ) {}
+
+  @Get()
+  async findAllTaxLots(@Query() query: { afterBbl?: string; limit?: number }) {
+    // Limitation of this POC. It treats the limit as a number. However, it never explicitly converts it to a number. In the production version, we will need to use zod to parse it into a number
+    return this.taxLotService.findAllTaxLots(query);
+  }
 
   @Get("/:bbl")
   @UsePipes(new ZodValidationPipe(getTaxLotByBblPathParamsSchema))

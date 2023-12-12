@@ -42,6 +42,55 @@ export class TaxLotService {
     })
     .prepare("checkTaxLotByBbl");
 
+  async findAllTaxLots({
+    afterBbl,
+    limit = 100,
+  }: {
+    afterBbl?: string;
+    limit?: number;
+  }) {
+    const taxLots = afterBbl
+      ? await this.db.query.taxLot.findMany({
+          columns: {
+            boroughId: false,
+            landUseId: false,
+            wgs84: false,
+            liFt: false,
+          },
+          with: {
+            borough: true,
+            landUse: true,
+          },
+          where: (taxLot, { gt }) => gt(taxLot.bbl, afterBbl),
+          limit: Math.min(100, limit),
+          orderBy: taxLot.bbl,
+        })
+      : await this.db.query.taxLot.findMany({
+          columns: {
+            boroughId: false,
+            landUseId: false,
+            wgs84: false,
+            liFt: false,
+          },
+          with: {
+            borough: true,
+            landUse: true,
+          },
+          limit: Math.min(100, limit),
+          orderBy: taxLot.bbl,
+        });
+    const count = taxLots.length;
+    const lastBbl = taxLots[count - 1].bbl;
+    return {
+      taxLots,
+      page: {
+        lastBbl,
+        count,
+        limit,
+      },
+    };
+  }
+
   async findTaxLotByBbl(bbl: string) {
     if (this.featureFlagConfig.useDrizzle) {
       let result: SelectTaxLotNested | undefined;
