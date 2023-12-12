@@ -31,6 +31,8 @@ paths:
                     type: array
                     items: 
                       $ref: '#/components/schemas/Borough'
+                required:
+                  - boroughs
   /land-uses:
     get: 
       summary: List land uses
@@ -49,6 +51,8 @@ paths:
                     type: array
                     items: 
                       $ref: '#/components/schemas/LandUse'
+                required:
+                  - landUses
   /tax-lots/{bbl}:
     get: 
       summary: Non-spatial details for a specific tax lot
@@ -146,6 +150,8 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/ZoningDistrictClass'
+                required:
+                  - zoningDistrictClasses
   /zoning-districts/{id}:
     get:
       summary: Non-spatial details for a specific zoning district
@@ -191,6 +197,8 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/ZoningDistrictClass'
+                required:
+                  - zoningDistrictClasses
   /zoning-district-classes:
     get:
       summary: Class schemas for all zoning districts
@@ -209,10 +217,12 @@ paths:
                     type: array
                     items: 
                       $ref: "#/components/schemas/ZoningDistrictClass"
+                required:
+                  - zoningDistrictClasses
   /zoning-district-classes/category-colors:
     get:
       summary: List of color and class category
-      operationId: getZoningDistrictClassesCategoryColors
+      operationId: getZoningDistrictClassCategoryColors
       tags:
       - Zoning Districts
       responses:
@@ -227,6 +237,8 @@ paths:
                       type: array
                       items:
                         $ref: "#/components/schemas/ZoningDistrictClassCategoryColor"
+                  required:
+                    - zoningDistrictClassCategoryColors
   /zoning-district-classes/{id}:
     get:
       summary: Class schema for the specified class
@@ -382,6 +394,12 @@ components:
           description: Zoning classes from layer groups.
           pattern: '^#([A-Fa-f0-9]{8})$'
           example: '#f3b3ffff'
+      required:
+        - id
+        - category
+        - description
+        - url
+        - color
     ZoningDistrictClassCategory:
       type: string
       enum:
@@ -399,6 +417,9 @@ components:
           description: The color for the zoning district class category.
           pattern: '^#([A-Fa-f0-9]{8})$'
           example: '#f3b3ffff'
+      required:
+        - category
+        - color
     Position:
       type: array
       description: The fundamental spatial construct
