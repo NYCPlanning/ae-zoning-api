@@ -7,6 +7,7 @@ export * from "./getLandUsesSchema";
 export * from "./getTaxLotByBblSchema";
 export * from "./getTaxLotGeoJsonByBblSchema";
 export * from "./getZoningDistrictByIdSchema";
+export * from "./getZoningDistrictClassCategoryColorsSchema";
 export * from "./getZoningDistrictClassesByIdSchema";
 export * from "./getZoningDistrictClassesByTaxLotBblSchema";
 export * from "./getZoningDistrictClassesByUuidSchema";

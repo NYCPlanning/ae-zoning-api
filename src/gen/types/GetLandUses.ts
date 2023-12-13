@@ -1,11 +1,16 @@
+import type { Error } from "./Error";
 import type { LandUse } from "./LandUse";
 
+export type GetLandUses400 = Error;
+
+export type GetLandUses500 = Error;
+
 /**
- * @description An array of land use objects.
+ * @description An object containing all land uses.
  */
 export type GetLandUsesQueryResponse = {
   /**
-   * @type array | undefined
+   * @type array
    */
-  landUses?: LandUse[];
+  landUses: LandUse[];
 };
