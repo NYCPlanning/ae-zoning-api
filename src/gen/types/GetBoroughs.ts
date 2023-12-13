@@ -1,11 +1,16 @@
+import type { Error } from "./Error";
 import type { Borough } from "./Borough";
 
+export type GetBoroughs400 = Error;
+
+export type GetBoroughs500 = Error;
+
 /**
- * @description An array of borough objects.
+ * @description An object containing all boroughs.
  */
 export type GetBoroughsQueryResponse = {
   /**
-   * @type array | undefined
+   * @type array
    */
-  boroughs?: Borough[];
+  boroughs: Borough[];
 };

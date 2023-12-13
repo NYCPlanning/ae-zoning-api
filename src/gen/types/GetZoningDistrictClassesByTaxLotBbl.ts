@@ -1,3 +1,4 @@
+import type { Error } from "./Error";
 import type { ZoningDistrictClass } from "./ZoningDistrictClass";
 
 export type GetZoningDistrictClassesByTaxLotBblPathParams = {
@@ -7,12 +8,18 @@ export type GetZoningDistrictClassesByTaxLotBblPathParams = {
   bbl: string;
 };
 
+export type GetZoningDistrictClassesByTaxLotBbl400 = Error;
+
+export type GetZoningDistrictClassesByTaxLotBbl404 = Error;
+
+export type GetZoningDistrictClassesByTaxLotBbl500 = Error;
+
 /**
- * @description An array of zoning district class schemas
+ * @description An object containing zoning district class schemas.
  */
 export type GetZoningDistrictClassesByTaxLotBblQueryResponse = {
   /**
-   * @type array | undefined
+   * @type array
    */
-  zoningDistrictClasses?: ZoningDistrictClass[];
+  zoningDistrictClasses: ZoningDistrictClass[];
 };
