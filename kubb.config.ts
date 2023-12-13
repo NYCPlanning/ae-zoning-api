@@ -11,7 +11,7 @@ export default defineConfig({
     path: "./src/gen",
   },
   hooks: {
-    done: ['prettier --write "**/*.{ts,tsx}"', "eslint --fix ./src/gen"],
+    done: ['prettier --write "./src/gen"', 'eslint "./src/gen" --fix'],
   },
   plugins: [
     createSwagger({ output: false }),
