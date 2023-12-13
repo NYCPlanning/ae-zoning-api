@@ -7,6 +7,7 @@ export * from "./GetLandUses";
 export * from "./GetTaxLotByBbl";
 export * from "./GetTaxLotGeoJsonByBbl";
 export * from "./GetZoningDistrictById";
+export * from "./GetZoningDistrictClassCategoryColors";
 export * from "./GetZoningDistrictClassesById";
 export * from "./GetZoningDistrictClassesByTaxLotBbl";
 export * from "./GetZoningDistrictClassesByUuid";

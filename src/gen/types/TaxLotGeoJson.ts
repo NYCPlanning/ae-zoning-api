@@ -9,14 +9,14 @@ export type TaxLotGeoJsonType =
 export type TaxLotGeoJson = {
   /**
    * @description The bbl of the tax lot.
-   * @type string | undefined
+   * @type string
    * @example 1000477501
    */
-  id?: string;
+  id: string;
   /**
-   * @type string | undefined
+   * @type string
    */
-  type?: TaxLotGeoJsonType;
-  geometry?: MultiPolygon;
-  properties?: TaxLot;
+  type: TaxLotGeoJsonType;
+  geometry: MultiPolygon;
+  properties: TaxLot;
 };

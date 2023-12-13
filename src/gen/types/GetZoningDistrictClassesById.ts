@@ -1,3 +1,4 @@
+import type { Error } from "./Error";
 import type { ZoningDistrictClass } from "./ZoningDistrictClass";
 
 export type GetZoningDistrictClassesByIdPathParams = {
@@ -6,6 +7,12 @@ export type GetZoningDistrictClassesByIdPathParams = {
    */
   id: string;
 };
+
+export type GetZoningDistrictClassesById400 = Error;
+
+export type GetZoningDistrictClassesById404 = Error;
+
+export type GetZoningDistrictClassesById500 = Error;
 
 /**
  * @description A class schema for a zoning district

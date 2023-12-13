@@ -7,12 +7,12 @@ export type MultiPolygonType =
   (typeof multiPolygonType)[keyof typeof multiPolygonType];
 export type MultiPolygon = {
   /**
-   * @type string | undefined
+   * @type string
    */
-  type?: MultiPolygonType;
+  type: MultiPolygonType;
   /**
    * @description Array of polygon coordinate arrays.
-   * @type array | undefined
+   * @type array
    */
-  coordinates?: Position[][][];
+  coordinates: Position[][][];
 };
