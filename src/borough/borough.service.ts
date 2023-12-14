@@ -5,6 +5,7 @@ import { BoroughRepository } from "./borough.repository";
 import { DB, DbType } from "src/global/providers/db.provider";
 import { FeatureFlagConfig } from "src/config";
 import { ConfigType } from "@nestjs/config";
+import { DataRetrievalException } from "src/error";
 
 @Injectable()
 export class BoroughService {
@@ -21,10 +22,14 @@ export class BoroughService {
 
   async findAll() {
     if (this.featureFlagConfig.useDrizzle) {
-      const boroughs = await this.db.query.borough.findMany();
-      return {
-        boroughs,
-      };
+      try {
+        const boroughs = await this.db.query.borough.findMany();
+        return {
+          boroughs,
+        };
+      } catch {
+        throw DataRetrievalException;
+      }
     } else {
       return this.boroughRepository.findAll();
     }
