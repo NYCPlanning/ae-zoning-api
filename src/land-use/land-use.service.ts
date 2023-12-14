@@ -5,6 +5,7 @@ import { LandUseRepository } from "./land-use.repository";
 import { DB, DbType } from "src/global/providers/db.provider";
 import { FeatureFlagConfig } from "src/config";
 import { ConfigType } from "@nestjs/config";
+import { DataRetrievalException } from "src/error";
 
 @Injectable()
 export class LandUseService {
@@ -21,10 +22,14 @@ export class LandUseService {
 
   async findAll() {
     if (this.featureFlagConfig.useDrizzle) {
-      const landUses = await this.db.query.landUse.findMany();
-      return {
-        landUses,
-      };
+      try {
+        const landUses = await this.db.query.landUse.findMany();
+        return {
+          landUses,
+        };
+      } catch {
+        throw DataRetrievalException;
+      }
     } else {
       return this.landUseRepository.findAll();
     }
