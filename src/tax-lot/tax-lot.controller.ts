@@ -13,7 +13,13 @@ import { StorageConfig } from "src/config";
 import { ZodValidationPipe } from "src/pipes/zod-validation-pipe";
 import {
   getTaxLotByBblPathParamsSchema,
+  getTaxLotGeoJsonByBblPathParamsSchema,
+  GetTaxLotGeoJsonByBblPathParams,
   GetTaxLotByBblPathParams,
+  GetZoningDistrictsByTaxLotBblPathParams,
+  getZoningDistrictsByTaxLotBblPathParamsSchema,
+  getZoningDistrictClassesByTaxLotBblPathParamsSchema,
+  GetZoningDistrictClassesByTaxLotBblPathParams,
 } from "../gen";
 
 @Injectable()
@@ -32,17 +38,30 @@ export class TaxLotController {
   }
 
   @Get("/:bbl/geojson")
-  async findTaxLotByBblGeoJson(@Param() params: { bbl: string }) {
+  @UsePipes(new ZodValidationPipe(getTaxLotGeoJsonByBblPathParamsSchema))
+  async findTaxLotByBblGeoJson(
+    @Param() params: GetTaxLotGeoJsonByBblPathParams,
+  ) {
     return this.taxLotService.findTaxLotByBblGeoJson(params.bbl);
   }
 
   @Get("/:bbl/zoning-districts")
-  async findZoningDistrictByTaxLotBbl(@Param() params: { bbl: string }) {
+  @UsePipes(
+    new ZodValidationPipe(getZoningDistrictsByTaxLotBblPathParamsSchema),
+  )
+  async findZoningDistrictByTaxLotBbl(
+    @Param() params: GetZoningDistrictsByTaxLotBblPathParams,
+  ) {
     return this.taxLotService.findZoningDistrictByTaxLotBbl(params.bbl);
   }
 
   @Get("/:bbl/zoning-districts/classes")
-  async findZoningDistrictClassByTaxLotBbl(@Param() params: { bbl: string }) {
+  @UsePipes(
+    new ZodValidationPipe(getZoningDistrictClassesByTaxLotBblPathParamsSchema),
+  )
+  async findZoningDistrictClassByTaxLotBbl(
+    @Param() params: GetZoningDistrictClassesByTaxLotBblPathParams,
+  ) {
     return this.taxLotService.findZoningDistrictClassByTaxLotBbl(params.bbl);
   }
 
