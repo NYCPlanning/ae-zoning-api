@@ -1,4 +1,6 @@
 import { char, pgEnum, pgTable, text } from "drizzle-orm/pg-core";
+import { createSelectSchema } from "drizzle-zod";
+import { z } from "zod";
 
 export const categoryEnum = pgEnum("category", [
   "Residential",
@@ -13,3 +15,10 @@ export const zoningDistrictClass = pgTable("zoning_district_class", {
   url: text("url"),
   color: char("color", { length: 9 }).notNull(),
 });
+
+export const selectZoningDistrictClassSchema =
+  createSelectSchema(zoningDistrictClass);
+
+export type SelectZoningDistrictClass = z.infer<
+  typeof selectZoningDistrictClassSchema
+>;
