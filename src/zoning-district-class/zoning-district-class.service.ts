@@ -4,6 +4,8 @@ import { DB, DbType } from "src/global/providers/db.provider";
 import { ConfigType } from "@nestjs/config";
 import { zoningDistrictClass } from "src/schema";
 import { eq } from "drizzle-orm";
+import { DataRetrievalException, ResourceNotFoundException } from "src/error";
+import { SelectZoningDistrictClass } from "src/schema/zoning-district-class";
 
 @Injectable()
 export class ZoningDistrictClassService {
@@ -17,11 +19,15 @@ export class ZoningDistrictClassService {
 
   async findAllZoningDistrictClasses() {
     if (this.featureFlagConfig.useDrizzle) {
-      const zoningDistrictClasses =
-        await this.db.query.zoningDistrictClass.findMany();
-      return {
-        zoningDistrictClasses,
-      };
+      try {
+        const zoningDistrictClasses =
+          await this.db.query.zoningDistrictClass.findMany();
+        return {
+          zoningDistrictClasses,
+        };
+      } catch {
+        throw DataRetrievalException;
+      }
     } else {
       throw new Error(
         "Zoning District Classes route not supported in Mikro ORM",
@@ -31,10 +37,18 @@ export class ZoningDistrictClassService {
 
   async findZoningDistrictClassById(id: string) {
     if (this.featureFlagConfig.useDrizzle) {
-      const result = await this.db.query.zoningDistrictClass.findFirst({
-        where: eq(zoningDistrictClass.id, id),
-      });
-      return result === undefined ? null : result;
+      let result: SelectZoningDistrictClass | undefined;
+
+      try {
+        result = await this.db.query.zoningDistrictClass.findFirst({
+          where: eq(zoningDistrictClass.id, id),
+        });
+      } catch {
+        throw DataRetrievalException;
+      }
+
+      if (result === undefined) throw ResourceNotFoundException;
+      return result;
     } else {
       throw new Error(
         "Zoning District Classes route not supported in Mikro ORM",
@@ -44,16 +58,20 @@ export class ZoningDistrictClassService {
 
   async findZoningDistrictClassCategoryColors() {
     if (this.featureFlagConfig.useDrizzle) {
-      const zoningDistrictClassCategoryColors = await this.db
-        .selectDistinctOn([zoningDistrictClass.category], {
-          category: zoningDistrictClass.category,
-          color: zoningDistrictClass.color,
-        })
-        .from(zoningDistrictClass);
+      try {
+        const zoningDistrictClassCategoryColors = await this.db
+          .selectDistinctOn([zoningDistrictClass.category], {
+            category: zoningDistrictClass.category,
+            color: zoningDistrictClass.color,
+          })
+          .from(zoningDistrictClass);
 
-      return {
-        zoningDistrictClassCategoryColors,
-      };
+        return {
+          zoningDistrictClassCategoryColors,
+        };
+      } catch {
+        throw DataRetrievalException;
+      }
     } else {
       throw new Error(
         "Zoning District Classes route not supported in Mikro ORM",

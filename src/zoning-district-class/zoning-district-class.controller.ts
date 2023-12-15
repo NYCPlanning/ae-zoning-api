@@ -1,5 +1,10 @@
-import { Controller, Get, Param } from "@nestjs/common";
+import { Controller, Get, Param, UsePipes } from "@nestjs/common";
 import { ZoningDistrictClassService } from "./zoning-district-class.service";
+import { ZodValidationPipe } from "src/pipes/zod-validation-pipe";
+import {
+  GetZoningDistrictClassesByIdPathParams,
+  getZoningDistrictClassesByIdPathParamsSchema,
+} from "../gen";
 
 @Controller("zoning-district-classes")
 export class ZoningDistrictClassController {
@@ -18,7 +23,10 @@ export class ZoningDistrictClassController {
   }
 
   @Get("/:id")
-  async findZoningDistrictClassById(@Param() params: { id: string }) {
+  @UsePipes(new ZodValidationPipe(getZoningDistrictClassesByIdPathParamsSchema))
+  async findZoningDistrictClassById(
+    @Param() params: GetZoningDistrictClassesByIdPathParams,
+  ) {
     return this.zoningDistrictService.findZoningDistrictClassById(params.id);
   }
 }
