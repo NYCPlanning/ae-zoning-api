@@ -5,10 +5,18 @@ import {
   Injectable,
   Param,
   Redirect,
+  UsePipes,
 } from "@nestjs/common";
 import { ConfigType } from "@nestjs/config";
 import { ZoningDistrictService } from "./zoning-district.service";
 import { StorageConfig } from "src/config";
+import { ZodValidationPipe } from "src/pipes/zod-validation-pipe";
+import {
+  GetZoningDistrictByIdPathParams,
+  GetZoningDistrictClassesByUuidPathParams,
+  getZoningDistrictByIdPathParamsSchema,
+  getZoningDistrictClassesByUuidPathParamsSchema,
+} from "src/gen";
 
 @Injectable()
 @Controller("zoning-districts")
@@ -19,13 +27,21 @@ export class ZoningDistrictController {
     private storageConfig: ConfigType<typeof StorageConfig>,
   ) {}
 
-  @Get("/:uuid")
-  async findZoningDistrictByUuid(@Param() params: { uuid: string }) {
-    return this.zoningDistrictService.findZoningDistrictByUuid(params.uuid);
+  @Get("/:id")
+  @UsePipes(new ZodValidationPipe(getZoningDistrictByIdPathParamsSchema))
+  async findZoningDistrictByUuid(
+    @Param() params: GetZoningDistrictByIdPathParams,
+  ) {
+    return this.zoningDistrictService.findZoningDistrictByUuid(params.id);
   }
 
   @Get("/:uuid/classes")
-  async findClassesByZoningDistrictUuid(@Param() params: { uuid: string }) {
+  @UsePipes(
+    new ZodValidationPipe(getZoningDistrictClassesByUuidPathParamsSchema),
+  )
+  async findClassesByZoningDistrictUuid(
+    @Param() params: GetZoningDistrictClassesByUuidPathParams,
+  ) {
     return this.zoningDistrictService.findClassesByZoningDistrictUuid(
       params.uuid,
     );
