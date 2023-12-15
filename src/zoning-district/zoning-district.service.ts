@@ -11,6 +11,8 @@ import {
   zoningDistrictZoningDistrictClass,
 } from "src/schema";
 import { eq } from "drizzle-orm";
+import { DataRetrievalException, ResourceNotFoundException } from "src/error";
+import { SelectZoningDistrict } from "src/schema/zoning-district";
 
 @Injectable()
 export class ZoningDistrictService {
@@ -27,11 +29,17 @@ export class ZoningDistrictService {
 
   async findZoningDistrictByUuid(uuid: string) {
     if (this.featureFlagConfig.useDrizzle) {
-      const result = await this.db.query.zoningDistrict.findFirst({
-        columns: { wgs84: false, liFt: false },
-        where: eq(zoningDistrict.id, uuid),
-      });
-      return result === undefined ? null : result;
+      let result: SelectZoningDistrict | undefined;
+      try {
+        result = await this.db.query.zoningDistrict.findFirst({
+          columns: { wgs84: false, liFt: false },
+          where: eq(zoningDistrict.id, uuid),
+        });
+      } catch {
+        throw DataRetrievalException;
+      }
+      if (result === undefined) throw ResourceNotFoundException;
+      return result;
     } else {
       return this.zoningDistrictRepository.findOne(uuid, {
         fields: ["id", "label"],
@@ -39,36 +47,60 @@ export class ZoningDistrictService {
     }
   }
 
-  async findClassesByZoningDistrictUuid(uuid: string) {
-    if (this.featureFlagConfig.useDrizzle) {
-      const zoningDistrictClasses = await this.db
-        .select({
-          id: zoningDistrictClass.id,
-          category: zoningDistrictClass.category,
-          description: zoningDistrictClass.description,
-          url: zoningDistrictClass.url,
-          color: zoningDistrictClass.color,
-        })
-        .from(zoningDistrictClass)
-        .leftJoin(
-          zoningDistrictZoningDistrictClass,
-          eq(
-            zoningDistrictZoningDistrictClass.zoningDistrictClassId,
-            zoningDistrictClass.id,
-          ),
-        )
-        .leftJoin(
-          zoningDistrict,
-          eq(
-            zoningDistrictZoningDistrictClass.zoningDistrictId,
-            zoningDistrict.id,
-          ),
-        )
-        .where(eq(zoningDistrict.id, uuid));
+  #checkZoningDistrictById = this.db.query.zoningDistrict
+    .findFirst({
+      columns: {
+        id: true,
+      },
+      where: (zoningDistrict, { eq, sql }) =>
+        eq(zoningDistrict.id, sql.placeholder("id")),
+    })
+    .prepare("checkZoningDistrictById");
 
-      return {
-        zoningDistrictClasses,
-      };
+  async findClassesByZoningDistrictUuid(id: string) {
+    if (this.featureFlagConfig.useDrizzle) {
+      let zoningDistrictCheck: Pick<SelectZoningDistrict, "id"> | undefined;
+      try {
+        zoningDistrictCheck = await this.#checkZoningDistrictById.execute({
+          id,
+        });
+      } catch {
+        throw DataRetrievalException;
+      }
+      if (zoningDistrictCheck === undefined) throw ResourceNotFoundException;
+
+      try {
+        const zoningDistrictClasses = await this.db
+          .select({
+            id: zoningDistrictClass.id,
+            category: zoningDistrictClass.category,
+            description: zoningDistrictClass.description,
+            url: zoningDistrictClass.url,
+            color: zoningDistrictClass.color,
+          })
+          .from(zoningDistrictClass)
+          .leftJoin(
+            zoningDistrictZoningDistrictClass,
+            eq(
+              zoningDistrictZoningDistrictClass.zoningDistrictClassId,
+              zoningDistrictClass.id,
+            ),
+          )
+          .leftJoin(
+            zoningDistrict,
+            eq(
+              zoningDistrictZoningDistrictClass.zoningDistrictId,
+              zoningDistrict.id,
+            ),
+          )
+          .where(eq(zoningDistrict.id, id));
+
+        return {
+          zoningDistrictClasses,
+        };
+      } catch {
+        throw DataRetrievalException;
+      }
     } else {
       throw new Error(
         "Zoning District Classes route not supported in Mikro ORM",
