@@ -1,0 +1,1 @@
+CREATE INDEX IF NOT EXISTS "tax_lot_li_ft_gix" ON "tax_lot" ("li_ft");
