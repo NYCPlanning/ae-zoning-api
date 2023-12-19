@@ -5,7 +5,14 @@ import {
 } from "@nestjs/common";
 import { DATA_RETRIEVAL_ERROR, INVALID_REQUEST_PARAMETER } from "./message";
 
-export const DataRetrievalException = new InternalServerErrorException(
+export class DataRetrievalException extends Error {
+  constructor(message = DATA_RETRIEVAL_ERROR) {
+    super(message);
+    this.name = "DataRetrievalException";
+  }
+}
+
+export const DataRetrievalHttpException = new InternalServerErrorException(
   DATA_RETRIEVAL_ERROR,
 );
 
