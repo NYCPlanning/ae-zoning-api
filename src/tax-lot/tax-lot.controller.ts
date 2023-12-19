@@ -5,6 +5,7 @@ import {
   Injectable,
   Param,
   Redirect,
+  UseFilters,
   UsePipes,
 } from "@nestjs/common";
 import { ConfigType } from "@nestjs/config";
@@ -21,6 +22,11 @@ import {
   getZoningDistrictClassesByTaxLotBblPathParamsSchema,
   GetZoningDistrictClassesByTaxLotBblPathParams,
 } from "../gen";
+import {
+  DataRetrievalExceptionFilter,
+  InvalidRequestParameterExceptionFilter,
+  ResourceNotFoundExceptionFilter,
+} from "src/error";
 
 @Injectable()
 @Controller("tax-lots")
@@ -33,6 +39,11 @@ export class TaxLotController {
 
   @Get("/:bbl")
   @UsePipes(new ZodValidationPipe(getTaxLotByBblPathParamsSchema))
+  @UseFilters(
+    DataRetrievalExceptionFilter,
+    InvalidRequestParameterExceptionFilter,
+    ResourceNotFoundExceptionFilter,
+  )
   async findDetailsByBbl(@Param() params: GetTaxLotByBblPathParams) {
     return this.taxLotService.findTaxLotByBbl(params.bbl);
   }

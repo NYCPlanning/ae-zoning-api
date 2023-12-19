@@ -1,23 +1,20 @@
-import {
-  BadRequestException,
-  InternalServerErrorException,
-  NotFoundException,
-} from "@nestjs/common";
-import { DATA_RETRIEVAL_ERROR, INVALID_REQUEST_PARAMETER } from "./message";
-
 export class DataRetrievalException extends Error {
-  constructor(message = DATA_RETRIEVAL_ERROR) {
-    super(message);
+  constructor() {
+    super("Error while retrieving data");
     this.name = "DataRetrievalException";
   }
 }
 
-export const DataRetrievalHttpException = new InternalServerErrorException(
-  DATA_RETRIEVAL_ERROR,
-);
+export class InvalidRequestParameterException extends Error {
+  constructor() {
+    super("Invalid data type or format for request parameter");
+    this.name = "InvalidRequestParameterException";
+  }
+}
 
-export const InvalidRequestParameterException = new BadRequestException(
-  INVALID_REQUEST_PARAMETER,
-);
-
-export const ResourceNotFoundException = new NotFoundException();
+export class ResourceNotFoundException extends Error {
+  constructor() {
+    super();
+    this.name = "ResourceNotFoundException";
+  }
+}

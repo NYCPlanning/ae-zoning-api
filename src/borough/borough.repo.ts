@@ -12,7 +12,7 @@ export class BoroughRepo {
     try {
       return await this.db.query.borough.findMany();
     } catch {
-      throw DataRetrievalException;
+      throw new DataRetrievalException();
     }
   }
 }

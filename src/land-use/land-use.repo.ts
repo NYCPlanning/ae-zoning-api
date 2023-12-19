@@ -12,7 +12,7 @@ export class LandUseRepo {
     try {
       return await this.db.query.landUse.findMany();
     } catch {
-      throw DataRetrievalException;
+      throw new DataRetrievalException();
     }
   }
 }

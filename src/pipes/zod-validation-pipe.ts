@@ -8,7 +8,7 @@ export class ZodValidationPipe implements PipeTransform {
     try {
       this.schema.parse(value);
     } catch (error) {
-      throw InvalidRequestParameterException;
+      throw new InvalidRequestParameterException();
     }
     return value;
   }

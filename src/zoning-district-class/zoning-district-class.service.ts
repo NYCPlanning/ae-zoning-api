@@ -26,7 +26,7 @@ export class ZoningDistrictClassService {
           zoningDistrictClasses,
         };
       } catch {
-        throw DataRetrievalException;
+        throw new DataRetrievalException();
       }
     } else {
       throw new Error(
@@ -44,10 +44,10 @@ export class ZoningDistrictClassService {
           where: eq(zoningDistrictClass.id, id),
         });
       } catch {
-        throw DataRetrievalException;
+        throw new DataRetrievalException();
       }
 
-      if (result === undefined) throw ResourceNotFoundException;
+      if (result === undefined) throw new ResourceNotFoundException();
       return result;
     } else {
       throw new Error(
@@ -70,7 +70,7 @@ export class ZoningDistrictClassService {
           zoningDistrictClassCategoryColors,
         };
       } catch {
-        throw DataRetrievalException;
+        throw new DataRetrievalException();
       }
     } else {
       throw new Error(
