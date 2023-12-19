@@ -13,10 +13,10 @@ import {
 import { HttpName } from "./http-name";
 
 @Catch(DataRetrievalException)
-export class DataRetrievalExceptionFilter implements ExceptionFilter {
+export class InternalServerErrorExceptionFilter implements ExceptionFilter {
   constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
 
-  catch(exception: DataRetrievalException, host: ArgumentsHost) {
+  catch(exception: Error, host: ArgumentsHost) {
     const { httpAdapter } = this.httpAdapterHost;
 
     const httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -33,10 +33,10 @@ export class DataRetrievalExceptionFilter implements ExceptionFilter {
 }
 
 @Catch(InvalidRequestParameterException)
-export class InvalidRequestParameterExceptionFilter implements ExceptionFilter {
+export class BadRequestExceptionFilter implements ExceptionFilter {
   constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
 
-  catch(exception: InvalidRequestParameterException, host: ArgumentsHost) {
+  catch(exception: Error, host: ArgumentsHost) {
     const { httpAdapter } = this.httpAdapterHost;
 
     const httpStatus = HttpStatus.BAD_REQUEST;
@@ -53,7 +53,7 @@ export class InvalidRequestParameterExceptionFilter implements ExceptionFilter {
 }
 
 @Catch(ResourceNotFoundException)
-export class ResourceNotFoundExceptionFilter implements ExceptionFilter {
+export class NotFoundExceptionFilter implements ExceptionFilter {
   constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
 
   catch(exception: Error, host: ArgumentsHost) {

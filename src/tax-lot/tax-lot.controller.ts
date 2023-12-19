@@ -23,12 +23,17 @@ import {
   GetZoningDistrictClassesByTaxLotBblPathParams,
 } from "../gen";
 import {
-  DataRetrievalExceptionFilter,
-  InvalidRequestParameterExceptionFilter,
-  ResourceNotFoundExceptionFilter,
+  BadRequestExceptionFilter,
+  InternalServerErrorExceptionFilter,
+  NotFoundExceptionFilter,
 } from "src/error";
 
 @Injectable()
+@UseFilters(
+  BadRequestExceptionFilter,
+  InternalServerErrorExceptionFilter,
+  NotFoundExceptionFilter,
+)
 @Controller("tax-lots")
 export class TaxLotController {
   constructor(
@@ -39,11 +44,6 @@ export class TaxLotController {
 
   @Get("/:bbl")
   @UsePipes(new ZodValidationPipe(getTaxLotByBblPathParamsSchema))
-  @UseFilters(
-    DataRetrievalExceptionFilter,
-    InvalidRequestParameterExceptionFilter,
-    ResourceNotFoundExceptionFilter,
-  )
   async findDetailsByBbl(@Param() params: GetTaxLotByBblPathParams) {
     return this.taxLotService.findTaxLotByBbl(params.bbl);
   }
