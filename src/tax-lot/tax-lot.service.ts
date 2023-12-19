@@ -44,6 +44,7 @@ export class TaxLotService {
 
   async findTaxLotByBbl(bbl: string) {
     if (this.featureFlagConfig.useDrizzle) {
+      console.info("this is the service we are hitting");
       let result: SelectTaxLotNested | undefined;
       try {
         result = await this.db.query.taxLot.findFirst({
@@ -60,7 +61,8 @@ export class TaxLotService {
           },
         });
       } catch {
-        throw DataRetrievalException;
+        console.info("this is the exception we are first throwing");
+        throw new DataRetrievalException();
       }
 
       if (result === undefined) throw ResourceNotFoundException;

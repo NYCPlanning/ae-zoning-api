@@ -21,6 +21,7 @@ import {
   getZoningDistrictClassesByTaxLotBblPathParamsSchema,
   GetZoningDistrictClassesByTaxLotBblPathParams,
 } from "../gen";
+import { DataRetrievalException } from "src/error";
 
 @Injectable()
 @Controller("tax-lots")
@@ -34,7 +35,16 @@ export class TaxLotController {
   @Get("/:bbl")
   @UsePipes(new ZodValidationPipe(getTaxLotByBblPathParamsSchema))
   async findDetailsByBbl(@Param() params: GetTaxLotByBblPathParams) {
-    return this.taxLotService.findTaxLotByBbl(params.bbl);
+    try {
+      console.info("this is the route we are hitting");
+      return this.taxLotService.findTaxLotByBbl(params.bbl);
+    } catch (e) {
+      console.info("This is the catch block we're targeting");
+      console.log("e", e);
+      console.info(e instanceof DataRetrievalException);
+    } finally {
+      console.info("always do this!");
+    }
   }
 
   @Get("/:bbl/geojson")
