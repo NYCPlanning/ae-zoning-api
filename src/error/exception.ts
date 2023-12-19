@@ -5,6 +5,13 @@ export class DataRetrievalException extends Error {
   }
 }
 
+export class InvalidGeometryException extends Error {
+  constructor() {
+    super("Invalid geometry");
+    this.name = "InvalidGeometryException";
+  }
+}
+
 export class InvalidRequestParameterException extends Error {
   constructor() {
     super("Invalid data type or format for request parameter");

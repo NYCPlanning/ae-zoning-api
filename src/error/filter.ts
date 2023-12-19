@@ -7,6 +7,7 @@ import {
 import { HttpAdapterHost } from "@nestjs/core";
 import {
   DataRetrievalException,
+  InvalidGeometryException,
   InvalidRequestParameterException,
   ResourceNotFoundException,
 } from "./exception";
@@ -32,7 +33,7 @@ export class InternalServerErrorExceptionFilter implements ExceptionFilter {
   }
 }
 
-@Catch(InvalidRequestParameterException)
+@Catch(InvalidGeometryException, InvalidRequestParameterException)
 export class BadRequestExceptionFilter implements ExceptionFilter {
   constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
 
