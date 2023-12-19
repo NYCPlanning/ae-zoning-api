@@ -1,6 +1,6 @@
 import { Controller, Get, UseFilters } from "@nestjs/common";
 import { BoroughService } from "./borough.service";
-import { InternalServerErrorExceptionFilter } from "src/error";
+import { InternalServerErrorExceptionFilter } from "src/filter";
 
 @UseFilters(InternalServerErrorExceptionFilter)
 @Controller("boroughs")

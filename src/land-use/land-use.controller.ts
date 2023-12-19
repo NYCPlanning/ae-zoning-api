@@ -1,6 +1,6 @@
 import { Controller, Get, UseFilters } from "@nestjs/common";
 import { LandUseService } from "./land-use.service";
-import { InternalServerErrorExceptionFilter } from "src/error";
+import { InternalServerErrorExceptionFilter } from "src/filter";
 
 @UseFilters(InternalServerErrorExceptionFilter)
 @Controller("land-uses")

@@ -4,8 +4,11 @@ import { DB, DbType } from "src/global/providers/db.provider";
 import { ConfigType } from "@nestjs/config";
 import { zoningDistrictClass } from "src/schema";
 import { eq } from "drizzle-orm";
-import { DataRetrievalException, ResourceNotFoundException } from "src/error";
 import { SelectZoningDistrictClass } from "src/schema/zoning-district-class";
+import {
+  DataRetrievalException,
+  ResourceNotFoundException,
+} from "src/exception";
 
 @Injectable()
 export class ZoningDistrictClassService {

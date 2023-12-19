@@ -1,6 +1,6 @@
 import { PipeTransform } from "@nestjs/common";
+import { InvalidRequestParameterException } from "src/exception";
 import { ZodObject } from "zod";
-import { InvalidRequestParameterException } from "../error";
 export class ZodValidationPipe implements PipeTransform {
   constructor(private schema: ZodObject<any>) {}
 

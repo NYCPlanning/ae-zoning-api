@@ -22,7 +22,7 @@ import {
   BadRequestExceptionFilter,
   InternalServerErrorExceptionFilter,
   NotFoundExceptionFilter,
-} from "src/error";
+} from "src/filter";
 
 @Injectable()
 @UseFilters(

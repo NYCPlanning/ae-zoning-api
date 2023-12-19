@@ -12,7 +12,10 @@ import {
   zoningDistrictZoningDistrictClass,
 } from "src/schema";
 import { eq, sql } from "drizzle-orm";
-import { DataRetrievalException, ResourceNotFoundException } from "src/error";
+import {
+  DataRetrievalException,
+  ResourceNotFoundException,
+} from "src/exception";
 import {
   SelectTaxLot,
   SelectTaxLotNested,

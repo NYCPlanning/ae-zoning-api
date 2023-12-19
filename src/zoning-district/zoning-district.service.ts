@@ -11,8 +11,11 @@ import {
   zoningDistrictZoningDistrictClass,
 } from "src/schema";
 import { eq } from "drizzle-orm";
-import { DataRetrievalException, ResourceNotFoundException } from "src/error";
 import { SelectZoningDistrict } from "src/schema/zoning-district";
+import {
+  DataRetrievalException,
+  ResourceNotFoundException,
+} from "src/exception";
 
 @Injectable()
 export class ZoningDistrictService {
