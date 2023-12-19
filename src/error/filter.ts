@@ -12,7 +12,59 @@ import {
 } from "./exception";
 import { HttpName } from "./http-name";
 
-@Catch(DataRetrievalException)
+@Catch(
+  DataRetrievalException,
+  InvalidRequestParameterException,
+  ResourceNotFoundException,
+)
+export class AllExceptionFilter implements ExceptionFilter {
+  constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
+
+  catch(exception: Error, host: ArgumentsHost) {
+    const { httpAdapter } = this.httpAdapterHost;
+    const { message } = exception;
+    console.info("message", message);
+    let statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
+    const httpName = HttpName.INTERNAL_SEVER_ERROR;
+    let responseBody: {
+      statusCode: number;
+      message: HttpName | string;
+      error?: string;
+    };
+    switch (true) {
+      case exception instanceof DataRetrievalException:
+      case exception instanceof InvalidRequestParameterException: {
+        statusCode = HttpStatus.BAD_REQUEST;
+        if (message) {
+          responseBody = {
+            statusCode,
+            message,
+            error: HttpName.BAD_REQUEST,
+          };
+        } else {
+          responseBody = {
+            statusCode,
+            message: HttpName.BAD_REQUEST,
+          };
+        }
+        break;
+      }
+      default: {
+        responseBody = {
+          statusCode,
+          message: httpName,
+        };
+        break;
+      }
+    }
+
+    const ctx = host.switchToHttp();
+
+    httpAdapter.reply(ctx.getResponse(), responseBody, statusCode);
+  }
+}
+
+@Catch()
 export class DataRetrievalExceptionFilter implements ExceptionFilter {
   constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
 
@@ -32,7 +84,7 @@ export class DataRetrievalExceptionFilter implements ExceptionFilter {
   }
 }
 
-@Catch(InvalidRequestParameterException)
+@Catch()
 export class InvalidRequestParameterExceptionFilter implements ExceptionFilter {
   constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
 
@@ -52,7 +104,7 @@ export class InvalidRequestParameterExceptionFilter implements ExceptionFilter {
   }
 }
 
-@Catch(ResourceNotFoundException)
+@Catch()
 export class ResourceNotFoundExceptionFilter implements ExceptionFilter {
   constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
 

@@ -23,6 +23,7 @@ import {
   GetZoningDistrictClassesByTaxLotBblPathParams,
 } from "../gen";
 import {
+  AllExceptionFilter,
   DataRetrievalExceptionFilter,
   InvalidRequestParameterExceptionFilter,
   ResourceNotFoundExceptionFilter,
@@ -40,9 +41,10 @@ export class TaxLotController {
   @Get("/:bbl")
   @UsePipes(new ZodValidationPipe(getTaxLotByBblPathParamsSchema))
   @UseFilters(
-    DataRetrievalExceptionFilter,
-    InvalidRequestParameterExceptionFilter,
-    ResourceNotFoundExceptionFilter,
+    // DataRetrievalExceptionFilter,
+    // InvalidRequestParameterExceptionFilter,
+    // ResourceNotFoundExceptionFilter,
+    AllExceptionFilter,
   )
   async findDetailsByBbl(@Param() params: GetTaxLotByBblPathParams) {
     return this.taxLotService.findTaxLotByBbl(params.bbl);
