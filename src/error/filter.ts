@@ -10,6 +10,7 @@ import {
   InvalidRequestParameterException,
   ResourceNotFoundException,
 } from "./exception";
+import { HttpName } from "./http-name";
 
 @Catch(DataRetrievalException)
 export class DataRetrievalExceptionFilter implements ExceptionFilter {
@@ -22,7 +23,7 @@ export class DataRetrievalExceptionFilter implements ExceptionFilter {
     const responseBody = {
       statusCode: httpStatus,
       message: exception.message,
-      error: "Internal Server Error",
+      error: HttpName.INTERNAL_SEVER_ERROR,
     };
 
     const ctx = host.switchToHttp();
@@ -42,7 +43,7 @@ export class InvalidRequestParameterExceptionFilter implements ExceptionFilter {
     const responseBody = {
       statusCode: httpStatus,
       message: exception.message,
-      error: "Bad Request",
+      error: HttpName.BAD_REQUEST,
     };
 
     const ctx = host.switchToHttp();
@@ -61,7 +62,7 @@ export class ResourceNotFoundExceptionFilter implements ExceptionFilter {
     const httpStatus = HttpStatus.NOT_FOUND;
     const responseBody = {
       statusCode: httpStatus,
-      message: "Not Found",
+      message: HttpName.NOT_FOUND,
     };
 
     const ctx = host.switchToHttp();
