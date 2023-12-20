@@ -42,6 +42,15 @@ export class TaxLotService {
     })
     .prepare("checkTaxLotByBbl");
 
+  lons = [
+    -73.97914931646805, -73.97914931646805, -73.97740014971507,
+    -73.97740014971507, -73.97914931646805,
+  ];
+  lats = [
+    40.75910653895198, 40.75785953808591, 40.75785953808591, 40.75910653895198,
+    40.75910653895198,
+  ];
+
   async findTaxLotByBbl(bbl: string) {
     if (this.featureFlagConfig.useDrizzle) {
       let result: SelectTaxLotNested | undefined;
