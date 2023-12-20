@@ -12,7 +12,10 @@ import {
   zoningDistrictZoningDistrictClass,
 } from "src/schema";
 import { eq, sql } from "drizzle-orm";
-import { DataRetrievalException, ResourceNotFoundException } from "src/error";
+import {
+  DataRetrievalException,
+  ResourceNotFoundException,
+} from "src/exception";
 import {
   SelectTaxLot,
   SelectTaxLotNested,
@@ -60,10 +63,10 @@ export class TaxLotService {
           },
         });
       } catch {
-        throw DataRetrievalException;
+        throw new DataRetrievalException();
       }
 
-      if (result === undefined) throw ResourceNotFoundException;
+      if (result === undefined) throw new ResourceNotFoundException();
       return result;
     } else {
       return this.taxLotRepository.findOne(
@@ -99,9 +102,9 @@ export class TaxLotService {
           },
         });
       } catch {
-        throw DataRetrievalException;
+        throw new DataRetrievalException();
       }
-      if (result === undefined) throw ResourceNotFoundException;
+      if (result === undefined) throw new ResourceNotFoundException();
       const geometry = JSON.parse(result.geometry) as MultiPolygon;
       return {
         type: "Feature",
@@ -127,9 +130,9 @@ export class TaxLotService {
       try {
         taxLotCheck = await this.#checkTaxLotByBbl.execute({ bbl });
       } catch {
-        throw DataRetrievalException;
+        throw new DataRetrievalException();
       }
-      if (taxLotCheck === undefined) throw ResourceNotFoundException;
+      if (taxLotCheck === undefined) throw new ResourceNotFoundException();
       try {
         const zoningDistricts = await this.db
           .select({
@@ -147,7 +150,7 @@ export class TaxLotService {
           zoningDistricts,
         };
       } catch {
-        throw DataRetrievalException;
+        throw new DataRetrievalException();
       }
     } else {
       throw new Error(
@@ -162,9 +165,9 @@ export class TaxLotService {
       try {
         taxLotCheck = await this.#checkTaxLotByBbl.execute({ bbl });
       } catch {
-        throw DataRetrievalException;
+        throw new DataRetrievalException();
       }
-      if (taxLotCheck === undefined) throw ResourceNotFoundException;
+      if (taxLotCheck === undefined) throw new ResourceNotFoundException();
       try {
         const zoningDistrictClasses = await this.db
           .select({
@@ -199,7 +202,7 @@ export class TaxLotService {
           zoningDistrictClasses,
         };
       } catch {
-        throw DataRetrievalException;
+        throw new DataRetrievalException();
       }
     } else {
       throw new Error(
