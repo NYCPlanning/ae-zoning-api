@@ -1,12 +1,8 @@
 import { Inject } from "@nestjs/common";
 import { DB, DbType } from "src/global/providers/db.provider";
 import { eq, sql } from "drizzle-orm";
-import { DataRetrievalException, ResourceNotFoundException } from "src/error";
-import {
-  SelectTaxLot,
-  SelectTaxLotNested,
-  SelectTaxLotSpatial,
-} from "src/schema/tax-lot";
+import { DataRetrievalException } from "src/exception";
+import { SelectTaxLotSpatial } from "src/schema/tax-lot";
 import {
   taxLot,
   zoningDistrict,
@@ -30,10 +26,17 @@ export class TaxLotRepo {
     })
     .prepare("checkTaxLotByBbl");
 
-  async taxLotByBbl(bbl: string) {
-    let result: SelectTaxLotNested | undefined;
+  async checkTaxLotByBbl(bbl: string) {
     try {
-      result = await this.db.query.taxLot.findFirst({
+      return await this.#checkTaxLotByBbl.execute({ bbl });
+    } catch {
+      throw new DataRetrievalException();
+    }
+  }
+
+  async findByBbl(bbl: string) {
+    try {
+      return await this.db.query.taxLot.findFirst({
         columns: {
           boroughId: false,
           landUseId: false,
@@ -47,14 +50,11 @@ export class TaxLotRepo {
         },
       });
     } catch {
-      throw DataRetrievalException;
+      throw new DataRetrievalException();
     }
-
-    if (result === undefined) throw ResourceNotFoundException;
-    return result;
   }
 
-  async taxLotByBblGeoJson(bbl: string) {
+  async findByBblGeoJson(bbl: string) {
     let result: SelectTaxLotSpatial | undefined;
     try {
       result = await this.db.query.taxLot.findFirst({
@@ -76,36 +76,29 @@ export class TaxLotRepo {
         },
       });
     } catch {
-      throw DataRetrievalException;
+      throw new DataRetrievalException();
     }
 
-    if (result === undefined) throw ResourceNotFoundException;
+    if (result !== undefined) {
+      const geometry = JSON.parse(result.geometry) as MultiPolygon;
 
-    const geometry = JSON.parse(result.geometry) as MultiPolygon;
-
-    return {
-      type: "Feature",
-      id: result.bbl,
-      properties: {
-        bbl: result.bbl,
-        borough: result.borough,
-        block: result.block,
-        lot: result.lot,
-        address: result.address,
-        landUse: result.landUse,
-      },
-      geometry,
-    };
+      return {
+        type: "Feature",
+        id: result.bbl,
+        properties: {
+          bbl: result.bbl,
+          borough: result.borough,
+          block: result.block,
+          lot: result.lot,
+          address: result.address,
+          landUse: result.landUse,
+        },
+        geometry,
+      };
+    }
   }
 
-  async zoningDistrictByTaxLotBbl(bbl: string) {
-    let taxLotCheck: Pick<SelectTaxLot, "bbl"> | undefined;
-    try {
-      taxLotCheck = await this.#checkTaxLotByBbl.execute({ bbl });
-    } catch {
-      throw DataRetrievalException;
-    }
-    if (taxLotCheck === undefined) throw ResourceNotFoundException;
+  async findZoningDistrictByBbl(bbl: string) {
     try {
       const zoningDistricts = await this.db
         .select({
@@ -123,18 +116,11 @@ export class TaxLotRepo {
         zoningDistricts,
       };
     } catch {
-      throw DataRetrievalException;
+      throw new DataRetrievalException();
     }
   }
 
-  async zoningDistrictClassByTaxLotBbl(bbl: string) {
-    let taxLotCheck: Pick<SelectTaxLot, "bbl"> | undefined;
-    try {
-      taxLotCheck = await this.#checkTaxLotByBbl.execute({ bbl });
-    } catch {
-      throw DataRetrievalException;
-    }
-    if (taxLotCheck === undefined) throw ResourceNotFoundException;
+  async findZoningDistrictClassByBbl(bbl: string) {
     try {
       const zoningDistrictClasses = await this.db
         .select({
@@ -169,7 +155,7 @@ export class TaxLotRepo {
         zoningDistrictClasses,
       };
     } catch {
-      throw DataRetrievalException;
+      throw new DataRetrievalException();
     }
   }
 }

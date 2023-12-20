@@ -6,6 +6,7 @@ import { TaxLotRepository } from "./tax-lot.repository";
 import { FeatureFlagConfig } from "src/config";
 import { ConfigType } from "@nestjs/config";
 import { TaxLotRepo } from "./tax-lot.repo";
+import { ResourceNotFoundException } from "src/exception";
 
 @Injectable()
 export class TaxLotService {
@@ -25,7 +26,10 @@ export class TaxLotService {
 
   async findTaxLotByBbl(bbl: string) {
     if (this.featureFlagConfig.useDrizzle) {
-      return await this.taxLotRepo.taxLotByBbl(bbl);
+      const taxLotCheck = await this.taxLotRepo.checkTaxLotByBbl(bbl);
+      if (taxLotCheck === undefined) throw new ResourceNotFoundException();
+
+      return await this.taxLotRepo.findByBbl(bbl);
     } else {
       return this.taxLotRepository.findOne(
         { bbl },
@@ -39,7 +43,10 @@ export class TaxLotService {
 
   async findTaxLotByBblGeoJson(bbl: string) {
     if (this.featureFlagConfig.useDrizzle) {
-      return await this.taxLotRepo.taxLotByBblGeoJson(bbl);
+      const taxLotCheck = await this.taxLotRepo.checkTaxLotByBbl(bbl);
+      if (taxLotCheck === undefined) throw new ResourceNotFoundException();
+
+      return await this.taxLotRepo.findByBblGeoJson(bbl);
     } else {
       return this.taxLotRepository.findOne({ bbl });
     }
@@ -47,7 +54,9 @@ export class TaxLotService {
 
   async findZoningDistrictByTaxLotBbl(bbl: string) {
     if (this.featureFlagConfig.useDrizzle) {
-      return await this.taxLotRepo.zoningDistrictByTaxLotBbl(bbl);
+      const taxLotCheck = await this.taxLotRepo.checkTaxLotByBbl(bbl);
+      if (taxLotCheck === undefined) throw new ResourceNotFoundException();
+      return await this.taxLotRepo.findZoningDistrictByBbl(bbl);
     } else {
       throw new Error(
         "Zoning district by tax lot bbl route not implemented in Mikro orm",
@@ -57,7 +66,10 @@ export class TaxLotService {
 
   async findZoningDistrictClassByTaxLotBbl(bbl: string) {
     if (this.featureFlagConfig.useDrizzle) {
-      return await this.taxLotRepo.zoningDistrictClassByTaxLotBbl(bbl);
+      const taxLotCheck = await this.taxLotRepo.checkTaxLotByBbl(bbl);
+      if (taxLotCheck === undefined) throw new ResourceNotFoundException();
+
+      return await this.taxLotRepo.findZoningDistrictClassByBbl(bbl);
     } else {
       throw new Error(
         "Zoning district class by tax lot bbl route not implemented in Mikro orm",
