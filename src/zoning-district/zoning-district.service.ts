@@ -11,8 +11,11 @@ import {
   zoningDistrictZoningDistrictClass,
 } from "src/schema";
 import { eq } from "drizzle-orm";
-import { DataRetrievalException, ResourceNotFoundException } from "src/error";
 import { SelectZoningDistrict } from "src/schema/zoning-district";
+import {
+  DataRetrievalException,
+  ResourceNotFoundException,
+} from "src/exception";
 
 @Injectable()
 export class ZoningDistrictService {
@@ -36,9 +39,9 @@ export class ZoningDistrictService {
           where: eq(zoningDistrict.id, uuid),
         });
       } catch {
-        throw DataRetrievalException;
+        throw new DataRetrievalException();
       }
-      if (result === undefined) throw ResourceNotFoundException;
+      if (result === undefined) throw new ResourceNotFoundException();
       return result;
     } else {
       return this.zoningDistrictRepository.findOne(uuid, {
@@ -65,9 +68,10 @@ export class ZoningDistrictService {
           id,
         });
       } catch {
-        throw DataRetrievalException;
+        throw new DataRetrievalException();
       }
-      if (zoningDistrictCheck === undefined) throw ResourceNotFoundException;
+      if (zoningDistrictCheck === undefined)
+        throw new ResourceNotFoundException();
 
       try {
         const zoningDistrictClasses = await this.db
@@ -99,7 +103,7 @@ export class ZoningDistrictService {
           zoningDistrictClasses,
         };
       } catch {
-        throw DataRetrievalException;
+        throw new DataRetrievalException();
       }
     } else {
       throw new Error(

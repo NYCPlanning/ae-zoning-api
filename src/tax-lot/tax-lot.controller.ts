@@ -5,6 +5,7 @@ import {
   Injectable,
   Param,
   Redirect,
+  UseFilters,
   UsePipes,
 } from "@nestjs/common";
 import { ConfigType } from "@nestjs/config";
@@ -21,8 +22,18 @@ import {
   getZoningDistrictClassesByTaxLotBblPathParamsSchema,
   GetZoningDistrictClassesByTaxLotBblPathParams,
 } from "../gen";
+import {
+  BadRequestExceptionFilter,
+  InternalServerErrorExceptionFilter,
+  NotFoundExceptionFilter,
+} from "src/filter";
 
 @Injectable()
+@UseFilters(
+  BadRequestExceptionFilter,
+  InternalServerErrorExceptionFilter,
+  NotFoundExceptionFilter,
+)
 @Controller("tax-lots")
 export class TaxLotController {
   constructor(

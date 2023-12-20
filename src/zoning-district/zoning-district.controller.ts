@@ -5,6 +5,7 @@ import {
   Injectable,
   Param,
   Redirect,
+  UseFilters,
   UsePipes,
 } from "@nestjs/common";
 import { ConfigType } from "@nestjs/config";
@@ -17,8 +18,18 @@ import {
   getZoningDistrictByIdPathParamsSchema,
   getZoningDistrictClassesByUuidPathParamsSchema,
 } from "src/gen";
+import {
+  BadRequestExceptionFilter,
+  InternalServerErrorExceptionFilter,
+  NotFoundExceptionFilter,
+} from "src/filter";
 
 @Injectable()
+@UseFilters(
+  BadRequestExceptionFilter,
+  InternalServerErrorExceptionFilter,
+  NotFoundExceptionFilter,
+)
 @Controller("zoning-districts")
 export class ZoningDistrictController {
   constructor(

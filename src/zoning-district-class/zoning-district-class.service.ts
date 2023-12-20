@@ -4,8 +4,11 @@ import { DB, DbType } from "src/global/providers/db.provider";
 import { ConfigType } from "@nestjs/config";
 import { zoningDistrictClass } from "src/schema";
 import { eq } from "drizzle-orm";
-import { DataRetrievalException, ResourceNotFoundException } from "src/error";
 import { SelectZoningDistrictClass } from "src/schema/zoning-district-class";
+import {
+  DataRetrievalException,
+  ResourceNotFoundException,
+} from "src/exception";
 
 @Injectable()
 export class ZoningDistrictClassService {
@@ -26,7 +29,7 @@ export class ZoningDistrictClassService {
           zoningDistrictClasses,
         };
       } catch {
-        throw DataRetrievalException;
+        throw new DataRetrievalException();
       }
     } else {
       throw new Error(
@@ -44,10 +47,10 @@ export class ZoningDistrictClassService {
           where: eq(zoningDistrictClass.id, id),
         });
       } catch {
-        throw DataRetrievalException;
+        throw new DataRetrievalException();
       }
 
-      if (result === undefined) throw ResourceNotFoundException;
+      if (result === undefined) throw new ResourceNotFoundException();
       return result;
     } else {
       throw new Error(
@@ -70,7 +73,7 @@ export class ZoningDistrictClassService {
           zoningDistrictClassCategoryColors,
         };
       } catch {
-        throw DataRetrievalException;
+        throw new DataRetrievalException();
       }
     } else {
       throw new Error(
