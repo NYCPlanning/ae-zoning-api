@@ -7,6 +7,7 @@ import { FeatureFlagConfig } from "src/config";
 import { ConfigType } from "@nestjs/config";
 import { TaxLotRepo } from "./tax-lot.repo";
 import { ResourceNotFoundException } from "src/exception";
+import { MultiPolygon } from "geojson";
 
 @Injectable()
 export class TaxLotService {
@@ -26,10 +27,9 @@ export class TaxLotService {
 
   async findTaxLotByBbl(bbl: string) {
     if (this.featureFlagConfig.useDrizzle) {
-      const taxLotCheck = await this.taxLotRepo.checkTaxLotByBbl(bbl);
-      if (taxLotCheck === undefined) throw new ResourceNotFoundException();
-
-      return await this.taxLotRepo.findByBbl(bbl);
+      const result = await this.taxLotRepo.findByBbl(bbl);
+      if (result === undefined) throw new ResourceNotFoundException();
+      return result;
     } else {
       return this.taxLotRepository.findOne(
         { bbl },
@@ -43,10 +43,24 @@ export class TaxLotService {
 
   async findTaxLotByBblGeoJson(bbl: string) {
     if (this.featureFlagConfig.useDrizzle) {
-      const taxLotCheck = await this.taxLotRepo.checkTaxLotByBbl(bbl);
-      if (taxLotCheck === undefined) throw new ResourceNotFoundException();
+      const result = await this.taxLotRepo.findByBblSpatial(bbl);
+      if (result === undefined) throw new ResourceNotFoundException();
 
-      return await this.taxLotRepo.findByBblGeoJson(bbl);
+      const geometry = JSON.parse(result.geometry) as MultiPolygon;
+
+      return {
+        type: "Feature",
+        id: result.bbl,
+        properties: {
+          bbl: result.bbl,
+          borough: result.borough,
+          block: result.block,
+          lot: result.lot,
+          address: result.address,
+          landUse: result.landUse,
+        },
+        geometry,
+      };
     } else {
       return this.taxLotRepository.findOne({ bbl });
     }
@@ -56,7 +70,11 @@ export class TaxLotService {
     if (this.featureFlagConfig.useDrizzle) {
       const taxLotCheck = await this.taxLotRepo.checkTaxLotByBbl(bbl);
       if (taxLotCheck === undefined) throw new ResourceNotFoundException();
-      return await this.taxLotRepo.findZoningDistrictByBbl(bbl);
+      const zoningDistricts =
+        await this.taxLotRepo.findZoningDistrictByBbl(bbl);
+      return {
+        zoningDistricts,
+      };
     } else {
       throw new Error(
         "Zoning district by tax lot bbl route not implemented in Mikro orm",
@@ -69,7 +87,11 @@ export class TaxLotService {
       const taxLotCheck = await this.taxLotRepo.checkTaxLotByBbl(bbl);
       if (taxLotCheck === undefined) throw new ResourceNotFoundException();
 
-      return await this.taxLotRepo.findZoningDistrictClassByBbl(bbl);
+      const zoningDistrictClasses =
+        await this.taxLotRepo.findZoningDistrictClassByBbl(bbl);
+      return {
+        zoningDistrictClasses,
+      };
     } else {
       throw new Error(
         "Zoning district class by tax lot bbl route not implemented in Mikro orm",
