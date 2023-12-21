@@ -2,14 +2,12 @@ import { Inject } from "@nestjs/common";
 import { DB, DbType } from "src/global/providers/db.provider";
 import { eq, sql } from "drizzle-orm";
 import { DataRetrievalException } from "src/exception";
-import { SelectTaxLotSpatial } from "src/schema/tax-lot";
 import {
   taxLot,
   zoningDistrict,
   zoningDistrictClass,
   zoningDistrictZoningDistrictClass,
 } from "src/schema";
-import { MultiPolygon } from "geojson";
 
 export class TaxLotRepo {
   constructor(
@@ -54,10 +52,9 @@ export class TaxLotRepo {
     }
   }
 
-  async findByBblGeoJson(bbl: string) {
-    let result: SelectTaxLotSpatial | undefined;
+  async findByBblSpatial(bbl: string) {
     try {
-      result = await this.db.query.taxLot.findFirst({
+      return await this.db.query.taxLot.findFirst({
         columns: {
           bbl: true,
           block: true,
@@ -78,29 +75,11 @@ export class TaxLotRepo {
     } catch {
       throw new DataRetrievalException();
     }
-
-    if (result !== undefined) {
-      const geometry = JSON.parse(result.geometry) as MultiPolygon;
-
-      return {
-        type: "Feature",
-        id: result.bbl,
-        properties: {
-          bbl: result.bbl,
-          borough: result.borough,
-          block: result.block,
-          lot: result.lot,
-          address: result.address,
-          landUse: result.landUse,
-        },
-        geometry,
-      };
-    }
   }
 
   async findZoningDistrictByBbl(bbl: string) {
     try {
-      const zoningDistricts = await this.db
+      return await this.db
         .select({
           id: zoningDistrict.id,
           label: zoningDistrict.label,
@@ -111,10 +90,6 @@ export class TaxLotRepo {
           sql`ST_Intersects(${taxLot.liFt}, ${zoningDistrict.liFt})`,
         )
         .where(eq(taxLot.bbl, bbl));
-
-      return {
-        zoningDistricts,
-      };
     } catch {
       throw new DataRetrievalException();
     }
@@ -122,7 +97,7 @@ export class TaxLotRepo {
 
   async findZoningDistrictClassByBbl(bbl: string) {
     try {
-      const zoningDistrictClasses = await this.db
+      return await this.db
         .select({
           id: zoningDistrictClass.id,
           category: zoningDistrictClass.category,
@@ -150,10 +125,6 @@ export class TaxLotRepo {
           sql`ST_Intersects(${taxLot.liFt}, ${zoningDistrict.liFt})`,
         )
         .where(eq(taxLot.bbl, bbl));
-
-      return {
-        zoningDistrictClasses,
-      };
     } catch {
       throw new DataRetrievalException();
     }
