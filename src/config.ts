@@ -9,9 +9,7 @@ export const DbConfig = registerAs("db", () => ({
   name: process.env.DATABASE_NAME,
 }));
 
-export const FeatureFlagConfig = registerAs("featureFlag", () => ({
-  useDrizzle: Boolean(process.env.FEATURE_FLAG_DRIZZLE),
-}));
+export const FeatureFlagConfig = registerAs("featureFlag", () => ({}));
 
 export const StorageConfig = registerAs("storage", () => ({
   storageUrl: process.env.STORAGE_URL,

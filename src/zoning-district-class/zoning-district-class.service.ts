@@ -1,7 +1,5 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { FeatureFlagConfig } from "src/config";
 import { DB, DbType } from "src/global/providers/db.provider";
-import { ConfigType } from "@nestjs/config";
 import { zoningDistrictClass } from "src/schema";
 import { eq } from "drizzle-orm";
 import { SelectZoningDistrictClass } from "src/schema/zoning-district-class";
@@ -15,70 +13,49 @@ export class ZoningDistrictClassService {
   constructor(
     @Inject(DB)
     private readonly db: DbType,
-
-    @Inject(FeatureFlagConfig.KEY)
-    private featureFlagConfig: ConfigType<typeof FeatureFlagConfig>,
   ) {}
 
   async findAllZoningDistrictClasses() {
-    if (this.featureFlagConfig.useDrizzle) {
-      try {
-        const zoningDistrictClasses =
-          await this.db.query.zoningDistrictClass.findMany();
-        return {
-          zoningDistrictClasses,
-        };
-      } catch {
-        throw new DataRetrievalException();
-      }
-    } else {
-      throw new Error(
-        "Zoning District Classes route not supported in Mikro ORM",
-      );
+    try {
+      const zoningDistrictClasses =
+        await this.db.query.zoningDistrictClass.findMany();
+      return {
+        zoningDistrictClasses,
+      };
+    } catch {
+      throw new DataRetrievalException();
     }
   }
 
   async findZoningDistrictClassById(id: string) {
-    if (this.featureFlagConfig.useDrizzle) {
-      let result: SelectZoningDistrictClass | undefined;
+    let result: SelectZoningDistrictClass | undefined;
 
-      try {
-        result = await this.db.query.zoningDistrictClass.findFirst({
-          where: eq(zoningDistrictClass.id, id),
-        });
-      } catch {
-        throw new DataRetrievalException();
-      }
-
-      if (result === undefined) throw new ResourceNotFoundException();
-      return result;
-    } else {
-      throw new Error(
-        "Zoning District Classes route not supported in Mikro ORM",
-      );
+    try {
+      result = await this.db.query.zoningDistrictClass.findFirst({
+        where: eq(zoningDistrictClass.id, id),
+      });
+    } catch {
+      throw new DataRetrievalException();
     }
+
+    if (result === undefined) throw new ResourceNotFoundException();
+    return result;
   }
 
   async findZoningDistrictClassCategoryColors() {
-    if (this.featureFlagConfig.useDrizzle) {
-      try {
-        const zoningDistrictClassCategoryColors = await this.db
-          .selectDistinctOn([zoningDistrictClass.category], {
-            category: zoningDistrictClass.category,
-            color: zoningDistrictClass.color,
-          })
-          .from(zoningDistrictClass);
+    try {
+      const zoningDistrictClassCategoryColors = await this.db
+        .selectDistinctOn([zoningDistrictClass.category], {
+          category: zoningDistrictClass.category,
+          color: zoningDistrictClass.color,
+        })
+        .from(zoningDistrictClass);
 
-        return {
-          zoningDistrictClassCategoryColors,
-        };
-      } catch {
-        throw new DataRetrievalException();
-      }
-    } else {
-      throw new Error(
-        "Zoning District Classes route not supported in Mikro ORM",
-      );
+      return {
+        zoningDistrictClassCategoryColors,
+      };
+    } catch {
+      throw new DataRetrievalException();
     }
   }
 }
