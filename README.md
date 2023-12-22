@@ -35,6 +35,14 @@ Finally, to run the project locally:
 ```
 npm run dev
 ```
+
+### ORM setup
+To configure the Drizzle ORM:
+
+- Run the migrations with `npm run drizzle:migrate`
+- Load the data by running the sql commands in `drizzle-management/load.sql`
+   - This can be done through a db manager, such as pgAdmin or psql
+
 ### OpenApi documentation
 Open Api documentation is managed through [redoc](https://redocly.com/docs/redoc/). Changes to the documentation are managed through edits to the `openapi/openapi.yaml` file. The `openapi/index.html` is used to serve the rendered documentation. It is generated through the redocly cli and should not be manually edited.
 
