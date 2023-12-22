@@ -1,4 +1,18 @@
-import { EntityRepository } from "@mikro-orm/postgresql";
-import { LandUse } from "./land-use.entity";
+import { Inject } from "@nestjs/common";
+import { DB, DbType } from "src/global/providers/db.provider";
+import { DataRetrievalException } from "src/exception";
 
-export class LandUseRepository extends EntityRepository<LandUse> {}
+export class LandUseRepository {
+  constructor(
+    @Inject(DB)
+    private readonly db: DbType,
+  ) {}
+
+  async findAll() {
+    try {
+      return await this.db.query.landUse.findMany();
+    } catch {
+      throw new DataRetrievalException();
+    }
+  }
+}

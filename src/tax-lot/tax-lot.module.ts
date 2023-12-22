@@ -1,14 +1,11 @@
-import { MikroOrmModule } from "@mikro-orm/nestjs";
 import { Module } from "@nestjs/common";
-import { TaxLot } from "./tax-lot.entity";
 import { TaxLotService } from "./tax-lot.service";
 import { TaxLotController } from "./tax-lot.controller";
-import { TaxLotRepo } from "./tax-lot.repo";
+import { TaxLotRepository } from "./tax-lot.repository";
 
 @Module({
-  imports: [MikroOrmModule.forFeature({ entities: [TaxLot] })],
   exports: [TaxLotService],
-  providers: [TaxLotService, TaxLotRepo],
+  providers: [TaxLotService, TaxLotRepository],
   controllers: [TaxLotController],
 })
 export class TaxLotModule {}
