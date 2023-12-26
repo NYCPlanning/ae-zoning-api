@@ -9,8 +9,7 @@ export const taxLotSchema = z.object({
     .describe(
       `The ten character code compromised of a one character borough, five character block, and four character lot codes.`,
     )
-    .min(10)
-    .max(10),
+    .regex(new RegExp("^([0-9]{10})$")),
   borough: z.lazy(() => boroughSchema).schema,
   block: z
     .string()

@@ -371,8 +371,7 @@ components:
         bbl:
           type: string
           description: The ten character code compromised of a one character borough, five character block, and four character lot codes.
-          minLength: 10
-          maxLength: 10
+          pattern: '^([0-9]{10})$'
           example: '1000477501'
         borough:
           $ref: '#/components/schemas/Borough'
