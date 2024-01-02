@@ -1,4 +1,5 @@
 export * from "./badRequestSchema";
+export * from "./bblSchema";
 export * from "./boroughSchema";
 export * from "./errorSchema";
 export * from "./getAllZoningDistrictClassesSchema";
@@ -11,7 +12,6 @@ export * from "./getZoningDistrictClassCategoryColorsSchema";
 export * from "./getZoningDistrictClassesByIdSchema";
 export * from "./getZoningDistrictClassesByTaxLotBblSchema";
 export * from "./getZoningDistrictClassesByUuidSchema";
-export * from "./getZoningDistrictClassesCategoryColorsSchema";
 export * from "./getZoningDistrictsByTaxLotBblSchema";
 export * from "./internalServerErrorSchema";
 export * from "./landUseSchema";

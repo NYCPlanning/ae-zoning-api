@@ -1,15 +1,11 @@
 import { z } from "zod";
 
+import { bblSchema } from "./bblSchema";
 import { boroughSchema } from "./boroughSchema";
 import { landUseSchema } from "./landUseSchema";
 
 export const taxLotSchema = z.object({
-  bbl: z
-    .string()
-    .describe(
-      `The ten character code compromised of a one character borough, five character block, and four character lot codes.`,
-    )
-    .regex(new RegExp("^([0-9]{10})$")),
+  bbl: z.lazy(() => bblSchema).schema,
   borough: z.lazy(() => boroughSchema).schema,
   block: z
     .string()

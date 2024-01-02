@@ -1,4 +1,5 @@
 export * from "./BadRequest";
+export * from "./Bbl";
 export * from "./Borough";
 export * from "./Error";
 export * from "./GetAllZoningDistrictClasses";
@@ -11,7 +12,6 @@ export * from "./GetZoningDistrictClassCategoryColors";
 export * from "./GetZoningDistrictClassesById";
 export * from "./GetZoningDistrictClassesByTaxLotBbl";
 export * from "./GetZoningDistrictClassesByUuid";
-export * from "./GetZoningDistrictClassesCategoryColors";
 export * from "./GetZoningDistrictsByTaxLotBbl";
 export * from "./InternalServerError";
 export * from "./LandUse";

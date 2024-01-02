@@ -1,18 +1,16 @@
 import type { Error } from "./Error";
+import type { Bbl } from "./Bbl";
 import type { ZoningDistrictClass } from "./ZoningDistrictClass";
-
-export type GetZoningDistrictClassesByTaxLotBblPathParams = {
-  /**
-   * @type string
-   */
-  bbl: string;
-};
 
 export type GetZoningDistrictClassesByTaxLotBbl400 = Error;
 
 export type GetZoningDistrictClassesByTaxLotBbl404 = Error;
 
 export type GetZoningDistrictClassesByTaxLotBbl500 = Error;
+
+export type GetZoningDistrictClassesByTaxLotBblPathParams = {
+  bbl: Bbl;
+};
 
 /**
  * @description An object containing zoning district class schemas.

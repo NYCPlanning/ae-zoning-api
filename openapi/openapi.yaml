@@ -5,7 +5,7 @@ info:
     An API for serving data related to the zoning of New York City.
   version: 0.1.0
 servers:
-  - url: https://zoning.planningdigital.com/api
+  - url: https://zoning.planningdigital.com/api 
 tags:
   - name: Boroughs
   - name: Land Uses
@@ -72,9 +72,7 @@ paths:
           in: path
           required: true  
           schema:
-            type: string
-            minLength: 10
-            maxLength: 10
+            $ref: '#/components/schemas/Bbl'
       responses:
         '200':
           description: A tax lot object
@@ -100,9 +98,7 @@ paths:
           in: path
           required: true  
           schema:
-            type: string
-            minLength: 10
-            maxLength: 10
+            $ref: '#/components/schemas/Bbl'
       responses:
         '200':
           description: A tax lot geojson object
@@ -128,9 +124,7 @@ paths:
           in: path
           required: true  
           schema:
-            type: string
-            minLength: 10
-            maxLength: 10
+            $ref: '#/components/schemas/Bbl'
       responses:
         '200':
           description: An object containing zoning districts.
@@ -163,9 +157,7 @@ paths:
           in: path
           required: true
           schema:
-            type: string
-            minLength: 10
-            maxLength: 10
+            $ref: '#/components/schemas/Bbl'
       responses:
         '200':
           description: An object containing zoning district class schemas.
@@ -369,10 +361,7 @@ components:
       type: object
       properties:
         bbl:
-          type: string
-          description: The ten character code compromised of a one character borough, five character block, and four character lot codes.
-          pattern: '^([0-9]{10})$'
-          example: '1000477501'
+          $ref: '#/components/schemas/Bbl'
         borough:
           $ref: '#/components/schemas/Borough'
         block:
@@ -524,6 +513,11 @@ components:
       required:
         - statusCode
         - message
+    Bbl:
+      type: string
+      description: The ten character code compromised of a one character borough, five character block, and four character lot codes.
+      pattern: '^([0-9]{10})$'
+      example: '1000477501'
   responses:
     BadRequest:
       description: Invalid client request

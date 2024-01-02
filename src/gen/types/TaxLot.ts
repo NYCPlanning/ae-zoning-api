@@ -1,13 +1,9 @@
+import type { Bbl } from "./Bbl";
 import type { Borough } from "./Borough";
 import type { LandUse } from "./LandUse";
 
 export type TaxLot = {
-  /**
-   * @description The ten character code compromised of a one character borough, five character block, and four character lot codes.
-   * @type string
-   * @example 1000477501
-   */
-  bbl: string;
+  bbl: Bbl;
   borough: Borough;
   /**
    * @description The block code, without its padding zeros.
