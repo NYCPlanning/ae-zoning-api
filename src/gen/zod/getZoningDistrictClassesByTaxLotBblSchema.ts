@@ -4,7 +4,12 @@ import { errorSchema } from "./errorSchema";
 import { zoningDistrictClassSchema } from "./zoningDistrictClassSchema";
 
 export const getZoningDistrictClassesByTaxLotBblPathParamsSchema = z.object({
-  bbl: z.string().min(10).max(10),
+  bbl: z
+    .string()
+    .describe(
+      `The ten character code compromised of a one character borough, five character block, and four character lot codes.`,
+    )
+    .regex(new RegExp("^([0-9]{10})$")),
 });
 export const getZoningDistrictClassesByTaxLotBbl400Schema = z.lazy(
   () => errorSchema,

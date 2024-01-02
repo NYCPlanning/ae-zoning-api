@@ -5,7 +5,7 @@ info:
     An API for serving data related to the zoning of New York City.
   version: 0.1.0
 servers:
-  - url: https://zoning.planningdigital.com/api
+  - url: https://zoning.planningdigital.com/api 
 tags:
   - name: Boroughs
   - name: Land Uses
@@ -68,13 +68,7 @@ paths:
       tags:
       - Tax Lots
       parameters:
-        - name: bbl
-          in: path
-          required: true  
-          schema:
-            type: string
-            minLength: 10
-            maxLength: 10
+        - $ref: "#/components/parameters/bblParam"
       responses:
         '200':
           description: A tax lot object
@@ -96,13 +90,7 @@ paths:
       - Tax Lots
       - GeoJSON
       parameters:
-        - name: bbl
-          in: path
-          required: true  
-          schema:
-            type: string
-            minLength: 10
-            maxLength: 10
+        - $ref: "#/components/parameters/bblParam"
       responses:
         '200':
           description: A tax lot geojson object
@@ -124,13 +112,7 @@ paths:
       - Tax Lots
       - Zoning Districts
       parameters:
-        - name: bbl
-          in: path
-          required: true  
-          schema:
-            type: string
-            minLength: 10
-            maxLength: 10
+        - $ref: "#/components/parameters/bblParam"
       responses:
         '200':
           description: An object containing zoning districts.
@@ -159,13 +141,7 @@ paths:
         - Tax Lots
         - Zoning Districts
       parameters:
-        - name: bbl
-          in: path
-          required: true
-          schema:
-            type: string
-            minLength: 10
-            maxLength: 10
+        - $ref: "#/components/parameters/bblParam"
       responses:
         '200':
           description: An object containing zoning district class schemas.
@@ -320,6 +296,16 @@ paths:
         '500':
           $ref: "#/components/responses/InternalServerError"
 components:
+  parameters: 
+    bblParam:
+      name: bbl
+      required: true
+      in: path
+      schema:
+        type: string
+        pattern: '^([0-9]{10})$'
+        example: '1000477501'
+      description: The ten character code compromised of a one character borough, five character block, and four character lot codes.
   schemas:
     Borough:
       type: object

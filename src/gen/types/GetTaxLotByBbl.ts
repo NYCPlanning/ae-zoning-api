@@ -3,7 +3,9 @@ import type { TaxLot } from "./TaxLot";
 
 export type GetTaxLotByBblPathParams = {
   /**
+   * @description The ten character code compromised of a one character borough, five character block, and four character lot codes.
    * @type string
+   * @example 1000477501
    */
   bbl: string;
 };
