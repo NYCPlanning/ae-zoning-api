@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 import { DataRetrievalException } from "src/exception";
 import { zoningDistrictClass } from "src/schema";
 
-export class ZoningDistrictClassRepo {
+export class ZoningDistrictClassRepository {
   constructor(
     @Inject(DB)
     private readonly db: DbType,

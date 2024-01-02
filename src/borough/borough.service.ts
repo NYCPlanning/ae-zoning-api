@@ -1,15 +1,15 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { BoroughRepo } from "./borough.repo";
+import { BoroughRepository } from "./borough.repository";
 
 @Injectable()
 export class BoroughService {
   constructor(
-    @Inject(BoroughRepo)
-    private readonly boroughRepo: BoroughRepo,
+    @Inject(BoroughRepository)
+    private readonly boroughRepository: BoroughRepository,
   ) {}
 
   async findAll() {
-    const boroughs = await this.boroughRepo.findAll();
+    const boroughs = await this.boroughRepository.findAll();
     return {
       boroughs,
     };

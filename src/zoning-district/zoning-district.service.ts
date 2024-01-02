@@ -1,6 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { ResourceNotFoundException } from "src/exception";
-import { ZoningDistrictRepo } from "./zoning-district.repo";
+import { ZoningDistrictRepo } from "./zoning-district.repository";
 
 @Injectable()
 export class ZoningDistrictService {

@@ -2,7 +2,7 @@ import { Inject } from "@nestjs/common";
 import { DB, DbType } from "src/global/providers/db.provider";
 import { DataRetrievalException } from "src/exception";
 
-export class BoroughRepo {
+export class LandUseRepository {
   constructor(
     @Inject(DB)
     private readonly db: DbType,
@@ -10,7 +10,7 @@ export class BoroughRepo {
 
   async findAll() {
     try {
-      return await this.db.query.borough.findMany();
+      return await this.db.query.landUse.findMany();
     } catch {
       throw new DataRetrievalException();
     }

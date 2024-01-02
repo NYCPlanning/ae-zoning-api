@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 import { ZoningDistrictClassController } from "./zoning-district-class.controller";
 import { ZoningDistrictClassService } from "./zoning-district-class.service";
-import { ZoningDistrictClassRepo } from "./zoning-district-class.repo";
+import { ZoningDistrictClassRepo } from "./zoning-district-class.repository";
 
 @Module({
   exports: [ZoningDistrictClassService],

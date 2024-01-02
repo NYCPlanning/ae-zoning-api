@@ -1,23 +1,23 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { TaxLotRepo } from "./tax-lot.repo";
+import { TaxLotRepository } from "./tax-lot.repository";
 import { ResourceNotFoundException } from "src/exception";
 import { MultiPolygon } from "geojson";
 
 @Injectable()
 export class TaxLotService {
   constructor(
-    @Inject(TaxLotRepo)
-    private readonly taxLotRepo: TaxLotRepo,
+    @Inject(TaxLotRepository)
+    private readonly taxLotRepository: TaxLotRepository,
   ) {}
 
   async findTaxLotByBbl(bbl: string) {
-    const result = await this.taxLotRepo.findByBbl(bbl);
+    const result = await this.taxLotRepository.findByBbl(bbl);
     if (result === undefined) throw new ResourceNotFoundException();
     return result;
   }
 
   async findTaxLotByBblGeoJson(bbl: string) {
-    const result = await this.taxLotRepo.findByBblSpatial(bbl);
+    const result = await this.taxLotRepository.findByBblSpatial(bbl);
     if (result === undefined) throw new ResourceNotFoundException();
 
     const geometry = JSON.parse(result.geometry) as MultiPolygon;
@@ -38,20 +38,21 @@ export class TaxLotService {
   }
 
   async findZoningDistrictByTaxLotBbl(bbl: string) {
-    const taxLotCheck = await this.taxLotRepo.checkTaxLotByBbl(bbl);
+    const taxLotCheck = await this.taxLotRepository.checkTaxLotByBbl(bbl);
     if (taxLotCheck === undefined) throw new ResourceNotFoundException();
-    const zoningDistricts = await this.taxLotRepo.findZoningDistrictByBbl(bbl);
+    const zoningDistricts =
+      await this.taxLotRepository.findZoningDistrictByBbl(bbl);
     return {
       zoningDistricts,
     };
   }
 
   async findZoningDistrictClassByTaxLotBbl(bbl: string) {
-    const taxLotCheck = await this.taxLotRepo.checkTaxLotByBbl(bbl);
+    const taxLotCheck = await this.taxLotRepository.checkTaxLotByBbl(bbl);
     if (taxLotCheck === undefined) throw new ResourceNotFoundException();
 
     const zoningDistrictClasses =
-      await this.taxLotRepo.findZoningDistrictClassByBbl(bbl);
+      await this.taxLotRepository.findZoningDistrictClassByBbl(bbl);
     return {
       zoningDistrictClasses,
     };

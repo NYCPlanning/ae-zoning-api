@@ -8,7 +8,7 @@ import {
   zoningDistrictZoningDistrictClass,
 } from "src/schema";
 
-export class ZoningDistrictRepo {
+export class ZoningDistrictRepository {
   constructor(
     @Inject(DB)
     private readonly db: DbType,

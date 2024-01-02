@@ -1,14 +1,14 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { LandUseRepo } from "./land-use.repo";
+import { LandUseRepository } from "./land-use.repository";
 @Injectable()
 export class LandUseService {
   constructor(
-    @Inject(LandUseRepo)
-    private readonly landUseRepo: LandUseRepo,
+    @Inject(LandUseRepository)
+    private readonly landUseRepository: LandUseRepository,
   ) {}
 
   async findAll() {
-    const landUses = await this.landUseRepo.findAll();
+    const landUses = await this.landUseRepository.findAll();
     return {
       landUses,
     };
