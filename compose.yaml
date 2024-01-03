@@ -1,4 +1,14 @@
 services:
+  martin:
+    image: maplibre/martin:latest
+    restart: unless-stopped
+    ports:
+      - "5433:3000"
+    environment:
+      - DATABASE_URL=postgresql://${DATABASE_USER}:${DATABASE_PASSWORD}@db/${DATABASE_NAME}
+    depends_on:
+      - db
+
   db:
     build: 
       context: ./db

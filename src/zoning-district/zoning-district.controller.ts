@@ -58,13 +58,13 @@ export class ZoningDistrictController {
     );
   }
 
-  @Get("/:z/:x/:y.pbf")
+  @Get("/:z/:x/:y")
   @Redirect()
   findZoningDistrictTilesets(
     @Param() params: { z: number; x: number; y: number },
   ) {
     return {
-      url: `${this.storageConfig.storageUrl}/tilesets/zoning_district/${params.z}/${params.x}/${params.y}.pbf`,
+      url: `http://localhost:5433/zoning_district/${params.z}/${params.x}/${params.y}`,
     };
   }
 }

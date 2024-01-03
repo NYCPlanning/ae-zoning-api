@@ -76,11 +76,11 @@ export class TaxLotController {
     return this.taxLotService.findZoningDistrictClassByTaxLotBbl(params.bbl);
   }
 
-  @Get("/:z/:x/:y.pbf")
+  @Get("/:z/:x/:y")
   @Redirect()
   findTaxLotTilesets(@Param() params: { z: number; x: number; y: number }) {
     return {
-      url: `${this.storageConfig.storageUrl}/tilesets/tax_lot/${params.z}/${params.x}/${params.y}.pbf`,
+      url: `http://localhost:5433/tax_lot/${params.z}/${params.x}/${params.y}`,
     };
   }
 }
