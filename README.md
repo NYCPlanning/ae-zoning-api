@@ -11,11 +11,17 @@ Once you have cloned this repo, install the necessary dependencies:
 ```
 npm i
 ```
-### Run local database with docker compose
-Next, use [docker compose](https://docs.docker.com/compose/) to stand up a local Postgresql database with PostGIS installed. If you need to install docker compose, follow [these instructions](https://docs.docker.com/compose/install/).
-
 ### Set up your `.env` file
 Create a file called `.env` in the root folder of the project and copy the contents of `sample.env` into that new file
+
+### Run local database with docker compose
+Next, use [docker compose](https://docs.docker.com/compose/) to stand up a local Postgresql database with PostGIS installed. 
+```
+docker compose up
+```
+
+If you need to install docker compose, follow [these instructions](https://docs.docker.com/compose/install/).
+
 
 ### Drizzle ORM setup
 To configure Drizzle:
