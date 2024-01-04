@@ -1,16 +1,16 @@
 import {
   Controller,
   Get,
-  Inject,
+  // Inject,
   Injectable,
   Param,
-  Redirect,
+  // Redirect,
   UseFilters,
   UsePipes,
 } from "@nestjs/common";
-import { ConfigType } from "@nestjs/config";
+// import { ConfigType } from "@nestjs/config";
 import { TaxLotService } from "./tax-lot.service";
-import { StorageConfig } from "src/config";
+// import { StorageConfig } from "src/config";
 import { ZodValidationPipe } from "src/pipes/zod-validation-pipe";
 import {
   getTaxLotByBblPathParamsSchema,
@@ -38,8 +38,8 @@ import {
 export class TaxLotController {
   constructor(
     private readonly taxLotService: TaxLotService,
-    @Inject(StorageConfig.KEY)
-    private storageConfig: ConfigType<typeof StorageConfig>,
+    // @Inject(StorageConfig.KEY)
+    // private storageConfig: ConfigType<typeof StorageConfig>,
   ) {}
 
   @Get("/:bbl")
@@ -76,11 +76,11 @@ export class TaxLotController {
     return this.taxLotService.findZoningDistrictClassByTaxLotBbl(params.bbl);
   }
 
-  @Get("/:z/:x/:y.pbf")
-  @Redirect()
-  findTaxLotTilesets(@Param() params: { z: number; x: number; y: number }) {
-    return {
-      url: `${this.storageConfig.storageUrl}/tilesets/tax_lot/${params.z}/${params.x}/${params.y}.pbf`,
-    };
-  }
+  // @Get("/:z/:x/:y.pbf")
+  // @Redirect()
+  // findTaxLotTilesets(@Param() params: { z: number; x: number; y: number }) {
+  //   return {
+  //     url: `${this.storageConfig.storageUrl}/tilesets/tax_lot/${params.z}/${params.x}/${params.y}.pbf`,
+  //   };
+  // }
 }
