@@ -1,10 +1,12 @@
 import {
   Controller,
   Get,
+  Header,
   Inject,
   Injectable,
   Param,
   Redirect,
+  Res,
   UseFilters,
   UsePipes,
 } from "@nestjs/common";
@@ -23,6 +25,7 @@ import {
   InternalServerErrorExceptionFilter,
   NotFoundExceptionFilter,
 } from "src/filter";
+import { Response } from "express";
 
 @Injectable()
 @UseFilters(
@@ -39,10 +42,14 @@ export class ZoningDistrictController {
   ) {}
 
   @Get("/labels/:z/:x/:y")
+  @Header("Content-Type", "application/x-protobuf")
   async findZoningDistrictLabelTile(
     @Param() params: { z: number; x: number; y: number },
+    @Res() res: Response,
   ) {
-    return await this.zoningDistrictService.findZoningDistrictLabelTile(params);
+    const tile =
+      await this.zoningDistrictService.findZoningDistrictLabelTile(params);
+    res.send(tile);
   }
 
   @Get("/:id")

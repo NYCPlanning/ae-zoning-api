@@ -1,6 +1,6 @@
 import { Inject } from "@nestjs/common";
 import { DB, DbType } from "src/global/providers/db.provider";
-import { eq, sql } from "drizzle-orm";
+import { eq, isNotNull, sql } from "drizzle-orm";
 import { DataRetrievalException } from "src/exception";
 import {
   zoningDistrict,
@@ -39,15 +39,30 @@ export class ZoningDistrictRepository {
     x: number;
     y: number;
   }) {
+    const { z, x, y } = params;
     try {
-      console.info("hitting the repo");
-      const labels = await this.db.execute(
-        sql`select zoning_district_label(${params.z}, ${params.x}, ${params.y})`,
-      );
-      // const labels = params;
-      console.info(labels.rows[0].zoning_district_label);
-      return labels.rows[0].zoning_district_label;
-      // return labels;
+      const tile = this.db
+        .selectDistinctOn([zoningDistrict.id], {
+          id: zoningDistrict.id,
+          label: zoningDistrict.label,
+          geom: sql`ST_AsMVTGeom(ST_Transform((ST_MaximumInscribedCircle(${zoningDistrict.wgs84}::geometry)).center, 3857),ST_TileEnvelope(${z}, ${x},${y}),4096,64,true)`.as(
+            "geom",
+          ),
+        })
+        .from(zoningDistrict)
+        .where(
+          sql`${zoningDistrict.wgs84} && ST_Transform(ST_TileEnvelope(${z}, ${x},${y}),4326)`,
+        )
+        .as("tile");
+      const labels = await this.db
+        .select({
+          mvt: sql`ST_AsMVT(tile, 'zoning_district_label', 4096, 'geom')`,
+        })
+        .from(tile)
+        .where(isNotNull(tile.geom));
+      const { mvt } = labels[0];
+      console.info(mvt);
+      return mvt;
     } catch {
       throw new DataRetrievalException();
     }
