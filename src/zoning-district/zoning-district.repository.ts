@@ -1,6 +1,6 @@
 import { Inject } from "@nestjs/common";
 import { DB, DbType } from "src/global/providers/db.provider";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { DataRetrievalException } from "src/exception";
 import {
   zoningDistrict,
@@ -29,6 +29,25 @@ export class ZoningDistrictRepository {
       return await this.#checkZoningDistrictById.execute({
         id,
       });
+    } catch {
+      throw new DataRetrievalException();
+    }
+  }
+
+  async findZoningDistrictLabelTile(params: {
+    z: number;
+    x: number;
+    y: number;
+  }) {
+    try {
+      console.info("hitting the repo");
+      const labels = await this.db.execute(
+        sql`select zoning_district_label(${params.z}, ${params.x}, ${params.y})`,
+      );
+      // const labels = params;
+      console.info(labels.rows[0].zoning_district_label);
+      return labels.rows[0].zoning_district_label;
+      // return labels;
     } catch {
       throw new DataRetrievalException();
     }

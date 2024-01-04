@@ -38,6 +38,13 @@ export class ZoningDistrictController {
     private storageConfig: ConfigType<typeof StorageConfig>,
   ) {}
 
+  @Get("/labels/:z/:x/:y")
+  async findZoningDistrictLabelTile(
+    @Param() params: { z: number; x: number; y: number },
+  ) {
+    return await this.zoningDistrictService.findZoningDistrictLabelTile(params);
+  }
+
   @Get("/:id")
   @UsePipes(new ZodValidationPipe(getZoningDistrictByIdPathParamsSchema))
   async findZoningDistrictByUuid(
