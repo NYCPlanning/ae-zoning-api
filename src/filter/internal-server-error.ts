@@ -7,8 +7,9 @@ import {
 import { HttpAdapterHost } from "@nestjs/core";
 import { DataRetrievalException } from "src/exception";
 import { HttpName } from ".";
+import { TilesetRetrievalException } from "src/exception/tileset-retrieval";
 
-@Catch(DataRetrievalException)
+@Catch(DataRetrievalException, TilesetRetrievalException)
 export class InternalServerErrorExceptionFilter implements ExceptionFilter {
   constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
 

@@ -7,6 +7,7 @@ import {
   zoningDistrictClass,
   zoningDistrictZoningDistrictClass,
 } from "src/schema";
+import { TilesetRetrievalException } from "src/exception/tileset-retrieval";
 
 export class ZoningDistrictRepository {
   constructor(
@@ -81,7 +82,7 @@ export class ZoningDistrictRepository {
         .from(tile)
         .where(isNotNull(tile.geom));
     } catch {
-      throw new DataRetrievalException();
+      throw new TilesetRetrievalException();
     }
   }
 
@@ -132,7 +133,7 @@ export class ZoningDistrictRepository {
         .from(tile)
         .where(isNotNull(tile.geom));
     } catch {
-      throw new DataRetrievalException();
+      throw new TilesetRetrievalException();
     }
   }
 

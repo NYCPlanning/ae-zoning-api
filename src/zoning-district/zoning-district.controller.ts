@@ -1,7 +1,6 @@
 import {
   Controller,
   Get,
-  Header,
   Injectable,
   Param,
   Res,
@@ -34,22 +33,22 @@ export class ZoningDistrictController {
   constructor(private readonly zoningDistrictService: ZoningDistrictService) {}
 
   @Get("/fills/:z/:x/:y")
-  @Header("Content-Type", "application/x-protobuf")
   async findFillTile(
     @Param() params: { z: number; x: number; y: number },
     @Res() res: Response,
   ) {
     const tile = await this.zoningDistrictService.findFillTile(params);
+    res.set("Content-Type", "application/x-protobuf");
     res.send(tile);
   }
 
   @Get("/labels/:z/:x/:y")
-  @Header("Content-Type", "application/x-protobuf")
   async findLabelTile(
     @Param() params: { z: number; x: number; y: number },
     @Res() res: Response,
   ) {
     const tile = await this.zoningDistrictService.findLabelTile(params);
+    res.set("Content-Type", "application/x-protobuf");
     res.send(tile);
   }
 
