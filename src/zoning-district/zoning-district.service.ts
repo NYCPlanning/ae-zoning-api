@@ -9,6 +9,13 @@ export class ZoningDistrictService {
     private readonly zoningDistrictRepository: ZoningDistrictRepository,
   ) {}
 
+  async findFillTile(params: { z: number; x: number; y: number }) {
+    const fills = await this.zoningDistrictRepository.findFillTile(params);
+    if (fills.length < 1) throw new ResourceNotFoundException();
+
+    return fills[0].mvt;
+  }
+
   async findZoningDistrictLabelTile(params: {
     z: number;
     x: number;

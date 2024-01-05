@@ -34,6 +34,57 @@ export class ZoningDistrictRepository {
     }
   }
 
+  async findFillTile(params: { z: number; x: number; y: number }) {
+    try {
+      const { z, x, y } = params;
+      const tile = this.db
+        .select({
+          id: zoningDistrict.id,
+          label: zoningDistrict.label,
+          class: sql`${zoningDistrictClass.id}`.as("class"),
+          category: zoningDistrictClass.category,
+          color: sql`'['
+          ||('x'||SUBSTRING(${zoningDistrictClass.color}, 2, 2))::bit(8)::int||','
+          ||('x'||SUBSTRING(${zoningDistrictClass.color}, 4, 2))::bit(8)::int||','
+          ||('x'||SUBSTRING(${zoningDistrictClass.color}, 6, 2))::bit(8)::int||','
+          ||('x'||SUBSTRING(${zoningDistrictClass.color}, 8, 2))::bit(8)::int||
+          ']'`.as("color"),
+          geom: sql`ST_AsMVTGeom(
+            ST_Transform(ST_CurveToLine(${zoningDistrict.wgs84}::geometry), 3857),
+            ST_TileEnvelope(${z}, ${x}, ${y}),
+            4096, 64, true)`.as("geom"),
+        })
+        .from(zoningDistrict)
+        .leftJoin(
+          zoningDistrictZoningDistrictClass,
+          eq(
+            zoningDistrict.id,
+            zoningDistrictZoningDistrictClass.zoningDistrictId,
+          ),
+        )
+        .leftJoin(
+          zoningDistrictClass,
+          eq(
+            zoningDistrictClass.id,
+            zoningDistrictZoningDistrictClass.zoningDistrictClassId,
+          ),
+        )
+        .where(
+          sql`${zoningDistrict.wgs84} && ST_Transform(ST_TileEnvelope(${z}, ${x}, ${y}), 4326)`,
+        )
+        .as("tile");
+
+      return await this.db
+        .select({
+          mvt: sql`ST_AsMVT(tile, 'zoning_district_fill', 4096, 'geom')`,
+        })
+        .from(tile)
+        .where(isNotNull(tile.geom));
+    } catch {
+      throw new DataRetrievalException();
+    }
+  }
+
   async findZoningDistrictLabelTile(params: {
     z: number;
     x: number;
@@ -45,9 +96,10 @@ export class ZoningDistrictRepository {
         .selectDistinctOn([zoningDistrict.id], {
           id: zoningDistrict.id,
           label: zoningDistrict.label,
-          geom: sql`ST_AsMVTGeom(ST_Transform((ST_MaximumInscribedCircle(${zoningDistrict.wgs84}::geometry)).center, 3857),ST_TileEnvelope(${z}, ${x},${y}),4096,64,true)`.as(
-            "geom",
-          ),
+          geom: sql`ST_AsMVTGeom(
+            ST_Transform((ST_MaximumInscribedCircle(${zoningDistrict.wgs84}::geometry)).center, 3857),
+            ST_TileEnvelope(${z}, ${x},${y}),
+            4096,64,true)`.as("geom"),
           category:
             sql`'["'||STRING_AGG(${zoningDistrictClass.category}::TEXT, '","')||'"]'`.as(
               "category",

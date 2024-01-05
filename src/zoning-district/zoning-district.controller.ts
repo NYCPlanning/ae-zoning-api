@@ -41,6 +41,16 @@ export class ZoningDistrictController {
     private storageConfig: ConfigType<typeof StorageConfig>,
   ) {}
 
+  @Get("/fills/:z/:x/:y")
+  @Header("Content-Type", "application/x-protobuf")
+  async findFillTile(
+    @Param() params: { z: number; x: number; y: number },
+    @Res() res: Response,
+  ) {
+    const tile = await this.zoningDistrictService.findFillTile(params);
+    res.send(tile);
+  }
+
   @Get("/labels/:z/:x/:y")
   @Header("Content-Type", "application/x-protobuf")
   async findZoningDistrictLabelTile(
