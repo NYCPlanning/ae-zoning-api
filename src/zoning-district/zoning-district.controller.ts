@@ -12,8 +12,12 @@ import { ZodValidationPipe } from "src/pipes/zod-validation-pipe";
 import {
   GetZoningDistrictByIdPathParams,
   GetZoningDistrictClassesByUuidPathParams,
+  GetZoningDistrictFillsPathParams,
+  GetZoningDistrictLabelsPathParams,
   getZoningDistrictByIdPathParamsSchema,
   getZoningDistrictClassesByUuidPathParamsSchema,
+  getZoningDistrictFillsPathParamsSchema,
+  getZoningDistrictLabelsPathParamsSchema,
 } from "src/gen";
 import {
   BadRequestExceptionFilter,
@@ -33,21 +37,23 @@ export class ZoningDistrictController {
   constructor(private readonly zoningDistrictService: ZoningDistrictService) {}
 
   @Get("/fills/:z/:x/:y")
-  async findFillTile(
-    @Param() params: { z: number; x: number; y: number },
+  @UsePipes(new ZodValidationPipe(getZoningDistrictFillsPathParamsSchema))
+  async findFills(
+    @Param() params: GetZoningDistrictFillsPathParams,
     @Res() res: Response,
   ) {
-    const tile = await this.zoningDistrictService.findFillTile(params);
+    const tile = await this.zoningDistrictService.findFills(params);
     res.set("Content-Type", "application/x-protobuf");
     res.send(tile);
   }
 
   @Get("/labels/:z/:x/:y")
-  async findLabelTile(
-    @Param() params: { z: number; x: number; y: number },
+  @UsePipes(new ZodValidationPipe(getZoningDistrictLabelsPathParamsSchema))
+  async findLabels(
+    @Param() params: GetZoningDistrictLabelsPathParams,
     @Res() res: Response,
   ) {
-    const tile = await this.zoningDistrictService.findLabelTile(params);
+    const tile = await this.zoningDistrictService.findLabels(params);
     res.set("Content-Type", "application/x-protobuf");
     res.send(tile);
   }

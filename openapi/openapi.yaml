@@ -162,6 +162,42 @@ paths:
           $ref: "#/components/responses/NotFound"
         '500':
           $ref: "#/components/responses/InternalServerError"
+  /zoning-districts/labels/{z}/{x}/{y}:
+    get:
+      summary: Mapbox Vector Tiles for zoning district labels
+      operationId: getZoningDistrictLabels
+      tags:
+        - Zoning Districts
+        - MVT
+      parameters:
+        - $ref: '#/components/parameters/viewportZoomParam'
+        - $ref: '#/components/parameters/viewportXParam'
+        - $ref: '#/components/parameters/viewportYParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/MVT'
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
+  /zoning-districts/fills/{z}/{x}/{y}:
+    get:
+      summary: Mapbox Vector Tiles for zoning district fills
+      operationId: getZoningDistrictFills
+      tags:
+        - Zoning Districts
+        - MVT
+      parameters:
+        - $ref: '#/components/parameters/viewportZoomParam'
+        - $ref: '#/components/parameters/viewportXParam'
+        - $ref: '#/components/parameters/viewportYParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/MVT'
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
   /zoning-districts/{id}:
     get:
       summary: Non-spatial details for a specific zoning district
@@ -297,6 +333,30 @@ paths:
           $ref: "#/components/responses/InternalServerError"
 components:
   parameters: 
+    viewportZoomParam:
+      name: z
+      in: path
+      description: viewport zoom component
+      required: true
+      schema:
+        type: string
+        pattern: '^([0-9]+)$'
+    viewportXParam:
+      name: x
+      in: path
+      description: viewport x component
+      required: true
+      schema:
+        type: string
+        pattern: '^([0-9]+)$'
+    viewportYParam:
+      name: y
+      in: path
+      description: viewport y component
+      required: true
+      schema:
+        type: string
+        pattern: '^([0-9]+)$'
     bblParam:
       name: bbl
       required: true
@@ -511,6 +571,13 @@ components:
         - statusCode
         - message
   responses:
+    MVT:
+      description: A protobuf file formatted as Mapbox Vector Tile
+      content:
+        application/x-protobuf:
+          schema:
+            type: string
+            format: binary
     BadRequest:
       description: Invalid client request
       content:

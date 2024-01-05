@@ -1,6 +1,10 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { ResourceNotFoundException } from "src/exception";
 import { ZoningDistrictRepository } from "./zoning-district.repository";
+import {
+  GetZoningDistrictFillsPathParams,
+  GetZoningDistrictLabelsPathParams,
+} from "src/gen";
 
 @Injectable()
 export class ZoningDistrictService {
@@ -9,16 +13,13 @@ export class ZoningDistrictService {
     private readonly zoningDistrictRepository: ZoningDistrictRepository,
   ) {}
 
-  async findFillTile(params: { z: number; x: number; y: number }) {
-    const fills = await this.zoningDistrictRepository.findFillTile(params);
-    if (fills.length < 1) throw new ResourceNotFoundException();
-
+  async findFills(params: GetZoningDistrictFillsPathParams) {
+    const fills = await this.zoningDistrictRepository.findFills(params);
     return fills[0].mvt;
   }
 
-  async findLabelTile(params: { z: number; x: number; y: number }) {
-    const labels = await this.zoningDistrictRepository.findLabelTile(params);
-    if (labels.length < 1) throw new ResourceNotFoundException();
+  async findLabels(params: GetZoningDistrictLabelsPathParams) {
+    const labels = await this.zoningDistrictRepository.findLabels(params);
     return labels[0].mvt;
   }
 

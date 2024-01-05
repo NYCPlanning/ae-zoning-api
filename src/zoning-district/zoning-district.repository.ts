@@ -8,6 +8,10 @@ import {
   zoningDistrictZoningDistrictClass,
 } from "src/schema";
 import { TilesetRetrievalException } from "src/exception/tileset-retrieval";
+import {
+  GetZoningDistrictFillsPathParams,
+  GetZoningDistrictLabelsPathParams,
+} from "src/gen";
 
 export class ZoningDistrictRepository {
   constructor(
@@ -35,7 +39,7 @@ export class ZoningDistrictRepository {
     }
   }
 
-  async findFillTile(params: { z: number; x: number; y: number }) {
+  async findFills(params: GetZoningDistrictFillsPathParams) {
     try {
       const { z, x, y } = params;
       const tile = this.db
@@ -86,7 +90,7 @@ export class ZoningDistrictRepository {
     }
   }
 
-  async findLabelTile(params: { z: number; x: number; y: number }) {
+  async findLabels(params: GetZoningDistrictLabelsPathParams) {
     const { z, x, y } = params;
     try {
       const tile = this.db
