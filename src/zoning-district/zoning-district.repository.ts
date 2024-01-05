@@ -85,11 +85,7 @@ export class ZoningDistrictRepository {
     }
   }
 
-  async findZoningDistrictLabelTile(params: {
-    z: number;
-    x: number;
-    y: number;
-  }) {
+  async findLabelTile(params: { z: number; x: number; y: number }) {
     const { z, x, y } = params;
     try {
       const tile = this.db
