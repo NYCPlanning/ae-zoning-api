@@ -1,28 +1,30 @@
 import {
   Controller,
   Get,
-  Inject,
   Injectable,
   Param,
-  Redirect,
+  Res,
   UseFilters,
   UsePipes,
 } from "@nestjs/common";
-import { ConfigType } from "@nestjs/config";
 import { ZoningDistrictService } from "./zoning-district.service";
-import { StorageConfig } from "src/config";
 import { ZodValidationPipe } from "src/pipes/zod-validation-pipe";
 import {
   GetZoningDistrictByIdPathParams,
   GetZoningDistrictClassesByUuidPathParams,
+  GetZoningDistrictFillsPathParams,
+  GetZoningDistrictLabelsPathParams,
   getZoningDistrictByIdPathParamsSchema,
   getZoningDistrictClassesByUuidPathParamsSchema,
+  getZoningDistrictFillsPathParamsSchema,
+  getZoningDistrictLabelsPathParamsSchema,
 } from "src/gen";
 import {
   BadRequestExceptionFilter,
   InternalServerErrorExceptionFilter,
   NotFoundExceptionFilter,
 } from "src/filter";
+import { Response } from "express";
 
 @Injectable()
 @UseFilters(
@@ -32,11 +34,29 @@ import {
 )
 @Controller("zoning-districts")
 export class ZoningDistrictController {
-  constructor(
-    private readonly zoningDistrictService: ZoningDistrictService,
-    @Inject(StorageConfig.KEY)
-    private storageConfig: ConfigType<typeof StorageConfig>,
-  ) {}
+  constructor(private readonly zoningDistrictService: ZoningDistrictService) {}
+
+  @Get("/fills/:z/:x/:y")
+  @UsePipes(new ZodValidationPipe(getZoningDistrictFillsPathParamsSchema))
+  async findFills(
+    @Param() params: GetZoningDistrictFillsPathParams,
+    @Res() res: Response,
+  ) {
+    const tile = await this.zoningDistrictService.findFills(params);
+    res.set("Content-Type", "application/x-protobuf");
+    res.send(tile);
+  }
+
+  @Get("/labels/:z/:x/:y")
+  @UsePipes(new ZodValidationPipe(getZoningDistrictLabelsPathParamsSchema))
+  async findLabels(
+    @Param() params: GetZoningDistrictLabelsPathParams,
+    @Res() res: Response,
+  ) {
+    const tile = await this.zoningDistrictService.findLabels(params);
+    res.set("Content-Type", "application/x-protobuf");
+    res.send(tile);
+  }
 
   @Get("/:id")
   @UsePipes(new ZodValidationPipe(getZoningDistrictByIdPathParamsSchema))
@@ -56,15 +76,5 @@ export class ZoningDistrictController {
     return this.zoningDistrictService.findClassesByZoningDistrictUuid(
       params.uuid,
     );
-  }
-
-  @Get("/:z/:x/:y.pbf")
-  @Redirect()
-  findZoningDistrictTilesets(
-    @Param() params: { z: number; x: number; y: number },
-  ) {
-    return {
-      url: `${this.storageConfig.storageUrl}/tilesets/zoning_district/${params.z}/${params.x}/${params.y}.pbf`,
-    };
   }
 }
