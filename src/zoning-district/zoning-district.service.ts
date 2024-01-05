@@ -16,7 +16,8 @@ export class ZoningDistrictService {
   }) {
     const labels =
       await this.zoningDistrictRepository.findZoningDistrictLabelTile(params);
-    return labels;
+    if (labels.length < 1) throw new ResourceNotFoundException();
+    return labels[0].mvt;
   }
 
   async findZoningDistrictByUuid(uuid: string) {

@@ -48,21 +48,41 @@ export class ZoningDistrictRepository {
           geom: sql`ST_AsMVTGeom(ST_Transform((ST_MaximumInscribedCircle(${zoningDistrict.wgs84}::geometry)).center, 3857),ST_TileEnvelope(${z}, ${x},${y}),4096,64,true)`.as(
             "geom",
           ),
+          category:
+            sql`'["'||STRING_AGG(${zoningDistrictClass.category}::TEXT, '","')||'"]'`.as(
+              "category",
+            ),
+          class:
+            sql`'["'||STRING_AGG(${zoningDistrictZoningDistrictClass.zoningDistrictClassId}, '","')||'"]'`.as(
+              "class",
+            ),
         })
         .from(zoningDistrict)
+        .leftJoin(
+          zoningDistrictZoningDistrictClass,
+          eq(
+            zoningDistrict.id,
+            zoningDistrictZoningDistrictClass.zoningDistrictId,
+          ),
+        )
+        .leftJoin(
+          zoningDistrictClass,
+          eq(
+            zoningDistrictZoningDistrictClass.zoningDistrictClassId,
+            zoningDistrictClass.id,
+          ),
+        )
         .where(
           sql`${zoningDistrict.wgs84} && ST_Transform(ST_TileEnvelope(${z}, ${x},${y}),4326)`,
         )
+        .groupBy(zoningDistrict.id, zoningDistrict.label)
         .as("tile");
-      const labels = await this.db
+      return await this.db
         .select({
           mvt: sql`ST_AsMVT(tile, 'zoning_district_label', 4096, 'geom')`,
         })
         .from(tile)
         .where(isNotNull(tile.geom));
-      const { mvt } = labels[0];
-      console.info(mvt);
-      return mvt;
     } catch {
       throw new DataRetrievalException();
     }
