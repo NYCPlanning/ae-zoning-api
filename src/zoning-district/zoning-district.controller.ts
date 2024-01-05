@@ -1,10 +1,11 @@
 import {
   Controller,
   Get,
+  Header,
   Inject,
   Injectable,
   Param,
-  Redirect,
+  Res,
   UseFilters,
   UsePipes,
 } from "@nestjs/common";
@@ -23,6 +24,7 @@ import {
   InternalServerErrorExceptionFilter,
   NotFoundExceptionFilter,
 } from "src/filter";
+import { Response } from "express";
 
 @Injectable()
 @UseFilters(
@@ -59,12 +61,14 @@ export class ZoningDistrictController {
   }
 
   @Get("/:z/:x/:y.pbf")
-  @Redirect()
-  findZoningDistrictTilesets(
+  @Header("Content-Type", "application/x-protobuf")
+  async findZoningDistrictTilesets(
     @Param() params: { z: number; x: number; y: number },
+    @Res() res: Response,
   ) {
-    return {
-      url: `${this.storageConfig.storageUrl}/tilesets/zoning_district/${params.z}/${params.x}/${params.y}.pbf`,
-    };
+    const { z, x, y } = params;
+    const tile = await this.zoningDistrictService.findTilesets(z, x, y);
+    // console.debug("tile: ", tile);
+    res.send(tile);
   }
 }
