@@ -1,6 +1,6 @@
 import { char, pgTable, text } from "drizzle-orm/pg-core";
 import { borough, landUse } from "../schema";
-import { multiPolygonGeog, multiPolygonGeom } from "../drizzle-pgis";
+import { multiPolygonGeog, multiPolygonGeom, pointGeom } from "../drizzle-pgis";
 import { relations } from "drizzle-orm";
 import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -18,6 +18,8 @@ export const taxLot = pgTable("tax_lot", {
   landUseId: char("land_use_id", { length: 2 }).references(() => landUse.id),
   wgs84: multiPolygonGeog("wgs84", 4326).notNull(),
   liFt: multiPolygonGeom("li_ft", 2263).notNull(),
+  mercatorFill: multiPolygonGeom("mercator_fill", 3857),
+  mercatorLabel: pointGeom("mercator_label", 3857),
 });
 
 export const taxLotRelations = relations(taxLot, ({ one }) => ({

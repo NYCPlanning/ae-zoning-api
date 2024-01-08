@@ -70,3 +70,19 @@ BEGIN;
 		CSV HEADER;
 
 COMMIT;
+
+BEGIN;
+UPDATE tax_lot
+	SET
+		mercator_fill = ST_Transform(wgs84::geometry, 3857),
+		mercator_label = ST_Transform((ST_MaximumInscribedCircle(wgs84::geometry)).center, 3857);
+		
+COMMIT;
+
+UPDATE zoning_district
+	SET
+		mercator_fill = ST_Transform(wgs84::geometry, 3857),
+		mercator_label = ST_Transform((ST_MaximumInscribedCircle(wgs84::geometry)).center, 3857);
+		
+COMMIT;
+	

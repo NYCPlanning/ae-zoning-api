@@ -29,6 +29,13 @@
       "when": 1700579506393,
       "tag": "0003_premium_silver_samurai",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1704748060225,
+      "tag": "0004_hot_pride",
+      "breakpoints": true
     }
   ]
 }

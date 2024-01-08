@@ -55,7 +55,7 @@ export class ZoningDistrictRepository {
           ||('x'||SUBSTRING(${zoningDistrictClass.color}, 8, 2))::bit(8)::int||
           ']'`.as("color"),
           geom: sql`ST_AsMVTGeom(
-            ST_Transform(ST_CurveToLine(${zoningDistrict.wgs84}::geometry), 3857),
+            ${zoningDistrict.mercatorFill},
             ST_TileEnvelope(${z}, ${x}, ${y}),
             4096, 64, true)`.as("geom"),
         })
@@ -75,7 +75,7 @@ export class ZoningDistrictRepository {
           ),
         )
         .where(
-          sql`${zoningDistrict.wgs84} && ST_Transform(ST_TileEnvelope(${z}, ${x}, ${y}), 4326)`,
+          sql`${zoningDistrict.mercatorFill} && ST_TileEnvelope(${z}, ${x}, ${y})`,
         )
         .as("tile");
 
@@ -98,7 +98,7 @@ export class ZoningDistrictRepository {
           id: zoningDistrict.id,
           label: zoningDistrict.label,
           geom: sql`ST_AsMVTGeom(
-            ST_Transform((ST_MaximumInscribedCircle(${zoningDistrict.wgs84}::geometry)).center, 3857),
+            ${zoningDistrict.mercatorLabel},
             ST_TileEnvelope(${z}, ${x},${y}),
             4096,64,true)`.as("geom"),
           category:
@@ -126,7 +126,7 @@ export class ZoningDistrictRepository {
           ),
         )
         .where(
-          sql`${zoningDistrict.wgs84} && ST_Transform(ST_TileEnvelope(${z}, ${x},${y}),4326)`,
+          sql`${zoningDistrict.mercatorLabel} && ST_TileEnvelope(${z}, ${x},${y})`,
         )
         .groupBy(zoningDistrict.id, zoningDistrict.label)
         .as("tile");
