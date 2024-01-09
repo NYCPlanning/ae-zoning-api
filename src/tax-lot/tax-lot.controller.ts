@@ -5,6 +5,7 @@ import {
   Injectable,
   Param,
   Redirect,
+  Res,
   UseFilters,
   UsePipes,
 } from "@nestjs/common";
@@ -27,6 +28,7 @@ import {
   InternalServerErrorExceptionFilter,
   NotFoundExceptionFilter,
 } from "src/filter";
+import { Response } from "express";
 
 @Injectable()
 @UseFilters(
@@ -41,6 +43,16 @@ export class TaxLotController {
     @Inject(StorageConfig.KEY)
     private storageConfig: ConfigType<typeof StorageConfig>,
   ) {}
+
+  @Get("/fills/:z/:x/:y.pbf")
+  async findFills(
+    @Param() params: { z: string; x: string; y: string },
+    @Res() res: Response,
+  ) {
+    const tile = await this.taxLotService.findFills(params);
+    res.set("Content-Type", "application/x-protobuf");
+    res.send(tile);
+  }
 
   @Get("/:bbl")
   @UsePipes(new ZodValidationPipe(getTaxLotByBblPathParamsSchema))

@@ -1,8 +1,9 @@
 import { Inject } from "@nestjs/common";
 import { DB, DbType } from "src/global/providers/db.provider";
-import { eq, sql } from "drizzle-orm";
+import { eq, isNotNull, sql } from "drizzle-orm";
 import { DataRetrievalException } from "src/exception";
 import {
+  landUse,
   taxLot,
   zoningDistrict,
   zoningDistrictClass,
@@ -23,6 +24,35 @@ export class TaxLotRepository {
       where: (taxLot, { eq, sql }) => eq(taxLot.bbl, sql.placeholder("bbl")),
     })
     .prepare("checkTaxLotByBbl");
+
+  async findFills(params: { z: string; x: string; y: string }) {
+    const { z, x, y } = params;
+    const tile = this.db
+      .select({
+        bbl: taxLot.bbl,
+        color: sql`'['
+        ||('x'||SUBSTRING(${landUse.color}, 2, 2))::bit(8)::int||','
+        ||('x'||SUBSTRING(${landUse.color}, 4, 2))::bit(8)::int||','
+        ||('x'||SUBSTRING(${landUse.color}, 6, 2))::bit(8)::int||','
+        ||('x'||SUBSTRING(${landUse.color}, 8, 2))::bit(8)::int||
+        ']'`.as("color"),
+        geom: sql`ST_AsMVTGeom(
+				  ${taxLot.mercatorFill},
+				  ST_TileEnvelope(${z}, ${x}, ${y}),
+				  4096, 64, true)`.as("geom"),
+      })
+      .from(taxLot)
+      .leftJoin(landUse, eq(landUse.id, taxLot.landUseId))
+      .where(sql`${taxLot.mercatorFill} && ST_TileEnvelope(${z},${x},${y})`)
+      .as("tile");
+
+    return this.db
+      .select({
+        mvt: sql`ST_AsMVT(tile, 'tax_lot_fill', 4096, 'geom')`,
+      })
+      .from(tile)
+      .where(isNotNull(tile.geom));
+  }
 
   async checkTaxLotByBbl(bbl: string) {
     try {
