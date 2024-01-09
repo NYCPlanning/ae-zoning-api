@@ -54,6 +54,16 @@ export class TaxLotController {
     res.send(tile);
   }
 
+  @Get("/labels/:z/:x/:y.pbf")
+  async findLabels(
+    @Param() params: { z: string; x: string; y: string },
+    @Res() res: Response,
+  ) {
+    const tile = await this.taxLotService.findLabels(params);
+    res.set("Content-Type", "application/x-protobuf");
+    res.send(tile);
+  }
+
   @Get("/:bbl")
   @UsePipes(new ZodValidationPipe(getTaxLotByBblPathParamsSchema))
   async findDetailsByBbl(@Param() params: GetTaxLotByBblPathParams) {

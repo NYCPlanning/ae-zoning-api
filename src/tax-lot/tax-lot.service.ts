@@ -15,6 +15,11 @@ export class TaxLotService {
     return fills[0].mvt;
   }
 
+  async findLabels(params: { z: string; x: string; y: string }) {
+    const labels = await this.taxLotRepository.findLabels(params);
+    return labels[0].mvt;
+  }
+
   async findTaxLotByBbl(bbl: string) {
     const result = await this.taxLotRepository.findByBbl(bbl);
     if (result === undefined) throw new ResourceNotFoundException();
