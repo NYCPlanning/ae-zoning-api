@@ -12,8 +12,11 @@
     "dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
+    "kubb:generate": "kubb generate",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "drizzle:migrate": "ts-node ./drizzle-management/migrate.ts",
+    "drizzle:generate": "drizzle-kit generate:pg",
+    "drizzle:drop": "drizzle-kit drop",
     "redoc:build": "redocly build-docs openapi/openapi.yaml --output openapi/index.html",
     "redoc:dev": "redocly preview-docs openapi/openapi.yaml",
     "redoc:lint": "redocly lint openapi/openapi.yaml",
@@ -23,8 +26,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "prepare": "husky install",
-    "generate": "kubb generate"
+    "prepare": "husky install"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
