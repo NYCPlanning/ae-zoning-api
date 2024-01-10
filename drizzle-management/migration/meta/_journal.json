@@ -36,6 +36,13 @@
       "when": 1704748060225,
       "tag": "0004_hot_pride",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1704895875539,
+      "tag": "0005_daily_secret_warriors",
+      "breakpoints": true
     }
   ]
 }
