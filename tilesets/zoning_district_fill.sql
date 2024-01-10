@@ -1,3 +1,5 @@
+SELECT tablename, indexname, indexdef FROM pg_indexes WHERE tablename='zoning_district';
+
 DROP FUNCTION get_zoning_district;
 DROP INDEX zoning_district_wgs84_gix;
 

@@ -79,6 +79,7 @@ UPDATE tax_lot
 		
 COMMIT;
 
+BEGIN;
 UPDATE zoning_district
 	SET
 		mercator_fill = ST_Transform(wgs84::geometry, 3857),
