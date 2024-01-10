@@ -36,7 +36,7 @@ import { Response } from "express";
 export class ZoningDistrictController {
   constructor(private readonly zoningDistrictService: ZoningDistrictService) {}
 
-  @Get("/fills/:z/:x/:y")
+  @Get("/fills/:z/:x/:y.pbf")
   @UsePipes(new ZodValidationPipe(getZoningDistrictFillsPathParamsSchema))
   async findFills(
     @Param() params: GetZoningDistrictFillsPathParams,
@@ -47,7 +47,7 @@ export class ZoningDistrictController {
     res.send(tile);
   }
 
-  @Get("/labels/:z/:x/:y")
+  @Get("/labels/:z/:x/:y.pbf")
   @UsePipes(new ZodValidationPipe(getZoningDistrictLabelsPathParamsSchema))
   async findLabels(
     @Param() params: GetZoningDistrictLabelsPathParams,
