@@ -1,7 +1,6 @@
 import {
   Controller,
   Get,
-  Inject,
   Injectable,
   Param,
   Redirect,
@@ -9,9 +8,7 @@ import {
   UseFilters,
   UsePipes,
 } from "@nestjs/common";
-import { ConfigType } from "@nestjs/config";
 import { TaxLotService } from "./tax-lot.service";
-import { StorageConfig } from "src/config";
 import { ZodValidationPipe } from "src/pipes/zod-validation-pipe";
 import {
   getTaxLotByBblPathParamsSchema,
@@ -22,6 +19,10 @@ import {
   getZoningDistrictsByTaxLotBblPathParamsSchema,
   getZoningDistrictClassesByTaxLotBblPathParamsSchema,
   GetZoningDistrictClassesByTaxLotBblPathParams,
+  getTaxLotFillsPathParamsSchema,
+  GetTaxLotFillsPathParams,
+  getTaxLotLabelsPathParamsSchema,
+  GetTaxLotLabelsPathParams,
 } from "../gen";
 import {
   BadRequestExceptionFilter,
@@ -38,15 +39,12 @@ import { Response } from "express";
 )
 @Controller("tax-lots")
 export class TaxLotController {
-  constructor(
-    private readonly taxLotService: TaxLotService,
-    @Inject(StorageConfig.KEY)
-    private storageConfig: ConfigType<typeof StorageConfig>,
-  ) {}
+  constructor(private readonly taxLotService: TaxLotService) {}
 
   @Get("/fills/:z/:x/:y.pbf")
+  @UsePipes(new ZodValidationPipe(getTaxLotFillsPathParamsSchema))
   async findFills(
-    @Param() params: { z: string; x: string; y: string },
+    @Param() params: GetTaxLotFillsPathParams,
     @Res() res: Response,
   ) {
     const tile = await this.taxLotService.findFills(params);
@@ -55,8 +53,9 @@ export class TaxLotController {
   }
 
   @Get("/labels/:z/:x/:y.pbf")
+  @UsePipes(new ZodValidationPipe(getTaxLotLabelsPathParamsSchema))
   async findLabels(
-    @Param() params: { z: string; x: string; y: string },
+    @Param() params: GetTaxLotLabelsPathParams,
     @Res() res: Response,
   ) {
     const tile = await this.taxLotService.findLabels(params);

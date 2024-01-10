@@ -9,6 +9,7 @@ import {
   zoningDistrictClass,
   zoningDistrictZoningDistrictClass,
 } from "src/schema";
+import { GetTaxLotFillsPathParams, GetTaxLotLabelsPathParams } from "src/gen";
 
 export class TaxLotRepository {
   constructor(
@@ -25,7 +26,7 @@ export class TaxLotRepository {
     })
     .prepare("checkTaxLotByBbl");
 
-  async findFills(params: { z: string; x: string; y: string }) {
+  async findFills(params: GetTaxLotFillsPathParams) {
     const { z, x, y } = params;
     try {
       const tile = this.db
@@ -58,7 +59,7 @@ export class TaxLotRepository {
     }
   }
 
-  async findLabels(params: { z: string; x: string; y: string }) {
+  async findLabels(params: GetTaxLotLabelsPathParams) {
     const { z, x, y } = params;
     try {
       const tile = this.db
