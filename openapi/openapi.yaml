@@ -61,6 +61,42 @@ paths:
           $ref: "#/components/responses/BadRequest"
         '500':
           $ref: "#/components/responses/InternalServerError"
+  /tax-lots/labels/{z}/{x}/{y}.pbf:
+    get:
+      summary: Mapbox Vector Tiles for tax lot labels
+      operationId: getTaxLotLabels
+      tags:
+        - Tax Lots
+        - MVT
+      parameters:
+        - $ref: '#/components/parameters/viewportZoomParam'
+        - $ref: '#/components/parameters/viewportXParam'
+        - $ref: '#/components/parameters/viewportYParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/MVT'
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
+  /tax-lots/fills/{z}/{x}/{y}.pbf:
+    get:
+      summary: Mapbox Vector Tiles for tax lot fills
+      operationId: getTaxLotFills
+      tags:
+        - Tax Lots
+        - MVT
+      parameters:
+        - $ref: '#/components/parameters/viewportZoomParam'
+        - $ref: '#/components/parameters/viewportXParam'
+        - $ref: '#/components/parameters/viewportYParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/MVT'
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
   /tax-lots/{bbl}:
     get: 
       summary: Non-spatial details for a specific tax lot
