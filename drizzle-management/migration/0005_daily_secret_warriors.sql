@@ -1,0 +1,1 @@
+CREATE INDEX IF NOT EXISTS "tax_lot_mercator_fill_gix" ON "tax_lot" USING GIST ("mercator_fill");

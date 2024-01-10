@@ -2,6 +2,7 @@ import { Inject, Injectable } from "@nestjs/common";
 import { TaxLotRepository } from "./tax-lot.repository";
 import { ResourceNotFoundException } from "src/exception";
 import { MultiPolygon } from "geojson";
+import { GetTaxLotFillsPathParams, GetTaxLotLabelsPathParams } from "src/gen";
 
 @Injectable()
 export class TaxLotService {
@@ -9,6 +10,16 @@ export class TaxLotService {
     @Inject(TaxLotRepository)
     private readonly taxLotRepository: TaxLotRepository,
   ) {}
+
+  async findFills(params: GetTaxLotFillsPathParams) {
+    const fills = await this.taxLotRepository.findFills(params);
+    return fills[0].mvt;
+  }
+
+  async findLabels(params: GetTaxLotLabelsPathParams) {
+    const labels = await this.taxLotRepository.findLabels(params);
+    return labels[0].mvt;
+  }
 
   async findTaxLotByBbl(bbl: string) {
     const result = await this.taxLotRepository.findByBbl(bbl);
