@@ -6,7 +6,7 @@ import { TaxLot } from "../types/TaxLot";
 
 export function createTaxLot(): NonNullable<TaxLot> {
   return {
-    bbl: faker.string.alpha(),
+    bbl: faker.helpers.fromRegExp("/^([0-9]{10})$/"),
     borough: createBorough(),
     block: faker.string.alpha(),
     lot: faker.string.alpha(),
