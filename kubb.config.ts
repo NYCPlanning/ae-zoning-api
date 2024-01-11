@@ -2,6 +2,7 @@ import { defineConfig } from "@kubb/core";
 import createSwagger from "@kubb/swagger";
 import createSwaggerTS from "@kubb/swagger-ts";
 import createSwaggerZod from "@kubb/swagger-zod";
+import createSwaggerFaker from "@kubb/swagger-faker";
 
 export default defineConfig({
   input: {
@@ -19,5 +20,8 @@ export default defineConfig({
       output: "./zod",
     }),
     createSwaggerTS({}),
+    createSwaggerFaker({
+      output: "./mocks",
+    }),
   ],
 });
