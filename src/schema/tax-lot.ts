@@ -1,12 +1,12 @@
 import { char, pgTable, text } from "drizzle-orm/pg-core";
-import { borough, landUse, pointSchema } from "../schema";
+import { borough, landUse } from "../schema";
 import { multiPolygonGeog, multiPolygonGeom } from "../drizzle-pgis";
 import { relations } from "drizzle-orm";
 import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
-import { LandUse, landUseSchema } from "./land-use";
+import { LandUse } from "./land-use";
 import { Borough, boroughSchema } from "./borough";
-import { multiPolygonSchema } from "./spatial";
+import { landUseSchema } from "src/gen";
 
 export const taxLot = pgTable("tax_lot", {
   bbl: char("bbl", { length: 10 }).primaryKey(),
@@ -60,23 +60,14 @@ export const findByBblSchema = z.object({
 export type FindByBbl = z.infer<typeof findByBblSchema>;
 
 export const findByBblSpatialSchema = findByBblSchema.extend({
-  // geometry: z.string().transform((str) => JSON.parse(str)).pipe(multiPolygonSchema)
-  // geometry: z.string()
-  // geometry: multiPolygonSchema,
-  // geometry: pointSchema
-  // geometry: z.array(z.number()).length(2),
   geometry: z
     .string()
-    .regex(/^\[\[(\[\[-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?,-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?\](,\[-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?,-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?\]){3,}\])(,\[\[-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?,-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?\](,\[-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?,-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?\]){3,}\]){0,}\]\]$/),
+    .regex(
+      /^{"coordinates":\[\[(\[\[-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?,-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?\](,\[-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?,-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?\]){3,}\])(,\[\[-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?,-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?\](,\[-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?,-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?\]){3,}\]){0,}\]\],"type":"MultiPolygon"}$/,
+    ),
 });
 
-// Polygon regex
-// ^\[\[(\[[1-9][0-9]\.[0-9]{5}\,[1-9][0-9]\.[0-9]{5}\](,\[[1-9][0-9]\.[0-9]{5}\,[1-9][0-9]\.[0-9]{5}\]){3,})\]\]$
+export type findByBblSpatial = z.infer<typeof findByBblSpatialSchema>;
 
 // Multipolygon regex
-// ^\[\[(\[\[-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?,-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?\](,\[-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?,-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?\]){3,}\])(,\[\[-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?,-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?\](,\[-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?,-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?\]){3,}\]){0,}\]\]$
-// Test for multipolygon regex
-/**
- * [[[[73.95472,40.68788],[73.95472,40.65423],[73.91728,40.65423],[73.91728,40.68788],[73.95472,40.68788]],[[73.95472,40.68788],[73.95472,40.65423],[73.91728,40.65423],[73.91728,40.68788],[73.95472,40.68788]]]]
- */
-export type findByBblSpatial = z.infer<typeof findByBblSpatialSchema>;
+// ^'{"coordinates":\[\[(\[\[-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?,-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?\](,\[-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?,-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?\]){3,}\])(,\[\[-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?,-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?\](,\[-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?,-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?\]){3,}\]){0,}\]\],"type":"MultiPolygon"}'$
