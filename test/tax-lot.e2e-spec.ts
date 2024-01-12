@@ -5,7 +5,13 @@ import { Test } from "@nestjs/testing";
 import { TaxLotModule } from "src/tax-lot/tax-lot.module";
 import { TaxLotRepository } from "src/tax-lot/tax-lot.repository";
 import { StorageConfig } from "src/config";
-import { createMultiPolygon, createTaxLot } from "src/gen/mocks";
+import {
+  createMultiPolygon,
+  createTaxLot,
+  createTaxLotGeoJson,
+} from "src/gen/mocks";
+import { generateMock } from "@anatine/zod-mock";
+import { findByBblSchema, findByBblSpatialSchema } from "src/schema/tax-lot";
 
 describe("TaxLots", () => {
   let app: INestApplication;
@@ -90,10 +96,17 @@ describe("TaxLots", () => {
   // ];
 
   const taxLotRepository = {
-    findByBbl: (bbl: string) => mockTaxLotsArray.find((tl) => tl.bbl === bbl),
+    findByBbl: (bbl: string) => {
+      return mockTaxLotsArray.find((tl) => tl.bbl === bbl);
+    },
     // findByBblSpatial: (bbl: string) =>
     // mockTaxLotsSpatialArray.find((tl) => tl.bbl === bbl),
-    findByBblSpatial: () => taxLotGeojsonMock,
+    findByBblSpatial: () => {
+      console.debug("hitting spatial bbl mock");
+      // const taxLotSpatialMock = generateMock(selectTaxLotSchema);
+      // console.debug(taxLotSpatialMock);
+      return taxLotGeojsonMock;
+    },
   };
   const storageConfig = {};
 
@@ -113,6 +126,9 @@ describe("TaxLots", () => {
   });
 
   it("/GET tax-lots", () => {
+    // const taxLot = generateMock(selectTaxLotSchema)
+    const taxLot = generateMock(findByBblSchema);
+    console.log(taxLot);
     return request(app.getHttpServer())
       .get("/tax-lots/1000010010")
       .expect(200)
@@ -143,13 +159,26 @@ describe("TaxLots", () => {
   });
 
   it.only("/GET tax-lots by geojson", () => {
-    const testBbl = taxLotGeojsonMock.bbl;
-    console.log(taxLotGeojsonMock);
+    // const testBbl = taxLotGeojsonMock.bbl;
+    // console.debug('testBbl', testBbl);
+    // console.debug(taxLotGeojsonMock);
+    const { bbl: testBbl } = mockTaxLotsArray[0];
+    // const taxLotGeojsonMock = createTaxLotGeoJson();
+    const spatialMock = generateMock(findByBblSpatialSchema);
+
+    const spatial = JSON.parse(spatialMock.geometry);
+
+    console.debug("spatial", spatial);
+    // const taxLot = createTaxLot();
+    console.debug("tax lot mock", spatialMock);
+    // console.debug('tax lot geojson mock', taxLotGeojsonMock)
+    // const { id: testBbl} = taxLotGeojsonMock;
+
     return (
       request(app.getHttpServer())
         .get(`/tax-lots/${testBbl}/geojson`)
         // .expect(200)
-        .expect(taxLotGeojsonMock)
+        .expect(mockTaxLotsArray)
     );
     // .expect({
     //   type: "Feature",

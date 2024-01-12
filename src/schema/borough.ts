@@ -8,6 +8,6 @@ export const borough = pgTable("borough", {
   abbr: text("abbr").notNull(),
 });
 
-export const selectBoroughSchema = createSelectSchema(borough);
+export const boroughSchema = createSelectSchema(borough);
 
-export type SelectBorough = z.infer<typeof selectBoroughSchema>;
+export type Borough = z.infer<typeof boroughSchema>;

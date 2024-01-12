@@ -8,6 +8,6 @@ export const landUse = pgTable("land_use", {
   color: char("color", { length: 9 }).notNull(),
 });
 
-export const selectLandUseSchema = createSelectSchema(landUse);
+export const landUseSchema = createSelectSchema(landUse);
 
-export type SelectLandUse = z.infer<typeof selectLandUseSchema>;
+export type LandUse = z.infer<typeof landUseSchema>;
