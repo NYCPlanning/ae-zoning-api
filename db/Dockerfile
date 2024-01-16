@@ -1,4 +1,4 @@
-FROM postgis/postgis:15-3.4-alpine
+FROM postgres:14-bullseye
 
 ARG STORAGE_URL
 ADD  --chown=postgres $STORAGE_URL/tables/borough.csv /var/lib/postgresql/borough.csv

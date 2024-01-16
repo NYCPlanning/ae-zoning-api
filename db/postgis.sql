@@ -1,0 +1,3 @@
+BEGIN;
+    CREATE EXTENSION postgis;
+COMMIT;
