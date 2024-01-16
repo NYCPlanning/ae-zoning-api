@@ -2,12 +2,16 @@ import { Inject, Injectable } from "@nestjs/common";
 import { TaxLotRepository } from "./tax-lot.repository";
 import { ResourceNotFoundException } from "src/exception";
 import { MultiPolygon } from "geojson";
+import { StorageConfig } from "src/config";
+import { ConfigType } from "@nestjs/config";
 
 @Injectable()
 export class TaxLotService {
   constructor(
     @Inject(TaxLotRepository)
     private readonly taxLotRepository: TaxLotRepository,
+    @Inject(StorageConfig.KEY)
+    private storageConfig: ConfigType<typeof StorageConfig>,
   ) {}
 
   async findTaxLotByBbl(bbl: string) {
@@ -55,6 +59,12 @@ export class TaxLotService {
       await this.taxLotRepository.findZoningDistrictClassByBbl(bbl);
     return {
       zoningDistrictClasses,
+    };
+  }
+  async findTaxLotTilesets(params: { z: number; x: number; y: number }) {
+    console.info('storage url: ', this.storageConfig.storageUrl)
+    return {
+      url: `${this.storageConfig.storageUrl}/tilesets/tax_lot/${params.z}/${params.x}/${params.y}.pbf`,
     };
   }
 }

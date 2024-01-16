@@ -1,16 +1,13 @@
 import {
   Controller,
   Get,
-  Inject,
   Injectable,
   Param,
   Redirect,
   UseFilters,
   UsePipes,
 } from "@nestjs/common";
-import { ConfigType } from "@nestjs/config";
 import { TaxLotService } from "./tax-lot.service";
-import { StorageConfig } from "src/config";
 import { ZodValidationPipe } from "src/pipes/zod-validation-pipe";
 import {
   getTaxLotByBblPathParamsSchema,
@@ -38,8 +35,6 @@ import {
 export class TaxLotController {
   constructor(
     private readonly taxLotService: TaxLotService,
-    @Inject(StorageConfig.KEY)
-    private storageConfig: ConfigType<typeof StorageConfig>,
   ) {}
 
   @Get("/:bbl")
@@ -79,8 +74,6 @@ export class TaxLotController {
   @Get("/:z/:x/:y.pbf")
   @Redirect()
   findTaxLotTilesets(@Param() params: { z: number; x: number; y: number }) {
-    return {
-      url: `${this.storageConfig.storageUrl}/tilesets/tax_lot/${params.z}/${params.x}/${params.y}.pbf`,
-    };
+    return this.taxLotService.findTaxLotTilesets(params);
   }
 }

@@ -1,5 +1,4 @@
 import { char, pgTable, text } from "drizzle-orm/pg-core";
-import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
 export const borough = pgTable("borough", {
@@ -8,6 +7,10 @@ export const borough = pgTable("borough", {
   abbr: text("abbr").notNull(),
 });
 
-export const selectBoroughSchema = createSelectSchema(borough);
+export const boroughEntitySchema = z.object({
+  id: z.string().regex(/^[0-9]$/),
+  title: z.string(),
+  abbr: z.string().length(2),
+});
 
-export type SelectBorough = z.infer<typeof selectBoroughSchema>;
+export type BoroughEntity = z.infer<typeof boroughEntitySchema>;
