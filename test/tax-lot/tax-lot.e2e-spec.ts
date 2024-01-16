@@ -9,13 +9,18 @@ import { getTaxLotGeoJsonByBblQueryResponseSchema } from "src/gen";
 import { TaxLotRepositoryMock } from "./tax-lot.repository.mock";
 import { InvalidRequestParameterException } from "src/exception";
 import { HttpName } from "src/filter";
+import { ConfigModule, ConfigType } from "@nestjs/config";
+import { TaxLotController } from "src/tax-lot/tax-lot.controller";
+import { TaxLotService } from "src/tax-lot/tax-lot.service";
 
 describe("TaxLots", () => {
   let app: INestApplication;
 
   const taxLotRepository = new TaxLotRepositoryMock();
 
-  const storageConfig = {};
+  const storageConfig: ConfigType<typeof StorageConfig> = {
+    storageUrl: "test url" 
+  };
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -23,7 +28,7 @@ describe("TaxLots", () => {
     })
       .overrideProvider(TaxLotRepository)
       .useValue(taxLotRepository)
-      .overrideProvider(StorageConfig)
+      .overrideProvider('StorageConfig.KEY')
       .useValue(storageConfig)
       .compile();
     app = moduleRef.createNestApplication();
