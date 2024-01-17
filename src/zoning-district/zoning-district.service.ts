@@ -28,4 +28,16 @@ export class ZoningDistrictService {
       zoningDistrictClasses,
     };
   }
+
+  async findZoningDistrictTilesets(params: {
+    z: number;
+    x: number;
+    y: number;
+  }) {
+    const url =
+      await this.zoningDistrictRepository.findZoningDistrictTilesets(params);
+    return {
+      url,
+    };
+  }
 }
