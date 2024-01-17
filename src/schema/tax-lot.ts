@@ -2,10 +2,6 @@ import { char, pgTable, text } from "drizzle-orm/pg-core";
 import { borough, landUse } from "../schema";
 import { multiPolygonGeog, multiPolygonGeom } from "../drizzle-pgis";
 import { relations } from "drizzle-orm";
-import { createSelectSchema } from "drizzle-zod";
-import { z } from "zod";
-import { SelectLandUse } from "./land-use";
-import { SelectBorough } from "./borough";
 
 export const taxLot = pgTable("tax_lot", {
   bbl: char("bbl", { length: 10 }).primaryKey(),
@@ -30,19 +26,3 @@ export const taxLotRelations = relations(taxLot, ({ one }) => ({
     references: [landUse.id],
   }),
 }));
-
-export const selectTaxLotSchema = createSelectSchema(taxLot);
-
-export type SelectTaxLot = z.infer<typeof selectTaxLotSchema>;
-
-export type SelectTaxLotNested = Pick<
-  SelectTaxLot,
-  "address" | "bbl" | "block" | "lot"
-> & {
-  borough: SelectBorough | null;
-  landUse: SelectLandUse | null;
-};
-
-export type SelectTaxLotSpatial = SelectTaxLotNested & {
-  geometry: string;
-};

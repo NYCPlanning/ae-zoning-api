@@ -1,5 +1,4 @@
 import { char, pgTable, text } from "drizzle-orm/pg-core";
-import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
 export const landUse = pgTable("land_use", {
@@ -8,6 +7,10 @@ export const landUse = pgTable("land_use", {
   color: char("color", { length: 9 }).notNull(),
 });
 
-export const selectLandUseSchema = createSelectSchema(landUse);
+export const landUseEntitySchema = z.object({
+  id: z.string().length(2),
+  description: z.string(),
+  color: z.string().regex(/^#([A-Fa-f0-9]{8})$/),
+});
 
-export type SelectLandUse = z.infer<typeof selectLandUseSchema>;
+export type LandUseEntity = z.infer<typeof landUseEntitySchema>;

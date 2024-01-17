@@ -57,4 +57,11 @@ export class TaxLotService {
       zoningDistrictClasses,
     };
   }
+
+  async findTaxLotTilesets(params: { z: number; x: number; y: number }) {
+    const url = await this.taxLotRepository.findTaxLotTilesets(params);
+    return {
+      url,
+    };
+  }
 }
