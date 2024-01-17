@@ -1,5 +1,7 @@
 import { Inject } from "@nestjs/common";
 import { DB, DbType } from "src/global/providers/db.provider";
+import { StorageConfig } from "src/config";
+import { ConfigType } from "@nestjs/config";
 import { eq } from "drizzle-orm";
 import { DataRetrievalException } from "src/exception";
 import {
@@ -12,6 +14,8 @@ export class ZoningDistrictRepository {
   constructor(
     @Inject(DB)
     private readonly db: DbType,
+    @Inject(StorageConfig.KEY)
+    private storageConfig: ConfigType<typeof StorageConfig>,
   ) {}
 
   #checkZoningDistrictById = this.db.query.zoningDistrict
@@ -74,5 +78,13 @@ export class ZoningDistrictRepository {
     } catch {
       throw new DataRetrievalException();
     }
+  }
+
+  async findZoningDistrictTilesets(params: {
+    z: number;
+    x: number;
+    y: number;
+  }) {
+    return `${this.storageConfig.storageUrl}/tilesets/zoning_district/${params.z}/${params.x}/${params.y}.pbf`;
   }
 }

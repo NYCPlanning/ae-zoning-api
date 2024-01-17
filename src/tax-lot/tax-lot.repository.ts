@@ -1,5 +1,7 @@
 import { Inject } from "@nestjs/common";
 import { DB, DbType } from "src/global/providers/db.provider";
+import { StorageConfig } from "src/config";
+import { ConfigType } from "@nestjs/config";
 import { eq, sql } from "drizzle-orm";
 import { DataRetrievalException } from "src/exception";
 import {
@@ -13,6 +15,8 @@ export class TaxLotRepository {
   constructor(
     @Inject(DB)
     private readonly db: DbType,
+    @Inject(StorageConfig.KEY)
+    private storageConfig: ConfigType<typeof StorageConfig>,
   ) {}
 
   #checkTaxLotByBbl = this.db.query.taxLot
@@ -128,5 +132,9 @@ export class TaxLotRepository {
     } catch {
       throw new DataRetrievalException();
     }
+  }
+
+  async findTaxLotTilesets(params: { z: number; x: number; y: number }) {
+    return `${this.storageConfig.storageUrl}/tilesets/tax_lot/${params.z}/${params.x}/${params.y}.pbf`;
   }
 }

@@ -1,16 +1,13 @@
 import {
   Controller,
   Get,
-  Inject,
   Injectable,
   Param,
   Redirect,
   UseFilters,
   UsePipes,
 } from "@nestjs/common";
-import { ConfigType } from "@nestjs/config";
 import { ZoningDistrictService } from "./zoning-district.service";
-import { StorageConfig } from "src/config";
 import { ZodValidationPipe } from "src/pipes/zod-validation-pipe";
 import {
   GetZoningDistrictByIdPathParams,
@@ -32,11 +29,7 @@ import {
 )
 @Controller("zoning-districts")
 export class ZoningDistrictController {
-  constructor(
-    private readonly zoningDistrictService: ZoningDistrictService,
-    @Inject(StorageConfig.KEY)
-    private storageConfig: ConfigType<typeof StorageConfig>,
-  ) {}
+  constructor(private readonly zoningDistrictService: ZoningDistrictService) {}
 
   @Get("/:id")
   @UsePipes(new ZodValidationPipe(getZoningDistrictByIdPathParamsSchema))
@@ -60,11 +53,9 @@ export class ZoningDistrictController {
 
   @Get("/:z/:x/:y.pbf")
   @Redirect()
-  findZoningDistrictTilesets(
+  async findZoningDistrictTilesets(
     @Param() params: { z: number; x: number; y: number },
   ) {
-    return {
-      url: `${this.storageConfig.storageUrl}/tilesets/zoning_district/${params.z}/${params.x}/${params.y}.pbf`,
-    };
+    return await this.zoningDistrictService.findZoningDistrictTilesets(params);
   }
 }
