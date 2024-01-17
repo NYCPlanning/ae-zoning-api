@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { boroughEntitySchema, landUseEntitySchema } from "src/schema";
 
-export const findByBblSchema = z.object({
+export const findByBblRepoSchema = z.object({
   bbl: z.string().regex(RegExp("^([0-9]{10})$")),
   block: z.string().regex(RegExp("^([0-9]{1,5})$")),
   lot: z.string().regex(RegExp("^([0-9]{1,4})$")),
@@ -10,9 +10,9 @@ export const findByBblSchema = z.object({
   landUse: landUseEntitySchema.nullable(),
 });
 
-export type FindByBbl = z.infer<typeof findByBblSchema>;
+export type FindByBblRepo = z.infer<typeof findByBblRepoSchema>;
 
-export const findByBblSpatialSchema = findByBblSchema.extend({
+export const findByBblSpatialRepoSchema = findByBblRepoSchema.extend({
   geometry: z
     .string()
     /**
@@ -47,4 +47,4 @@ export const findByBblSpatialSchema = findByBblSchema.extend({
     ),
 });
 
-export type FindByBblSpatial = z.infer<typeof findByBblSpatialSchema>;
+export type FindByBblSpatialRepo = z.infer<typeof findByBblSpatialRepoSchema>;
