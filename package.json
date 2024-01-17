@@ -33,7 +33,6 @@
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/serve-static": "^4.0.0",
     "drizzle-orm": "^0.29.0",
-    "drizzle-zod": "^0.5.1",
     "joi": "^17.11.0",
     "pg": "^8.11.3",
     "reflect-metadata": "^0.1.13",
@@ -41,6 +40,8 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@anatine/zod-mock": "^3.13.3",
+    "@faker-js/faker": "^8.3.1",
     "@kubb/cli": "^1.14.9",
     "@kubb/core": "^1.14.9",
     "@kubb/swagger": "^1.14.9",
@@ -64,6 +65,7 @@
     "eslint": "^8.42.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.0",
+    "faker-js": "^1.0.0",
     "geojson": "npm:empty-npm-package@^1.0.0",
     "husky": "^8.0.3",
     "jest": "^29.5.0",
@@ -84,6 +86,9 @@
       "ts"
     ],
     "rootDir": "src",
+    "modulePaths": [
+      "<rootDir>/../"
+    ],
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
