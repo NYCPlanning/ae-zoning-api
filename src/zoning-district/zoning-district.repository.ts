@@ -9,6 +9,7 @@ import {
   zoningDistrictClass,
   zoningDistrictZoningDistrictClass,
 } from "src/schema";
+import { FindByUuidRepo } from "./zoning-district.repository.schema";
 
 export class ZoningDistrictRepository {
   constructor(
@@ -38,7 +39,7 @@ export class ZoningDistrictRepository {
     }
   }
 
-  async findByUuid(uuid: string) {
+  async findByUuid(uuid: string): Promise<FindByUuidRepo | undefined> {
     try {
       return await this.db.query.zoningDistrict.findFirst({
         columns: { wgs84: false, liFt: false },
