@@ -8,7 +8,7 @@ export const borough = pgTable("borough", {
 });
 
 export const boroughEntitySchema = z.object({
-  id: z.string().regex(/^[0-9]$/),
+  id: z.string().regex(/^[1-9]$/),
   title: z.string(),
   abbr: z.string().length(2),
 });
