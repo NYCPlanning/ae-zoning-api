@@ -10,6 +10,10 @@ import {
   zoningDistrictClass,
   zoningDistrictZoningDistrictClass,
 } from "src/schema";
+import {
+  FindByBblRepo,
+  FindByBblSpatialRepo,
+} from "./tax-lot.repository.schema";
 
 export class TaxLotRepository {
   constructor(
@@ -36,7 +40,7 @@ export class TaxLotRepository {
     }
   }
 
-  async findByBbl(bbl: string) {
+  async findByBbl(bbl: string): Promise<FindByBblRepo | undefined> {
     try {
       return await this.db.query.taxLot.findFirst({
         columns: {
@@ -56,7 +60,9 @@ export class TaxLotRepository {
     }
   }
 
-  async findByBblSpatial(bbl: string) {
+  async findByBblSpatial(
+    bbl: string,
+  ): Promise<FindByBblSpatialRepo | undefined> {
     try {
       return await this.db.query.taxLot.findFirst({
         columns: {

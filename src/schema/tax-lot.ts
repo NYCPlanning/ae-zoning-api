@@ -1,7 +1,13 @@
 import { char, pgTable, text } from "drizzle-orm/pg-core";
-import { borough, landUse } from "../schema";
+import {
+  borough,
+  boroughIdEntitySchema,
+  landUse,
+  landUseIdEntitySchema,
+} from "../schema";
 import { multiPolygonGeog, multiPolygonGeom } from "../drizzle-pgis";
 import { relations } from "drizzle-orm";
+import { z } from "zod";
 
 export const taxLot = pgTable("tax_lot", {
   bbl: char("bbl", { length: 10 }).primaryKey(),
@@ -26,3 +32,12 @@ export const taxLotRelations = relations(taxLot, ({ one }) => ({
     references: [landUse.id],
   }),
 }));
+
+export const taxLotEntitySchema = z.object({
+  bbl: z.string().regex(RegExp("^([0-9]{10})$")),
+  boroughId: boroughIdEntitySchema,
+  block: z.string().regex(RegExp("^([0-9]{1,5})$")),
+  lot: z.string().regex(RegExp("^([0-9]{1,4})$")),
+  address: z.string().nullable(),
+  landUseId: landUseIdEntitySchema,
+});

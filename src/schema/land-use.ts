@@ -7,8 +7,10 @@ export const landUse = pgTable("land_use", {
   color: char("color", { length: 9 }).notNull(),
 });
 
+export const landUseIdEntitySchema = z.string().length(2);
+
 export const landUseEntitySchema = z.object({
-  id: z.string().length(2),
+  id: landUseIdEntitySchema,
   description: z.string(),
   color: z.string().regex(/^#([A-Fa-f0-9]{8})$/),
 });
