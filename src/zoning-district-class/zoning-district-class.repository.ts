@@ -3,6 +3,7 @@ import { DB, DbType } from "src/global/providers/db.provider";
 import { eq } from "drizzle-orm";
 import { DataRetrievalException } from "src/exception";
 import { zoningDistrictClass } from "src/schema";
+import { FindAllRepo } from "./zoning-district-class.repository.schema";
 
 export class ZoningDistrictClassRepository {
   constructor(
@@ -10,7 +11,7 @@ export class ZoningDistrictClassRepository {
     private readonly db: DbType,
   ) {}
 
-  async findAll() {
+  async findAll(): Promise<FindAllRepo | undefined> {
     try {
       return await this.db.query.zoningDistrictClass.findMany();
     } catch {
