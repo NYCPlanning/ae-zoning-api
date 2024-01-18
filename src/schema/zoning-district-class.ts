@@ -1,4 +1,5 @@
 import { char, pgEnum, pgTable, text } from "drizzle-orm/pg-core";
+import { z } from "zod";
 
 export const categoryEnum = pgEnum("category", [
   "Residential",
@@ -12,4 +13,22 @@ export const zoningDistrictClass = pgTable("zoning_district_class", {
   description: text("description").notNull(),
   url: text("url"),
   color: char("color", { length: 9 }).notNull(),
+});
+
+export const zoningDistrictClassCategoryEntitySchema = z.enum([
+  "Residential",
+  "Commercial",
+  "Manufacturing",
+]);
+
+export type ZoningDistrictClassCategoryEntity = z.infer<
+  typeof zoningDistrictClassCategoryEntitySchema
+>;
+
+export const zoningDistrictClassEntitySchema = z.object({
+  id: z.string().regex(new RegExp("^((C[1-8])|(M[1-3])|(R([1-9]|10)))$")),
+  category: zoningDistrictClassCategoryEntitySchema.nullable(),
+  description: z.string().describe(`Zoning class descriptions.`),
+  url: z.string().nullable(),
+  color: z.string().regex(new RegExp("^#([A-Fa-f0-9]{8})$")),
 });
