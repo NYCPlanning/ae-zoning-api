@@ -15,20 +15,31 @@ npm i
 Create a file called `.env` in the root folder of the project and copy the contents of `sample.env` into that new file
 
 ### Run local database with docker compose
-Next, use [docker compose](https://docs.docker.com/compose/) to stand up a local Postgresql database with PostGIS installed. 
+Next, use [docker compose](https://docs.docker.com/compose/) to stand up a local Postgresql database. 
 ```
 docker compose up
 ```
 
 If you need to install docker compose, follow [these instructions](https://docs.docker.com/compose/install/).
 
+### Configure PostGIS
+Enable geospatial features by installing the postgis extension
+
+```
+npm run db:configure
+```
 
 ### Drizzle ORM setup
 To configure Drizzle:
 
 - Run the migrations with `npm run drizzle:migrate`
-- Load the data by running the sql commands in `drizzle-management/load.sql`
-   - This can be done through a db manager, such as pgAdmin or psql
+
+### Data loading
+Load the data into the tables. Under the hood, this uses the Postgres COPY command.
+
+```
+npm run db:copy
+```
 
 ### Run the project
 Finally, to run the project locally:
