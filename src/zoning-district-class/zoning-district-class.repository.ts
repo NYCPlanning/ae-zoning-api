@@ -3,7 +3,10 @@ import { DB, DbType } from "src/global/providers/db.provider";
 import { eq } from "drizzle-orm";
 import { DataRetrievalException } from "src/exception";
 import { zoningDistrictClass } from "src/schema";
-import { FindAllRepo } from "./zoning-district-class.repository.schema";
+import {
+  FindAllRepo,
+  findByIdRepo,
+} from "./zoning-district-class.repository.schema";
 
 export class ZoningDistrictClassRepository {
   constructor(
@@ -19,7 +22,7 @@ export class ZoningDistrictClassRepository {
     }
   }
 
-  async findById(id: string) {
+  async findById(id: string): Promise<findByIdRepo | undefined> {
     try {
       return await this.db.query.zoningDistrictClass.findFirst({
         where: eq(zoningDistrictClass.id, id),
