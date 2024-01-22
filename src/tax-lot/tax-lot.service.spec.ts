@@ -3,7 +3,10 @@ import { TaxLotService } from "./tax-lot.service";
 import { TaxLotRepositoryMock } from "test/tax-lot/tax-lot.repository.mock";
 import { TaxLotRepository } from "./tax-lot.repository";
 import { ResourceNotFoundException } from "src/exception";
-import { getTaxLotGeoJsonByBblQueryResponseSchema } from "src/gen";
+import {
+  getTaxLotByBblQueryResponseSchema,
+  getTaxLotGeoJsonByBblQueryResponseSchema,
+} from "src/gen";
 
 describe("TaxLotController", () => {
   let taxLotService: TaxLotService;
@@ -19,6 +22,23 @@ describe("TaxLotController", () => {
       .compile();
 
     taxLotService = moduleRef.get<TaxLotService>(TaxLotService);
+  });
+
+  describe("findTaxLotByBbl", () => {
+    it("should return a tax lot when requesting a valid bbl", async () => {
+      const { bbl } = taxLotRepository.findByBblSpatialMocks[0];
+      const taxLot = await taxLotService.findTaxLotByBbl(bbl);
+      expect(() =>
+        getTaxLotByBblQueryResponseSchema.parse(taxLot),
+      ).not.toThrow();
+    });
+
+    it("should throw a resource error when requesting a missing bbl", async () => {
+      const missingBbl = "0123456789";
+      expect(taxLotService.findTaxLotByBbl(missingBbl)).rejects.toThrow(
+        ResourceNotFoundException,
+      );
+    });
   });
 
   describe("findTaxLotByBblGeoJson", () => {
