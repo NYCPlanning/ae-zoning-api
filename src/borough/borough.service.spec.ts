@@ -1,7 +1,7 @@
 import { BoroughRepositoryMock } from "../../test/borough/borough.repository.mock";
 import { Test } from "@nestjs/testing";
 import { BoroughRepository } from "src/borough/borough.repository";
-import { getBoroughsQueryResponseSchema } from "src/gen";
+import { findBoroughsQueryResponseSchema } from "src/gen";
 import { BoroughService } from "./borough.service";
 
 describe("Borough service unit", () => {
@@ -20,8 +20,8 @@ describe("Borough service unit", () => {
     boroughService = moduleRef.get<BoroughService>(BoroughService);
   });
 
-  it("service should return a getBoroughsQueryResponseSchema compliant object", async () => {
-    const boroughs = await boroughService.findAll();
-    expect(() => getBoroughsQueryResponseSchema.parse(boroughs)).not.toThrow();
+  it("service should return a findBoroughsQueryResponseSchema compliant object", async () => {
+    const boroughs = await boroughService.findMany();
+    expect(() => findBoroughsQueryResponseSchema.parse(boroughs)).not.toThrow();
   });
 });

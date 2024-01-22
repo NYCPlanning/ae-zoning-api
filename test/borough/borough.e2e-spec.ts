@@ -4,7 +4,7 @@ import { Test } from "@nestjs/testing";
 import { BoroughRepository } from "src/borough/borough.repository";
 import { BoroughRepositoryMock } from "./borough.repository.mock";
 import { BoroughModule } from "src/borough/borough.module";
-import { getBoroughsQueryResponseSchema } from "src/gen";
+import { findBoroughsQueryResponseSchema } from "src/gen";
 import { DataRetrievalException } from "src/exception";
 import { HttpName } from "src/filter";
 
@@ -24,20 +24,20 @@ describe("Borough e2e", () => {
     await app.init();
   });
 
-  describe("findAll", () => {
+  describe("findBoroughs", () => {
     it("should 200 and return all boroughs", async () => {
       const response = await request(app.getHttpServer())
         .get(`/boroughs`)
         .expect(200);
       expect(() =>
-        getBoroughsQueryResponseSchema.parse(response.body),
+        findBoroughsQueryResponseSchema.parse(response.body),
       ).not.toThrow();
     });
 
     it("should 500 and return all boroughs", async () => {
       const dataRetrievalException = new DataRetrievalException();
       jest
-        .spyOn(boroughRepositoryMock, "findAll")
+        .spyOn(boroughRepositoryMock, "findMany")
         .mockImplementationOnce(() => {
           throw dataRetrievalException;
         });

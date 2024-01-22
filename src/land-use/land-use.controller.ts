@@ -8,7 +8,7 @@ export class LandUseController {
   constructor(private readonly landUseService: LandUseService) {}
 
   @Get()
-  async findAll() {
-    return this.landUseService.findAll();
+  async findMany() {
+    return this.landUseService.findMany();
   }
 }

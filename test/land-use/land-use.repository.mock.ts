@@ -1,10 +1,10 @@
-import { findAllRepoSchema } from "src/land-use/land-use.repository.schema";
+import { findManyRepoSchema } from "src/land-use/land-use.repository.schema";
 import { generateMock } from "@anatine/zod-mock";
 
 export class LandUseRepositoryMock {
-  findAllMocks = generateMock(findAllRepoSchema);
+  findAllMocks = generateMock(findManyRepoSchema);
 
-  async findAll() {
+  async findMany() {
     return this.findAllMocks;
   }
 }

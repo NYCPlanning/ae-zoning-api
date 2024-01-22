@@ -1,6 +1,6 @@
 import { boroughEntitySchema } from "src/schema";
 import { z } from "zod";
 
-export const findAllRepoSchema = z.array(boroughEntitySchema);
+export const findManyRepoSchema = z.array(boroughEntitySchema);
 
-export type FindAllRepo = z.infer<typeof findAllRepoSchema>;
+export type FindManyRepo = z.infer<typeof findManyRepoSchema>;
