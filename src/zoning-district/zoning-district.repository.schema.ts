@@ -1,8 +1,6 @@
+import { zoningDistrictEntitySchema } from "src/schema";
 import { z } from "zod";
 
-export const findByUuidRepoSchema = z.object({
-  id: z.string().uuid(),
-  label: z.string(),
-});
+export const findByUuidRepoSchema = zoningDistrictEntitySchema;
 
 export type FindByUuidRepo = z.infer<typeof findByUuidRepoSchema>;
