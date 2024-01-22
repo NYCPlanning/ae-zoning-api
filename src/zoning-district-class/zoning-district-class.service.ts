@@ -18,7 +18,7 @@ export class ZoningDistrictClassService {
   }
 
   async findZoningDistrictClassById(id: string) {
-    const result = this.zoningDistrictClassRepository.findById(id);
+    const result = await this.zoningDistrictClassRepository.findById(id);
     if (result === undefined) throw new ResourceNotFoundException();
 
     return result;
