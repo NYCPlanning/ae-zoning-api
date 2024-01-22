@@ -8,7 +8,7 @@ export class BoroughController {
   constructor(private readonly boroughService: BoroughService) {}
 
   @Get()
-  async findAll() {
-    return this.boroughService.findAll();
+  async findMany() {
+    return this.boroughService.findMany();
   }
 }

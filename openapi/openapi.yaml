@@ -16,7 +16,7 @@ paths:
   /boroughs:
     get: 
       summary: List boroughs
-      operationId: getBoroughs
+      operationId: findBoroughs
       tags:
       - Boroughs
       responses:
@@ -40,7 +40,7 @@ paths:
   /land-uses:
     get: 
       summary: List land uses
-      operationId: getLandUses
+      operationId: findLandUses
       tags:
       - Land Uses
       responses:

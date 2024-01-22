@@ -7,8 +7,8 @@ export class LandUseService {
     private readonly landUseRepository: LandUseRepository,
   ) {}
 
-  async findAll() {
-    const landUses = await this.landUseRepository.findAll();
+  async findMany() {
+    const landUses = await this.landUseRepository.findMany();
     return {
       landUses,
     };

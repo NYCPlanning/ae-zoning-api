@@ -6,7 +6,7 @@ import { HttpName } from "src/filter";
 import { LandUseRepositoryMock } from "./land-use.repository.mock";
 import { LandUseModule } from "src/land-use/land-use.module";
 import { LandUseRepository } from "src/land-use/land-use.repository";
-import { getLandUsesQueryResponseSchema } from "src/gen";
+import { findLandUsesQueryResponseSchema } from "src/gen";
 
 describe("Land Use e2e", () => {
   let app: INestApplication;
@@ -24,20 +24,20 @@ describe("Land Use e2e", () => {
     await app.init();
   });
 
-  describe("findAll", () => {
+  describe("findLandUses", () => {
     it("should 200 and return a list of all land uses", async () => {
       const response = await request(app.getHttpServer())
         .get(`/land-uses`)
         .expect(200);
       expect(() =>
-        getLandUsesQueryResponseSchema.parse(response.body),
+        findLandUsesQueryResponseSchema.parse(response.body),
       ).not.toThrow();
     });
 
     it("should 500 and return a list of all land uses", async () => {
       const dataRetrievalException = new DataRetrievalException();
       jest
-        .spyOn(landUseRepositoryMock, "findAll")
+        .spyOn(landUseRepositoryMock, "findMany")
         .mockImplementationOnce(() => {
           throw dataRetrievalException;
         });

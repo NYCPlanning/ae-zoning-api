@@ -8,8 +8,8 @@ export class BoroughService {
     private readonly boroughRepository: BoroughRepository,
   ) {}
 
-  async findAll() {
-    const boroughs = await this.boroughRepository.findAll();
+  async findMany() {
+    const boroughs = await this.boroughRepository.findMany();
     return {
       boroughs,
     };

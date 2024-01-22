@@ -1,7 +1,7 @@
 import { Inject } from "@nestjs/common";
 import { DB, DbType } from "src/global/providers/db.provider";
 import { DataRetrievalException } from "src/exception";
-import { FindAllRepo } from "./borough.repository.schema";
+import { FindManyRepo } from "./borough.repository.schema";
 
 export class BoroughRepository {
   constructor(
@@ -9,7 +9,7 @@ export class BoroughRepository {
     private readonly db: DbType,
   ) {}
 
-  async findAll(): Promise<FindAllRepo> {
+  async findMany(): Promise<FindManyRepo | undefined> {
     try {
       return await this.db.query.borough.findMany();
     } catch {
