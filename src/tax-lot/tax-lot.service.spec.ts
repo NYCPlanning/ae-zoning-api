@@ -6,6 +6,7 @@ import { ResourceNotFoundException } from "src/exception";
 import {
   getTaxLotByBblQueryResponseSchema,
   getTaxLotGeoJsonByBblQueryResponseSchema,
+  getZoningDistrictsByTaxLotBblQueryResponseSchema,
 } from "src/gen";
 
 describe("TaxLotController", () => {
@@ -55,6 +56,24 @@ describe("TaxLotController", () => {
       expect(taxLotService.findTaxLotByBblGeoJson(missingBbl)).rejects.toThrow(
         ResourceNotFoundException,
       );
+    });
+  });
+
+  describe("findZoningDistrictByTaxLotBbl", () => {
+    it("should return an array of zoning district(s) when requesting a valid bbl", async () => {
+      const { bbl } = taxLotRepository.checkTaxLotByBblMocks[0];
+      const zoningDistricts =
+        await taxLotService.findZoningDistrictByTaxLotBbl(bbl);
+      expect(() =>
+        getZoningDistrictsByTaxLotBblQueryResponseSchema.parse(zoningDistricts),
+      ).not.toThrow();
+    });
+
+    it("should throw a resource error when requesting a missing bbl", async () => {
+      const missingBbl = "0123456789";
+      expect(
+        taxLotService.findZoningDistrictByTaxLotBbl(missingBbl),
+      ).rejects.toThrow(ResourceNotFoundException);
     });
   });
 });

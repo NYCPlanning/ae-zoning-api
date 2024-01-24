@@ -2,9 +2,19 @@ import { generateMock } from "@anatine/zod-mock";
 import {
   findByBblRepoSchema,
   findByBblSpatialRepoSchema,
+  findZoningDistrictByTaxLotBblRepoSchema,
+  checkTaxLotByBblRepoSchema,
 } from "src/tax-lot/tax-lot.repository.schema";
 
 export class TaxLotRepositoryMock {
+  checkTaxLotByBblMocks = [
+    generateMock(checkTaxLotByBblRepoSchema, { seed: 1 }),
+  ];
+
+  async checkTaxLotByBbl(bbl: string) {
+    return this.checkTaxLotByBblMocks.find((row) => row.bbl === bbl);
+  }
+
   findByBblMocks = Array.from(Array(10), () =>
     generateMock(findByBblRepoSchema, { seed: 1 }),
   );
@@ -19,5 +29,22 @@ export class TaxLotRepositoryMock {
 
   async findByBblSpatial(bbl: string) {
     return this.findByBblSpatialMocks.find((row) => row.bbl === bbl);
+  }
+
+  findZoningDistrictByTaxLotBblMocks = this.checkTaxLotByBblMocks.map(
+    (checkTaxLotByBblMock) => {
+      return {
+        [checkTaxLotByBblMock.bbl]: generateMock(
+          findZoningDistrictByTaxLotBblRepoSchema,
+        ),
+      };
+    },
+  );
+
+  async findZoningDistrictByBbl(bbl: string) {
+    const results = this.findZoningDistrictByTaxLotBblMocks.find(
+      (taxLotZoningDistrictsPair) => bbl in taxLotZoningDistrictsPair,
+    );
+    return results === undefined ? results : results[bbl];
   }
 }
