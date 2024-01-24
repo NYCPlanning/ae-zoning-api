@@ -1,6 +1,16 @@
 import { z } from "zod";
-import { boroughEntitySchema, landUseEntitySchema } from "src/schema";
+import {
+  boroughEntitySchema,
+  landUseEntitySchema,
+  zoningDistrictEntitySchema,
+} from "src/schema";
 import { taxLotEntitySchema } from "src/schema/tax-lot";
+
+export const checkTaxLotByBblRepoSchema = taxLotEntitySchema.pick({
+  bbl: true,
+});
+
+export type CheckTaxLotByBblRepo = z.infer<typeof checkTaxLotByBblRepoSchema>;
 
 export const findByBblRepoSchema = taxLotEntitySchema
   .omit({ boroughId: true, landUseId: true })
@@ -47,3 +57,11 @@ export const findByBblSpatialRepoSchema = findByBblRepoSchema.extend({
 });
 
 export type FindByBblSpatialRepo = z.infer<typeof findByBblSpatialRepoSchema>;
+
+export const findZoningDistrictByTaxLotBblRepoSchema = z.array(
+  zoningDistrictEntitySchema,
+);
+
+export type FindZoningDistrictByTaxLotBblRepo = z.infer<
+  typeof findZoningDistrictByTaxLotBblRepoSchema
+>;

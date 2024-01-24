@@ -6,6 +6,7 @@ import { TaxLotRepository } from "src/tax-lot/tax-lot.repository";
 import {
   getTaxLotByBblQueryResponseSchema,
   getTaxLotGeoJsonByBblQueryResponseSchema,
+  getZoningDistrictsByTaxLotBblQueryResponseSchema,
 } from "src/gen";
 import { TaxLotRepositoryMock } from "./tax-lot.repository.mock";
 import {
@@ -89,7 +90,6 @@ describe("TaxLots", () => {
   describe("getTaxLotGeoJsonByBbl", () => {
     it("should 200 and return documented schema when finding by valid bbl", async () => {
       const mock = taxLotRepository.findByBblSpatialMocks[0];
-
       const response = await request(app.getHttpServer())
         .get(`/tax-lots/${mock.bbl}/geojson`)
         .expect(200);
@@ -138,6 +138,62 @@ describe("TaxLots", () => {
       const mock = taxLotRepository.findByBblSpatialMocks[0];
       const response = await request(app.getHttpServer())
         .get(`/tax-lots/${mock.bbl}/geojson`)
+        .expect(500);
+      expect(response.body.message).toBe(dataRetrievalException.message);
+      expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);
+    });
+  });
+
+  describe("findZoningDistrictByTaxLotBbl", () => {
+    it("should 200 and return documented schema when finding by valid bbl", async () => {
+      const mock = taxLotRepository.checkTaxLotByBblMocks[0];
+      const response = await request(app.getHttpServer())
+        .get(`/tax-lots/${mock.bbl}/zoning-districts`)
+        .expect(200);
+      expect(() =>
+        getZoningDistrictsByTaxLotBblQueryResponseSchema.parse(response.body),
+      ).not.toThrow();
+    });
+
+    it("should 400 when finding by too short bbl", async () => {
+      const shortBbl = "012345678";
+      const response = await request(app.getHttpServer())
+        .get(`/tax-lots/${shortBbl}/zoning-districts`)
+        .expect(400);
+      expect(response.body.message).toBe(
+        new InvalidRequestParameterException().message,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 when finding by lettered bbl", async () => {
+      const letterBbl = "012345678Y";
+      const response = await request(app.getHttpServer())
+        .get(`/tax-lots/${letterBbl}/zoning-districts`)
+        .expect(400);
+      expect(response.body.message).toBe(
+        new InvalidRequestParameterException().message,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+    it("should 404 when finding by missing bbl", async () => {
+      const missingBbl = "0123456789";
+      const response = await request(app.getHttpServer())
+        .get(`/tax-lots/${missingBbl}/zoning-districts`)
+        .expect(404);
+      expect(response.body.message).toBe(HttpName.NOT_FOUND);
+    });
+
+    it("should 500 when the database errors", async () => {
+      const dataRetrievalException = new DataRetrievalException();
+      jest
+        .spyOn(taxLotRepository, "findZoningDistrictByBbl")
+        .mockImplementationOnce(() => {
+          throw dataRetrievalException;
+        });
+      const mock = taxLotRepository.checkTaxLotByBblMocks[0];
+      const response = await request(app.getHttpServer())
+        .get(`/tax-lots/${mock.bbl}/zoning-districts`)
         .expect(500);
       expect(response.body.message).toBe(dataRetrievalException.message);
       expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);
