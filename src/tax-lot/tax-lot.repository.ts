@@ -13,6 +13,8 @@ import {
 import {
   FindByBblRepo,
   FindByBblSpatialRepo,
+  CheckTaxLotByBblRepo,
+  FindZoningDistrictByTaxLotBblRepo,
 } from "./tax-lot.repository.schema";
 
 export class TaxLotRepository {
@@ -32,7 +34,9 @@ export class TaxLotRepository {
     })
     .prepare("checkTaxLotByBbl");
 
-  async checkTaxLotByBbl(bbl: string) {
+  async checkTaxLotByBbl(
+    bbl: string,
+  ): Promise<CheckTaxLotByBblRepo | undefined> {
     try {
       return await this.#checkTaxLotByBbl.execute({ bbl });
     } catch {
@@ -87,7 +91,9 @@ export class TaxLotRepository {
     }
   }
 
-  async findZoningDistrictByBbl(bbl: string) {
+  async findZoningDistrictByBbl(
+    bbl: string,
+  ): Promise<FindZoningDistrictByTaxLotBblRepo | undefined> {
     try {
       return await this.db
         .select({
