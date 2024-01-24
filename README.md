@@ -26,21 +26,21 @@ If you need to install docker compose, follow [these instructions](https://docs.
 Enable geospatial features by installing the postgis extension
 
 ```
-npm run db:configure
+npm run pg:configure
 ```
 
 ### Drizzle ORM setup
 Structure the database tables with drizzle
 
 ```
-npm run db:migrate
+npm run drizzle:migrate
 ```
 
 ### Data loading
 Load the data into the tables. Under the hood, this uses the Postgres COPY command.
 
 ```
-npm run db:copy
+npm run pg:copy
 ```
 
 ### Run the project
