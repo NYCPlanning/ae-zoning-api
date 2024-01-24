@@ -15,16 +15,24 @@ export class TaxLotRepositoryMock {
     return this.checkTaxLotByBblMocks.find((row) => row.bbl === bbl);
   }
 
-  findByBblMocks = Array.from(Array(10), () =>
-    generateMock(findByBblRepoSchema, { seed: 1 }),
+  findByBblMocks = Array.from(Array(1), () =>
+    generateMock(findByBblRepoSchema, {
+      stringMap: {
+        bbl: () => this.checkTaxLotByBblMocks[0].bbl,
+      },
+    }),
   );
 
   async findByBbl(bbl: string) {
     return this.findByBblMocks.find((row) => row.bbl === bbl);
   }
 
-  findByBblSpatialMocks = Array.from(Array(10), () =>
-    generateMock(findByBblSpatialRepoSchema, { seed: 1 }),
+  findByBblSpatialMocks = Array.from(Array(1), () =>
+    generateMock(findByBblSpatialRepoSchema, {
+      stringMap: {
+        bbl: () => this.findByBblMocks[0].bbl,
+      },
+    }),
   );
 
   async findByBblSpatial(bbl: string) {
