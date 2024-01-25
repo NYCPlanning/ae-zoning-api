@@ -7,6 +7,7 @@ import { ZoningDistrictClassRepository } from "src/zoning-district-class/zoning-
 import {
   getAllZoningDistrictClassesQueryResponseSchema,
   getZoningDistrictClassesByIdQueryResponseSchema,
+  getZoningDistrictClassesCategoryColorsQueryResponseSchema,
 } from "src/gen";
 import {
   DataRetrievalException,
@@ -108,6 +109,36 @@ describe("Zoning District Classes e2e", () => {
       const mock = zoningDistrictClassRepositoryMock.findByIdMocks[0];
       const response = await request(app.getHttpServer())
         .get(`/zoning-district-classes/${mock.id}`)
+        .expect(500);
+
+      expect(response.body.message).toBe(dataRetrievalException.message);
+      expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);
+    });
+  });
+
+  describe("getZoningDistrictClassCategoryColors", () => {
+    it("should 200 and return an array of  zoning district class category colors", async () => {
+      const response = await request(app.getHttpServer())
+        .get("/zoning-district-classes/category-colors")
+        .expect(200);
+
+      expect(() =>
+        getZoningDistrictClassesCategoryColorsQueryResponseSchema.parse(
+          response.body,
+        ),
+      ).not.toThrow();
+    });
+
+    it("should 500 and throw data retrieval error", async () => {
+      const dataRetrievalException = new DataRetrievalException();
+      jest
+        .spyOn(zoningDistrictClassRepositoryMock, "findCategoryColors")
+        .mockImplementationOnce(() => {
+          throw dataRetrievalException;
+        });
+
+      const response = await request(app.getHttpServer())
+        .get("/zoning-district-classes/category-colors")
         .expect(500);
 
       expect(response.body.message).toBe(dataRetrievalException.message);

@@ -7,4 +7,15 @@ export type FindAllRepo = z.infer<typeof findAllRepoSchema>;
 
 export const findByIdRepoSchema = zoningDistrictClassEntitySchema;
 
-export type findByIdRepo = z.infer<typeof findByIdRepoSchema>;
+export type FindByIdRepo = z.infer<typeof findByIdRepoSchema>;
+
+export const findCategoryColorsRepoSchema = z.array(
+  zoningDistrictClassEntitySchema.pick({
+    category: true,
+    color: true,
+  }),
+);
+
+export type FindCategoryColorsRepo = z.infer<
+  typeof findCategoryColorsRepoSchema
+>;
