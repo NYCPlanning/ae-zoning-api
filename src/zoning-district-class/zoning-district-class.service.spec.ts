@@ -5,6 +5,7 @@ import { ZoningDistrictClassRepository } from "./zoning-district-class.repositor
 import {
   getAllZoningDistrictClassesQueryResponseSchema,
   getZoningDistrictClassesByIdQueryResponseSchema,
+  getZoningDistrictClassCategoryColorsQueryResponseSchema,
 } from "src/gen";
 import { ResourceNotFoundException } from "src/exception";
 
@@ -55,6 +56,19 @@ describe("zoning district class service unit", () => {
       expect(
         zoningDistrictClassService.findZoningDistrictClassById(missingId),
       ).rejects.toThrow(ResourceNotFoundException);
+    });
+  });
+
+  describe("getZoningDistrictClassesCategoryColors", () => {
+    it("should return an array of zoning district class category colors", async () => {
+      const zoningDistrictClassCategoryColors =
+        await zoningDistrictClassService.findZoningDistrictClassCategoryColors();
+
+      expect(() =>
+        getZoningDistrictClassCategoryColorsQueryResponseSchema.parse(
+          zoningDistrictClassCategoryColors,
+        ),
+      ).not.toThrow();
     });
   });
 });

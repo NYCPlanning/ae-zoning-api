@@ -5,7 +5,8 @@ import { DataRetrievalException } from "src/exception";
 import { zoningDistrictClass } from "src/schema";
 import {
   FindAllRepo,
-  findByIdRepo,
+  FindByIdRepo,
+  FindCategoryColorsRepo,
 } from "./zoning-district-class.repository.schema";
 
 export class ZoningDistrictClassRepository {
@@ -22,7 +23,7 @@ export class ZoningDistrictClassRepository {
     }
   }
 
-  async findById(id: string): Promise<findByIdRepo | undefined> {
+  async findById(id: string): Promise<FindByIdRepo | undefined> {
     try {
       return await this.db.query.zoningDistrictClass.findFirst({
         where: eq(zoningDistrictClass.id, id),
@@ -32,7 +33,7 @@ export class ZoningDistrictClassRepository {
     }
   }
 
-  async findCategoryColors() {
+  async findCategoryColors(): Promise<FindCategoryColorsRepo | undefined> {
     try {
       return await this.db
         .selectDistinctOn([zoningDistrictClass.category], {
