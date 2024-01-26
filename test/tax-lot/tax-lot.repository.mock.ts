@@ -7,43 +7,47 @@ import {
 } from "src/tax-lot/tax-lot.repository.schema";
 
 export class TaxLotRepositoryMock {
-  checkTaxLotByBblMocks = [
-    generateMock(checkTaxLotByBblRepoSchema, { seed: 1 }),
-  ];
+  checkTaxLotByBblMocks = Array.from(Array(1), (_, seed) =>
+    generateMock(checkTaxLotByBblRepoSchema, { seed }),
+  );
 
   async checkTaxLotByBbl(bbl: string) {
     return this.checkTaxLotByBblMocks.find((row) => row.bbl === bbl);
   }
 
-  findByBblMocks = Array.from(this.checkTaxLotByBblMocks, () =>
-    generateMock(findByBblRepoSchema, {
-      stringMap: {
-        bbl: () => this.checkTaxLotByBblMocks[0].bbl,
-      },
-    }),
-  );
+  findByBblMocks = this.checkTaxLotByBblMocks.map((checkTaxLot, seed) => {
+    const mock = generateMock(findByBblRepoSchema, { seed });
+    return {
+      ...mock,
+      ...checkTaxLot,
+    };
+  });
 
   async findByBbl(bbl: string) {
     return this.findByBblMocks.find((row) => row.bbl === bbl);
   }
 
-  findByBblSpatialMocks = Array.from(this.checkTaxLotByBblMocks, () =>
-    generateMock(findByBblSpatialRepoSchema, {
-      stringMap: {
-        bbl: () => this.findByBblMocks[0].bbl,
-      },
-    }),
+  findByBblSpatialMocks = this.checkTaxLotByBblMocks.map(
+    (checkTaxLot, seed) => {
+      const mock = generateMock(findByBblSpatialRepoSchema, { seed });
+      return {
+        ...mock,
+        ...checkTaxLot,
+      };
+    },
   );
 
   async findByBblSpatial(bbl: string) {
     return this.findByBblSpatialMocks.find((row) => row.bbl === bbl);
   }
 
-  findZoningDistrictByTaxLotBblMocks = Array.from(
-    this.checkTaxLotByBblMocks,
-    (taxLot) => {
+  findZoningDistrictByTaxLotBblMocks = this.checkTaxLotByBblMocks.map(
+    (checkTaxLot, seed) => {
       return {
-        [taxLot.bbl]: generateMock(findZoningDistrictByTaxLotBblRepoSchema),
+        [checkTaxLot.bbl]: generateMock(
+          findZoningDistrictByTaxLotBblRepoSchema,
+          { seed },
+        ),
       };
     },
   );
