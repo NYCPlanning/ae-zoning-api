@@ -9,6 +9,8 @@ import {
   findTaxLotsQueryResponseSchema,
   findZoningDistrictClassesByTaxLotBblQueryResponseSchema,
   findZoningDistrictsByTaxLotBblQueryResponseSchema,
+  findTaxLotFillsQueryResponseSchema,
+  findTaxLotLabelsQueryResponseSchema,
 } from "src/gen";
 
 describe("TaxLotController", () => {
@@ -227,6 +229,30 @@ describe("TaxLotController", () => {
           lons: [0, 1, 2, 3],
         }),
       ).rejects.toThrow(/geometry is invalid/);
+    });
+  });
+
+  describe("findFills", () => {
+    it("should return an mvt when requesting coordinates", async () => {
+      const mvt = await taxLotService.findFills({
+        z: "1",
+        y: "1",
+        x: "1",
+      });
+      expect(() => findTaxLotFillsQueryResponseSchema.parse(mvt)).not.toThrow();
+    });
+  });
+
+  describe("findLabels", () => {
+    it("should return an mvt when requesting coordinates", async () => {
+      const mvt = await taxLotService.findLabels({
+        z: "1",
+        y: "1",
+        x: "1",
+      });
+      expect(() =>
+        findTaxLotLabelsQueryResponseSchema.parse(mvt),
+      ).not.toThrow();
     });
   });
 

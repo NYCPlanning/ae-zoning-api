@@ -2,6 +2,9 @@ import {
   checkByIdRepoSchema,
   findByIdRepoSchema,
   findZoningDistrictClassesByIdRepoSchema,
+  findByUuidRepoSchema,
+  findFillsRepoSchema,
+  findLabelsRepoSchema,
 } from "src/zoning-district/zoning-district.repository.schema";
 import { generateMock } from "@anatine/zod-mock";
 
@@ -10,6 +13,21 @@ export class ZoningDistrictRepositoryMock {
 
   checkByIdMocks = Array.from(Array(this.numberOfMocks), (_, seed) =>
     generateMock(checkByIdRepoSchema, { seed: seed + 1 }),
+  );
+
+  findFillsMocks = generateMock(findFillsRepoSchema);
+
+  async findFills() {
+    return this.findFillsMocks;
+  }
+
+  findLabelsMocks = generateMock(findLabelsRepoSchema);
+
+  async findLabels() {
+    return this.findLabelsMocks;
+  }
+  findByUuidMocks = Array.from(Array(10), () =>
+    generateMock(findByUuidRepoSchema, { seed: 1 }),
   );
 
   async checkById(id: string) {

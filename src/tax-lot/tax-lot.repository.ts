@@ -1,10 +1,9 @@
 import { Inject } from "@nestjs/common";
 import { DB, DbType } from "src/global/providers/db.provider";
-import { StorageConfig } from "src/config";
-import { ConfigType } from "@nestjs/config";
-import { eq, sql } from "drizzle-orm";
+import { eq, isNotNull, sql } from "drizzle-orm";
 import { DataRetrievalException } from "src/exception";
 import {
+  landUse,
   taxLot,
   zoningDistrict,
   zoningDistrictClass,
@@ -22,16 +21,17 @@ import {
   FindMaximumInscribedCircleCenterRepo,
   CheckGeomIsValidRepo,
   FindGeomFromGeoJsonRepo,
+  FindFillsRepoSchema,
+  FindLabelsRepoSchema,
 } from "./tax-lot.repository.schema";
 import { Geometry } from "geojson";
 import { Geom } from "src/types";
+import { FindTaxLotFillsPathParams, FindTaxLotLabelsPathParams } from "src/gen";
 
 export class TaxLotRepository {
   constructor(
     @Inject(DB)
     private readonly db: DbType,
-    @Inject(StorageConfig.KEY)
-    private storageConfig: ConfigType<typeof StorageConfig>,
   ) {}
 
   #checkTaxLotByBbl = this.db.query.taxLot
@@ -42,6 +42,69 @@ export class TaxLotRepository {
       where: (taxLot, { eq, sql }) => eq(taxLot.bbl, sql.placeholder("bbl")),
     })
     .prepare("checkByBbl");
+
+  async findFills(
+    params: FindTaxLotFillsPathParams,
+  ): Promise<FindFillsRepoSchema> {
+    const { z, x, y } = params;
+    try {
+      const tile = this.db
+        .select({
+          bbl: taxLot.bbl,
+          color: sql`'['
+        ||('x'||SUBSTRING(${landUse.color}, 2, 2))::bit(8)::int||','
+        ||('x'||SUBSTRING(${landUse.color}, 4, 2))::bit(8)::int||','
+        ||('x'||SUBSTRING(${landUse.color}, 6, 2))::bit(8)::int||','
+        ||('x'||SUBSTRING(${landUse.color}, 8, 2))::bit(8)::int||
+        ']'`.as("color"),
+          geom: sql`ST_AsMVTGeom(
+				  ${taxLot.mercatorFill},
+				  ST_TileEnvelope(${z}, ${x}, ${y}),
+				  4096, 64, true)`.as("geom"),
+        })
+        .from(taxLot)
+        .leftJoin(landUse, eq(landUse.id, taxLot.landUseId))
+        .where(sql`${taxLot.mercatorFill} && ST_TileEnvelope(${z},${x},${y})`)
+        .as("tile");
+
+      return this.db
+        .select({
+          mvt: sql`ST_AsMVT(tile, 'tax_lot_fill', 4096, 'geom')`,
+        })
+        .from(tile)
+        .where(isNotNull(tile.geom));
+    } catch {
+      throw new DataRetrievalException();
+    }
+  }
+
+  async findLabels(
+    params: FindTaxLotLabelsPathParams,
+  ): Promise<FindLabelsRepoSchema> {
+    const { z, x, y } = params;
+    try {
+      const tile = this.db
+        .select({
+          bbl: taxLot.bbl,
+          geom: sql`ST_AsMVTGeom(
+            ${taxLot.mercatorLabel},
+            ST_TileEnvelope(${z}, ${x}, ${y})
+          )`.as("geom"),
+        })
+        .from(taxLot)
+        .where(sql`${taxLot.mercatorFill} && ST_TileEnvelope(${z}, ${x}, ${y})`)
+        .as("tile");
+
+      return await this.db
+        .select({
+          mvt: sql`ST_AsMVT(tile, 'tax_lot_label', 4096, 'geom')`,
+        })
+        .from(tile)
+        .where(isNotNull(tile.geom));
+    } catch {
+      throw new DataRetrievalException();
+    }
+  }
 
   async checkByBbl(bbl: string): Promise<CheckByBblRepo | undefined> {
     try {
@@ -273,9 +336,5 @@ export class TaxLotRepository {
     } catch {
       throw new DataRetrievalException();
     }
-  }
-
-  async findTilesets(params: { z: number; x: number; y: number }) {
-    return `${this.storageConfig.storageUrl}/tilesets/tax_lot/${params.z}/${params.x}/${params.y}.pbf`;
   }
 }

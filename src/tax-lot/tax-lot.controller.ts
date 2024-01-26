@@ -4,7 +4,7 @@ import {
   Injectable,
   Param,
   Query,
-  Redirect,
+  Res,
   UseFilters,
   UsePipes,
 } from "@nestjs/common";
@@ -21,6 +21,10 @@ import {
   FindZoningDistrictClassesByTaxLotBblPathParams,
   findTaxLotsQueryParamsSchema,
   FindTaxLotsQueryParams,
+  findTaxLotFillsPathParamsSchema,
+  FindTaxLotFillsPathParams,
+  findTaxLotLabelsPathParamsSchema,
+  FindTaxLotLabelsPathParams,
 } from "../gen";
 import {
   BadRequestExceptionFilter,
@@ -28,6 +32,7 @@ import {
   NotFoundExceptionFilter,
 } from "src/filter";
 import { DecodeParamsPipe } from "src/pipes/decode-params-pipe";
+import { Response } from "express";
 
 @Injectable()
 @UseFilters(
@@ -49,6 +54,27 @@ export class TaxLotController {
     params: FindTaxLotsQueryParams,
   ) {
     return await this.taxLotService.findMany(params);
+  }
+  @Get("/fills/:z/:x/:y.pbf")
+  @UsePipes(new ZodValidationPipe(findTaxLotFillsPathParamsSchema))
+  async findFills(
+    @Param() params: FindTaxLotFillsPathParams,
+    @Res() res: Response,
+  ) {
+    const tile = await this.taxLotService.findFills(params);
+    res.set("Content-Type", "application/x-protobuf");
+    res.send(tile);
+  }
+
+  @Get("/labels/:z/:x/:y.pbf")
+  @UsePipes(new ZodValidationPipe(findTaxLotLabelsPathParamsSchema))
+  async findLabels(
+    @Param() params: FindTaxLotLabelsPathParams,
+    @Res() res: Response,
+  ) {
+    const tile = await this.taxLotService.findLabels(params);
+    res.set("Content-Type", "application/x-protobuf");
+    res.send(tile);
   }
 
   @Get("/:bbl")
@@ -81,11 +107,5 @@ export class TaxLotController {
     @Param() params: FindZoningDistrictClassesByTaxLotBblPathParams,
   ) {
     return this.taxLotService.findZoningDistrictClassesByBbl(params.bbl);
-  }
-
-  @Get("/:z/:x/:y.pbf")
-  @Redirect()
-  async findTilesets(@Param() params: { z: number; x: number; y: number }) {
-    return await this.taxLotService.findTilesets(params);
   }
 }

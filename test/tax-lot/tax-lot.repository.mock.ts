@@ -13,6 +13,8 @@ import {
   FindGeomBufferRepo,
   CheckGeomIsValidRepo,
   FindMaximumInscribedCircleCenterRepo,
+  findFillsRepoSchema,
+  findLabelsRepoSchema,
 } from "src/tax-lot/tax-lot.repository.schema";
 import { Geom } from "src/types";
 
@@ -155,6 +157,27 @@ export class TaxLotRepositoryMock {
 
   async findByBbl(bbl: string) {
     return this.findByBblMocks.find((row) => row.bbl === bbl);
+  }
+
+  findFillsMocks = generateMock(findFillsRepoSchema);
+
+  /**
+   * The database will always return tiles, even when the view is outside the extents
+   * These would merely be empty tiles.
+   *
+   * To reflect this behavior in the mock,
+   * we disregard any viewport parameters always return something.
+   *
+   * This applies to all mvt-related mocks
+   */
+  async findFills() {
+    return this.findFillsMocks;
+  }
+
+  findLabelsMocks = generateMock(findLabelsRepoSchema);
+
+  async findLabels() {
+    return this.findLabelsMocks;
   }
 
   findByBblSpatialMocks = Array.from(Array(this.numberOfMocks), (_, seed) =>

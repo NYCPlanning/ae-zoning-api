@@ -3,7 +3,7 @@ import {
   Get,
   Injectable,
   Param,
-  Redirect,
+  Res,
   UseFilters,
   UsePipes,
 } from "@nestjs/common";
@@ -14,12 +14,17 @@ import {
   FindZoningDistrictClassesByZoningDistrictIdPathParams,
   findZoningDistrictByZoningDistrictIdPathParamsSchema,
   findZoningDistrictClassesByZoningDistrictIdPathParamsSchema,
+  FindZoningDistrictFillsPathParams,
+  FindZoningDistrictLabelsPathParams,
+  findZoningDistrictFillsPathParamsSchema,
+  findZoningDistrictLabelsPathParamsSchema,
 } from "src/gen";
 import {
   BadRequestExceptionFilter,
   InternalServerErrorExceptionFilter,
   NotFoundExceptionFilter,
 } from "src/filter";
+import { Response } from "express";
 
 @Injectable()
 @UseFilters(
@@ -30,6 +35,28 @@ import {
 @Controller("zoning-districts")
 export class ZoningDistrictController {
   constructor(private readonly zoningDistrictService: ZoningDistrictService) {}
+
+  @Get("/fills/:z/:x/:y.pbf")
+  @UsePipes(new ZodValidationPipe(findZoningDistrictFillsPathParamsSchema))
+  async findFills(
+    @Param() params: FindZoningDistrictFillsPathParams,
+    @Res() res: Response,
+  ) {
+    const tile = await this.zoningDistrictService.findFills(params);
+    res.set("Content-Type", "application/x-protobuf");
+    res.send(tile);
+  }
+
+  @Get("/labels/:z/:x/:y.pbf")
+  @UsePipes(new ZodValidationPipe(findZoningDistrictLabelsPathParamsSchema))
+  async findLabels(
+    @Param() params: FindZoningDistrictLabelsPathParams,
+    @Res() res: Response,
+  ) {
+    const tile = await this.zoningDistrictService.findLabels(params);
+    res.set("Content-Type", "application/x-protobuf");
+    res.send(tile);
+  }
 
   @Get("/:id")
   @UsePipes(
@@ -51,11 +78,5 @@ export class ZoningDistrictController {
     @Param() params: FindZoningDistrictClassesByZoningDistrictIdPathParams,
   ) {
     return this.zoningDistrictService.findZoningDistrictClassesById(params.id);
-  }
-
-  @Get("/:z/:x/:y.pbf")
-  @Redirect()
-  async findTilesets(@Param() params: { z: number; x: number; y: number }) {
-    return await this.zoningDistrictService.findZoningDistrictTilesets(params);
   }
 }

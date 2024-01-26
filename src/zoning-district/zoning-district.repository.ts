@@ -1,8 +1,6 @@
 import { Inject } from "@nestjs/common";
 import { DB, DbType } from "src/global/providers/db.provider";
-import { StorageConfig } from "src/config";
-import { ConfigType } from "@nestjs/config";
-import { eq } from "drizzle-orm";
+import { eq, isNotNull, sql } from "drizzle-orm";
 import { DataRetrievalException } from "src/exception";
 import {
   zoningDistrict,
@@ -10,8 +8,14 @@ import {
   zoningDistrictZoningDistrictClass,
 } from "src/schema";
 import {
+  FindZoningDistrictFillsPathParams,
+  FindZoningDistrictLabelsPathParams,
+} from "src/gen";
+import {
   CheckByIdRepo,
   FindByIdRepo,
+  FindFillsRepo,
+  FindLabelsRepo,
   FindZoningDistrictClassesByIdRepo,
 } from "./zoning-district.repository.schema";
 
@@ -19,8 +23,6 @@ export class ZoningDistrictRepository {
   constructor(
     @Inject(DB)
     private readonly db: DbType,
-    @Inject(StorageConfig.KEY)
-    private storageConfig: ConfigType<typeof StorageConfig>,
   ) {}
 
   #checkById = this.db.query.zoningDistrict
@@ -38,6 +40,112 @@ export class ZoningDistrictRepository {
       return await this.#checkById.execute({
         id,
       });
+    } catch {
+      throw new DataRetrievalException();
+    }
+  }
+
+  async findFills(
+    params: FindZoningDistrictFillsPathParams,
+  ): Promise<FindFillsRepo> {
+    try {
+      const { z, x, y } = params;
+      const tile = this.db
+        .select({
+          id: zoningDistrict.id,
+          label: zoningDistrict.label,
+          class: sql`${zoningDistrictClass.id}`.as("class"),
+          category: zoningDistrictClass.category,
+          color: sql`'['
+          ||('x'||SUBSTRING(${zoningDistrictClass.color}, 2, 2))::bit(8)::int||','
+          ||('x'||SUBSTRING(${zoningDistrictClass.color}, 4, 2))::bit(8)::int||','
+          ||('x'||SUBSTRING(${zoningDistrictClass.color}, 6, 2))::bit(8)::int||','
+          ||('x'||SUBSTRING(${zoningDistrictClass.color}, 8, 2))::bit(8)::int||
+          ']'`.as("color"),
+          geom: sql`ST_AsMVTGeom(
+            ${zoningDistrict.mercatorFill},
+            ST_TileEnvelope(${z}, ${x}, ${y}),
+            4096, 64, true)`.as("geom"),
+        })
+        .from(zoningDistrict)
+        .leftJoin(
+          zoningDistrictZoningDistrictClass,
+          eq(
+            zoningDistrict.id,
+            zoningDistrictZoningDistrictClass.zoningDistrictId,
+          ),
+        )
+        .leftJoin(
+          zoningDistrictClass,
+          eq(
+            zoningDistrictClass.id,
+            zoningDistrictZoningDistrictClass.zoningDistrictClassId,
+          ),
+        )
+        .where(
+          sql`${zoningDistrict.mercatorFill} && ST_TileEnvelope(${z}, ${x}, ${y})`,
+        )
+        .as("tile");
+
+      return await this.db
+        .select({
+          mvt: sql`ST_AsMVT(tile, 'zoning_district_fill', 4096, 'geom')`,
+        })
+        .from(tile)
+        .where(isNotNull(tile.geom));
+    } catch {
+      throw new DataRetrievalException();
+    }
+  }
+
+  async findLabels(
+    params: FindZoningDistrictLabelsPathParams,
+  ): Promise<FindLabelsRepo> {
+    const { z, x, y } = params;
+    try {
+      const tile = this.db
+        .selectDistinctOn([zoningDistrict.id], {
+          id: zoningDistrict.id,
+          label: zoningDistrict.label,
+          geom: sql`ST_AsMVTGeom(
+            ${zoningDistrict.mercatorLabel},
+            ST_TileEnvelope(${z}, ${x},${y}),
+            4096,64,true)`.as("geom"),
+          category:
+            sql`'["'||STRING_AGG(${zoningDistrictClass.category}::TEXT, '","')||'"]'`.as(
+              "category",
+            ),
+          class:
+            sql`'["'||STRING_AGG(${zoningDistrictZoningDistrictClass.zoningDistrictClassId}, '","')||'"]'`.as(
+              "class",
+            ),
+        })
+        .from(zoningDistrict)
+        .leftJoin(
+          zoningDistrictZoningDistrictClass,
+          eq(
+            zoningDistrict.id,
+            zoningDistrictZoningDistrictClass.zoningDistrictId,
+          ),
+        )
+        .leftJoin(
+          zoningDistrictClass,
+          eq(
+            zoningDistrictZoningDistrictClass.zoningDistrictClassId,
+            zoningDistrictClass.id,
+          ),
+        )
+        .where(
+          sql`${zoningDistrict.mercatorLabel} && ST_TileEnvelope(${z}, ${x},${y})`,
+        )
+        .groupBy(zoningDistrict.id, zoningDistrict.label)
+        .as("tile");
+      return await this.db
+        .select({
+          mvt: sql`ST_AsMVT(tile, 'zoning_district_label', 4096, 'geom')`,
+        })
+        .from(tile)
+        .where(isNotNull(tile.geom));
     } catch {
       throw new DataRetrievalException();
     }
@@ -85,13 +193,5 @@ export class ZoningDistrictRepository {
     } catch {
       throw new DataRetrievalException();
     }
-  }
-
-  async findZoningDistrictTilesets(params: {
-    z: number;
-    x: number;
-    y: number;
-  }) {
-    return `${this.storageConfig.storageUrl}/tilesets/zoning_district/${params.z}/${params.x}/${params.y}.pbf`;
   }
 }

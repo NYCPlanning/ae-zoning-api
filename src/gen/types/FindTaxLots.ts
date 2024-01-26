@@ -48,8 +48,6 @@ export type FindTaxLotsQueryParams = {
 
 export type FindTaxLots400 = Error;
 
-export type FindTaxLots500 = Error;
-
 /**
  * @description An object containing a list of tax lots and pagination metadata. An optional spatial filter will return all tax lots that intersect the spatial feature and its optional buffer. When applying a spatial filter, tax lots are ordered by their closeness to the spatial feature.
  */
