@@ -47,6 +47,6 @@ export class TaxLotRepositoryMock {
     const results = this.findZoningDistrictByTaxLotBblMocks.find(
       (taxLotZoningDistrictsPair) => bbl in taxLotZoningDistrictsPair,
     );
-    return results === undefined ? results : results[bbl];
+    return results === undefined ? [] : results[bbl];
   }
 }

@@ -93,7 +93,7 @@ export class TaxLotRepository {
 
   async findZoningDistrictByBbl(
     bbl: string,
-  ): Promise<FindZoningDistrictByTaxLotBblRepo | undefined> {
+  ): Promise<FindZoningDistrictByTaxLotBblRepo> {
     try {
       return await this.db
         .select({

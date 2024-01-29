@@ -15,7 +15,7 @@ export class ZoningDistrictClassRepository {
     private readonly db: DbType,
   ) {}
 
-  async findAll(): Promise<FindAllRepo | undefined> {
+  async findAll(): Promise<FindAllRepo> {
     try {
       return await this.db.query.zoningDistrictClass.findMany();
     } catch {
@@ -33,7 +33,7 @@ export class ZoningDistrictClassRepository {
     }
   }
 
-  async findCategoryColors(): Promise<FindCategoryColorsRepo | undefined> {
+  async findCategoryColors(): Promise<FindCategoryColorsRepo> {
     try {
       return await this.db
         .selectDistinctOn([zoningDistrictClass.category], {
