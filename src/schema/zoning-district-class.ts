@@ -26,7 +26,7 @@ export type ZoningDistrictClassCategoryEntity = z.infer<
 >;
 
 export const zoningDistrictClassEntitySchema = z.object({
-  id: z.string().regex(new RegExp("^((C[1-8])|(M[1-3])|(R([1-9]|10)))$")),
+  id: z.string().regex(new RegExp("^[A-Z][0-9]+$")),
   category: zoningDistrictClassCategoryEntitySchema.nullable(),
   description: z.string().describe(`Zoning class descriptions.`),
   url: z.string().nullable(),

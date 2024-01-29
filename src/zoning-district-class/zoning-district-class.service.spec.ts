@@ -51,8 +51,22 @@ describe("zoning district class service unit", () => {
       ).not.toThrow();
     });
 
+    it("should return an uppercase class when finding by lowercase", async () => {
+      const mock = zoningDistrictClassRepositoryMock.findByIdMocks[0];
+      const lowerCaseId = mock.id.toLowerCase();
+      const zoningDistrictClassesById =
+        await zoningDistrictClassService.findZoningDistrictClassById(
+          lowerCaseId,
+        );
+      expect(() =>
+        getZoningDistrictClassesByIdQueryResponseSchema.parse(
+          zoningDistrictClassesById,
+        ),
+      ).not.toThrow();
+    });
+
     it("service should throw 'Resource Not Found' if the id is missing", async () => {
-      const missingId = "C1";
+      const missingId = "T1";
       expect(
         zoningDistrictClassService.findZoningDistrictClassById(missingId),
       ).rejects.toThrow(ResourceNotFoundException);

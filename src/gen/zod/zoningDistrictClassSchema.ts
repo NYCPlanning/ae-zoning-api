@@ -6,7 +6,7 @@ export const zoningDistrictClassSchema = z.object({
   id: z
     .string()
     .describe(`The code associated with the Zoning class.`)
-    .regex(new RegExp("^((C[1-8])|(M[1-3])|(R([1-9]|10)))$")),
+    .regex(new RegExp("^[A-Z][0-9]+$")),
   category: z.lazy(() => zoningDistrictClassCategorySchema).schema,
   description: z.string().describe(`Zoning class descriptions.`),
   url: z
