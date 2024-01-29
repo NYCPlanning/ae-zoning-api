@@ -15,6 +15,7 @@ import {
   FindByBblSpatialRepo,
   CheckTaxLotByBblRepo,
   FindZoningDistrictByTaxLotBblRepo,
+  FindZoningDistrictClassByBblRepo,
 } from "./tax-lot.repository.schema";
 
 export class TaxLotRepository {
@@ -111,7 +112,9 @@ export class TaxLotRepository {
     }
   }
 
-  async findZoningDistrictClassByBbl(bbl: string) {
+  async findZoningDistrictClassByBbl(
+    bbl: string,
+  ): Promise<FindZoningDistrictClassByBblRepo> {
     try {
       return await this.db
         .select({
