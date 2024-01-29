@@ -4,6 +4,7 @@ import {
   findByBblSpatialRepoSchema,
   findZoningDistrictByTaxLotBblRepoSchema,
   checkTaxLotByBblRepoSchema,
+  findZoningDistrictClassByBblRepoSchema,
 } from "src/tax-lot/tax-lot.repository.schema";
 
 export class TaxLotRepositoryMock {
@@ -46,6 +47,21 @@ export class TaxLotRepositoryMock {
   async findZoningDistrictByBbl(bbl: string) {
     const results = this.findZoningDistrictByTaxLotBblMocks.find(
       (taxLotZoningDistrictsPair) => bbl in taxLotZoningDistrictsPair,
+    );
+    return results === undefined ? [] : results[bbl];
+  }
+
+  findZoningDistrictClassByTaxLotBblMocks = this.checkTaxLotByBblMocks.map(
+    (checkTaxLot) => {
+      return {
+        [checkTaxLot.bbl]: generateMock(findZoningDistrictClassByBblRepoSchema),
+      };
+    },
+  );
+
+  async findZoningDistrictClassByBbl(bbl: string) {
+    const results = this.findZoningDistrictClassByTaxLotBblMocks.find(
+      (taxLotZoningDistrictClasses) => bbl in taxLotZoningDistrictClasses,
     );
     return results === undefined ? [] : results[bbl];
   }

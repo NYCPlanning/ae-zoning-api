@@ -2,6 +2,7 @@ import { z } from "zod";
 import {
   boroughEntitySchema,
   landUseEntitySchema,
+  zoningDistrictClassEntitySchema,
   zoningDistrictEntitySchema,
 } from "src/schema";
 import { taxLotEntitySchema } from "src/schema/tax-lot";
@@ -64,4 +65,12 @@ export const findZoningDistrictByTaxLotBblRepoSchema = z.array(
 
 export type FindZoningDistrictByTaxLotBblRepo = z.infer<
   typeof findZoningDistrictByTaxLotBblRepoSchema
+>;
+
+export const findZoningDistrictClassByBblRepoSchema = z.array(
+  zoningDistrictClassEntitySchema,
+);
+
+export type FindZoningDistrictClassByBblRepo = z.infer<
+  typeof findZoningDistrictClassByBblRepoSchema
 >;
