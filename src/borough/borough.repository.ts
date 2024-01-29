@@ -9,7 +9,7 @@ export class BoroughRepository {
     private readonly db: DbType,
   ) {}
 
-  async findAll(): Promise<FindAllRepo | undefined> {
+  async findAll(): Promise<FindAllRepo> {
     try {
       return await this.db.query.borough.findMany();
     } catch {
