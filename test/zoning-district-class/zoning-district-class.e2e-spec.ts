@@ -74,6 +74,19 @@ describe("Zoning District Classes e2e", () => {
       ).not.toThrow();
     });
 
+    it("should 200 and return a zoning district class by lowercase id", async () => {
+      const mock = zoningDistrictClassRepositoryMock.findByIdMocks[0];
+      const lowerCaseId = mock.id.toLowerCase();
+
+      const response = await request(app.getHttpServer())
+        .get(`/zoning-district-classes/${lowerCaseId}`)
+        .expect(200);
+
+      expect(() =>
+        getZoningDistrictClassesByIdQueryResponseSchema.parse(response.body),
+      ).not.toThrow();
+    });
+
     it("should 400 and throw 'Bad Request' error with an invalid id", async () => {
       const invalidRequestParameterException =
         new InvalidRequestParameterException();
@@ -90,7 +103,7 @@ describe("Zoning District Classes e2e", () => {
     });
 
     it("should 404 and throw 'Not Found' with an missing id", async () => {
-      const missingId = "C1";
+      const missingId = "T1";
       const response = await request(app.getHttpServer())
         .get(`/zoning-district-classes/${missingId}`)
         .expect(404);
