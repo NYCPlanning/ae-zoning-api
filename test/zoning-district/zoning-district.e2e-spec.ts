@@ -3,7 +3,10 @@ import { INestApplication } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import { ZoningDistrictRepositoryMock } from "./zoning-district.repository.mock";
 import { ZoningDistrictRepository } from "src/zoning-district/zoning-district.repository";
-import { getZoningDistrictByIdQueryResponseSchema } from "src/gen";
+import {
+  getZoningDistrictByIdQueryResponseSchema,
+  getZoningDistrictClassesByUuidQueryResponseSchema,
+} from "src/gen";
 import { ZoningDistrictModule } from "src/zoning-district/zoning-district.module";
 import { DataRetrievalException } from "src/exception";
 import { HttpName } from "src/filter";
@@ -62,6 +65,52 @@ describe("Zoning district e2e", () => {
       const mock = zoningDistrictRepositoryMock.findByUuidMocks[0];
       const response = await request(app.getHttpServer())
         .get(`/zoning-districts/${mock.id}`)
+        .expect(500);
+      expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);
+      expect(response.body.message).toBe(dataRetrievalException.message);
+    });
+  });
+
+  describe("findClassesByUuid", () => {
+    it("should 200 and return a zoning district class for a given uuid", async () => {
+      const mock =
+        zoningDistrictRepositoryMock.checkZoningDistrictsByIdMocks[0];
+      const response = await request(app.getHttpServer())
+        .get(`/zoning-districts/${mock.id}/classes`)
+        .expect(200);
+      expect(() =>
+        getZoningDistrictClassesByUuidQueryResponseSchema.parse(response.body),
+      ).not.toThrow();
+    });
+
+    it("should 400 and when finding by a too short uuid", async () => {
+      const shortUuid = "03a40e74-e5b4-4faf-a8cb-a93cf6118d6";
+      const response = await request(app.getHttpServer())
+        .get(`/zoning-districts/${shortUuid}/classes`)
+        .expect(400);
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 404 and when finding by a missing uuid", async () => {
+      const missingUuid = "03a40e74-e5b4-4faf-a8cb-a93cf6118d6c";
+      const response = await request(app.getHttpServer())
+        .get(`/zoning-districts/${missingUuid}/classes`)
+        .expect(404);
+      expect(response.body.message).toBe(HttpName.NOT_FOUND);
+    });
+
+    it("should 500 when the database errors", async () => {
+      const dataRetrievalException = new DataRetrievalException();
+      jest
+        .spyOn(zoningDistrictRepositoryMock, "checkZoningDistrictById")
+        .mockImplementationOnce(() => {
+          throw dataRetrievalException;
+        });
+
+      const mock =
+        zoningDistrictRepositoryMock.checkZoningDistrictsByIdMocks[0];
+      const response = await request(app.getHttpServer())
+        .get(`/zoning-districts/${mock.id}/classes`)
         .expect(500);
       expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);
       expect(response.body.message).toBe(dataRetrievalException.message);

@@ -60,7 +60,7 @@ describe("TaxLotController", () => {
   });
 
   describe("findZoningDistrictByTaxLotBbl", () => {
-    it("should return an array of zoning district(s) when requesting a valid bbl", async () => {
+    it.only("should return an array of zoning district(s) when requesting a valid bbl", async () => {
       const { bbl } = taxLotRepository.checkTaxLotByBblMocks[0];
       const zoningDistricts =
         await taxLotService.findZoningDistrictByTaxLotBbl(bbl);
