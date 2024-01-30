@@ -1,12 +1,16 @@
 import { ZoningDistrictRepositoryMock } from "test/zoning-district/zoning-district.repository.mock";
 import { ZoningDistrictService } from "./zoning-district.service";
 import { ZoningDistrictRepository } from "./zoning-district.repository";
-import { getZoningDistrictByIdQueryResponseSchema } from "src/gen";
+import {
+  getZoningDistrictByIdQueryResponseSchema,
+  getZoningDistrictClassesByUuidQueryResponseSchema,
+} from "src/gen";
 import { Test } from "@nestjs/testing";
 import { ResourceNotFoundException } from "src/exception";
 
 describe("Zoning district service unit", () => {
   let zoningDistrictService: ZoningDistrictService;
+
   const zoningDistrictRepositoryMock = new ZoningDistrictRepositoryMock();
 
   beforeEach(async () => {
@@ -36,6 +40,27 @@ describe("Zoning district service unit", () => {
       const missingUuid = "03a40e74-e5b4-4faf-a8cb-a93cf6118d6c";
       const zoningDistrict =
         zoningDistrictService.findZoningDistrictByUuid(missingUuid);
+      expect(zoningDistrict).rejects.toThrow(ResourceNotFoundException);
+    });
+  });
+
+  describe("findClassesByUuid", () => {
+    it("service should return a getZoningDistrictClassesByUuidQueryResponseSchema compliant object", async () => {
+      const { id } =
+        zoningDistrictRepositoryMock.checkZoningDistrictsByIdMocks[0];
+      const zoningDistrictClasses =
+        await zoningDistrictService.findClassesByZoningDistrictUuid(id);
+      expect(() =>
+        getZoningDistrictClassesByUuidQueryResponseSchema.parse(
+          zoningDistrictClasses,
+        ),
+      ).not.toThrow();
+    });
+
+    it("service should throw a resource error when requesting with a missing id", async () => {
+      const missingUuid = "03a40e74-e5b4-4faf-a8cb-a93cf6118d6c";
+      const zoningDistrict =
+        zoningDistrictService.findClassesByZoningDistrictUuid(missingUuid);
       expect(zoningDistrict).rejects.toThrow(ResourceNotFoundException);
     });
   });
