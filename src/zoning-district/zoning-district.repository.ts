@@ -9,7 +9,11 @@ import {
   zoningDistrictClass,
   zoningDistrictZoningDistrictClass,
 } from "src/schema";
-import { FindByUuidRepo } from "./zoning-district.repository.schema";
+import {
+  CheckByIdRepo,
+  FindByUuidRepo,
+  FindClassesByIdRepo,
+} from "./zoning-district.repository.schema";
 
 export class ZoningDistrictRepository {
   constructor(
@@ -29,7 +33,9 @@ export class ZoningDistrictRepository {
     })
     .prepare("checkZoningDistrictById");
 
-  async checkZoningDistrictById(id: string) {
+  async checkZoningDistrictById(
+    id: string,
+  ): Promise<CheckByIdRepo | undefined> {
     try {
       return await this.#checkZoningDistrictById.execute({
         id,
@@ -39,18 +45,18 @@ export class ZoningDistrictRepository {
     }
   }
 
-  async findByUuid(uuid: string): Promise<FindByUuidRepo | undefined> {
+  async findByUuid(id: string): Promise<FindByUuidRepo | undefined> {
     try {
       return await this.db.query.zoningDistrict.findFirst({
         columns: { wgs84: false, liFt: false },
-        where: eq(zoningDistrict.id, uuid),
+        where: eq(zoningDistrict.id, id),
       });
     } catch {
       throw new DataRetrievalException();
     }
   }
 
-  async findClassesByUuid(id: string) {
+  async findClassesByUuid(id: string): Promise<FindClassesByIdRepo> {
     try {
       return await this.db
         .select({

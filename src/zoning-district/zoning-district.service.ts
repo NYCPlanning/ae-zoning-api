@@ -9,8 +9,8 @@ export class ZoningDistrictService {
     private readonly zoningDistrictRepository: ZoningDistrictRepository,
   ) {}
 
-  async findZoningDistrictByUuid(uuid: string) {
-    const zoningDistrict = await this.zoningDistrictRepository.findByUuid(uuid);
+  async findZoningDistrictByUuid(id: string) {
+    const zoningDistrict = await this.zoningDistrictRepository.findByUuid(id);
     if (zoningDistrict === undefined) throw new ResourceNotFoundException();
 
     return zoningDistrict;
