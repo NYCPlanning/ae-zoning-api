@@ -4,8 +4,8 @@ import { Test } from "@nestjs/testing";
 import { ZoningDistrictRepositoryMock } from "./zoning-district.repository.mock";
 import { ZoningDistrictRepository } from "src/zoning-district/zoning-district.repository";
 import {
-  getZoningDistrictByIdQueryResponseSchema,
-  getZoningDistrictClassesByUuidQueryResponseSchema,
+  findZoningDistrictByZoningDistrictIdQueryResponseSchema,
+  findZoningDistrictClassesByZoningDistrictIdQueryResponseSchema,
 } from "src/gen";
 import { ZoningDistrictModule } from "src/zoning-district/zoning-district.module";
 import { DataRetrievalException } from "src/exception";
@@ -27,29 +27,31 @@ describe("Zoning district e2e", () => {
     await app.init();
   });
 
-  describe("findByUuid", () => {
+  describe("findZoningDistrictByZoningDistrictId", () => {
     it("should 200 and return zoning district", async () => {
-      const mock = zoningDistrictRepositoryMock.findByUuidMocks[0];
+      const mock = zoningDistrictRepositoryMock.findByIdMocks[0];
       const response = await request(app.getHttpServer())
         .get(`/zoning-districts/${mock.id}`)
         .expect(200);
       expect(() =>
-        getZoningDistrictByIdQueryResponseSchema.parse(response.body),
+        findZoningDistrictByZoningDistrictIdQueryResponseSchema.parse(
+          response.body,
+        ),
       ).not.toThrow();
     });
 
-    it("should 400 and when finding by a too short uuid", async () => {
-      const shortUuid = "03a40e74-e5b4-4faf-a8cb-a93cf6118d6";
+    it("should 400 and when finding by a too short id", async () => {
+      const shortId = "03a40e74-e5b4-4faf-a8cb-a93cf6118d6";
       const response = await request(app.getHttpServer())
-        .get(`/zoning-districts/${shortUuid}`)
+        .get(`/zoning-districts/${shortId}`)
         .expect(400);
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
 
-    it("should 404 and when finding by a missing uuid", async () => {
-      const missingUuid = "03a40e74-e5b4-4faf-a8cb-a93cf6118d6c";
+    it("should 404 and when finding by a missing id", async () => {
+      const missingId = "03a40e74-e5b4-4faf-a8cb-a93cf6118d6c";
       const response = await request(app.getHttpServer())
-        .get(`/zoning-districts/${missingUuid}`)
+        .get(`/zoning-districts/${missingId}`)
         .expect(404);
       expect(response.body.message).toBe(HttpName.NOT_FOUND);
     });
@@ -57,12 +59,12 @@ describe("Zoning district e2e", () => {
     it("should 500 when the database errors", async () => {
       const dataRetrievalException = new DataRetrievalException();
       jest
-        .spyOn(zoningDistrictRepositoryMock, "findByUuid")
+        .spyOn(zoningDistrictRepositoryMock, "findById")
         .mockImplementationOnce(() => {
           throw dataRetrievalException;
         });
 
-      const mock = zoningDistrictRepositoryMock.findByUuidMocks[0];
+      const mock = zoningDistrictRepositoryMock.findByIdMocks[0];
       const response = await request(app.getHttpServer())
         .get(`/zoning-districts/${mock.id}`)
         .expect(500);
@@ -71,30 +73,31 @@ describe("Zoning district e2e", () => {
     });
   });
 
-  describe("findClassesByUuid", () => {
-    it("should 200 and return a zoning district class for a given uuid", async () => {
-      const mock =
-        zoningDistrictRepositoryMock.checkZoningDistrictsByIdMocks[0];
+  describe("findZoningDistrictClassesByZoningDistrictId", () => {
+    it("should 200 and return a zoning district class for a given id", async () => {
+      const mock = zoningDistrictRepositoryMock.checkByIdMocks[0];
       const response = await request(app.getHttpServer())
         .get(`/zoning-districts/${mock.id}/classes`)
         .expect(200);
       expect(() =>
-        getZoningDistrictClassesByUuidQueryResponseSchema.parse(response.body),
+        findZoningDistrictClassesByZoningDistrictIdQueryResponseSchema.parse(
+          response.body,
+        ),
       ).not.toThrow();
     });
 
-    it("should 400 and when finding by a too short uuid", async () => {
-      const shortUuid = "03a40e74-e5b4-4faf-a8cb-a93cf6118d6";
+    it("should 400 and when finding by a too short id", async () => {
+      const shortId = "03a40e74-e5b4-4faf-a8cb-a93cf6118d6";
       const response = await request(app.getHttpServer())
-        .get(`/zoning-districts/${shortUuid}/classes`)
+        .get(`/zoning-districts/${shortId}/classes`)
         .expect(400);
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
 
-    it("should 404 and when finding by a missing uuid", async () => {
-      const missingUuid = "03a40e74-e5b4-4faf-a8cb-a93cf6118d6c";
+    it("should 404 and when finding by a missing id", async () => {
+      const missingId = "03a40e74-e5b4-4faf-a8cb-a93cf6118d6c";
       const response = await request(app.getHttpServer())
-        .get(`/zoning-districts/${missingUuid}/classes`)
+        .get(`/zoning-districts/${missingId}/classes`)
         .expect(404);
       expect(response.body.message).toBe(HttpName.NOT_FOUND);
     });
@@ -102,13 +105,12 @@ describe("Zoning district e2e", () => {
     it("should 500 when the database errors", async () => {
       const dataRetrievalException = new DataRetrievalException();
       jest
-        .spyOn(zoningDistrictRepositoryMock, "checkZoningDistrictById")
+        .spyOn(zoningDistrictRepositoryMock, "checkById")
         .mockImplementationOnce(() => {
           throw dataRetrievalException;
         });
 
-      const mock =
-        zoningDistrictRepositoryMock.checkZoningDistrictsByIdMocks[0];
+      const mock = zoningDistrictRepositoryMock.checkByIdMocks[0];
       const response = await request(app.getHttpServer())
         .get(`/zoning-districts/${mock.id}/classes`)
         .expect(500);

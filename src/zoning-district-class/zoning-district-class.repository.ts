@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 import { DataRetrievalException } from "src/exception";
 import { zoningDistrictClass } from "src/schema";
 import {
-  FindAllRepo,
+  FindManyRepo,
   FindByIdRepo,
   FindCategoryColorsRepo,
 } from "./zoning-district-class.repository.schema";
@@ -15,7 +15,7 @@ export class ZoningDistrictClassRepository {
     private readonly db: DbType,
   ) {}
 
-  async findAll(): Promise<FindAllRepo> {
+  async findMany(): Promise<FindManyRepo> {
     try {
       return await this.db.query.zoningDistrictClass.findMany();
     } catch {

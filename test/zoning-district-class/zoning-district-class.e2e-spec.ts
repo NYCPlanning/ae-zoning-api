@@ -5,15 +5,15 @@ import { ZoningDistrictClassModule } from "src/zoning-district-class/zoning-dist
 import { ZoningDistrictClassRepositoryMock } from "./zoning-district-class.repository.mock";
 import { ZoningDistrictClassRepository } from "src/zoning-district-class/zoning-district-class.repository";
 import {
-  getAllZoningDistrictClassesQueryResponseSchema,
-  getZoningDistrictClassesByIdQueryResponseSchema,
-  getZoningDistrictClassesCategoryColorsQueryResponseSchema,
-} from "src/gen";
-import {
   DataRetrievalException,
   InvalidRequestParameterException,
 } from "src/exception";
 import { HttpName } from "src/filter";
+import {
+  findZoningDistrictClassByZoningDistrictClassIdQueryResponseSchema,
+  findZoningDistrictClassCategoryColorsQueryResponseSchema,
+  findZoningDistrictClassesQueryResponseSchema,
+} from "src/gen";
 
 describe("Zoning District Classes e2e", () => {
   let app: INestApplication;
@@ -33,21 +33,21 @@ describe("Zoning District Classes e2e", () => {
     await app.init();
   });
 
-  describe("getAllZoningDistrictClasses", () => {
+  describe("findZoningDistrictClasses", () => {
     it("should 200 and return all zoning district classes", async () => {
       const response = await request(app.getHttpServer())
         .get("/zoning-district-classes")
         .expect(200);
 
       expect(() =>
-        getAllZoningDistrictClassesQueryResponseSchema.parse(response.body),
+        findZoningDistrictClassesQueryResponseSchema.parse(response.body),
       ).not.toThrow();
     });
 
     it("should 500 and throw data retrieval error", async () => {
       const dataRetrievalException = new DataRetrievalException();
       jest
-        .spyOn(zoningDistrictClassRepositoryMock, "findAll")
+        .spyOn(zoningDistrictClassRepositoryMock, "findMany")
         .mockImplementationOnce(() => {
           throw dataRetrievalException;
         });
@@ -61,8 +61,8 @@ describe("Zoning District Classes e2e", () => {
     });
   });
 
-  describe("getZoningDistrictClassesById", () => {
-    it("should 200 and return a zoning district class by id", async () => {
+  describe("findZoningDistrictClassByZoningDistrictClassId", () => {
+    it("should 200 and return zoning district class(es) by zoning district id", async () => {
       const mock = zoningDistrictClassRepositoryMock.findByIdMocks[0];
 
       const response = await request(app.getHttpServer())
@@ -70,7 +70,9 @@ describe("Zoning District Classes e2e", () => {
         .expect(200);
 
       expect(() =>
-        getZoningDistrictClassesByIdQueryResponseSchema.parse(response.body),
+        findZoningDistrictClassByZoningDistrictClassIdQueryResponseSchema.parse(
+          response.body,
+        ),
       ).not.toThrow();
     });
 
@@ -83,7 +85,9 @@ describe("Zoning District Classes e2e", () => {
         .expect(200);
 
       expect(() =>
-        getZoningDistrictClassesByIdQueryResponseSchema.parse(response.body),
+        findZoningDistrictClassByZoningDistrictClassIdQueryResponseSchema.parse(
+          response.body,
+        ),
       ).not.toThrow();
     });
 
@@ -129,14 +133,14 @@ describe("Zoning District Classes e2e", () => {
     });
   });
 
-  describe("getZoningDistrictClassCategoryColors", () => {
-    it("should 200 and return an array of  zoning district class category colors", async () => {
+  describe("findZoningDistrictClassCategoryColors", () => {
+    it("should 200 and return zoning district class category colors", async () => {
       const response = await request(app.getHttpServer())
         .get("/zoning-district-classes/category-colors")
         .expect(200);
 
       expect(() =>
-        getZoningDistrictClassesCategoryColorsQueryResponseSchema.parse(
+        findZoningDistrictClassCategoryColorsQueryResponseSchema.parse(
           response.body,
         ),
       ).not.toThrow();

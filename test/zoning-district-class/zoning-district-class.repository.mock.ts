@@ -1,12 +1,12 @@
 import { generateMock } from "@anatine/zod-mock";
 import {
-  findAllRepoSchema,
   findByIdRepoSchema,
   findCategoryColorsRepoSchema,
+  findManyRepoSchema,
 } from "src/zoning-district-class/zoning-district-class.repository.schema";
 
 export class ZoningDistrictClassRepositoryMock {
-  findAllMocks = generateMock(findAllRepoSchema);
+  findManyMocks = generateMock(findManyRepoSchema);
 
   findByIdMocks = Array.from(Array(10), () =>
     generateMock(findByIdRepoSchema, { seed: 1 }),
@@ -16,8 +16,8 @@ export class ZoningDistrictClassRepositoryMock {
     seed: 1,
   });
 
-  findAll() {
-    return this.findAllMocks;
+  findMany() {
+    return this.findManyMocks;
   }
 
   async findById(id: string) {

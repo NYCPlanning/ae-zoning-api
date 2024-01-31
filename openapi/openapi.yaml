@@ -165,7 +165,7 @@ paths:
   /zoning-districts/{id}:
     get:
       summary: Non-spatial details for a specific zoning district
-      operationId: getZoningDistrictById
+      operationId: findZoningDistrictByZoningDistrictId
       tags:
       - Zoning Districts
       parameters:
@@ -188,14 +188,14 @@ paths:
           $ref: "#/components/responses/NotFound"
         '500':
           $ref: "#/components/responses/InternalServerError"
-  /zoning-districts/{uuid}/classes:
+  /zoning-districts/{id}/classes:
     get:
       summary: Class schemas for the specified zoning district
-      operationId: getZoningDistrictClassesByUuid
+      operationId: findZoningDistrictClassesByZoningDistrictId
       tags:
       - Zoning Districts
       parameters:
-        - name: uuid
+        - name: id
           in: path
           required: true
           schema:
@@ -224,7 +224,7 @@ paths:
   /zoning-district-classes:
     get:
       summary: Class schemas for all zoning districts
-      operationId: getAllZoningDistrictClasses
+      operationId: findZoningDistrictClasses
       tags:
       - Zoning Districts
       responses:
@@ -248,7 +248,7 @@ paths:
   /zoning-district-classes/category-colors:
     get:
       summary: List of color and class category
-      operationId: getZoningDistrictClassCategoryColors
+      operationId: findZoningDistrictClassCategoryColors
       tags:
       - Zoning Districts
       responses:
@@ -272,7 +272,7 @@ paths:
   /zoning-district-classes/{id}:
     get:
       summary: Class schema for the specified class
-      operationId: getZoningDistrictClassesById
+      operationId: findZoningDistrictClassByZoningDistrictClassId
       tags:
       - Zoning Districts
       parameters:

@@ -11,8 +11,8 @@ import {
 } from "src/schema";
 import {
   CheckByIdRepo,
-  FindByUuidRepo,
-  FindClassesByIdRepo,
+  FindByIdRepo,
+  FindZoningDistrictClassesByIdRepo,
 } from "./zoning-district.repository.schema";
 
 export class ZoningDistrictRepository {
@@ -23,7 +23,7 @@ export class ZoningDistrictRepository {
     private storageConfig: ConfigType<typeof StorageConfig>,
   ) {}
 
-  #checkZoningDistrictById = this.db.query.zoningDistrict
+  #checkById = this.db.query.zoningDistrict
     .findFirst({
       columns: {
         id: true,
@@ -33,11 +33,9 @@ export class ZoningDistrictRepository {
     })
     .prepare("checkZoningDistrictById");
 
-  async checkZoningDistrictById(
-    id: string,
-  ): Promise<CheckByIdRepo | undefined> {
+  async checkById(id: string): Promise<CheckByIdRepo | undefined> {
     try {
-      return await this.#checkZoningDistrictById.execute({
+      return await this.#checkById.execute({
         id,
       });
     } catch {
@@ -45,7 +43,7 @@ export class ZoningDistrictRepository {
     }
   }
 
-  async findByUuid(id: string): Promise<FindByUuidRepo | undefined> {
+  async findById(id: string): Promise<FindByIdRepo | undefined> {
     try {
       return await this.db.query.zoningDistrict.findFirst({
         columns: { wgs84: false, liFt: false },
@@ -56,7 +54,9 @@ export class ZoningDistrictRepository {
     }
   }
 
-  async findClassesByUuid(id: string): Promise<FindClassesByIdRepo> {
+  async findZoningDistrictClassesById(
+    id: string,
+  ): Promise<FindZoningDistrictClassesByIdRepo> {
     try {
       return await this.db
         .select({
