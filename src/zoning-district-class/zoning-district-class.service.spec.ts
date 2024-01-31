@@ -3,9 +3,9 @@ import { ZoningDistrictClassRepositoryMock } from "test/zoning-district-class/zo
 import { ZoningDistrictClassService } from "./zoning-district-class.service";
 import { ZoningDistrictClassRepository } from "./zoning-district-class.repository";
 import {
-  getAllZoningDistrictClassesQueryResponseSchema,
-  getZoningDistrictClassesByIdQueryResponseSchema,
-  getZoningDistrictClassCategoryColorsQueryResponseSchema,
+  findZoningDistrictClassesQueryResponseSchema,
+  findZoningDistrictClassByZoningDistrictClassIdQueryResponseSchema,
+  findZoningDistrictClassCategoryColorsQueryResponseSchema,
 } from "src/gen";
 import { ResourceNotFoundException } from "src/exception";
 
@@ -27,25 +27,24 @@ describe("zoning district class service unit", () => {
     );
   });
 
-  describe("getAllZoningDistrictClasses", () => {
+  describe("findMany", () => {
     it("should return zoning district classes", async () => {
-      const zoningDistrictClasses =
-        await zoningDistrictClassService.findAllZoningDistrictClasses();
+      const zoningDistrictClasses = await zoningDistrictClassService.findMany();
       expect(() =>
-        getAllZoningDistrictClassesQueryResponseSchema.parse(
+        findZoningDistrictClassesQueryResponseSchema.parse(
           zoningDistrictClasses,
         ),
       ).not.toThrow();
     });
   });
 
-  describe("getZoningDistrictClassesById", () => {
+  describe("findById", () => {
     it("should return a zoning district class by id", async () => {
       const mock = zoningDistrictClassRepositoryMock.findByIdMocks[0];
       const zoningDistrictClassesById =
-        await zoningDistrictClassService.findZoningDistrictClassById(mock.id);
+        await zoningDistrictClassService.findById(mock.id);
       expect(() =>
-        getZoningDistrictClassesByIdQueryResponseSchema.parse(
+        findZoningDistrictClassByZoningDistrictClassIdQueryResponseSchema.parse(
           zoningDistrictClassesById,
         ),
       ).not.toThrow();
@@ -55,11 +54,9 @@ describe("zoning district class service unit", () => {
       const mock = zoningDistrictClassRepositoryMock.findByIdMocks[0];
       const lowerCaseId = mock.id.toLowerCase();
       const zoningDistrictClassesById =
-        await zoningDistrictClassService.findZoningDistrictClassById(
-          lowerCaseId,
-        );
+        await zoningDistrictClassService.findById(lowerCaseId);
       expect(() =>
-        getZoningDistrictClassesByIdQueryResponseSchema.parse(
+        findZoningDistrictClassByZoningDistrictClassIdQueryResponseSchema.parse(
           zoningDistrictClassesById,
         ),
       ).not.toThrow();
@@ -67,19 +64,19 @@ describe("zoning district class service unit", () => {
 
     it("service should throw 'Resource Not Found' if the id is missing", async () => {
       const missingId = "T1";
-      expect(
-        zoningDistrictClassService.findZoningDistrictClassById(missingId),
-      ).rejects.toThrow(ResourceNotFoundException);
+      expect(zoningDistrictClassService.findById(missingId)).rejects.toThrow(
+        ResourceNotFoundException,
+      );
     });
   });
 
-  describe("getZoningDistrictClassesCategoryColors", () => {
+  describe("findCategoryColors", () => {
     it("should return an array of zoning district class category colors", async () => {
       const zoningDistrictClassCategoryColors =
-        await zoningDistrictClassService.findZoningDistrictClassCategoryColors();
+        await zoningDistrictClassService.findCategoryColors();
 
       expect(() =>
-        getZoningDistrictClassCategoryColorsQueryResponseSchema.parse(
+        findZoningDistrictClassCategoryColorsQueryResponseSchema.parse(
           zoningDistrictClassCategoryColors,
         ),
       ).not.toThrow();

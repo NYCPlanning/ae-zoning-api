@@ -9,15 +9,15 @@ export class ZoningDistrictClassService {
     private readonly zoningDistrictClassRepository: ZoningDistrictClassRepository,
   ) {}
 
-  async findAllZoningDistrictClasses() {
+  async findMany() {
     const zoningDistrictClasses =
-      await this.zoningDistrictClassRepository.findAll();
+      await this.zoningDistrictClassRepository.findMany();
     return {
       zoningDistrictClasses,
     };
   }
 
-  async findZoningDistrictClassById(id: string) {
+  async findById(id: string) {
     const result = await this.zoningDistrictClassRepository.findById(
       id.toUpperCase(),
     );
@@ -26,7 +26,7 @@ export class ZoningDistrictClassService {
     return result;
   }
 
-  async findZoningDistrictClassCategoryColors() {
+  async findCategoryColors() {
     const zoningDistrictClassCategoryColors =
       await this.zoningDistrictClassRepository.findCategoryColors();
 

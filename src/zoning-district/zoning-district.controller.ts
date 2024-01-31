@@ -10,10 +10,10 @@ import {
 import { ZoningDistrictService } from "./zoning-district.service";
 import { ZodValidationPipe } from "src/pipes/zod-validation-pipe";
 import {
-  GetZoningDistrictByIdPathParams,
-  GetZoningDistrictClassesByUuidPathParams,
-  getZoningDistrictByIdPathParamsSchema,
-  getZoningDistrictClassesByUuidPathParamsSchema,
+  FindZoningDistrictByZoningDistrictIdPathParams,
+  FindZoningDistrictClassesByZoningDistrictIdPathParams,
+  findZoningDistrictByZoningDistrictIdPathParamsSchema,
+  findZoningDistrictClassesByZoningDistrictIdPathParamsSchema,
 } from "src/gen";
 import {
   BadRequestExceptionFilter,
@@ -32,30 +32,30 @@ export class ZoningDistrictController {
   constructor(private readonly zoningDistrictService: ZoningDistrictService) {}
 
   @Get("/:id")
-  @UsePipes(new ZodValidationPipe(getZoningDistrictByIdPathParamsSchema))
-  async findZoningDistrictByUuid(
-    @Param() params: GetZoningDistrictByIdPathParams,
+  @UsePipes(
+    new ZodValidationPipe(findZoningDistrictByZoningDistrictIdPathParamsSchema),
+  )
+  async findById(
+    @Param() params: FindZoningDistrictByZoningDistrictIdPathParams,
   ) {
-    return this.zoningDistrictService.findZoningDistrictByUuid(params.id);
+    return this.zoningDistrictService.findById(params.id);
   }
 
-  @Get("/:uuid/classes")
+  @Get("/:id/classes")
   @UsePipes(
-    new ZodValidationPipe(getZoningDistrictClassesByUuidPathParamsSchema),
+    new ZodValidationPipe(
+      findZoningDistrictClassesByZoningDistrictIdPathParamsSchema,
+    ),
   )
-  async findClassesByZoningDistrictUuid(
-    @Param() params: GetZoningDistrictClassesByUuidPathParams,
+  async findZoningDistrictClassesById(
+    @Param() params: FindZoningDistrictClassesByZoningDistrictIdPathParams,
   ) {
-    return this.zoningDistrictService.findClassesByZoningDistrictUuid(
-      params.uuid,
-    );
+    return this.zoningDistrictService.findZoningDistrictClassesById(params.id);
   }
 
   @Get("/:z/:x/:y.pbf")
   @Redirect()
-  async findZoningDistrictTilesets(
-    @Param() params: { z: number; x: number; y: number },
-  ) {
+  async findTilesets(@Param() params: { z: number; x: number; y: number }) {
     return await this.zoningDistrictService.findZoningDistrictTilesets(params);
   }
 }

@@ -9,20 +9,20 @@ export class ZoningDistrictService {
     private readonly zoningDistrictRepository: ZoningDistrictRepository,
   ) {}
 
-  async findZoningDistrictByUuid(id: string) {
-    const zoningDistrict = await this.zoningDistrictRepository.findByUuid(id);
+  async findById(id: string) {
+    const zoningDistrict = await this.zoningDistrictRepository.findById(id);
     if (zoningDistrict === undefined) throw new ResourceNotFoundException();
 
     return zoningDistrict;
   }
 
-  async findClassesByZoningDistrictUuid(id: string) {
+  async findZoningDistrictClassesById(id: string) {
     const zoningDistrictCheck =
-      await this.zoningDistrictRepository.checkZoningDistrictById(id);
+      await this.zoningDistrictRepository.checkById(id);
     if (zoningDistrictCheck === undefined)
       throw new ResourceNotFoundException();
     const zoningDistrictClasses =
-      await this.zoningDistrictRepository.findClassesByUuid(id);
+      await this.zoningDistrictRepository.findZoningDistrictClassesById(id);
 
     return {
       zoningDistrictClasses,

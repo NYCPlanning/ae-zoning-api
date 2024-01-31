@@ -2,8 +2,8 @@ import { Controller, Get, Param, UseFilters, UsePipes } from "@nestjs/common";
 import { ZoningDistrictClassService } from "./zoning-district-class.service";
 import { ZodValidationPipe } from "src/pipes/zod-validation-pipe";
 import {
-  GetZoningDistrictClassesByIdPathParams,
-  getZoningDistrictClassesByIdPathParamsSchema,
+  findZoningDistrictClassByZoningDistrictClassIdPathParamsSchema,
+  FindZoningDistrictClassByZoningDistrictClassIdPathParams,
 } from "../gen";
 import {
   BadRequestExceptionFilter,
@@ -19,24 +19,28 @@ import {
 @Controller("zoning-district-classes")
 export class ZoningDistrictClassController {
   constructor(
-    private readonly zoningDistrictService: ZoningDistrictClassService,
+    private readonly zoningDistrictClassService: ZoningDistrictClassService,
   ) {}
 
   @Get()
-  async findAllZoningDistrictClasses() {
-    return this.zoningDistrictService.findAllZoningDistrictClasses();
+  async findMany() {
+    return this.zoningDistrictClassService.findMany();
   }
 
   @Get("/category-colors")
-  async findZoningDistrictClassCategoryColors() {
-    return this.zoningDistrictService.findZoningDistrictClassCategoryColors();
+  async findCategoryColors() {
+    return this.zoningDistrictClassService.findCategoryColors();
   }
 
   @Get("/:id")
-  @UsePipes(new ZodValidationPipe(getZoningDistrictClassesByIdPathParamsSchema))
-  async findZoningDistrictClassById(
-    @Param() params: GetZoningDistrictClassesByIdPathParams,
+  @UsePipes(
+    new ZodValidationPipe(
+      findZoningDistrictClassByZoningDistrictClassIdPathParamsSchema,
+    ),
+  )
+  async findById(
+    @Param() params: FindZoningDistrictClassByZoningDistrictClassIdPathParams,
   ) {
-    return this.zoningDistrictService.findZoningDistrictClassById(params.id);
+    return this.zoningDistrictClassService.findById(params.id);
   }
 }

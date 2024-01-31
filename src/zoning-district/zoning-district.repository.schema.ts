@@ -10,12 +10,14 @@ export const checkByIdRepoSchema = zoningDistrictEntitySchema.pick({
 
 export type CheckByIdRepo = z.infer<typeof checkByIdRepoSchema>;
 
-export const findByUuidRepoSchema = zoningDistrictEntitySchema;
+export const findByIdRepoSchema = zoningDistrictEntitySchema;
 
-export type FindByUuidRepo = z.infer<typeof findByUuidRepoSchema>;
+export type FindByIdRepo = z.infer<typeof findByIdRepoSchema>;
 
-export const findClassesByIdRepoSchema = z.array(
+export const findZoningDistrictClassesByIdRepoSchema = z.array(
   zoningDistrictClassEntitySchema,
 );
 
-export type FindClassesByIdRepo = z.infer<typeof findClassesByIdRepoSchema>;
+export type FindZoningDistrictClassesByIdRepo = z.infer<
+  typeof findZoningDistrictClassesByIdRepoSchema
+>;

@@ -1,40 +1,41 @@
 import {
   checkByIdRepoSchema,
-  findByUuidRepoSchema,
-  findClassesByIdRepoSchema,
+  findByIdRepoSchema,
+  findZoningDistrictClassesByIdRepoSchema,
 } from "src/zoning-district/zoning-district.repository.schema";
 import { generateMock } from "@anatine/zod-mock";
 
 export class ZoningDistrictRepositoryMock {
   numberOfMocks = 1;
 
-  checkZoningDistrictsByIdMocks = Array.from(
-    Array(this.numberOfMocks),
-    (_, seed) => generateMock(checkByIdRepoSchema, { seed: seed + 1 }),
+  checkByIdMocks = Array.from(Array(this.numberOfMocks), (_, seed) =>
+    generateMock(checkByIdRepoSchema, { seed: seed + 1 }),
   );
 
-  async checkZoningDistrictById(id: string) {
-    return this.checkZoningDistrictsByIdMocks.find((row) => row.id === id);
+  async checkById(id: string) {
+    return this.checkByIdMocks.find((row) => row.id === id);
   }
 
-  findByUuidMocks = Array.from(Array(10), () =>
-    generateMock(findByUuidRepoSchema, { seed: 1 }),
+  findByIdMocks = Array.from(Array(10), () =>
+    generateMock(findByIdRepoSchema, { seed: 1 }),
   );
 
-  async findByUuid(id: string) {
-    return this.findByUuidMocks.find((row) => row.id === id);
+  async findById(id: string) {
+    return this.findByIdMocks.find((row) => row.id === id);
   }
 
-  findClassesByUuidMocks = this.checkZoningDistrictsByIdMocks.map(
+  findZoningDistrictClassesByIdMocks = this.checkByIdMocks.map(
     (checkZoningDistrict) => {
       return {
-        [checkZoningDistrict.id]: generateMock(findClassesByIdRepoSchema),
+        [checkZoningDistrict.id]: generateMock(
+          findZoningDistrictClassesByIdRepoSchema,
+        ),
       };
     },
   );
 
-  async findClassesByUuid(id: string) {
-    const results = this.findClassesByUuidMocks.find(
+  async findZoningDistrictClassesById(id: string) {
+    const results = this.findZoningDistrictClassesByIdMocks.find(
       (zoningDistrictClassesPair) => id in zoningDistrictClassesPair,
     );
 
