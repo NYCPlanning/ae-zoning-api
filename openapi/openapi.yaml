@@ -61,6 +61,26 @@ paths:
           $ref: "#/components/responses/BadRequest"
         '500':
           $ref: "#/components/responses/InternalServerError"
+  /tax-lots:
+    get: 
+      summary: Non-spatial details for tax lots
+      operationId: findTaxLots
+      tags:
+        - Tax Lots
+      parameters: 
+        - $ref: "#/components/parameters/limitParam"
+        - $ref: "#/components/parameters/offsetParam"
+      responses: 
+        '200':
+          description: An object containing a list of tax lots and pagination metadata
+          content: 
+            application/json:
+              schema: 
+                $ref: "#/components/schemas/TaxLotBasicPage"
+        '400':
+            $ref: "#/components/responses/BadRequest"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
   /tax-lots/{bbl}:
     get: 
       summary: Non-spatial details for a specific tax lot
@@ -306,6 +326,25 @@ components:
         pattern: '^([0-9]{10})$'
         example: '1000477501'
       description: The ten character code compromised of a one character borough, five character block, and four character lot codes.
+    limitParam:
+      name: limit
+      required: false
+      in: query
+      schema:
+        type: string
+        pattern: '^[0-9]+$'
+        example: '100'
+      description: The maximum number of results to be returned in each response. The default limit is 20 and it cannot exceed 100.
+        If the user requests a higher limit, it will be reduced to 100. If the user requests 0, it will be increased to 1.
+    offsetParam:
+      name: offset
+      required: false
+      in: query
+      schema:
+        type: string
+        pattern: '^[0-9]+$'
+        example: '100'
+      description: The position in the full list to begin returning results. Default offset is 0. If the offset is beyond the end of the list, no results will be returned.
   schemas:
     Borough:
       type: object
@@ -386,6 +425,48 @@ components:
         - lot
         - address
         - landUse
+    TaxLotBasic:
+      type: object
+      properties: 
+        bbl:
+          type: string
+          description: The ten character code compromised of a one character borough, five character block, and four character lot codes.
+          pattern: '^([0-9]{10})$'
+          example: '1000477501'
+        boroughId:
+          type: string
+          description: A single character numeric string containing the common number used to refer to the borough. Possible values are 1-5.
+          pattern: \b[1-9]\b
+          example: 1
+        block:
+          type: string
+          description: The block code, without its padding zeros.
+          minLength: 1
+          maxLength: 5
+          example: 47
+        lot:
+          type: string
+          description: The lot code, without its padding zeros.
+          minLength: 1
+          maxLength: 4
+          example: 7501
+        address:
+          type: string
+          description: The street address.
+          example: 120 BROADWAY
+        landUseId:
+          type: string
+          description: The two character code to represent the land use. Possible values are 01-11.
+          minLength: 2
+          maxLength: 2
+          example: '05'
+      required:
+        - bbl
+        - boroughId
+        - block
+        - lot
+        - address
+        - landUseId
     TaxLotGeoJson:
       type: object
       properties:
@@ -510,6 +591,45 @@ components:
       required:
         - statusCode
         - message
+    Page:
+      type: object
+      properties:
+        limit:
+          type: integer
+          description: The limit used for the response. Defaults to 20 when the request does not specify one. Is reduced to 100 if the request specified a higher limit. Is increased to 1 if the request specifies 0.
+          minimum: 1
+          maximum: 100
+          example: 20
+        offset:
+          type: integer
+          description: The offset used for the response. Defaults to 0 when the request does not specify one.
+          minimum: 0
+          example: 0
+        total:
+          type: integer
+          description: The number of rows returned in the response. If the total is less than the limit, the user is on the last page and no more results match the query.
+          minimum: 0
+          example: 10
+        order:
+          type: string
+          description: The criteria used to sort the results. Defaults to the primary key of the table, ascending
+          example: "bbl"
+      required: 
+        - limit
+        - offset
+        - total
+        - order
+    TaxLotBasicPage:
+      allOf: 
+        - $ref: "#/components/schemas/Page"
+        - type: object
+          properties:
+            taxLots:
+              type: array
+              items:
+                $ref: "#/components/schemas/TaxLotBasic" 
+          required:
+            - taxLots
   responses:
     BadRequest:
       description: Invalid client request
