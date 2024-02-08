@@ -13,9 +13,9 @@ import {
 import {
   FindByBblRepo,
   FindByBblSpatialRepo,
-  CheckTaxLotByBblRepo,
-  FindZoningDistrictByTaxLotBblRepo,
-  FindZoningDistrictClassByBblRepo,
+  CheckByBblRepo,
+  FindZoningDistrictsByBblRepo,
+  FindZoningDistrictClassesByBblRepo,
 } from "./tax-lot.repository.schema";
 
 export class TaxLotRepository {
@@ -33,11 +33,9 @@ export class TaxLotRepository {
       },
       where: (taxLot, { eq, sql }) => eq(taxLot.bbl, sql.placeholder("bbl")),
     })
-    .prepare("checkTaxLotByBbl");
+    .prepare("checkByBbl");
 
-  async checkTaxLotByBbl(
-    bbl: string,
-  ): Promise<CheckTaxLotByBblRepo | undefined> {
+  async checkByBbl(bbl: string): Promise<CheckByBblRepo | undefined> {
     try {
       return await this.#checkTaxLotByBbl.execute({ bbl });
     } catch {
@@ -92,9 +90,9 @@ export class TaxLotRepository {
     }
   }
 
-  async findZoningDistrictByBbl(
+  async findZoningDistrictsByBbl(
     bbl: string,
-  ): Promise<FindZoningDistrictByTaxLotBblRepo> {
+  ): Promise<FindZoningDistrictsByBblRepo> {
     try {
       return await this.db
         .select({
@@ -112,9 +110,9 @@ export class TaxLotRepository {
     }
   }
 
-  async findZoningDistrictClassByBbl(
+  async findZoningDistrictClassesByBbl(
     bbl: string,
-  ): Promise<FindZoningDistrictClassByBblRepo> {
+  ): Promise<FindZoningDistrictClassesByBblRepo> {
     try {
       return await this.db
         .select({
@@ -149,7 +147,7 @@ export class TaxLotRepository {
     }
   }
 
-  async findTaxLotTilesets(params: { z: number; x: number; y: number }) {
+  async findTilesets(params: { z: number; x: number; y: number }) {
     return `${this.storageConfig.storageUrl}/tilesets/tax_lot/${params.z}/${params.x}/${params.y}.pbf`;
   }
 }

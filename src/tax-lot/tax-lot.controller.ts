@@ -10,14 +10,14 @@ import {
 import { TaxLotService } from "./tax-lot.service";
 import { ZodValidationPipe } from "src/pipes/zod-validation-pipe";
 import {
-  getTaxLotByBblPathParamsSchema,
-  getTaxLotGeoJsonByBblPathParamsSchema,
-  GetTaxLotGeoJsonByBblPathParams,
-  GetTaxLotByBblPathParams,
-  GetZoningDistrictsByTaxLotBblPathParams,
-  getZoningDistrictsByTaxLotBblPathParamsSchema,
-  getZoningDistrictClassesByTaxLotBblPathParamsSchema,
-  GetZoningDistrictClassesByTaxLotBblPathParams,
+  findTaxLotByBblPathParamsSchema,
+  findTaxLotGeoJsonByBblPathParamsSchema,
+  FindTaxLotGeoJsonByBblPathParams,
+  FindTaxLotByBblPathParams,
+  FindZoningDistrictsByTaxLotBblPathParams,
+  findZoningDistrictsByTaxLotBblPathParamsSchema,
+  findZoningDistrictClassesByTaxLotBblPathParamsSchema,
+  FindZoningDistrictClassesByTaxLotBblPathParams,
 } from "../gen";
 import {
   BadRequestExceptionFilter,
@@ -36,44 +36,40 @@ export class TaxLotController {
   constructor(private readonly taxLotService: TaxLotService) {}
 
   @Get("/:bbl")
-  @UsePipes(new ZodValidationPipe(getTaxLotByBblPathParamsSchema))
-  async findDetailsByBbl(@Param() params: GetTaxLotByBblPathParams) {
-    return this.taxLotService.findTaxLotByBbl(params.bbl);
+  @UsePipes(new ZodValidationPipe(findTaxLotByBblPathParamsSchema))
+  async findDetailsByBbl(@Param() params: FindTaxLotByBblPathParams) {
+    return this.taxLotService.findByBbl(params.bbl);
   }
 
   @Get("/:bbl/geojson")
-  @UsePipes(new ZodValidationPipe(getTaxLotGeoJsonByBblPathParamsSchema))
-  async findTaxLotByBblGeoJson(
-    @Param() params: GetTaxLotGeoJsonByBblPathParams,
-  ) {
-    return this.taxLotService.findTaxLotByBblGeoJson(params.bbl);
+  @UsePipes(new ZodValidationPipe(findTaxLotGeoJsonByBblPathParamsSchema))
+  async findBblByGeoJson(@Param() params: FindTaxLotGeoJsonByBblPathParams) {
+    return this.taxLotService.findGeoJsonByBbl(params.bbl);
   }
 
   @Get("/:bbl/zoning-districts")
   @UsePipes(
-    new ZodValidationPipe(getZoningDistrictsByTaxLotBblPathParamsSchema),
+    new ZodValidationPipe(findZoningDistrictsByTaxLotBblPathParamsSchema),
   )
-  async findZoningDistrictByTaxLotBbl(
-    @Param() params: GetZoningDistrictsByTaxLotBblPathParams,
+  async findZoningDistrictsByBbl(
+    @Param() params: FindZoningDistrictsByTaxLotBblPathParams,
   ) {
-    return this.taxLotService.findZoningDistrictByTaxLotBbl(params.bbl);
+    return this.taxLotService.findZoningDistrictsByBbl(params.bbl);
   }
 
   @Get("/:bbl/zoning-districts/classes")
   @UsePipes(
-    new ZodValidationPipe(getZoningDistrictClassesByTaxLotBblPathParamsSchema),
+    new ZodValidationPipe(findZoningDistrictClassesByTaxLotBblPathParamsSchema),
   )
-  async findZoningDistrictClassByTaxLotBbl(
-    @Param() params: GetZoningDistrictClassesByTaxLotBblPathParams,
+  async findZoningDistrictClassesByBbl(
+    @Param() params: FindZoningDistrictClassesByTaxLotBblPathParams,
   ) {
-    return this.taxLotService.findZoningDistrictClassByTaxLotBbl(params.bbl);
+    return this.taxLotService.findZoningDistrictClassesByBbl(params.bbl);
   }
 
   @Get("/:z/:x/:y.pbf")
   @Redirect()
-  async findTaxLotTilesets(
-    @Param() params: { z: number; x: number; y: number },
-  ) {
-    return await this.taxLotService.findTaxLotTilesets(params);
+  async findTilesets(@Param() params: { z: number; x: number; y: number }) {
+    return await this.taxLotService.findTilesets(params);
   }
 }

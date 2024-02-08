@@ -3,7 +3,7 @@ import { z } from "zod";
 import { errorSchema } from "./errorSchema";
 import { taxLotSchema } from "./taxLotSchema";
 
-export const getTaxLotByBblPathParamsSchema = z.object({
+export const findTaxLotByBblPathParamsSchema = z.object({
   bbl: z
     .string()
     .describe(
@@ -11,13 +11,13 @@ export const getTaxLotByBblPathParamsSchema = z.object({
     )
     .regex(new RegExp("^([0-9]{10})$")),
 });
-export const getTaxLotByBbl400Schema = z.lazy(() => errorSchema).schema;
-export const getTaxLotByBbl404Schema = z.lazy(() => errorSchema).schema;
-export const getTaxLotByBbl500Schema = z.lazy(() => errorSchema).schema;
+export const findTaxLotByBbl400Schema = z.lazy(() => errorSchema).schema;
+export const findTaxLotByBbl404Schema = z.lazy(() => errorSchema).schema;
+export const findTaxLotByBbl500Schema = z.lazy(() => errorSchema).schema;
 
 /**
  * @description A tax lot object
  */
-export const getTaxLotByBblQueryResponseSchema = z.lazy(
+export const findTaxLotByBblQueryResponseSchema = z.lazy(
   () => taxLotSchema,
 ).schema;

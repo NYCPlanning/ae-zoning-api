@@ -1,7 +1,7 @@
 import type { Error } from "./Error";
 import type { ZoningDistrictClass } from "./ZoningDistrictClass";
 
-export type GetZoningDistrictClassesByTaxLotBblPathParams = {
+export type FindZoningDistrictClassesByTaxLotBblPathParams = {
   /**
    * @description The ten character code compromised of a one character borough, five character block, and four character lot codes.
    * @type string
@@ -10,16 +10,16 @@ export type GetZoningDistrictClassesByTaxLotBblPathParams = {
   bbl: string;
 };
 
-export type GetZoningDistrictClassesByTaxLotBbl400 = Error;
+export type FindZoningDistrictClassesByTaxLotBbl400 = Error;
 
-export type GetZoningDistrictClassesByTaxLotBbl404 = Error;
+export type FindZoningDistrictClassesByTaxLotBbl404 = Error;
 
-export type GetZoningDistrictClassesByTaxLotBbl500 = Error;
+export type FindZoningDistrictClassesByTaxLotBbl500 = Error;
 
 /**
  * @description An object containing zoning district class schemas.
  */
-export type GetZoningDistrictClassesByTaxLotBblQueryResponse = {
+export type FindZoningDistrictClassesByTaxLotBblQueryResponse = {
   /**
    * @type array
    */

@@ -10,13 +10,13 @@ export class TaxLotService {
     private readonly taxLotRepository: TaxLotRepository,
   ) {}
 
-  async findTaxLotByBbl(bbl: string) {
+  async findByBbl(bbl: string) {
     const result = await this.taxLotRepository.findByBbl(bbl);
     if (result === undefined) throw new ResourceNotFoundException();
     return result;
   }
 
-  async findTaxLotByBblGeoJson(bbl: string) {
+  async findGeoJsonByBbl(bbl: string) {
     const result = await this.taxLotRepository.findByBblSpatial(bbl);
     if (result === undefined) throw new ResourceNotFoundException();
 
@@ -37,29 +37,29 @@ export class TaxLotService {
     };
   }
 
-  async findZoningDistrictByTaxLotBbl(bbl: string) {
-    const taxLotCheck = await this.taxLotRepository.checkTaxLotByBbl(bbl);
+  async findZoningDistrictsByBbl(bbl: string) {
+    const taxLotCheck = await this.taxLotRepository.checkByBbl(bbl);
     if (taxLotCheck === undefined) throw new ResourceNotFoundException();
     const zoningDistricts =
-      await this.taxLotRepository.findZoningDistrictByBbl(bbl);
+      await this.taxLotRepository.findZoningDistrictsByBbl(bbl);
     return {
       zoningDistricts,
     };
   }
 
-  async findZoningDistrictClassByTaxLotBbl(bbl: string) {
-    const taxLotCheck = await this.taxLotRepository.checkTaxLotByBbl(bbl);
+  async findZoningDistrictClassesByBbl(bbl: string) {
+    const taxLotCheck = await this.taxLotRepository.checkByBbl(bbl);
     if (taxLotCheck === undefined) throw new ResourceNotFoundException();
 
     const zoningDistrictClasses =
-      await this.taxLotRepository.findZoningDistrictClassByBbl(bbl);
+      await this.taxLotRepository.findZoningDistrictClassesByBbl(bbl);
     return {
       zoningDistrictClasses,
     };
   }
 
-  async findTaxLotTilesets(params: { z: number; x: number; y: number }) {
-    const url = await this.taxLotRepository.findTaxLotTilesets(params);
+  async findTilesets(params: { z: number; x: number; y: number }) {
+    const url = await this.taxLotRepository.findTilesets(params);
     return {
       url,
     };
