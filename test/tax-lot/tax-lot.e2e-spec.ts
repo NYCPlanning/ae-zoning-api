@@ -4,10 +4,10 @@ import { Test } from "@nestjs/testing";
 import { TaxLotModule } from "src/tax-lot/tax-lot.module";
 import { TaxLotRepository } from "src/tax-lot/tax-lot.repository";
 import {
-  getTaxLotByBblQueryResponseSchema,
-  getTaxLotGeoJsonByBblQueryResponseSchema,
-  getZoningDistrictClassesByTaxLotBblQueryResponseSchema,
-  getZoningDistrictsByTaxLotBblQueryResponseSchema,
+  findTaxLotByBblQueryResponseSchema,
+  findTaxLotGeoJsonByBblQueryResponseSchema,
+  findZoningDistrictClassesByTaxLotBblQueryResponseSchema,
+  findZoningDistrictsByTaxLotBblQueryResponseSchema,
 } from "src/gen";
 import { TaxLotRepositoryMock } from "./tax-lot.repository.mock";
 import {
@@ -40,7 +40,7 @@ describe("TaxLots", () => {
         .get(`/tax-lots/${mock.bbl}`)
         .expect(200);
       expect(() =>
-        getTaxLotByBblQueryResponseSchema.parse(response.body),
+        findTaxLotByBblQueryResponseSchema.parse(response.body),
       ).not.toThrow();
     });
 
@@ -95,7 +95,7 @@ describe("TaxLots", () => {
         .get(`/tax-lots/${mock.bbl}/geojson`)
         .expect(200);
       expect(() =>
-        getTaxLotGeoJsonByBblQueryResponseSchema.parse(response.body),
+        findTaxLotGeoJsonByBblQueryResponseSchema.parse(response.body),
       ).not.toThrow();
     });
 
@@ -147,12 +147,12 @@ describe("TaxLots", () => {
 
   describe("findZoningDistrictByTaxLotBbl", () => {
     it("should 200 and return documented schema when finding by valid bbl", async () => {
-      const mock = taxLotRepository.checkTaxLotByBblMocks[0];
+      const mock = taxLotRepository.checkByBblMocks[0];
       const response = await request(app.getHttpServer())
         .get(`/tax-lots/${mock.bbl}/zoning-districts`)
         .expect(200);
       expect(() =>
-        getZoningDistrictsByTaxLotBblQueryResponseSchema.parse(response.body),
+        findZoningDistrictsByTaxLotBblQueryResponseSchema.parse(response.body),
       ).not.toThrow();
     });
 
@@ -188,11 +188,11 @@ describe("TaxLots", () => {
     it("should 500 when the database errors", async () => {
       const dataRetrievalException = new DataRetrievalException();
       jest
-        .spyOn(taxLotRepository, "findZoningDistrictByBbl")
+        .spyOn(taxLotRepository, "findZoningDistrictsByBbl")
         .mockImplementationOnce(() => {
           throw dataRetrievalException;
         });
-      const mock = taxLotRepository.checkTaxLotByBblMocks[0];
+      const mock = taxLotRepository.checkByBblMocks[0];
       const response = await request(app.getHttpServer())
         .get(`/tax-lots/${mock.bbl}/zoning-districts`)
         .expect(500);
@@ -203,12 +203,12 @@ describe("TaxLots", () => {
 
   describe("findZoningDistrictClassByTaxLotBbl", () => {
     it("should 200 and return documented schema when finding by valid bbl", async () => {
-      const mock = taxLotRepository.checkTaxLotByBblMocks[0];
+      const mock = taxLotRepository.checkByBblMocks[0];
       const response = await request(app.getHttpServer())
         .get(`/tax-lots/${mock.bbl}/zoning-districts/classes`)
         .expect(200);
       expect(() =>
-        getZoningDistrictClassesByTaxLotBblQueryResponseSchema.parse(
+        findZoningDistrictClassesByTaxLotBblQueryResponseSchema.parse(
           response.body,
         ),
       ).not.toThrow();
@@ -247,11 +247,11 @@ describe("TaxLots", () => {
     it("should 500 when the database errors", async () => {
       const dataRetrievalException = new DataRetrievalException();
       jest
-        .spyOn(taxLotRepository, "findZoningDistrictClassByBbl")
+        .spyOn(taxLotRepository, "findZoningDistrictClassesByBbl")
         .mockImplementationOnce(() => {
           throw dataRetrievalException;
         });
-      const mock = taxLotRepository.checkTaxLotByBblMocks[0];
+      const mock = taxLotRepository.checkByBblMocks[0];
       const response = await request(app.getHttpServer())
         .get(`/tax-lots/${mock.bbl}/zoning-districts/classes`)
         .expect(500);

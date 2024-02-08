@@ -1,7 +1,7 @@
 import type { Error } from "./Error";
 import type { TaxLotGeoJson } from "./TaxLotGeoJson";
 
-export type GetTaxLotGeoJsonByBblPathParams = {
+export type FindTaxLotGeoJsonByBblPathParams = {
   /**
    * @description The ten character code compromised of a one character borough, five character block, and four character lot codes.
    * @type string
@@ -10,13 +10,13 @@ export type GetTaxLotGeoJsonByBblPathParams = {
   bbl: string;
 };
 
-export type GetTaxLotGeoJsonByBbl400 = Error;
+export type FindTaxLotGeoJsonByBbl400 = Error;
 
-export type GetTaxLotGeoJsonByBbl404 = Error;
+export type FindTaxLotGeoJsonByBbl404 = Error;
 
-export type GetTaxLotGeoJsonByBbl500 = Error;
+export type FindTaxLotGeoJsonByBbl500 = Error;
 
 /**
  * @description A tax lot geojson object
  */
-export type GetTaxLotGeoJsonByBblQueryResponse = TaxLotGeoJson;
+export type FindTaxLotGeoJsonByBblQueryResponse = TaxLotGeoJson;

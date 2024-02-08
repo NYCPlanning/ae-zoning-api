@@ -64,7 +64,7 @@ paths:
   /tax-lots/{bbl}:
     get: 
       summary: Non-spatial details for a specific tax lot
-      operationId: getTaxLotByBbl
+      operationId: findTaxLotByBbl
       tags:
       - Tax Lots
       parameters:
@@ -85,7 +85,7 @@ paths:
   /tax-lots/{bbl}/geojson:
     get: 
       summary: GeoJSON for a specific tax lot
-      operationId: getTaxLotGeoJsonByBbl
+      operationId: findTaxLotGeoJsonByBbl
       tags:
       - Tax Lots
       - GeoJSON
@@ -107,7 +107,7 @@ paths:
   /tax-lots/{bbl}/zoning-districts:
     get: 
       summary: Non-spatial details for zoning districts that spatially intersect a tax lot.
-      operationId: getZoningDistrictsByTaxLotBbl
+      operationId: findZoningDistrictsByTaxLotBbl
       tags:
       - Tax Lots
       - Zoning Districts
@@ -136,7 +136,7 @@ paths:
   /tax-lots/{bbl}/zoning-districts/classes:
     get:
       summary: Class schemas for all zoning districts that spatially intersect the tax lot
-      operationId: getZoningDistrictClassesByTaxLotBbl
+      operationId: findZoningDistrictClassesByTaxLotBbl
       tags:
         - Tax Lots
         - Zoning Districts

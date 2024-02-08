@@ -3,7 +3,7 @@ import { z } from "zod";
 import { errorSchema } from "./errorSchema";
 import { zoningDistrictSchema } from "./zoningDistrictSchema";
 
-export const getZoningDistrictsByTaxLotBblPathParamsSchema = z.object({
+export const findZoningDistrictsByTaxLotBblPathParamsSchema = z.object({
   bbl: z
     .string()
     .describe(
@@ -11,19 +11,19 @@ export const getZoningDistrictsByTaxLotBblPathParamsSchema = z.object({
     )
     .regex(new RegExp("^([0-9]{10})$")),
 });
-export const getZoningDistrictsByTaxLotBbl400Schema = z.lazy(
+export const findZoningDistrictsByTaxLotBbl400Schema = z.lazy(
   () => errorSchema,
 ).schema;
-export const getZoningDistrictsByTaxLotBbl404Schema = z.lazy(
+export const findZoningDistrictsByTaxLotBbl404Schema = z.lazy(
   () => errorSchema,
 ).schema;
-export const getZoningDistrictsByTaxLotBbl500Schema = z.lazy(
+export const findZoningDistrictsByTaxLotBbl500Schema = z.lazy(
   () => errorSchema,
 ).schema;
 
 /**
  * @description An object containing zoning districts.
  */
-export const getZoningDistrictsByTaxLotBblQueryResponseSchema = z.object({
+export const findZoningDistrictsByTaxLotBblQueryResponseSchema = z.object({
   zoningDistricts: z.array(z.lazy(() => zoningDistrictSchema).schema),
 });

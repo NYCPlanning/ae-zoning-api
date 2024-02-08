@@ -3,7 +3,7 @@ import { z } from "zod";
 import { errorSchema } from "./errorSchema";
 import { zoningDistrictClassSchema } from "./zoningDistrictClassSchema";
 
-export const getZoningDistrictClassesByTaxLotBblPathParamsSchema = z.object({
+export const findZoningDistrictClassesByTaxLotBblPathParamsSchema = z.object({
   bbl: z
     .string()
     .describe(
@@ -11,21 +11,23 @@ export const getZoningDistrictClassesByTaxLotBblPathParamsSchema = z.object({
     )
     .regex(new RegExp("^([0-9]{10})$")),
 });
-export const getZoningDistrictClassesByTaxLotBbl400Schema = z.lazy(
+export const findZoningDistrictClassesByTaxLotBbl400Schema = z.lazy(
   () => errorSchema,
 ).schema;
-export const getZoningDistrictClassesByTaxLotBbl404Schema = z.lazy(
+export const findZoningDistrictClassesByTaxLotBbl404Schema = z.lazy(
   () => errorSchema,
 ).schema;
-export const getZoningDistrictClassesByTaxLotBbl500Schema = z.lazy(
+export const findZoningDistrictClassesByTaxLotBbl500Schema = z.lazy(
   () => errorSchema,
 ).schema;
 
 /**
  * @description An object containing zoning district class schemas.
  */
-export const getZoningDistrictClassesByTaxLotBblQueryResponseSchema = z.object({
-  zoningDistrictClasses: z.array(
-    z.lazy(() => zoningDistrictClassSchema).schema,
-  ),
-});
+export const findZoningDistrictClassesByTaxLotBblQueryResponseSchema = z.object(
+  {
+    zoningDistrictClasses: z.array(
+      z.lazy(() => zoningDistrictClassSchema).schema,
+    ),
+  },
+);

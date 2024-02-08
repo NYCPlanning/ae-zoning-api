@@ -7,11 +7,11 @@ import {
 } from "src/schema";
 import { taxLotEntitySchema } from "src/schema/tax-lot";
 
-export const checkTaxLotByBblRepoSchema = taxLotEntitySchema.pick({
+export const checkByBblRepoSchema = taxLotEntitySchema.pick({
   bbl: true,
 });
 
-export type CheckTaxLotByBblRepo = z.infer<typeof checkTaxLotByBblRepoSchema>;
+export type CheckByBblRepo = z.infer<typeof checkByBblRepoSchema>;
 
 export const findByBblRepoSchema = taxLotEntitySchema
   .omit({ boroughId: true, landUseId: true })
@@ -59,18 +59,18 @@ export const findByBblSpatialRepoSchema = findByBblRepoSchema.extend({
 
 export type FindByBblSpatialRepo = z.infer<typeof findByBblSpatialRepoSchema>;
 
-export const findZoningDistrictByTaxLotBblRepoSchema = z.array(
+export const findZoningDistrictsByBblRepoSchema = z.array(
   zoningDistrictEntitySchema,
 );
 
-export type FindZoningDistrictByTaxLotBblRepo = z.infer<
-  typeof findZoningDistrictByTaxLotBblRepoSchema
+export type FindZoningDistrictsByBblRepo = z.infer<
+  typeof findZoningDistrictsByBblRepoSchema
 >;
 
-export const findZoningDistrictClassByBblRepoSchema = z.array(
+export const findZoningDistrictClassesByBblRepoSchema = z.array(
   zoningDistrictClassEntitySchema,
 );
 
-export type FindZoningDistrictClassByBblRepo = z.infer<
-  typeof findZoningDistrictClassByBblRepoSchema
+export type FindZoningDistrictClassesByBblRepo = z.infer<
+  typeof findZoningDistrictClassesByBblRepoSchema
 >;
