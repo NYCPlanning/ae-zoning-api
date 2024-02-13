@@ -16,6 +16,7 @@ import {
   CheckByBblRepo,
   FindZoningDistrictsByBblRepo,
   FindZoningDistrictClassesByBblRepo,
+  FindManyRepo,
 } from "./tax-lot.repository.schema";
 
 export class TaxLotRepository {
@@ -38,6 +39,32 @@ export class TaxLotRepository {
   async checkByBbl(bbl: string): Promise<CheckByBblRepo | undefined> {
     try {
       return await this.#checkTaxLotByBbl.execute({ bbl });
+    } catch {
+      throw new DataRetrievalException();
+    }
+  }
+
+  async findMany({
+    limit,
+    offset,
+  }: {
+    limit: number;
+    offset: number;
+  }): Promise<FindManyRepo> {
+    try {
+      return await this.db.query.taxLot.findMany({
+        columns: {
+          bbl: true,
+          boroughId: true,
+          block: true,
+          lot: true,
+          address: true,
+          landUseId: true,
+        },
+        limit,
+        offset,
+        orderBy: taxLot.bbl,
+      });
     } catch {
       throw new DataRetrievalException();
     }

@@ -5,6 +5,7 @@ import {
   findZoningDistrictsByBblRepoSchema,
   checkByBblRepoSchema,
   findZoningDistrictClassesByBblRepoSchema,
+  findManyRepoSchema,
 } from "src/tax-lot/tax-lot.repository.schema";
 
 export class TaxLotRepositoryMock {
@@ -16,6 +17,12 @@ export class TaxLotRepositoryMock {
 
   async checkByBbl(bbl: string) {
     return this.checkByBblMocks.find((row) => row.bbl === bbl);
+  }
+
+  findManyMocks = generateMock(findManyRepoSchema.length(10));
+
+  async findMany({ limit, offset }: { limit: number; offset: number }) {
+    return this.findManyMocks.slice(offset, limit + offset);
   }
 
   findByBblMocks = Array.from(Array(this.numberOfMocks), (_, seed) =>

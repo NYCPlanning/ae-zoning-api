@@ -3,6 +3,7 @@ import {
   Get,
   Injectable,
   Param,
+  Query,
   Redirect,
   UseFilters,
   UsePipes,
@@ -18,12 +19,15 @@ import {
   findZoningDistrictsByTaxLotBblPathParamsSchema,
   findZoningDistrictClassesByTaxLotBblPathParamsSchema,
   FindZoningDistrictClassesByTaxLotBblPathParams,
+  findTaxLotsQueryParamsSchema,
+  FindTaxLotsQueryParams,
 } from "../gen";
 import {
   BadRequestExceptionFilter,
   InternalServerErrorExceptionFilter,
   NotFoundExceptionFilter,
 } from "src/filter";
+import { InvalidRequestParameterException } from "src/exception";
 
 @Injectable()
 @UseFilters(
@@ -34,6 +38,25 @@ import {
 @Controller("tax-lots")
 export class TaxLotController {
   constructor(private readonly taxLotService: TaxLotService) {}
+
+  @Get()
+  @UsePipes(new ZodValidationPipe(findTaxLotsQueryParamsSchema))
+  async findMany(@Query() query: FindTaxLotsQueryParams) {
+    const { limit: rawLimit, offset: rawOffset } = query;
+
+    let limit: number | undefined;
+    if (rawLimit !== undefined) {
+      limit = parseInt(rawLimit);
+      if (limit < 1 || limit > 100)
+        throw new InvalidRequestParameterException();
+    } else {
+      limit = undefined;
+    }
+
+    const offset = rawOffset !== undefined ? parseInt(rawOffset) : undefined;
+
+    return await this.taxLotService.findMany({ limit, offset });
+  }
 
   @Get("/:bbl")
   @UsePipes(new ZodValidationPipe(findTaxLotByBblPathParamsSchema))

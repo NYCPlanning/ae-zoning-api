@@ -10,6 +10,20 @@ export class TaxLotService {
     private readonly taxLotRepository: TaxLotRepository,
   ) {}
 
+  async findMany({ limit = 20, offset = 0 }) {
+    const taxLots = await this.taxLotRepository.findMany({
+      limit,
+      offset,
+    });
+    return {
+      taxLots,
+      limit,
+      offset,
+      order: "bbl",
+      total: taxLots.length,
+    };
+  }
+
   async findByBbl(bbl: string) {
     const result = await this.taxLotRepository.findByBbl(bbl);
     if (result === undefined) throw new ResourceNotFoundException();
