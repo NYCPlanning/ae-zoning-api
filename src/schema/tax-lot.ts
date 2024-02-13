@@ -1,10 +1,5 @@
 import { char, pgTable, text } from "drizzle-orm/pg-core";
-import {
-  borough,
-  boroughIdEntitySchema,
-  landUse,
-  landUseIdEntitySchema,
-} from "../schema";
+import { borough, boroughIdEntitySchema, landUse } from "../schema";
 import { multiPolygonGeog, multiPolygonGeom } from "../drizzle-pgis";
 import { relations } from "drizzle-orm";
 import { z } from "zod";
@@ -39,5 +34,5 @@ export const taxLotEntitySchema = z.object({
   block: z.string().regex(RegExp("^([0-9]{1,5})$")),
   lot: z.string().regex(RegExp("^([0-9]{1,4})$")),
   address: z.string().nullable(),
-  landUseId: landUseIdEntitySchema,
+  landUseId: z.string().length(2).nullable(),
 });

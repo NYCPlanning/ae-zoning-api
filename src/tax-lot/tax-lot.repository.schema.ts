@@ -13,6 +13,10 @@ export const checkByBblRepoSchema = taxLotEntitySchema.pick({
 
 export type CheckByBblRepo = z.infer<typeof checkByBblRepoSchema>;
 
+export const findManyRepoSchema = z.array(taxLotEntitySchema);
+
+export type FindManyRepo = z.infer<typeof findManyRepoSchema>;
+
 export const findByBblRepoSchema = taxLotEntitySchema
   .omit({ boroughId: true, landUseId: true })
   .extend({

@@ -6,6 +6,7 @@ import { ResourceNotFoundException } from "src/exception";
 import {
   findTaxLotByBblQueryResponseSchema,
   findTaxLotGeoJsonByBblQueryResponseSchema,
+  findTaxLotsQueryResponseSchema,
   findZoningDistrictClassesByTaxLotBblQueryResponseSchema,
   findZoningDistrictsByTaxLotBblQueryResponseSchema,
 } from "src/gen";
@@ -24,6 +25,32 @@ describe("TaxLotController", () => {
       .compile();
 
     taxLotService = moduleRef.get<TaxLotService>(TaxLotService);
+  });
+
+  describe("findMany", () => {
+    it("should return a list of tax lots, using the default limit and offset", async () => {
+      const resource = await taxLotService.findMany({});
+      expect(() =>
+        findTaxLotsQueryResponseSchema.parse(resource),
+      ).not.toThrow();
+      const parsedResource = findTaxLotsQueryResponseSchema.parse(resource);
+      expect(parsedResource.limit).toBe(20);
+      expect(parsedResource.offset).toBe(0);
+      expect(parsedResource.total).toBe(parsedResource.taxLots.length);
+      expect(parsedResource.order).toBe("bbl");
+    });
+
+    it("should return a tax lot list, using user specified limit and offset", async () => {
+      const limit = 2;
+      const offset = 5;
+      const taxLots = await taxLotService.findMany({ limit, offset });
+      expect(() => findTaxLotsQueryResponseSchema.parse(taxLots)).not.toThrow();
+      const parsedTaxLots = findTaxLotsQueryResponseSchema.parse(taxLots);
+      expect(parsedTaxLots.limit).toBe(2);
+      expect(parsedTaxLots.offset).toBe(5);
+      expect(parsedTaxLots.total).toBe(parsedTaxLots.taxLots.length);
+      expect(parsedTaxLots.order).toBe("bbl");
+    });
   });
 
   describe("findByBbl", () => {
@@ -60,7 +87,7 @@ describe("TaxLotController", () => {
     });
   });
 
-  describe("findZoningDistrictByBbl", () => {
+  describe("findZoningDistrictsByBbl", () => {
     it("should return an array of zoning district(s) when requesting a valid bbl", async () => {
       const { bbl } = taxLotRepository.checkByBblMocks[0];
       const zoningDistricts = await taxLotService.findZoningDistrictsByBbl(bbl);
@@ -79,7 +106,7 @@ describe("TaxLotController", () => {
     });
   });
 
-  describe("findZoningDistrictClassByBbl", () => {
+  describe("findZoningDistrictClassesByBbl", () => {
     it("should return zoning district classes when requesting a valid bbl", async () => {
       const { bbl } = taxLotRepository.checkByBblMocks[0];
       const zoningDistrictClasses =

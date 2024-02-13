@@ -8,6 +8,7 @@ import {
   findTaxLotGeoJsonByBblQueryResponseSchema,
   findZoningDistrictClassesByTaxLotBblQueryResponseSchema,
   findZoningDistrictsByTaxLotBblQueryResponseSchema,
+  findTaxLotsQueryResponseSchema,
 } from "src/gen";
 import { TaxLotRepositoryMock } from "./tax-lot.repository.mock";
 import {
@@ -30,6 +31,87 @@ describe("TaxLots", () => {
       .compile();
     app = moduleRef.createNestApplication();
     await app.init();
+  });
+
+  describe("findTaxLots", () => {
+    it("should 200 and return a list of tax lots with page metadata", async () => {
+      const response = await request(app.getHttpServer())
+        .get("/tax-lots")
+        .expect(200);
+      expect(() =>
+        findTaxLotsQueryResponseSchema.parse(response.body),
+      ).not.toThrow();
+      const parsedBody = findTaxLotsQueryResponseSchema.parse(response.body);
+      expect(parsedBody.limit).toBe(20);
+      expect(parsedBody.offset).toBe(0);
+    });
+
+    it("should 200 and return tax lots with page metadata when specifying offset and limit", async () => {
+      const limit = 5;
+      const offset = 2;
+      const response = await request(app.getHttpServer()).get(
+        `/tax-lots?limit=${limit}&offset=${offset}`,
+      );
+
+      expect(() =>
+        findTaxLotsQueryResponseSchema.parse(response.body),
+      ).not.toThrow();
+      const parsedBody = findTaxLotsQueryResponseSchema.parse(response.body);
+      expect(parsedBody.limit).toBe(limit);
+      expect(parsedBody.offset).toBe(offset);
+    });
+
+    it("should 400 when finding by an invalid limit", async () => {
+      const response = await request(app.getHttpServer()).get(
+        "/tax-lots?limit=b4d",
+      );
+      expect(response.body.message).toBe(
+        new InvalidRequestParameterException().message,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 when finding by a 'too-high' limit", async () => {
+      const response = await request(app.getHttpServer()).get(
+        "/tax-lots?limit=101",
+      );
+      expect(response.body.message).toBe(
+        new InvalidRequestParameterException().message,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 when finding by a 'too-low' limit", async () => {
+      const response = await request(app.getHttpServer()).get(
+        "/tax-lots?limit=0",
+      );
+      expect(response.body.message).toBe(
+        new InvalidRequestParameterException().message,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 when finding by invalid offset", async () => {
+      const response = await request(app.getHttpServer()).get(
+        "/tax-lots?offset=b4d",
+      );
+      expect(response.body.message).toBe(
+        new InvalidRequestParameterException().message,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 500 when there is a database error", async () => {
+      const dataRetrievalException = new DataRetrievalException();
+      jest.spyOn(taxLotRepository, "findMany").mockImplementationOnce(() => {
+        throw dataRetrievalException;
+      });
+      const response = await request(app.getHttpServer())
+        .get("/tax-lots")
+        .expect(500);
+      expect(response.body.message).toBe(dataRetrievalException.message);
+      expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);
+    });
   });
 
   describe("getTaxLotByBbl", () => {
