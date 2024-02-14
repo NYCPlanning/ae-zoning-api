@@ -18,6 +18,13 @@ export const findTaxLotsQueryParamsSchema = z.object({
     )
     .regex(new RegExp("^[0-9]+$"))
     .optional(),
+  geometry: z
+    .enum([`Point`, `LineString`, `Polygon`])
+    .describe(
+      `The type of geometry used for a spatial filter. It must be provided if applying a spatial filter; each geometry has its own coordinate requirements.`,
+    )
+    .optional(),
+  lons: z.array(z.string()).min(1).optional(),
 });
 export const findTaxLots400Schema = z.lazy(() => errorSchema).schema;
 export const findTaxLots500Schema = z.lazy(() => errorSchema).schema;

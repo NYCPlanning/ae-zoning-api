@@ -28,6 +28,11 @@ import {
   NotFoundExceptionFilter,
 } from "src/filter";
 import { InvalidRequestParameterException } from "src/exception";
+import {
+  CommaArrayParam,
+  DeserializeParamsPipe,
+} from "src/pipes/deserialize-params-pipe";
+import { StringParam } from "serialize-query-params";
 
 @Injectable()
 @UseFilters(
@@ -40,9 +45,14 @@ export class TaxLotController {
   constructor(private readonly taxLotService: TaxLotService) {}
 
   @Get()
-  @UsePipes(new ZodValidationPipe(findTaxLotsQueryParamsSchema))
+  @UsePipes(
+    new DeserializeParamsPipe({ geometry: StringParam, lons: CommaArrayParam }),
+    new ZodValidationPipe(findTaxLotsQueryParamsSchema),
+  )
   async findMany(@Query() query: FindTaxLotsQueryParams) {
-    const { limit: rawLimit, offset: rawOffset } = query;
+    const { limit: rawLimit, offset: rawOffset, geometry, lons } = query;
+    console.debug("geometry", geometry);
+    console.debug("lons", lons);
 
     let limit: number | undefined;
     if (rawLimit !== undefined) {

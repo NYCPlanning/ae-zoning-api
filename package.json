@@ -39,6 +39,7 @@
     "pg": "^8.11.3",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
+    "serialize-query-params": "^2.0.2",
     "zod": "^3.22.4"
   },
   "devDependencies": {
