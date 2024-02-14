@@ -70,6 +70,8 @@ paths:
       parameters: 
         - $ref: "#/components/parameters/limitParam"
         - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/geometryParam"
+        - $ref: "#/components/parameters/lonsParam"
       responses: 
         '200':
           description: An object containing a list of tax lots and pagination metadata
@@ -326,6 +328,29 @@ components:
         pattern: '^([0-9]{10})$'
         example: '1000477501'
       description: The ten character code compromised of a one character borough, five character block, and four character lot codes.
+    geometryParam:
+      name: geometry
+      required: false
+      in: query
+      schema:
+        type: string
+        enum:
+          - Point
+          - LineString
+          - Polygon
+        example: Point
+      description: The type of geometry used for a spatial filter. It must be provided if applying a spatial filter; each geometry has its own coordinate requirements. 
+    lonsParam:
+      name: lons
+      required: false
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+        minItems: 1
+      style: form
+      explode: false
     limitParam:
       name: limit
       required: false
