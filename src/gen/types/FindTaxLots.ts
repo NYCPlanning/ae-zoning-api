@@ -30,7 +30,7 @@ export type FindTaxLotsQueryParams = {
   /**
    * @type array | undefined
    */
-  lons?: string[];
+  lons?: number[];
 };
 
 export type FindTaxLots400 = Error;

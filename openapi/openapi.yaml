@@ -347,7 +347,7 @@ components:
       schema:
         type: array
         items:
-          type: string
+          type: number
         minItems: 1
       style: form
       explode: false

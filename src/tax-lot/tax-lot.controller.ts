@@ -3,10 +3,12 @@ import {
   Get,
   Injectable,
   Param,
+  ParseArrayPipe,
   Query,
   Redirect,
   UseFilters,
   UsePipes,
+  ValidationPipe,
 } from "@nestjs/common";
 import { TaxLotService } from "./tax-lot.service";
 import { ZodValidationPipe } from "src/pipes/zod-validation-pipe";
@@ -29,10 +31,8 @@ import {
 } from "src/filter";
 import { InvalidRequestParameterException } from "src/exception";
 import {
-  CommaArrayParam,
   DeserializeParamsPipe,
 } from "src/pipes/deserialize-params-pipe";
-import { StringParam } from "serialize-query-params";
 
 @Injectable()
 @UseFilters(
@@ -46,10 +46,14 @@ export class TaxLotController {
 
   @Get()
   @UsePipes(
-    new DeserializeParamsPipe({ geometry: StringParam, lons: CommaArrayParam }),
+    new DeserializeParamsPipe(findTaxLotsQueryParamsSchema),
     new ZodValidationPipe(findTaxLotsQueryParamsSchema),
+    new ValidationPipe({transform: true})
   )
-  async findMany(@Query() query: FindTaxLotsQueryParams) {
+  async findMany(
+    @Query()
+    query: FindTaxLotsQueryParams,
+  ) {
     const { limit: rawLimit, offset: rawOffset, geometry, lons } = query;
     console.debug("geometry", geometry);
     console.debug("lons", lons);

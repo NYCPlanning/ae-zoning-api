@@ -6,7 +6,7 @@ export class ZodValidationPipe implements PipeTransform {
 
   transform(value: unknown) {
     try {
-      console.log(value);
+      console.log("zod validation", value);
       this.schema.parse(value);
     } catch (error) {
       throw new InvalidRequestParameterException();
