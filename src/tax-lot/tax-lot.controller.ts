@@ -27,7 +27,7 @@ import {
   InternalServerErrorExceptionFilter,
   NotFoundExceptionFilter,
 } from "src/filter";
-import { InvalidRequestParameterException } from "src/exception";
+import { DecodeParamsPipe } from "src/pipes/decode-params-pipe";
 
 @Injectable()
 @UseFilters(
@@ -40,21 +40,14 @@ export class TaxLotController {
   constructor(private readonly taxLotService: TaxLotService) {}
 
   @Get()
-  @UsePipes(new ZodValidationPipe(findTaxLotsQueryParamsSchema))
-  async findMany(@Query() query: FindTaxLotsQueryParams) {
-    const { limit: rawLimit, offset: rawOffset } = query;
-
-    let limit: number | undefined;
-    if (rawLimit !== undefined) {
-      limit = parseInt(rawLimit);
-      if (limit < 1 || limit > 100)
-        throw new InvalidRequestParameterException();
-    } else {
-      limit = undefined;
-    }
-
-    const offset = rawOffset !== undefined ? parseInt(rawOffset) : undefined;
-
+  @UsePipes(
+    new DecodeParamsPipe(findTaxLotsQueryParamsSchema),
+    new ZodValidationPipe(findTaxLotsQueryParamsSchema),
+  )
+  async findMany(
+    @Query()
+    { limit, offset }: FindTaxLotsQueryParams,
+  ) {
     return await this.taxLotService.findMany({ limit, offset });
   }
 
