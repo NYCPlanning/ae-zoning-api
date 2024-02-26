@@ -70,9 +70,15 @@ paths:
       parameters: 
         - $ref: "#/components/parameters/limitParam"
         - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/geometryParam"
+        - $ref: "#/components/parameters/lonsParam"
+        - $ref: "#/components/parameters/latsParam"
+        - $ref: "#/components/parameters/bufferParam"
       responses: 
         '200':
-          description: An object containing a list of tax lots and pagination metadata
+          description: An object containing a list of tax lots and pagination metadata.
+            An optional spatial filter will return all tax lots that intersect the spatial feature and its optional buffer.
+            When applying a spatial filter, tax lots are ordered by their closeness to the spatial feature.
           content: 
             application/json:
               schema: 
@@ -326,6 +332,56 @@ components:
         pattern: '^([0-9]{10})$'
         example: '1000477501'
       description: The ten character code compromised of a one character borough, five character block, and four character lot codes.
+    bufferParam:
+      name: buffer
+      in: query
+      schema:
+        type: number
+        example: 600
+      description: A buffer around the spatial feature. Units are feet. It is optional when applying a spatial filter.
+    geometryParam:
+      name: geometry
+      required: false
+      in: query
+      schema:
+        type: string
+        enum:
+          - Point
+          - LineString
+          - Polygon
+        example: Polygon
+      description: The type of geometry used for a spatial filter. It must be provided when applying a spatial filter; each geometry has its own coordinate requirements. 
+        Point geometries have length of 1.
+        LineString geometries have length of 2 to 5, inclusive.
+        Polygons have length 4 to 5, inclusive; the last coordinate must match the first coordinate to close the polygon.
+    lonsParam:
+      name: lons
+      required: false
+      in: query
+      schema:
+        type: array
+        items:
+          type: number
+        minItems: 1
+        maxItems: 5
+        example: -74.010776,-74.010776,-74.010139,-74.010139,-74.010776
+      style: form
+      explode: false
+      description: The longitude portion of coordinates. It must be provided when applying a spatial filter and have the same length as the latitudes.
+    latsParam:
+      name: lats
+      required: false
+      in: query
+      schema:
+        type: array
+        items:
+          type: number
+        minItems: 1
+        maxItems: 5
+      style: form
+      explode: false
+      example: 40.708649,40.707800,40.707800,40.708649,40.708649
+      description: The latitude portion of coordinates. It must be provided when applying a spatial filter and have the same length as the longitudes.
     limitParam:
       name: limit
       required: false
