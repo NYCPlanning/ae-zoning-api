@@ -46,9 +46,9 @@ export class TaxLotController {
   )
   async findMany(
     @Query()
-    { limit, offset }: FindTaxLotsQueryParams,
+    params: FindTaxLotsQueryParams,
   ) {
-    return await this.taxLotService.findMany({ limit, offset });
+    return await this.taxLotService.findMany(params);
   }
 
   @Get("/:bbl")
