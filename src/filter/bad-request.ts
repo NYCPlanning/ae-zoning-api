@@ -7,8 +7,12 @@ import {
 import { HttpAdapterHost } from "@nestjs/core";
 import { InvalidRequestParameterException } from "src/exception";
 import { HttpName } from ".";
+import { InvalidSpatialFilterRequestParametersException } from "src/exception/invalid-spatial-filter";
 
-@Catch(InvalidRequestParameterException)
+@Catch(
+  InvalidRequestParameterException,
+  InvalidSpatialFilterRequestParametersException,
+)
 export class BadRequestExceptionFilter implements ExceptionFilter {
   constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
 
