@@ -27,7 +27,7 @@ describe("TaxLotController", () => {
     taxLotService = moduleRef.get<TaxLotService>(TaxLotService);
   });
 
-  describe("findMany", () => {
+  describe.only("findMany", () => {
     it("should return a list of tax lots, using the default limit and offset", async () => {
       const resource = await taxLotService.findMany({});
       expect(() =>
@@ -51,6 +51,106 @@ describe("TaxLotController", () => {
       expect(parsedTaxLots.total).toBe(parsedTaxLots.taxLots.length);
       expect(parsedTaxLots.order).toBe("bbl");
     });
+
+    it("should error when requesting an incomplete set of spatial filters", async () => {
+      expect(taxLotService.findMany({ buffer: 600 })).rejects.toThrow(
+        /missing required parameters/,
+      );
+    });
+
+    it("should error when requesting a shape with lats and lons of different lengths", async () => {
+      expect(
+        taxLotService.findMany({
+          geometry: "LineString",
+          lats: [0, 1],
+          lons: [0, 1, 2],
+        }),
+      ).rejects.toThrow(/latitude and longitude lengths differ/);
+    });
+
+    it("should error when requesting a Point with a lon length greater than one", async () => {
+      expect(
+        taxLotService.findMany({
+          geometry: "Point",
+          lats: [0, 1],
+          lons: [0, 1],
+        }),
+      ).rejects.toThrow(/more than one coordinate provided for Point/);
+    });
+
+    it("should error when requesting a LineString with a lon length less than two", async () => {
+      expect(
+        taxLotService.findMany({
+          geometry: "LineString",
+          lats: [0],
+          lons: [0],
+        }),
+      ).rejects.toThrow(/fewer than two coordinates provided for LineString/);
+    });
+
+    it("should error when requesting a Polygon with a lon length less than four", async () => {
+      expect(
+        taxLotService.findMany({
+          geometry: "Polygon",
+          lats: [0, 1, 2],
+          lons: [0, 1, 2],
+        }),
+      ).rejects.toThrow(/fewer than four coordinates provided for Polygon/);
+    });
+
+    it("should return a list of tax lots filtered by a Point", async () => {
+      const resource = await taxLotService.findMany({
+        geometry: "Point",
+        lats: [0],
+        lons: [0],
+      });
+      expect(() =>
+        findTaxLotsQueryResponseSchema.parse(resource),
+      ).not.toThrow();
+      const parsedResource = findTaxLotsQueryResponseSchema.parse(resource);
+      // mock data are seeded to return this bbl when the spatial filter was the shape
+      expect(parsedResource.taxLots[0].bbl).toBe("1588702147");
+      expect(parsedResource.order).toBe("distance");
+    });
+
+    it("should return a list of tax lots filtered by a Point with a buffer", async () => {
+      const resource = await taxLotService.findMany({
+        geometry: "Point",
+        buffer: 600,
+        lats: [0],
+        lons: [0],
+      });
+      expect(() =>
+        findTaxLotsQueryResponseSchema.parse(resource),
+      ).not.toThrow();
+      const parsedResource = findTaxLotsQueryResponseSchema.parse(resource);
+      // mock data are seeded to return this bbl when the spatial filter was a buffer
+      expect(parsedResource.taxLots[0].bbl).toBe("9898000381");
+      expect(parsedResource.order).toBe("distance");
+    });
+
+    it.only("should return a list of tax lots filtered by a LineString", async () => {
+      const resource = await taxLotService.findMany({
+        geometry: "LineString",
+        lats: [0, 1],
+        lons: [0, 1],
+      });
+      expect(() =>
+        findTaxLotsQueryResponseSchema.parse(resource),
+      ).not.toThrow();
+      const parsedResource = findTaxLotsQueryResponseSchema.parse(resource);
+      // mock data are seeded to return this bbl when the spatial filter was the shape
+      expect(parsedResource.taxLots[0].bbl).toBe("1588702147");
+      expect(parsedResource.order).toBe("distance");
+    });
+
+    it.todo(
+      "should return a list of tax lots filtered by a LineString with a buffer",
+    );
+    it.todo("should return a list of tax lots filtered by a Polygon");
+    it.todo(
+      "should return a list of tax lots filtered by a Polygon with a buffer",
+    );
   });
 
   describe("findByBbl", () => {
