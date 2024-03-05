@@ -61,6 +61,17 @@ describe("TaxLots", () => {
       expect(parsedBody.offset).toBe(offset);
     });
 
+    it("should 200 and return tax lots with page metadata when passing a spatial filter", async () => {
+      const response = await request(app.getHttpServer())
+        .get("/tax-lots?geometry=LineString&lons=0,1&lats=0,1")
+        .expect(200);
+      expect(() =>
+        findTaxLotsQueryResponseSchema.parse(response.body),
+      ).not.toThrow();
+      const parsedBody = findTaxLotsQueryResponseSchema.parse(response.body);
+      expect(parsedBody.total).toBe(2);
+    });
+
     it("should 400 when finding by an invalid limit", async () => {
       const response = await request(app.getHttpServer()).get(
         "/tax-lots?limit=b4d",
@@ -97,6 +108,59 @@ describe("TaxLots", () => {
       );
       expect(response.body.message).toBe(
         new InvalidRequestParameterException().message,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 when requesting an invalid geometry", async () => {
+      const response = await request(app.getHttpServer())
+        .get("/tax-lots?geometry=linestring&lons=0,1&lats=0,1")
+        .expect(400);
+      expect(response.body.message).toBe(
+        new InvalidRequestParameterException().message,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 when requesting a coordinate with too many points", async () => {
+      const response = await request(app.getHttpServer())
+        .get("/tax-lots?geometry=LineString&lons=0,1,2,3,4,5&lats=0,1,2,3,4,5")
+        .expect(400);
+      expect(response.body.message).toBe(
+        new InvalidRequestParameterException().message,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 when requesting a coordinate with invalid points", async () => {
+      const response = await request(app.getHttpServer())
+        .get("/tax-lots?geometry=LineString&lons=DROPTables&lats=DROPDatabase")
+        .expect(400);
+      expect(response.body.message).toBe(
+        new InvalidRequestParameterException().message,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 when requesting an invalid buffer", async () => {
+      const response = await request(app.getHttpServer())
+        .get(
+          "/tax-lots?geometry=LineString&lons=0,1,2,3,4&lats=0,1,2,3,4&buffer=b4d",
+        )
+        .expect(400);
+      expect(response.body.message).toBe(
+        new InvalidRequestParameterException().message,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 when requesting a spatial filter with incomplete parameters", async () => {
+      const response = await request(app.getHttpServer())
+        .get("/tax-lots?geometry=LineString&lons=0,1,2,3,4")
+        .expect(400);
+
+      expect(response.body.message).toContain(
+        "spatial filter: missing required",
       );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });

@@ -17,7 +17,14 @@ import {
   FindZoningDistrictsByBblRepo,
   FindZoningDistrictClassesByBblRepo,
   FindManyRepo,
+  FindManyBySpatialFilterRepo,
+  FindGeomBufferRepo,
+  FindMaximumInscribedCircleCenterRepo,
+  CheckGeomIsValidRepo,
+  FindGeomFromGeoJsonRepo,
 } from "./tax-lot.repository.schema";
+import { Geometry } from "geojson";
+import { Geom } from "src/types";
 
 export class TaxLotRepository {
   constructor(
@@ -64,6 +71,100 @@ export class TaxLotRepository {
         limit,
         offset,
         orderBy: taxLot.bbl,
+      });
+    } catch {
+      throw new DataRetrievalException();
+    }
+  }
+
+  async findGeomFromGeoJson(
+    shape: Geometry,
+    targetSrid = 4326,
+  ): Promise<FindGeomFromGeoJsonRepo> {
+    try {
+      const result = await this.db.execute(
+        sql`SELECT ST_Transform(ST_GeomFromGeoJSON(${shape}), CAST(${targetSrid} AS INTEGER)) AS geom`,
+      );
+      return result.rows[0].geom as Geom;
+    } catch {
+      throw new DataRetrievalException();
+    }
+  }
+
+  async findGeomBuffer(
+    geom: Geom,
+    buffer: number,
+  ): Promise<FindGeomBufferRepo> {
+    try {
+      const result = await this.db.execute(
+        sql`SELECT ST_Buffer(${geom}, ${buffer}) AS buffer`,
+      );
+      return result.rows[0].buffer as Geom;
+    } catch {
+      throw new DataRetrievalException();
+    }
+  }
+
+  async checkGeomIsValid(geom: Geom): Promise<CheckGeomIsValidRepo> {
+    try {
+      const result = await this.db.execute(
+        sql`SELECT ST_IsValid(${geom}) AS valid`,
+      );
+      return result.rows[0].valid as boolean;
+    } catch {
+      throw new DataRetrievalException();
+    }
+  }
+
+  async findMaximumInscribedCircleCenter(
+    geom: Geom,
+  ): Promise<FindMaximumInscribedCircleCenterRepo> {
+    try {
+      const result = await this.db.execute(
+        sql`SELECT (ST_MaximumInscribedCircle(${geom})).center AS center`,
+      );
+      return result.rows[0].center as Geom;
+    } catch {
+      throw new DataRetrievalException();
+    }
+  }
+
+  #findManyBySpatialFilter = this.db.query.taxLot
+    .findMany({
+      columns: {
+        bbl: true,
+        boroughId: true,
+        block: true,
+        lot: true,
+        address: true,
+        landUseId: true,
+      },
+      where: (taxLot, { sql }) =>
+        sql`ST_Intersects(${taxLot.liFt},${sql.placeholder("intersectGeom")})`,
+      limit: sql.placeholder("limit"),
+      offset: sql.placeholder("offset"),
+      orderBy: (taxLot, { sql }) =>
+        sql`${taxLot.liFt} <-> ${sql.placeholder("orderGeom")}`,
+    })
+    .prepare("findManyBySpatialFilter");
+
+  async findManyBySpatialFilter({
+    limit,
+    offset,
+    intersectGeom,
+    orderGeom,
+  }: {
+    limit: number;
+    offset: number;
+    intersectGeom: Geom;
+    orderGeom: Geom;
+  }): Promise<FindManyBySpatialFilterRepo> {
+    try {
+      return await this.#findManyBySpatialFilter.execute({
+        limit,
+        offset,
+        intersectGeom,
+        orderGeom,
       });
     } catch {
       throw new DataRetrievalException();
