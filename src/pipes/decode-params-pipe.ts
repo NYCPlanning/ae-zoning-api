@@ -46,7 +46,7 @@ export class DecodeParamsPipe<T extends ZodRawShape> implements PipeTransform {
         if (properties?.type === "number") {
           config[param] = parseFloat(value);
         } else if (properties?.type === "array") {
-          const values = value.split(",");
+          const values = Array.isArray(value) ? value : value.split(",");
           config[param] =
             properties.items.type === "number"
               ? values.map((value) => parseFloat(value))
