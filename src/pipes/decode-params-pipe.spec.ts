@@ -23,6 +23,32 @@ describe("decode params pipe", () => {
     expect(() => genericSchema.parse(decodedParams)).not.toThrow();
   });
 
+  it("should handle arrays that were already created upstream", () => {
+    const params = {
+      numeric: "42",
+      textual: "text",
+      numericArray: ["1", "2"],
+      textualArray: ["foo", "bar"],
+    };
+    expect(() => genericSchema.parse(params)).toThrow();
+
+    const decodedParams = new DecodeParamsPipe(genericSchema).transform(params);
+
+    expect(() => genericSchema.parse(decodedParams)).not.toThrow();
+  });
+
+  it("should error if a numeric parameter was incorrectly formatted as a array", () => {
+    const params = {
+      numeric: ["42"],
+      textual: "text",
+      numericArray: "1",
+      textualArray: "foo",
+    };
+    expect(() =>
+      new DecodeParamsPipe(genericSchema).transform(params),
+    ).toThrow();
+  });
+
   it("should let parameters not defined in the schema pass through as strings", () => {
     const params = {
       numeric: "42",
