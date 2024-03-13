@@ -72,6 +72,16 @@ describe("TaxLots", () => {
       expect(parsedBody.total).toBe(2);
     });
 
+    it("should 400 when formatting a numeric parameter as an array", async () => {
+      const response = await request(app.getHttpServer()).get(
+        "/tax-lots?limit=[4]",
+      );
+      expect(response.body.message).toBe(
+        new InvalidRequestParameterException().message,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
     it("should 400 when finding by an invalid limit", async () => {
       const response = await request(app.getHttpServer()).get(
         "/tax-lots?limit=b4d",
