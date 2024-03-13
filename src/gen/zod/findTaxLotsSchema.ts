@@ -49,7 +49,6 @@ export const findTaxLotsQueryParamsSchema = z.object({
     .optional(),
 });
 export const findTaxLots400Schema = z.lazy(() => errorSchema).schema;
-export const findTaxLots500Schema = z.lazy(() => errorSchema).schema;
 
 /**
  * @description An object containing a list of tax lots and pagination metadata. An optional spatial filter will return all tax lots that intersect the spatial feature and its optional buffer. When applying a spatial filter, tax lots are ordered by their closeness to the spatial feature.

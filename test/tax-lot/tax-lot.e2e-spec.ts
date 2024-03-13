@@ -170,8 +170,102 @@ describe("TaxLots", () => {
       jest.spyOn(taxLotRepository, "findMany").mockImplementationOnce(() => {
         throw dataRetrievalException;
       });
+      const response = await request(app.getHttpServer()).get("/tax-lots");
+      expect(response.body.message).toBe(dataRetrievalException.message);
+      expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);
+    });
+  });
+
+  describe("findFills", () => {
+    it("should return pbf files when find by valid viewport", async () => {
+      const params = {
+        z: "10",
+        x: "123",
+        y: "456",
+      };
+      await request(app.getHttpServer())
+        .get(`/tax-lots/fills/${params.z}/${params.x}/${params.y}.pbf`)
+        .expect("Content-Type", "application/x-protobuf")
+        .expect(200);
+    });
+
+    it("should 400 when finding lettered viewport", async () => {
+      const params = {
+        z: "foo",
+        x: "bar",
+        y: "baz",
+      };
       const response = await request(app.getHttpServer())
-        .get("/tax-lots")
+        .get(`/tax-lots/fills/${params.z}/${params.x}/${params.y}.pbf`)
+        .expect(400);
+      expect(response.body.message).toBe(
+        new InvalidRequestParameterException().message,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 500 when there is a data retrieval error", async () => {
+      const dataRetrievalException = new DataRetrievalException();
+      jest.spyOn(taxLotRepository, "findFills").mockImplementationOnce(() => {
+        throw dataRetrievalException;
+      });
+
+      const params = {
+        z: "10",
+        x: "123",
+        y: "456",
+      };
+
+      const response = await request(app.getHttpServer())
+        .get(`/tax-lots/fills/${params.z}/${params.x}/${params.y}.pbf`)
+        .expect(500);
+      expect(response.body.message).toBe(dataRetrievalException.message);
+      expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);
+    });
+  });
+
+  describe("findLabels", () => {
+    it("should return pbf files when find by valid viewport", async () => {
+      const params = {
+        z: "10",
+        x: "123",
+        y: "456",
+      };
+      await request(app.getHttpServer())
+        .get(`/tax-lots/labels/${params.z}/${params.x}/${params.y}.pbf`)
+        .expect("Content-Type", "application/x-protobuf")
+        .expect(200);
+    });
+
+    it("should 400 when finding lettered viewport", async () => {
+      const params = {
+        z: "foo",
+        x: "bar",
+        y: "baz",
+      };
+      const response = await request(app.getHttpServer())
+        .get(`/tax-lots/labels/${params.z}/${params.x}/${params.y}.pbf`)
+        .expect(400);
+      expect(response.body.message).toBe(
+        new InvalidRequestParameterException().message,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 500 when there is a data retrieval error", async () => {
+      const dataRetrievalException = new DataRetrievalException();
+      jest.spyOn(taxLotRepository, "findLabels").mockImplementationOnce(() => {
+        throw dataRetrievalException;
+      });
+
+      const params = {
+        z: "10",
+        x: "123",
+        y: "456",
+      };
+
+      const response = await request(app.getHttpServer())
+        .get(`/tax-lots/labels/${params.z}/${params.x}/${params.y}.pbf`)
         .expect(500);
       expect(response.body.message).toBe(dataRetrievalException.message);
       expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);

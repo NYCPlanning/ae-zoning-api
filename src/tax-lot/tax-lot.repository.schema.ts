@@ -7,6 +7,15 @@ import {
 } from "src/schema";
 import { taxLotEntitySchema } from "src/schema/tax-lot";
 import { geomSchema } from "src/types";
+import { mvtEntitySchema } from "src/schema/mvt";
+
+export const findFillsRepoSchema = z.array(mvtEntitySchema).length(1);
+
+export type FindFillsRepoSchema = z.infer<typeof findFillsRepoSchema>;
+
+export const findLabelsRepoSchema = z.array(mvtEntitySchema).length(1);
+
+export type FindLabelsRepoSchema = z.infer<typeof findLabelsRepoSchema>;
 
 export const checkByBblRepoSchema = taxLotEntitySchema.pick({
   bbl: true,

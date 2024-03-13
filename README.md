@@ -43,6 +43,13 @@ Load the data into the tables. Under the hood, this uses the Postgres COPY comma
 npm run pg:copy
 ```
 
+### Populate the web mercator columns
+Spatial columns are created to hold web mercator projections for the tax lot and zoning district spatial data. These data are in the `mercator_fill` and `mercator_label` columns; they hold polygon and point data, respectively. They are used in generating mapbox vector tiles. The columns are populated with:
+
+```
+npm run pg:mercator
+```
+
 ### Run the project
 Finally, to run the project locally:
 ```
@@ -63,4 +70,8 @@ For production workflows, `npm run build` includes the command to build the docu
 ### OpenApi code generation
 This project makes use of [Kubb](https://www.kubb.dev) to generate code based on the `openapi.yaml` file. Kubb is configured in the `kubb.config.ts` file to use the `@kubb/swagger-ts` and `@kubb/swagger-zod` plugins to generate typescript types and Zod schemas. These types and schemas can then be used to perform validation on route params, query params, and request bodies via the `ZodValidationPipe` custom Nest pipe.
 
-This code is kept in `/src/gen`. Developers working on this project should never make manual changes to the contents of that folder. To update the generated code to reflect changes to `openapi.yaml`, run `npm run generate`. 
+This code is kept in `/src/gen`. Developers working on this project should never make manual changes to the contents of that folder. 
+
+To update the generated code to reflect changes to `openapi.yaml`, run:
+
+```npm run kubb:generate``` 

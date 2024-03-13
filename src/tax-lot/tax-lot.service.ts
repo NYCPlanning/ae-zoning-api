@@ -3,7 +3,11 @@ import { TaxLotRepository } from "./tax-lot.repository";
 import { ResourceNotFoundException } from "src/exception";
 import { Geometry, MultiPolygon } from "geojson";
 import { z } from "zod";
-import { FindTaxLotsQueryParams } from "src/gen";
+import {
+  FindTaxLotFillsPathParams,
+  FindTaxLotLabelsPathParams,
+  FindTaxLotsQueryParams,
+} from "src/gen";
 import { InvalidSpatialFilterRequestParametersException } from "src/exception/invalid-spatial-filter";
 import { Geom } from "src/types";
 
@@ -179,6 +183,16 @@ export class TaxLotService {
     );
   }
 
+  async findFills(params: FindTaxLotFillsPathParams) {
+    const fills = await this.taxLotRepository.findFills(params);
+    return fills[0].mvt;
+  }
+
+  async findLabels(params: FindTaxLotLabelsPathParams) {
+    const labels = await this.taxLotRepository.findLabels(params);
+    return labels[0].mvt;
+  }
+
   async findByBbl(bbl: string) {
     const result = await this.taxLotRepository.findByBbl(bbl);
     if (result === undefined) throw new ResourceNotFoundException();
@@ -224,13 +238,6 @@ export class TaxLotService {
       await this.taxLotRepository.findZoningDistrictClassesByBbl(bbl);
     return {
       zoningDistrictClasses,
-    };
-  }
-
-  async findTilesets(params: { z: number; x: number; y: number }) {
-    const url = await this.taxLotRepository.findTilesets(params);
-    return {
-      url,
     };
   }
 }

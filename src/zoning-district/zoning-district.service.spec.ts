@@ -1,6 +1,10 @@
 import { ZoningDistrictRepositoryMock } from "test/zoning-district/zoning-district.repository.mock";
 import { ZoningDistrictService } from "./zoning-district.service";
 import { ZoningDistrictRepository } from "./zoning-district.repository";
+import {
+  findZoningDistrictFillsQueryResponseSchema,
+  findZoningDistrictLabelsQueryResponseSchema,
+} from "src/gen";
 import { Test } from "@nestjs/testing";
 import { ResourceNotFoundException } from "src/exception";
 import {
@@ -24,6 +28,32 @@ describe("Zoning district service unit", () => {
     zoningDistrictService = moduleRef.get<ZoningDistrictService>(
       ZoningDistrictService,
     );
+  });
+
+  describe("findFills", () => {
+    it("should return an mvt when requesting coordinates", async () => {
+      const mvt = await zoningDistrictService.findFills({
+        z: "1",
+        y: "1",
+        x: "1",
+      });
+      expect(() =>
+        findZoningDistrictFillsQueryResponseSchema.parse(mvt),
+      ).not.toThrow();
+    });
+  });
+
+  describe("findLabels", () => {
+    it("should return an mvt when requesting coordinates", async () => {
+      const mvt = await zoningDistrictService.findLabels({
+        z: "1",
+        y: "1",
+        x: "1",
+      });
+      expect(() =>
+        findZoningDistrictLabelsQueryResponseSchema.parse(mvt),
+      ).not.toThrow();
+    });
   });
 
   describe("findById", () => {
