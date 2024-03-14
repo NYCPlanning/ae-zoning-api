@@ -25,6 +25,7 @@
   },
   "scripts": {
     "bundle": "webpack",
-    "test": "docker run --rm -i grafana/k6 run - <dist/get-200-status-test.js"
+    "test": "docker run --rm -i grafana/k6 run - <dist/find-tax-lots-test.js",
+    "go": "npm run bundle && npm run test"
   }
 }
