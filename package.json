@@ -26,7 +26,7 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "test:load:up": "docker compose --file compose.load-test.yaml up -d api db influxdb grafana",
-    "test:load:run": "npm run --prefix ./load-test bundle && docker compose --file compose.load-test.yaml run --rm k6 run /scripts/find-tax-lots-test.js",
+    "test:load:run": "npm run --prefix ./load-test bundle && docker compose --file compose.load-test.yaml run --rm k6 run /scripts/open-api-test.js",
     "test:load:stop": "docker compose --file compose.load-test.yaml down",
     "prepare": "husky install",
     "generate": "kubb generate"
