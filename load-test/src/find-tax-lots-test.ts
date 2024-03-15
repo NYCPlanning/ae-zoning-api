@@ -3,7 +3,7 @@ import { Options } from "k6/options";
 import http from "k6/http";
 
 export const options: Options = {
-  vus: 70,
+  vus: 100,
   duration: "2m",
   thresholds: {
     http_req_failed: ["rate<0.01"],
@@ -16,7 +16,8 @@ export default () => {
   for (let offset = 0; offset < 8e5; offset += 5e4) {
     const req = {
       method: "GET",
-      url: `http://host.docker.internal:3000/api/tax-lots?limit=10&${offset}`,
+      // url: `http://host.docker.internal:3000/api/tax-lots?limit=10&${offset}`,
+      url: `http://api:3000/api/tax-lots?limit=10&${offset}`,
       params: {
         tags: {
           name: "findTaxLots",
@@ -31,7 +32,7 @@ export default () => {
     const taxLot = (data.taxLots as Array<{ bbl: string }>)[0];
     return {
       method: "GET",
-      url: `http://host.docker.internal:3000/api/tax-lots/${taxLot.bbl}`,
+      url: `http://api:3000/api/tax-lots/${taxLot.bbl}`,
       params: {
         tags: {
           name: "findTaxLotByBbl",

@@ -24,8 +24,6 @@
     "webpack-glob-entries": "^1.0.1"
   },
   "scripts": {
-    "bundle": "webpack",
-    "test": "docker run --rm -i grafana/k6 run - <dist/find-tax-lots-test.js",
-    "go": "npm run bundle && npm run test"
+    "bundle": "webpack"
   }
 }

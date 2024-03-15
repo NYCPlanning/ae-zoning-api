@@ -1,3 +1,7 @@
+networks:
+  db:
+  api:
+
 services:
   db:
     build: 
@@ -8,7 +12,24 @@ services:
       - POSTGRES_USER=${DATABASE_USER}
       - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
       - POSTGRES_DB=${DATABASE_NAME}
+    networks:
+      - db
     ports:
-      - "5432:5432"
+      - 5432:5432
     volumes:
       - ./db-volume:/var/lib/postgresql/data
+  api:
+    build: .
+    networks:
+      - db
+      - api
+    ports:
+      - 3000:3000
+    environment:
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      DATABASE_USER: ${DATABASE_USER}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_NAME: ${DATABASE_NAME}
+    depends_on:
+      - db
