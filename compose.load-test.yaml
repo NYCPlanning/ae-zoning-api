@@ -1,16 +1,9 @@
 include:
   - compose.yaml
 
-networks:
-  k6:
-  grafana:
-
 services:
   influxdb:
     image: influxdb:1.8
-    networks:
-      - k6
-      - grafana
     ports:
       - "8086:8086"
     environment:
@@ -18,8 +11,6 @@ services:
 
   grafana:
     image: grafana/grafana-oss:10.3.4
-    networks:
-      - grafana
     ports:
       - "3001:3000"
     environment:
@@ -34,9 +25,6 @@ services:
 
   k6:
     image: grafana/k6:0.49.0
-    networks:
-      - k6
-      - api
     ports:
       - "6565:6565"
     environment:

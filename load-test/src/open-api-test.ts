@@ -13,7 +13,10 @@
 import http from "k6/http";
 import { group, check } from "k6";
 
-const BASE_URL = "http://api:3000/api";
+const BASE_URL = "http://host.docker.internal:3000/api";
+// const BASE_URL = "http://localhost:3000/api";
+// const BASE_URL = "http://172.17.0.1:3000/api";
+// const BASE_URL = "http://api:3000/api";
 // Sleep duration between successive requests.
 // You might want to edit the value of this variable or remove calls to the sleep function on the script.
 // const SLEEP_DURATION = 0.1;
