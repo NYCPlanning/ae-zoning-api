@@ -14,13 +14,26 @@ npm i
 ### Set up your `.env` file
 Create a file called `.env` in the root folder of the project and copy the contents of `sample.env` into that new file
 
-### Run local database with docker compose
-Next, use [docker compose](https://docs.docker.com/compose/) to stand up a local Postgresql database. 
+### Create development database
+
+Either run a local database or create one in the database cluster in Digital Ocean.
+
+#### Run local database with docker compose
+Next, use [docker compose](https://docs.docker.com/compose/) to stand up a local Postgresql database.
+
 ```
 docker compose up
 ```
 
 If you need to install docker compose, follow [these instructions](https://docs.docker.com/compose/install/).
+
+#### Use the DO cluster
+
+Ensure the value of `DATABASE_NAME` in `.env` is unique to you and then create the database. Other connection values are stored in our credential manager.
+
+```bash
+npm run pg:dev
+```
 
 ### Configure PostGIS
 Enable geospatial features by installing the postgis extension
