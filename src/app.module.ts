@@ -1,4 +1,5 @@
 import { Module } from "@nestjs/common";
+import { SentryModule } from "@ntegral/nestjs-sentry";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { ConfigModule } from "@nestjs/config";
@@ -12,7 +13,6 @@ import { ZoningDistrictModule } from "./zoning-district/zoning-district.module";
 import { DbConfig, FeatureFlagConfig, StorageConfig } from "./config";
 import { GlobalModule } from "./global/global.module";
 import { ZoningDistrictClassModule } from "./zoning-district-class/zoning-district-class.module";
-
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -34,6 +34,13 @@ import { ZoningDistrictClassModule } from "./zoning-district-class/zoning-distri
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, "..", "openapi"),
       exclude: ["/api/(.*)"],
+    }),
+    SentryModule.forRoot({
+      dsn: process.env.SENTRY_DSN,
+      debug: true,
+      maxBreadcrumbs: 50,
+      environment: process.env.SENTRY_ENVIRONMENT,
+      logLevels: ["error"], //based on sentry.io loglevel //
     }),
     GlobalModule,
     BoroughModule,
