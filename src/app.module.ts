@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { ConfigModule } from "@nestjs/config";
+import { RavenModule } from "nest-raven";
 import { ServeStaticModule } from "@nestjs/serve-static";
 import * as Joi from "joi";
 import { join } from "path";
@@ -35,6 +36,7 @@ import { ZoningDistrictClassModule } from "./zoning-district-class/zoning-distri
       rootPath: join(__dirname, "..", "openapi"),
       exclude: ["/api/(.*)"],
     }),
+    RavenModule,
     GlobalModule,
     BoroughModule,
     LandUseModule,

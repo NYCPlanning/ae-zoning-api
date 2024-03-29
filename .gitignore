@@ -43,3 +43,6 @@ lerna-debug.log*
 
 # database volume
 db-volume
+
+# Sentry Config File
+.sentryclirc
