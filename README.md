@@ -41,11 +41,7 @@ npm run drizzle:migrate
 ```
 
 #### Data loading
-Load the data into the tables. Under the hood, this uses the Postgres COPY command.
-
-```
-npm run pg:copy
-```
+Use the `ae-data-flow` repo to load data into the local database tables. Follow the instructions in that repo for local database use.
 
 ### Run the project
 Finally, to run the project locally:
