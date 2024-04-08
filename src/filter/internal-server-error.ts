@@ -20,6 +20,8 @@ export class InternalServerErrorExceptionFilter implements ExceptionFilter {
       statusCode: httpStatus,
       message: exception.message,
       error: HttpName.INTERNAL_SEVER_ERROR,
+      name: exception.name,
+      db_name: process.env.DATABASE_NAME,
     };
 
     const ctx = host.switchToHttp();

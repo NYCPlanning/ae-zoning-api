@@ -7,6 +7,7 @@ export const DbConfig = registerAs("db", () => ({
   user: process.env.DATABASE_USER,
   password: process.env.DATABASE_PASSWORD,
   name: process.env.DATABASE_NAME,
+  sslRejectUnauthorized: process.env.NODE_ENV === "production",
 }));
 
 export const FeatureFlagConfig = registerAs("featureFlag", () => ({}));
