@@ -6,7 +6,7 @@ import {
   pgEnum,
   primaryKey,
 } from "drizzle-orm/pg-core";
-import { managingCodeEntitySchema } from "./managing-code";
+import { managingCode, managingCodeEntitySchema } from "./managing-code";
 import { agencyEntitySchema } from "./agency";
 import { z } from "zod";
 
@@ -19,7 +19,9 @@ export const projectCategoryEnum = pgEnum("project_category", [
 export const project = pgTable(
   "project",
   {
-    managingCode: char("managing_code", { length: 3 }),
+    managingCode: char("managing_code", { length: 3 }).references(
+      () => managingCode.id,
+    ),
     id: text("id"),
     managingAgency: text("managing_agency"),
     description: text("description"),
@@ -39,5 +41,7 @@ export const projectEntitySchema = z.object({
   id: z.string(),
   managingAgency: agencyEntitySchema,
   description: z.string(),
+  minDate: z.date(),
+  maxDate: z.date(),
   category: z.string(),
 });
