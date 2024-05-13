@@ -9,6 +9,7 @@ import {
 import { managingCode, managingCodeEntitySchema } from "./managing-code";
 import { agencyEntitySchema } from "./agency";
 import { z } from "zod";
+import { multiPointGeom, multiPolygonGeom } from "src/drizzle-pgis";
 
 export const capitalProjectCategoryEnum = pgEnum("capital_project_category", [
   "Fixed Asset",
@@ -28,6 +29,11 @@ export const capitalProject = pgTable(
     minDate: date("min_date"),
     maxDate: date("max_date"),
     category: capitalProjectCategoryEnum("capital_project_category"),
+    liFtMPnt: multiPointGeom("li_ft_m_pnt", 2263),
+    liFtMPoly: multiPolygonGeom("li_ft_m_poly", 2263),
+    mercatorLabel: multiPointGeom("mercator_label", 3857),
+    mercatorFillMPnt: multiPointGeom("mercator_fill_m_pnt", 3857),
+    mercatorFillMPoly: multiPolygonGeom("mercator_fill_m_poly", 3857),
   },
   (table) => {
     return {
