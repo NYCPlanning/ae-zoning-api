@@ -464,6 +464,13 @@ components:
         - id
         - title
         - abbr
+    CapitalProjectCategory:
+      type: string
+      enum:
+        - "Fixed Asset"
+        - "Lump Sum"
+        - "ITT, Vehicles and Equipment"
+      descirption: The type of Capital Project.
     LandUse:
       type: object
       properties:
