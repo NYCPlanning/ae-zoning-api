@@ -428,6 +428,20 @@ components:
         type: integer
         example: 7
   schemas:
+    Agency:
+      type: object
+      properties:
+        initials:
+          type: string
+          description: A string of variable length containing the initials of the agency.
+          example: DOT
+        name:
+          type: string
+          description: The full name of the agency.
+          example: Department of Transportation
+      required:
+          - initials
+          - name
     Borough:
       type: object
       properties:
