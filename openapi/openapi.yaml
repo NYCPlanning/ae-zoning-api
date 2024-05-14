@@ -471,6 +471,22 @@ components:
         - "Lump Sum"
         - "ITT, Vehicles and Equipment"
       descirption: The type of Capital Project.
+    CommunityDistrict:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The two character numeric string containing the number used to refer to the community district.
+          pattern: '^([0-9]{2})$'
+          example: 01
+        boroughId:
+          type: string
+          description: A single character numeric string containing the common number used to refer to the borough. Possible values are 1-5. 
+          pattern: \b[1-9]\b
+          example: 1
+        required:
+          - id
+          - boroughId
     LandUse:
       type: object
       properties:
