@@ -106,6 +106,7 @@
     "*.{ts,tsx}": [
       "bash -c 'npm run typecheck'",
       "npm run lint"
-    ]
+    ],
+    "openapi/openapi.yaml" : "bash -c 'npm run redoc:build && git add openapi/index.html'"
   }
 }
