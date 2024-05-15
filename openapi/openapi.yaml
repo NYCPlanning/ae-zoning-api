@@ -520,7 +520,7 @@ components:
       properties:
         id:
           type: string
-          description: A string of variable length, composite of managing code and project ID
+          description: The id for the project, which combines with the managing code to make a unique id
           example: 'HWPEDSF5'
         description:
           type: string
@@ -528,20 +528,20 @@ components:
           example: 'Multi-Site Pedestrian Safety Phase 5'
         managingCode:
           type: string
-          description: Three character string of numbers representing managing agency.
+          description: Three character string of numbers representing managing agency
           pattern: '^([0-9]{3})$'
           example: 850
         managingAgencyInitials:
           type: string
-          description: The managing agency name abbreviation or acronym.
+          description: The managing agency name abbreviation or acronym
           example: 'DOT'
         minDate:
           type: date
-          description: The starting date of the capital project.
+          description: The starting date of the capital project
           example: '2024-05-15T14:20:03.842Z'
         maxDate:
           type: date
-          description: The ending date of the capital project.
+          description: The ending date of the capital project
           example: '2024-05-15T14:20:03.842Z'
         category:
           $ref: '#/components/schemas/CapitalProjectCategory'
