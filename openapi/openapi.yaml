@@ -514,7 +514,7 @@ components:
         - "Fixed Asset"
         - "Lump Sum"
         - "ITT, Vehicles and Equipment"
-      descirption: The type of Capital Project.
+      description: The type of Capital Project.
     CapitalProject:
       type: object
       properties:
