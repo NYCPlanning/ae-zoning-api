@@ -13,6 +13,30 @@ tags:
   - name: Zoning Districts
   - name: GeoJSON
 paths:
+  /agencies:
+    get:
+      summary: Find agencies
+      operationId: findAgencies
+      tags:
+      - Agencies
+      responses:
+        '200':
+          description: An object containing all agencies.
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  agencies:
+                    type: array
+                    items: 
+                      $ref: '#/components/schemas/Agency'
+                required:
+                  - agencies
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
   /boroughs:
     get: 
       summary: List boroughs
