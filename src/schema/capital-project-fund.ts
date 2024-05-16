@@ -7,7 +7,7 @@ import {
   text,
   uuid,
 } from "drizzle-orm/pg-core";
-import { capitalProject, capitalProjectCategoryEnum } from "./capital-project";
+import { capitalProject } from "./capital-project";
 import { z } from "zod";
 import { managingCodeEntitySchema } from "./managing-code";
 
@@ -33,8 +33,8 @@ export const capitalProjectFund = pgTable(
     id: uuid("id").primaryKey(),
     managingCode: char("managing_code", { length: 3 }),
     capitalProjectId: text("capital_project_id"),
-    category: capitalProjectCategoryEnum("capital_project_category"),
-    stage: capitalProjectFundStageEnum("capital_project_fund_stage"),
+    capitalFundCategory: capitalFundCategoryEnum("capital_fund_category"),
+    stage: capitalProjectFundStageEnum("stage"),
     value: numeric("value"),
   },
   (table) => {

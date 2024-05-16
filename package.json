@@ -65,6 +65,7 @@
     "@typescript-eslint/parser": "^6.0.0",
     "dotenv": "^16.3.1",
     "drizzle-kit": "^0.20.2",
+    "esbuild": "^0.21.2",
     "eslint": "^8.42.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.0",
@@ -107,6 +108,6 @@
       "bash -c 'npm run typecheck'",
       "npm run lint"
     ],
-    "openapi/openapi.yaml" : "bash -c 'npm run redoc:build && git add openapi/index.html'"
+    "openapi/openapi.yaml": "bash -c 'npm run redoc:build && git add openapi/index.html'"
   }
 }
