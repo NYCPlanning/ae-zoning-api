@@ -10,12 +10,15 @@ import { z } from "zod";
 import { managingCodeEntitySchema } from "./managing-code";
 import { capitalProject } from "./capital-project";
 import { budgetLine } from "./budget-line";
+import { capitalCommitmentType } from "./capital-commitment-type";
 
 export const capitalCommitment = pgTable(
   "captial_commitment",
   {
     id: uuid("id").primaryKey(),
-    type: char("type", { length: 4 }),
+    type: char("type", { length: 4 }).references(
+      () => capitalCommitmentType.code,
+    ),
     plannedDate: date("planned_date"),
     managingCode: char("managing_code", { length: 3 }),
     capitalProjectId: text("capital_project_id"),

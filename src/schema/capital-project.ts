@@ -7,9 +7,9 @@ import {
   primaryKey,
 } from "drizzle-orm/pg-core";
 import { managingCode, managingCodeEntitySchema } from "./managing-code";
-import { agencyEntitySchema } from "./agency";
+import { agency, agencyEntitySchema } from "./agency";
 import { z } from "zod";
-import { multiPointGeom, multiPolygonGeom } from "src/drizzle-pgis";
+import { multiPointGeom, multiPolygonGeom, pointGeom } from "src/drizzle-pgis";
 
 export const capitalProjectCategoryEnum = pgEnum("capital_project_category", [
   "Fixed Asset",
@@ -24,14 +24,14 @@ export const capitalProject = pgTable(
       () => managingCode.id,
     ),
     id: text("id"),
-    managingAgency: text("managing_agency"),
+    managingAgency: text("managing_agency").references(() => agency.initials),
     description: text("description"),
     minDate: date("min_date"),
     maxDate: date("max_date"),
-    category: capitalProjectCategoryEnum("capital_project_category"),
+    category: capitalProjectCategoryEnum("category"),
     liFtMPnt: multiPointGeom("li_ft_m_pnt", 2263),
     liFtMPoly: multiPolygonGeom("li_ft_m_poly", 2263),
-    mercatorLabel: multiPointGeom("mercator_label", 3857),
+    mercatorLabel: pointGeom("mercator_label", 3857),
     mercatorFillMPnt: multiPointGeom("mercator_fill_m_pnt", 3857),
     mercatorFillMPoly: multiPolygonGeom("mercator_fill_m_poly", 3857),
   },
