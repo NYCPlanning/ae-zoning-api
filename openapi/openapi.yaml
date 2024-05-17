@@ -622,6 +622,31 @@ components:
         - managingAgencyInitials
         - minDate
         - maxDate
+    CapitalProjectBudgeted:
+      allOf:
+        - $ref: '#/components/schema/CapitalProject'
+        - type: object
+          properties:
+            commitmentsTotal:
+              type: number
+              description: The sum total of commitments for the capital project
+              example: 200000
+            sponsoringAgencyInitials:
+              type: array
+              items:
+                type: string
+              description: An array containing string values representing the sponsoring agencies initials.
+              example: ["DOT"]
+            budgetType:
+              type: array
+              items:
+                  type: string
+              description: An array containing string values representing the budget types.
+              example: ["Highways", "Highway Bridges"]
+          required:
+            - commitmentsTotal
+            - sponsoringAgencyInitials
+            - budgetType
     CityCouncilDistrict:
       type: object
       properties:
