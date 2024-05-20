@@ -12,6 +12,7 @@ import { ZoningDistrictModule } from "./zoning-district/zoning-district.module";
 import { DbConfig, FeatureFlagConfig, StorageConfig } from "./config";
 import { GlobalModule } from "./global/global.module";
 import { ZoningDistrictClassModule } from "./zoning-district-class/zoning-district-class.module";
+import { AgencyModule } from "./agency/agency.module";
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { ZoningDistrictClassModule } from "./zoning-district-class/zoning-distri
       exclude: ["/api/(.*)"],
     }),
     GlobalModule,
+    AgencyModule,
     BoroughModule,
     LandUseModule,
     TaxLotModule,
