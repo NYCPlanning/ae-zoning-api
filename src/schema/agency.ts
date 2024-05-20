@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export const agency = pgTable("agency", {
   initials: text("initials").primaryKey(),
-  name: text("name"),
+  name: text("name").notNull(),
 });
 
 export const agencyEntitySchema = z.object({
