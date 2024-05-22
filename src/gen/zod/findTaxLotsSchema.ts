@@ -28,7 +28,7 @@ export const findTaxLotsQueryParamsSchema = z.object({
   lons: z
     .array(z.number())
     .describe(
-      `The longitude portion of coordinates. It must be provided when applying a spatial filter and have the same length as the latitudes.`,
+      `The longitude portion of coordinates. It must be provided when applying a spatial filter and have the same length as the latitudes. (If using a tool like axios, serializing the array with brackets is also supported. ex; lons[]=-74.010776&lons[]=-74.010776)`,
     )
     .min(1)
     .max(5)
@@ -36,7 +36,7 @@ export const findTaxLotsQueryParamsSchema = z.object({
   lats: z
     .array(z.number())
     .describe(
-      `The latitude portion of coordinates. It must be provided when applying a spatial filter and have the same length as the longitudes.`,
+      `The latitude portion of coordinates. It must be provided when applying a spatial filter and have the same length as the longitudes. (If using a tool like axios, serializing the array with brackets is also supported. ex; lats[]=40.708649&lats[]=40.707800)`,
     )
     .min(1)
     .max(5)
