@@ -20,6 +20,6 @@ export const communityDistrict = pgTable(
 );
 
 export const communityDistrictEntitySchema = z.object({
-  boroughId: z.string().length(1),
-  id: z.string().length(2),
+  boroughId: z.string().length(1).nullable(),
+  id: z.string().length(2).nullable(),
 });

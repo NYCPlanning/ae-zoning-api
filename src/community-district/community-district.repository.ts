@@ -4,9 +4,7 @@ import { StorageConfig } from "src/config";
 import { ConfigType } from "@nestjs/config";
 import { eq } from "drizzle-orm";
 import { DataRetrievalException } from "src/exception";
-import {
-  communityDistrict,
-} from "src/schema";
+import { communityDistrict } from "src/schema";
 import {
   // CheckByIdRepo,
   // FindByIdRepo,
@@ -31,13 +29,13 @@ export class CommunityDistrictRepository {
           boroughId: communityDistrict.boroughId,
         })
         .from(communityDistrict)
-        .where(eq(communityDistrict.id, id));
+        .where(eq(communityDistrict.boroughId, id));
     } catch {
       throw new DataRetrievalException();
     }
   }
 
-/*   async findCommunityDistrictsByBoroughId(
+  /*   async findCommunityDistrictsByBoroughId(
     id: string,
   ){
     try {
