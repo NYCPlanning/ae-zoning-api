@@ -6,6 +6,7 @@ import { ServeStaticModule } from "@nestjs/serve-static";
 import * as Joi from "joi";
 import { join } from "path";
 import { BoroughModule } from "./borough/borough.module";
+import { CommunityDistrictModule } from "./community-district/community-district.module";
 import { LandUseModule } from "./land-use/land-use.module";
 import { TaxLotModule } from "./tax-lot/tax-lot.module";
 import { ZoningDistrictModule } from "./zoning-district/zoning-district.module";
@@ -37,6 +38,7 @@ import { ZoningDistrictClassModule } from "./zoning-district-class/zoning-distri
     }),
     GlobalModule,
     BoroughModule,
+    CommunityDistrictModule,
     LandUseModule,
     TaxLotModule,
     ZoningDistrictModule,
