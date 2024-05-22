@@ -4,7 +4,10 @@ import { Test } from "@nestjs/testing";
 import { BoroughRepository } from "src/borough/borough.repository";
 import { BoroughRepositoryMock } from "./borough.repository.mock";
 import { BoroughModule } from "src/borough/borough.module";
-import { findBoroughsQueryResponseSchema } from "src/gen";
+import {
+  findBoroughsQueryResponseSchema,
+  findCommunityDistrictsByBoroughIdQueryResponseSchema,
+} from "src/gen";
 import { DataRetrievalException } from "src/exception";
 import { HttpName } from "src/filter";
 
@@ -47,6 +50,46 @@ describe("Borough e2e", () => {
         .expect(500);
       expect(response.body.message).toBe(dataRetrievalException.message);
       expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);
+    });
+  });
+
+  describe("findCommunityDistrictsByBoroughId", () => {
+    it("should 200 and return community districts for a given borough id", async () => {
+      const mock = boroughRepositoryMock.checkBoroughByIdMocks[0];
+
+      const response = await request(app.getHttpServer())
+        .get(`/boroughs/${mock.id}/community-districts`)
+        .expect(200);
+
+      expect(() => {
+        findCommunityDistrictsByBoroughIdQueryResponseSchema.parse(
+          response.body,
+        );
+      }).not.toThrow();
+    });
+
+    it("should 400 and when finding by an invalid id", async () => {
+      const invalidId = "MN";
+      const response = await request(app.getHttpServer())
+        .get(`/boroughs/${invalidId}/community-districts`)
+        .expect(400);
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 500 when the database errors", async () => {
+      const dataRetrievalException = new DataRetrievalException();
+      jest
+        .spyOn(boroughRepositoryMock, "checkBoroughById")
+        .mockImplementationOnce(() => {
+          throw dataRetrievalException;
+        });
+
+      const mock = boroughRepositoryMock.checkBoroughByIdMocks[0];
+      const response = await request(app.getHttpServer())
+        .get(`/boroughs/${mock.id}/community-districts`)
+        .expect(500);
+      expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);
+      expect(response.body.message).toBe(dataRetrievalException.message);
     });
   });
 

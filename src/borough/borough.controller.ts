@@ -1,8 +1,29 @@
-import { Controller, Get, UseFilters } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Injectable,
+  Param,
+  UseFilters,
+  UsePipes,
+} from "@nestjs/common";
 import { BoroughService } from "./borough.service";
-import { InternalServerErrorExceptionFilter } from "src/filter";
+import { ZodValidationPipe } from "src/pipes/zod-validation-pipe";
+import {
+  FindCommunityDistrictsByBoroughIdPathParams,
+  findCommunityDistrictsByBoroughIdPathParamsSchema,
+} from "src/gen";
+import {
+  BadRequestExceptionFilter,
+  InternalServerErrorExceptionFilter,
+  NotFoundExceptionFilter,
+} from "src/filter";
 
-@UseFilters(InternalServerErrorExceptionFilter)
+@Injectable()
+@UseFilters(
+  BadRequestExceptionFilter,
+  InternalServerErrorExceptionFilter,
+  NotFoundExceptionFilter,
+)
 @Controller("boroughs")
 export class BoroughController {
   constructor(private readonly boroughService: BoroughService) {}
@@ -10,5 +31,17 @@ export class BoroughController {
   @Get()
   async findMany() {
     return this.boroughService.findMany();
+  }
+
+  @Get("/:boroughId/community-districts")
+  @UsePipes(
+    new ZodValidationPipe(findCommunityDistrictsByBoroughIdPathParamsSchema),
+  )
+  async findCommunityDistrictsById(
+    @Param() params: FindCommunityDistrictsByBoroughIdPathParams,
+  ) {
+    return this.boroughService.findCommunityDistrictsByBoroughId(
+      params.boroughId,
+    );
   }
 }
