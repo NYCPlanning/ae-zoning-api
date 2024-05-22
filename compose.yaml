@@ -10,5 +10,9 @@ services:
       - POSTGRES_DB=${DATABASE_NAME}
     ports:
       - "8010:5432"
+    networks:
+      - data
     volumes:
       - ./db-volume:/var/lib/postgresql/data
+networks:
+  data:
