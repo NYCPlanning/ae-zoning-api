@@ -111,15 +111,17 @@ paths:
           $ref: "#/components/responses/NotFound"
         '500':
           $ref: "#/components/responses/InternalServerError"
-  /city-council-districts:
+  /capital-projects/{managingCode}/{capitalProjectid}/capital-commitments:
     get:
-      summary: 🚧 Find city council districts
-      operationId: findCityCouncilDistricts
-      tags: 
-        - City Council Districts
+      summary: 🚧 Find capital commitments associated with a specific capital project
+      operationId: findCapitalCommitmentsByManagingCodeCapitalProjectId
+      tags: Capital Commitments
+      parameters:
+        - managingCode
+        - capitalProjectId
       responses:
         '200':
-          description: an object of city council districts
+          description: an object of capital commitments for the capital project
           content:
             application/json:
               schema:
@@ -135,6 +137,15 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '500':
           $ref: '#/components/responses/InternalServerError'
+  /city-council-districts:
+    get:
+      summary: 🚧 Find city council districts
+      operationId: findCityCouncilDistricts
+      tags: 
+        - City Council Districts
+      responses:
+        '200':
+          description: an object of city council districts
   /city-council-districts/{cityCouncilDistrictId}/capital-projects:
     get:
       summary: 🚧 Find paginated capital projects within a specific city council district.
@@ -156,6 +167,18 @@ paths:
           $ref: "#/components/responses/NotFound"
         '500':
           $ref: "#/components/responses/InternalServerError"
+                  capitalCommitments:
+                    type: object
+                    items:
+                      $ref: '#/components/schemas/CapitalCommitment'
+                required:
+                  - capitalCommitments
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
   /land-uses:
     get: 
       summary: List land uses
@@ -664,15 +687,15 @@ components:
           type: number
           description: A numeric string used to refer to the amount of total planned commitments.
           example: 1600000
-        required:
-          - id
-          - type
-          - plannedDate
-          - budgetLineCode
-          - budgetLineId
-          - sponsoringAgencyInitials
-          - budgetType
-          - totalValue
+      required:
+        - id
+        - type
+        - plannedDate
+        - budgetLineCode
+        - budgetLineId
+        - sponsoringAgencyInitials
+        - budgetType
+        - totalValue
     CapitalProjectCategory:
       type: string
       enum:
