@@ -26,7 +26,7 @@ docker compose up
 If you need to install docker compose, follow [these instructions](https://docs.docker.com/compose/install/).
 
 ### Configure PostGIS
-Enable geospatial features by installing the postgis extension
+Enable geospatial features by activating the postgis extension
 
 ```sh
 npm run pg:configure
@@ -37,13 +37,6 @@ Structure the database tables with drizzle
 
 ```sh
 npm run drizzle:migrate
-```
-
-### Data loading
-Load the data into the tables. Under the hood, this uses the Postgres COPY command.
-
-```sh
-npm run pg:copy
 ```
 
 ## Local development
@@ -78,13 +71,6 @@ Generate these resources with:
 npm run kubb:generate
 ```
 
-The console may include the output below. It can be safely ignored.
-```console
-✖ Something went wrong
-
-  Error: The "paths[0]" argument must be of type string. Received undefined
-```
-
 Finally, to run the api locally:
 ```sh
 npm run dev
@@ -103,6 +89,26 @@ If you make changes to any database schema in `src/schema`, it will be necessary
 ```sh
 npm run drizzle:generate
 ```
+
+### Data loading
+This API manages its own database schemas (using the drizzle steps listed above). However, the data itself is loaded into the database through a separate ETL repository. The ETL repository is `NYCPlanning/ae-data-flow`.
+For local development, the ETL communicates with the Zoning API through a shared docker network. The Zoning API docker compose creates this network, which the ETL repository then looks for and joins when it starts.
+
+#### Troubleshooting the docker network
+
+The docker network should be created automatically when bringing the Zoning API `up` and the ETL should also join it automatically. However, there are two common scenarios that may cause issues.
+
+The ETL cannot find the network:
+- Check the configuration of the `compose.yaml` in this repository (NYCPlanning/ae-zoning-api). It should be configured to have a network called `data`.
+- Configure the compose to create a `data` network, if it does not already.
+- If it does already configure this network, attempt to rebuild the container with `docker compose up --build -d`
+
+The ETL cannot find the Zoning Database on the network:
+- In this scenario, the network exists from a previous build. However, the Zoning API is failing to join it when it starts.
+- First confirm the network exists.
+  - Run `docker network ls`
+  - Confirm there is a network called `ae-zoning-api_data`
+  - Connect the Zoning API database container to the data network by running `docker network connect ae-zoning-api_data ae-zoning-api-db-1`
 
 ## Production builds
 Running a production version of the site is a two step process.
