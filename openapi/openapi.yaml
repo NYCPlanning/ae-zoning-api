@@ -533,6 +533,7 @@ components:
           example: DOT
         name:
           type: string
+          nullable: true
           description: The full name of the agency.
           example: Department of Transportation
       required:
