@@ -111,6 +111,30 @@ paths:
           $ref: "#/components/responses/NotFound"
         '500':
           $ref: "#/components/responses/InternalServerError"
+  /city-council-districts:
+    get:
+      summary: 🚧 Find city council districts
+      operationId: findCityCouncilDistricts
+      tags: 
+        - City Council Districts
+      responses:
+        '200':
+          description: an object of city council districts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cityCouncilDistricts:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CityCouncilDistrict'
+                required:
+                 - cityCouncilDistricts
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
   /city-council-districts/{cityCouncilDistrictId}/capital-projects:
     get:
       summary: 🚧 Find paginated capital projects within a specific city council district.
