@@ -634,13 +634,15 @@ components:
           description: The managing agency name abbreviation or acronym
           example: 'DOT'
         minDate:
-          type: date
+          type: string
+          format: date
           description: The starting date of the capital project
-          example: '2024-05-15T14:20:03.842Z'
+          example: '2024-05-15'
         maxDate:
-          type: date
+          type: string
+          format: date
           description: The ending date of the capital project
-          example: '2024-05-15T14:20:03.842Z'
+          example: '2024-05-15'
         category:
           $ref: '#/components/schemas/CapitalProjectCategory'
       required:
