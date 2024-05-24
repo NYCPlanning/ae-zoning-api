@@ -650,9 +650,20 @@ components:
         - managingAgencyInitials
         - minDate
         - maxDate
+    CapitalProjectPage:
+      allOf:
+        - $ref: '#/components/schemas/Page'
+        - type: object
+          properties:
+            capitalProjects:
+              type: array
+              items:
+                $ref: '#/components/schemas/CapitalProject'
+          required:
+            - capitalProjects
     CapitalProjectBudgeted:
       allOf:
-        - $ref: '#/components/schema/CapitalProject'
+        - $ref: '#/components/schemas/CapitalProject'
         - type: object
           properties:
             commitmentsTotal:
