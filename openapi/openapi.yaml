@@ -88,7 +88,29 @@ paths:
         '404':
           $ref: "#/components/responses/NotFound"
         '500':
-          $ref: "#/components/responses/InternalServerError" 
+          $ref: "#/components/responses/InternalServerError"
+  /boroughs/{boroughId}/community-districts/{communityDistrictId}/capital-projects:
+    get:
+      summary: Find paginated capital projects within a specified community district
+      operationId: findCapitalProjectsByBoroughIdCommunityDistrictId
+      tags:
+      - Capital Projects
+      parameters:
+        - $ref: "#/components/parameters/boroughIdParam"
+        - $ref: "#/components/parameters/communityDistrictIdParam"
+      responses:
+        '200':
+          description: An object containing pagination metadata and an array of capital projects for the community district
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CapitalProjectPage"
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
   /land-uses:
     get: 
       summary: List land uses
