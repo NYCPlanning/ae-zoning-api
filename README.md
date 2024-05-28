@@ -90,6 +90,10 @@ Finally, to run the api locally:
 npm run dev
 ```
 
+The application is running on port `3000`
+- The root route `/` has the documentation built from the point where the application was run (`localhost:3000/`) 
+- The `/api/{endpoint}` routes have the actual API implementation (ex: `localhost:3000/api/boroughs`)
+
 (This command will also create a static site of the OpenAPI documentation at the root of the API.
 This site reflects the documentation at the point where the command was written. Viewing changes to
 the OpenAPI documentation requires restarting the development server).

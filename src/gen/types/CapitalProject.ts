@@ -27,15 +27,15 @@ export type CapitalProject = {
   managingAgencyInitials: string;
   /**
    * @description The starting date of the capital project
-   * @type date
-   * @example 2024-05-15T14:20:03.842Z
+   * @type string date
+   * @example 2024-05-15
    */
-  minDate: any;
+  minDate: string;
   /**
    * @description The ending date of the capital project
-   * @type date
-   * @example 2024-05-15T14:20:03.842Z
+   * @type string date
+   * @example 2024-05-15
    */
-  maxDate: any;
+  maxDate: string;
   category?: CapitalProjectCategory;
 };

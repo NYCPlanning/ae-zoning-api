@@ -16,7 +16,7 @@ export const capitalProjectSchema = z.object({
   managingAgencyInitials: z
     .string()
     .describe(`The managing agency name abbreviation or acronym`),
-  minDate: z.any().describe(`The starting date of the capital project`),
-  maxDate: z.any().describe(`The ending date of the capital project`),
+  minDate: z.string().describe(`The starting date of the capital project`),
+  maxDate: z.string().describe(`The ending date of the capital project`),
   category: z.lazy(() => capitalProjectCategorySchema).schema.optional(),
 });

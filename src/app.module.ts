@@ -13,6 +13,7 @@ import { DbConfig, FeatureFlagConfig, StorageConfig } from "./config";
 import { GlobalModule } from "./global/global.module";
 import { ZoningDistrictClassModule } from "./zoning-district-class/zoning-district-class.module";
 import { AgencyModule } from "./agency/agency.module";
+import { CityCouncilDistrictModule } from "./city-council-district/city-council-district.module";
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { AgencyModule } from "./agency/agency.module";
     GlobalModule,
     AgencyModule,
     BoroughModule,
+    CityCouncilDistrictModule,
     LandUseModule,
     TaxLotModule,
     ZoningDistrictModule,
