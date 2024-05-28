@@ -1,50 +1,49 @@
 export type CapitalCommitment = {
   /**
    * @description A uuid used to refer to the capital commitment.
-   * @type string | undefined uuid
+   * @type string uuid
    */
-  id?: string;
+  id: string;
   /**
    * @description A four character string used to refer to the commitment type.
-   * @type string | undefined
+   * @type string
    * @example DSGN
    */
-  type?: string;
+  type: string;
   /**
    * @description A string used to refer to the date when the commitment is projected to be committed.
-   * @type string | undefined date
+   * @type string date
    * @example 2012-04-23
    */
-  plannedDate?: string;
+  plannedDate: string;
   /**
    * @description A string used to refer to the budget line.
-   * @type string | undefined
+   * @type string
    * @example HW
    */
-  budgetLineCode?: string;
+  budgetLineCode: string;
   /**
    * @description A string used to refer to the budget line.
-   * @type string | undefined
+   * @type string
    * @example 0002Q
    */
-  budgetLineId?: string;
+  budgetLineId: string;
   /**
    * @description A string of variable length containing the initials of the sponsoring agency.
-   * @type string | undefined
+   * @type string
    * @example DOT
    */
-  sponsoringAgencyInitials?: string;
+  sponsoringAgencyInitials: string;
   /**
    * @description A string of variable length denoting the type of budget.
-   * @type string | undefined
+   * @type string
    * @example Highways
    */
-  budgetType?: string;
+  budgetType: string;
   /**
    * @description A numeric string used to refer to the amount of total planned commitments.
-   * @type number | undefined
+   * @type number
    * @example 1600000
    */
-  totalValue?: number;
-  required?: any;
+  totalValue: number;
 };

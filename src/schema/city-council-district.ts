@@ -10,5 +10,5 @@ export const cityCouncilDistrict = pgTable("city_council_district", {
 });
 
 export const cityCouncilDistrictEntitySchema = z.object({
-  id: z.string(),
+  id: z.string().regex(new RegExp("^([0-9]{1,2})$")),
 });
