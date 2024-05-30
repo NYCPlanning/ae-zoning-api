@@ -111,6 +111,27 @@ paths:
           $ref: "#/components/responses/NotFound"
         '500':
           $ref: "#/components/responses/InternalServerError"
+  /city-council-districts/{cityCouncilDistrictId}/capital-projects:
+    get:
+      summary: 🚧 Find paginated capital projects within a specific city council district.
+      operationId: findCapitalProjectsByCityCouncilId
+      tags:
+        - Capital Projects
+      parameters:
+        - $ref: "#/components/parameters/cityCouncilDistrictIdParam"
+      responses:
+        '200':
+          description: An object containing pagination metadata and an array of capital projects for the city council district
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CapitalProjectPage"
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
   /land-uses:
     get: 
       summary: List land uses
@@ -674,6 +695,7 @@ components:
         - managingAgencyInitials
         - minDate
         - maxDate
+        - category
     CapitalProjectPage:
       allOf:
         - $ref: '#/components/schemas/Page'
