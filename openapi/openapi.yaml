@@ -63,7 +63,7 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /boroughs/{boroughId}/community-districts:
     get:
-      summary: Find community districts within a borough
+      summary: 🚧 Find community districts within a borough
       operationId: findCommunityDistrictsByBoroughId
       tags:
       - Community Districts
@@ -91,7 +91,7 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /boroughs/{boroughId}/community-districts/{communityDistrictId}/capital-projects:
     get:
-      summary: Find paginated capital projects within a specified community district
+      summary: 🚧 Find paginated capital projects within a specified community district
       operationId: findCapitalProjectsByBoroughIdCommunityDistrictId
       tags:
       - Capital Projects
