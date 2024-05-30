@@ -67,7 +67,7 @@ To check validity of OpenAPI documentation:
 
 ### API development
 The API integrates with the OpenAPI documentation by implementing its endpoints. 
-The OpenAPI documentation defines schemas for the API to interact with. 
+The OpenAPI documentation defines schemas for the API to interact with. If an endpoint description is preceded by 🚧, it indicates that the endpoint has not yet been implemented and cannot be used on the frontend. 
 
 The API uses [Kubb](https://www.kubb.dev) to automatically generate 
 Typescript definitions and zod schemas from the OpenAPI documentation.
