@@ -111,17 +111,62 @@ paths:
           $ref: "#/components/responses/NotFound"
         '500':
           $ref: "#/components/responses/InternalServerError"
-  /capital-projects/{managingCode}/{capitalProjectid}/capital-commitments:
+  /capital-projects/{managingCode}/{capitalProjectId}/capital-commitments:
     get:
       summary: 🚧 Find capital commitments associated with a specific capital project
       operationId: findCapitalCommitmentsByManagingCodeCapitalProjectId
-      tags: Capital Commitments
+      tags: 
+        - Capital Commitments
       parameters:
-        - managingCode
-        - capitalProjectId
+        - $ref:  '#/components/parameters/managingCodeParam'
+        - $ref: '#/components/parameters/capitalProjectIdParam'
       responses:
         '200':
           description: an object of capital commitments for the capital project
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  capitalCommitments:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CapitalCommitment'
+                required:
+                - capitalCommitments
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
+  /capital-projects/{z}/{x}/{y}.pbf:
+    get:
+      summary: 🚧 Mapbox Vector Tiles for capital projects
+      operationId: findCapitalProjectTiles
+      tags:
+        - MVT
+        - Capital Projects
+      parameters:
+        - $ref: '#/components/parameters/viewportZoomParam'
+        - $ref: '#/components/parameters/viewportXParam'
+        - $ref: '#/components/parameters/viewportYParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/MVT'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /city-council-districts:
+    get:
+      summary: 🚧 Find city council districts
+      operationId: findCityCouncilDistricts
+      tags: 
+        - City Council Districts
+      responses:
+        '200':
+          description: an object of city council districts
           content:
             application/json:
               schema:
@@ -137,15 +182,6 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '500':
           $ref: '#/components/responses/InternalServerError'
-  /city-council-districts:
-    get:
-      summary: 🚧 Find city council districts
-      operationId: findCityCouncilDistricts
-      tags: 
-        - City Council Districts
-      responses:
-        '200':
-          description: an object of city council districts
   /city-council-districts/{cityCouncilDistrictId}/capital-projects:
     get:
       summary: 🚧 Find paginated capital projects within a specific city council district.
@@ -167,16 +203,40 @@ paths:
           $ref: "#/components/responses/NotFound"
         '500':
           $ref: "#/components/responses/InternalServerError"
-                  capitalCommitments:
-                    type: object
-                    items:
-                      $ref: '#/components/schemas/CapitalCommitment'
-                required:
-                  - capitalCommitments
+  /city-council-districts/{z}/{x}/{y}.pbf:
+    get:
+      summary: 🚧 Mapbox Vector Tiles for city council districts
+      operationId: findCityCouncilDistrictTiles
+      tags:
+        - MVT
+        - City Council Districts
+      parameters:
+        - $ref: '#/components/parameters/viewportZoomParam'
+        - $ref: '#/components/parameters/viewportXParam'
+        - $ref: '#/components/parameters/viewportYParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/MVT'
         '400':
           $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /community-districts/{z}/{x}/{y}.pbf:
+    get:
+      summary: 🚧 Mapbox Vector Tiles for community districts
+      operationId: findCommunityDistrictTiles
+      tags:
+        - MVT
+        - Community Districts
+      parameters:
+        - $ref: '#/components/parameters/viewportZoomParam'
+        - $ref: '#/components/parameters/viewportXParam'
+        - $ref: '#/components/parameters/viewportYParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/MVT'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '500':
           $ref: '#/components/responses/InternalServerError'
   /land-uses:
@@ -802,9 +862,9 @@ components:
           description: A single character numeric string containing the common number used to refer to the borough. Possible values are 1-5. 
           pattern: \b[1-9]\b
           example: 1
-        required:
-          - id
-          - boroughId
+      required:
+        - id
+        - boroughId
     LandUse:
       type: object
       properties:
@@ -1068,6 +1128,13 @@ components:
           required:
             - taxLots
   responses:
+    MVT:
+      description: A protobuf file formatted as Mapbox Vector Tile
+      content:
+        application/x-protobuf:
+          schema:
+            type: string
+            format: binary
     BadRequest:
       description: Invalid client request
       content:
