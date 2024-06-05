@@ -14,6 +14,7 @@ import { GlobalModule } from "./global/global.module";
 import { ZoningDistrictClassModule } from "./zoning-district-class/zoning-district-class.module";
 import { AgencyModule } from "./agency/agency.module";
 import { CityCouncilDistrictModule } from "./city-council-district/city-council-district.module";
+import { CapitalProjectModule } from "./capital-project/capital-project.module";
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { CityCouncilDistrictModule } from "./city-council-district/city-council-
     AgencyModule,
     BoroughModule,
     CityCouncilDistrictModule,
+    CapitalProjectModule,
     LandUseModule,
     TaxLotModule,
     ZoningDistrictModule,

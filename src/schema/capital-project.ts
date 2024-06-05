@@ -1,5 +1,6 @@
 import {
   char,
+  index,
   pgTable,
   text,
   date,
@@ -38,6 +39,8 @@ export const capitalProject = pgTable(
   (table) => {
     return {
       pk: primaryKey({ columns: [table.managingCode, table.id] }),
+      mercatorFillMPolyGix: index().using("GIST", table.mercatorFillMPoly),
+      mercatorFillMPntGix: index().using("GIST", table.mercatorFillMPnt),
     };
   },
 );
