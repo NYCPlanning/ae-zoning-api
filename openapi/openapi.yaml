@@ -142,7 +142,7 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /capital-projects/{z}/{x}/{y}.pbf:
     get:
-      summary: 🚧 Mapbox Vector Tiles for capital projects
+      summary: Mapbox Vector Tiles for capital projects
       operationId: findCapitalProjectTiles
       tags:
         - MVT

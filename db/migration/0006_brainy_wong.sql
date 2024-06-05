@@ -1,0 +1,2 @@
+CREATE INDEX IF NOT EXISTS "capital_project_mercator_fill_m_poly_index" ON "capital_project" USING GIST (mercator_fill_m_poly);--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "capital_project_mercator_fill_m_pnt_index" ON "capital_project" USING GIST (mercator_fill_m_pnt);

@@ -37,5 +37,5 @@ export type CapitalProject = {
    * @example 2024-05-15
    */
   maxDate: string;
-  category?: CapitalProjectCategory;
+  category: CapitalProjectCategory;
 };
