@@ -1,10 +1,8 @@
 {
-  "id": "258c27d2-149b-4c9c-87d7-53cecaee89e2",
-  "prevId": "00000000-0000-0000-0000-000000000000",
-  "version": "5",
-  "dialect": "pg",
+  "version": "7",
+  "dialect": "postgresql",
   "tables": {
-    "borough": {
+    "public.borough": {
       "name": "borough",
       "schema": "",
       "columns": {
@@ -39,5 +37,7 @@
     "schemas": {},
     "tables": {},
     "columns": {}
-  }
+  },
+  "id": "258c27d2-149b-4c9c-87d7-53cecaee89e2",
+  "prevId": "00000000-0000-0000-0000-000000000000"
 }

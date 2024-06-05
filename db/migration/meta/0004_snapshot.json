@@ -1,10 +1,8 @@
 {
-  "id": "bd003b5a-e4cc-46e1-a5dc-c23e206f9519",
-  "prevId": "8ff5121f-8ecf-45e7-9fce-3b5cd62794d0",
-  "version": "5",
-  "dialect": "pg",
+  "version": "7",
+  "dialect": "postgresql",
   "tables": {
-    "agency_budget": {
+    "public.agency_budget": {
       "name": "agency_budget",
       "schema": "",
       "columns": {
@@ -32,21 +30,21 @@
         "agency_budget_sponsor_agency_initials_fk": {
           "name": "agency_budget_sponsor_agency_initials_fk",
           "tableFrom": "agency_budget",
-          "tableTo": "agency",
           "columnsFrom": [
             "sponsor"
           ],
+          "tableTo": "agency",
           "columnsTo": [
             "initials"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "agency": {
+    "public.agency": {
       "name": "agency",
       "schema": "",
       "columns": {
@@ -68,7 +66,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "borough": {
+    "public.borough": {
       "name": "borough",
       "schema": "",
       "columns": {
@@ -96,7 +94,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "budget_line": {
+    "public.budget_line": {
       "name": "budget_line",
       "schema": "",
       "columns": {
@@ -118,15 +116,15 @@
         "budget_line_code_agency_budget_code_fk": {
           "name": "budget_line_code_agency_budget_code_fk",
           "tableFrom": "budget_line",
-          "tableTo": "agency_budget",
           "columnsFrom": [
             "code"
           ],
+          "tableTo": "agency_budget",
           "columnsTo": [
             "code"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {
@@ -140,7 +138,7 @@
       },
       "uniqueConstraints": {}
     },
-    "capital_commitment_fund": {
+    "public.capital_commitment_fund": {
       "name": "capital_commitment_fund",
       "schema": "",
       "columns": {
@@ -174,21 +172,21 @@
         "capital_commitment_fund_capital_commitment_id_captial_commitment_id_fk": {
           "name": "capital_commitment_fund_capital_commitment_id_captial_commitment_id_fk",
           "tableFrom": "capital_commitment_fund",
-          "tableTo": "captial_commitment",
           "columnsFrom": [
             "capital_commitment_id"
           ],
+          "tableTo": "captial_commitment",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "capital_commitment_type": {
+    "public.capital_commitment_type": {
       "name": "capital_commitment_type",
       "schema": "",
       "columns": {
@@ -210,7 +208,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "captial_commitment": {
+    "public.captial_commitment": {
       "name": "captial_commitment",
       "schema": "",
       "columns": {
@@ -262,51 +260,51 @@
         "captial_commitment_type_capital_commitment_type_code_fk": {
           "name": "captial_commitment_type_capital_commitment_type_code_fk",
           "tableFrom": "captial_commitment",
-          "tableTo": "capital_commitment_type",
           "columnsFrom": [
             "type"
           ],
+          "tableTo": "capital_commitment_type",
           "columnsTo": [
             "code"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "captial_commitment_managing_code_capital_project_id_capital_project_managing_code_id_fk": {
           "name": "captial_commitment_managing_code_capital_project_id_capital_project_managing_code_id_fk",
           "tableFrom": "captial_commitment",
-          "tableTo": "capital_project",
           "columnsFrom": [
             "managing_code",
             "capital_project_id"
           ],
+          "tableTo": "capital_project",
           "columnsTo": [
             "managing_code",
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "captial_commitment_budget_line_code_budget_line_id_budget_line_code_id_fk": {
           "name": "captial_commitment_budget_line_code_budget_line_id_budget_line_code_id_fk",
           "tableFrom": "captial_commitment",
-          "tableTo": "budget_line",
           "columnsFrom": [
             "budget_line_code",
             "budget_line_id"
           ],
+          "tableTo": "budget_line",
           "columnsTo": [
             "code",
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "capital_project_checkbook": {
+    "public.capital_project_checkbook": {
       "name": "capital_project_checkbook",
       "schema": "",
       "columns": {
@@ -340,23 +338,23 @@
         "custom_fk": {
           "name": "custom_fk",
           "tableFrom": "capital_project_checkbook",
-          "tableTo": "capital_project",
           "columnsFrom": [
             "managing_code",
             "capital_project_id"
           ],
+          "tableTo": "capital_project",
           "columnsTo": [
             "managing_code",
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "capital_project_fund": {
+    "public.capital_project_fund": {
       "name": "capital_project_fund",
       "schema": "",
       "columns": {
@@ -402,23 +400,23 @@
         "custom_fk": {
           "name": "custom_fk",
           "tableFrom": "capital_project_fund",
-          "tableTo": "capital_project",
           "columnsFrom": [
             "managing_code",
             "capital_project_id"
           ],
+          "tableTo": "capital_project",
           "columnsTo": [
             "managing_code",
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "capital_project": {
+    "public.capital_project": {
       "name": "capital_project",
       "schema": "",
       "columns": {
@@ -500,28 +498,28 @@
         "capital_project_managing_code_managing_code_id_fk": {
           "name": "capital_project_managing_code_managing_code_id_fk",
           "tableFrom": "capital_project",
-          "tableTo": "managing_code",
           "columnsFrom": [
             "managing_code"
           ],
+          "tableTo": "managing_code",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "capital_project_managing_agency_agency_initials_fk": {
           "name": "capital_project_managing_agency_agency_initials_fk",
           "tableFrom": "capital_project",
-          "tableTo": "agency",
           "columnsFrom": [
             "managing_agency"
           ],
+          "tableTo": "agency",
           "columnsTo": [
             "initials"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {
@@ -535,7 +533,7 @@
       },
       "uniqueConstraints": {}
     },
-    "city_council_district": {
+    "public.city_council_district": {
       "name": "city_council_district",
       "schema": "",
       "columns": {
@@ -569,7 +567,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "community_district": {
+    "public.community_district": {
       "name": "community_district",
       "schema": "",
       "columns": {
@@ -609,15 +607,15 @@
         "community_district_borough_id_borough_id_fk": {
           "name": "community_district_borough_id_borough_id_fk",
           "tableFrom": "community_district",
-          "tableTo": "borough",
           "columnsFrom": [
             "borough_id"
           ],
+          "tableTo": "borough",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {
@@ -631,7 +629,7 @@
       },
       "uniqueConstraints": {}
     },
-    "tax_lot": {
+    "public.tax_lot": {
       "name": "tax_lot",
       "schema": "",
       "columns": {
@@ -689,34 +687,34 @@
         "tax_lot_borough_id_borough_id_fk": {
           "name": "tax_lot_borough_id_borough_id_fk",
           "tableFrom": "tax_lot",
-          "tableTo": "borough",
           "columnsFrom": [
             "borough_id"
           ],
+          "tableTo": "borough",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "tax_lot_land_use_id_land_use_id_fk": {
           "name": "tax_lot_land_use_id_land_use_id_fk",
           "tableFrom": "tax_lot",
-          "tableTo": "land_use",
           "columnsFrom": [
             "land_use_id"
           ],
+          "tableTo": "land_use",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "land_use": {
+    "public.land_use": {
       "name": "land_use",
       "schema": "",
       "columns": {
@@ -744,7 +742,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "zoning_district": {
+    "public.zoning_district": {
       "name": "zoning_district",
       "schema": "",
       "columns": {
@@ -779,7 +777,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "zoning_district_class": {
+    "public.zoning_district_class": {
       "name": "zoning_district_class",
       "schema": "",
       "columns": {
@@ -819,7 +817,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "zoning_district_zoning_district_class": {
+    "public.zoning_district_zoning_district_class": {
       "name": "zoning_district_zoning_district_class",
       "schema": "",
       "columns": {
@@ -841,34 +839,34 @@
         "zoning_district_zoning_district_class_zoning_district_id_zoning_district_id_fk": {
           "name": "zoning_district_zoning_district_class_zoning_district_id_zoning_district_id_fk",
           "tableFrom": "zoning_district_zoning_district_class",
-          "tableTo": "zoning_district",
           "columnsFrom": [
             "zoning_district_id"
           ],
+          "tableTo": "zoning_district",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "zoning_district_zoning_district_class_zoning_district_class_id_zoning_district_class_id_fk": {
           "name": "zoning_district_zoning_district_class_zoning_district_class_id_zoning_district_class_id_fk",
           "tableFrom": "zoning_district_zoning_district_class",
-          "tableTo": "zoning_district_class",
           "columnsFrom": [
             "zoning_district_class_id"
           ],
+          "tableTo": "zoning_district_class",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "managing_code": {
+    "public.managing_code": {
       "name": "managing_code",
       "schema": "",
       "columns": {
@@ -886,43 +884,47 @@
     }
   },
   "enums": {
-    "capital_fund_category": {
+    "public.capital_fund_category": {
       "name": "capital_fund_category",
-      "values": {
-        "city-non-exempt": "city-non-exempt",
-        "city-exempt": "city-exempt",
-        "city-cost": "city-cost",
-        "non-city-state": "non-city-state",
-        "non-city-federal": "non-city-federal",
-        "non-city-other": "non-city-other",
-        "non-city-cost": "non-city-cost",
-        "total": "total"
-      }
+      "schema": "public",
+      "values": [
+        "city-non-exempt",
+        "city-exempt",
+        "city-cost",
+        "non-city-state",
+        "non-city-federal",
+        "non-city-other",
+        "non-city-cost",
+        "total"
+      ]
     },
-    "capital_project_fund_stage": {
+    "public.capital_project_fund_stage": {
       "name": "capital_project_fund_stage",
-      "values": {
-        "adopt": "adopt",
-        "allocate": "allocate",
-        "commit": "commit",
-        "spent": "spent"
-      }
+      "schema": "public",
+      "values": [
+        "adopt",
+        "allocate",
+        "commit",
+        "spent"
+      ]
     },
-    "capital_project_category": {
+    "public.capital_project_category": {
       "name": "capital_project_category",
-      "values": {
-        "Fixed Asset": "Fixed Asset",
-        "Lump Sum": "Lump Sum",
-        "ITT, Vehicles and Equipment": "ITT, Vehicles and Equipment"
-      }
+      "schema": "public",
+      "values": [
+        "Fixed Asset",
+        "Lump Sum",
+        "ITT, Vehicles and Equipment"
+      ]
     },
-    "category": {
+    "public.category": {
       "name": "category",
-      "values": {
-        "Residential": "Residential",
-        "Commercial": "Commercial",
-        "Manufacturing": "Manufacturing"
-      }
+      "schema": "public",
+      "values": [
+        "Residential",
+        "Commercial",
+        "Manufacturing"
+      ]
     }
   },
   "schemas": {},
@@ -930,5 +932,7 @@
     "schemas": {},
     "tables": {},
     "columns": {}
-  }
+  },
+  "id": "bd003b5a-e4cc-46e1-a5dc-c23e206f9519",
+  "prevId": "8ff5121f-8ecf-45e7-9fce-3b5cd62794d0"
 }
