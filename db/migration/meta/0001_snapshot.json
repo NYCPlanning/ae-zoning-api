@@ -1,10 +1,8 @@
 {
-  "id": "c7aaaf9a-b2d5-4bd9-96d7-fe26bbb781b3",
-  "prevId": "258c27d2-149b-4c9c-87d7-53cecaee89e2",
-  "version": "5",
-  "dialect": "pg",
+  "version": "7",
+  "dialect": "postgresql",
   "tables": {
-    "borough": {
+    "public.borough": {
       "name": "borough",
       "schema": "",
       "columns": {
@@ -32,7 +30,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "land_use": {
+    "public.land_use": {
       "name": "land_use",
       "schema": "",
       "columns": {
@@ -67,5 +65,7 @@
     "schemas": {},
     "tables": {},
     "columns": {}
-  }
+  },
+  "id": "c7aaaf9a-b2d5-4bd9-96d7-fe26bbb781b3",
+  "prevId": "258c27d2-149b-4c9c-87d7-53cecaee89e2"
 }

@@ -1,10 +1,8 @@
 {
-  "id": "4e677f00-7a15-4ae5-a1cd-fd66e350b2da",
-  "prevId": "c7aaaf9a-b2d5-4bd9-96d7-fe26bbb781b3",
-  "version": "5",
-  "dialect": "pg",
+  "version": "7",
+  "dialect": "postgresql",
   "tables": {
-    "borough": {
+    "public.borough": {
       "name": "borough",
       "schema": "",
       "columns": {
@@ -32,7 +30,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "land_use": {
+    "public.land_use": {
       "name": "land_use",
       "schema": "",
       "columns": {
@@ -60,7 +58,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "tax_lot": {
+    "public.tax_lot": {
       "name": "tax_lot",
       "schema": "",
       "columns": {
@@ -118,28 +116,28 @@
         "tax_lot_borough_id_borough_id_fk": {
           "name": "tax_lot_borough_id_borough_id_fk",
           "tableFrom": "tax_lot",
-          "tableTo": "borough",
           "columnsFrom": [
             "borough_id"
           ],
+          "tableTo": "borough",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "tax_lot_land_use_id_land_use_id_fk": {
           "name": "tax_lot_land_use_id_land_use_id_fk",
           "tableFrom": "tax_lot",
-          "tableTo": "land_use",
           "columnsFrom": [
             "land_use_id"
           ],
+          "tableTo": "land_use",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -152,5 +150,7 @@
     "schemas": {},
     "tables": {},
     "columns": {}
-  }
+  },
+  "id": "4e677f00-7a15-4ae5-a1cd-fd66e350b2da",
+  "prevId": "c7aaaf9a-b2d5-4bd9-96d7-fe26bbb781b3"
 }
