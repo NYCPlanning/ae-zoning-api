@@ -694,7 +694,7 @@ components:
         id:
           type: string
           description: A single character numeric string containing the common number used to refer to the borough. Possible values are 1-5.
-          pattern: \b[1-9]\b
+          pattern: '^([0-9])$'
           example: 1
         title:
           type: string
@@ -860,7 +860,7 @@ components:
         boroughId:
           type: string
           description: A single character numeric string containing the common number used to refer to the borough. Possible values are 1-5. 
-          pattern: \b[1-9]\b
+          pattern: '^([0-9])$'
           example: 1
       required:
         - id
@@ -933,7 +933,7 @@ components:
         boroughId:
           type: string
           description: A single character numeric string containing the common number used to refer to the borough. Possible values are 1-5.
-          pattern: \b[1-9]\b
+          pattern: '^([0-9])$'
           example: 1
         block:
           type: string
