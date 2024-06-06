@@ -50,6 +50,13 @@
       "when": 1717534239478,
       "tag": "0006_brainy_wong",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1717703351298,
+      "tag": "0007_dashing_the_hand",
+      "breakpoints": true
     }
   ]
 }

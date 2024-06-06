@@ -21,10 +21,10 @@ export const capitalProjectCategoryEnum = pgEnum("capital_project_category", [
 export const capitalProject = pgTable(
   "capital_project",
   {
-    managingCode: char("managing_code", { length: 3 }).references(
-      () => managingCode.id,
-    ),
-    id: text("id"),
+    managingCode: char("managing_code", { length: 3 })
+      .references(() => managingCode.id)
+      .notNull(),
+    id: text("id").notNull(),
     managingAgency: text("managing_agency").references(() => agency.initials),
     description: text("description"),
     minDate: date("min_date"),
