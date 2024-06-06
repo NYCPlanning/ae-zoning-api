@@ -12,7 +12,7 @@ export const taxLotBasicSchema = z.object({
     .describe(
       `A single character numeric string containing the common number used to refer to the borough. Possible values are 1-5.`,
     )
-    .regex(new RegExp("\\b[1-9]\\b")),
+    .regex(new RegExp("^([0-9])$")),
   block: z
     .string()
     .describe(`The block code, without its padding zeros.`)
