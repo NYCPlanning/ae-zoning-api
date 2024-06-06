@@ -1,0 +1,15 @@
+import { Inject, Injectable } from "@nestjs/common";
+import { CommunityDistrictRepository } from "./community-district.repository";
+import { FindCommunityDistrictTilesPathParams } from "src/gen";
+
+@Injectable()
+export class CommunityDistrictService {
+  constructor(
+    @Inject(CommunityDistrictRepository)
+    private readonly communityDistrictRepository: CommunityDistrictRepository,
+  ) {}
+
+  async findTiles(param: FindCommunityDistrictTilesPathParams) {
+    return await this.communityDistrictRepository.findTiles(params);
+  }
+}
