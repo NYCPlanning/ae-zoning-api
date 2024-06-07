@@ -47,7 +47,7 @@ describe("Borough service unit", () => {
     });
 
     it("service should throw a resource error when requesting with a missing id", async () => {
-      const missingId = "";
+      const missingId = "9";
       const zoningDistrict =
         boroughService.findCommunityDistrictsByBoroughId(missingId);
       expect(zoningDistrict).rejects.toThrow(ResourceNotFoundException);

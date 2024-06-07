@@ -22,6 +22,6 @@ export const communityDistrict = pgTable(
 );
 
 export const communityDistrictEntitySchema = z.object({
-  boroughId: z.string().length(1).regex(new RegExp("[1-9]")),
+  boroughId: z.string().length(1).regex(new RegExp("[0-9]")),
   id: z.string().length(2).regex(new RegExp("^([0-9]{2})$")),
 });
