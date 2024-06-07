@@ -34,7 +34,7 @@ export class BoroughRepository {
     }
   }
 
-  async findMany(): Promise<FindManyRepo | undefined> {
+  async findMany(): Promise<FindManyRepo> {
     try {
       return await this.db.query.borough.findMany();
     } catch {

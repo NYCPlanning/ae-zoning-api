@@ -9,7 +9,7 @@ export class LandUseRepository {
     private readonly db: DbType,
   ) {}
 
-  async findMany(): Promise<FindManyRepo | undefined> {
+  async findMany(): Promise<FindManyRepo> {
     try {
       return await this.db.query.landUse.findMany();
     } catch {
