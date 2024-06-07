@@ -76,6 +76,14 @@ describe("Borough e2e", () => {
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
 
+    it("should 404 and when finding by a missing id", async () => {
+      const missingId = "9";
+      const response = await request(app.getHttpServer())
+        .get(`/boroughs/${missingId}/community-districts`)
+        .expect(404);
+      expect(response.body.message).toBe(HttpName.NOT_FOUND);
+    });
+
     it("should 500 when the database errors", async () => {
       const dataRetrievalException = new DataRetrievalException();
       jest
