@@ -9,7 +9,7 @@ export class CommunityDistrictService {
     private readonly communityDistrictRepository: CommunityDistrictRepository,
   ) {}
 
-  async findTiles(param: FindCommunityDistrictTilesPathParams) {
+  async findTiles(params: FindCommunityDistrictTilesPathParams) {
     return await this.communityDistrictRepository.findTiles(params);
   }
 }
