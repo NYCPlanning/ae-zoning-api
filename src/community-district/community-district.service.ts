@@ -1,8 +1,7 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Inject } from "@nestjs/common";
 import { CommunityDistrictRepository } from "./community-district.repository";
 import { FindCommunityDistrictTilesPathParams } from "src/gen";
 
-@Injectable()
 export class CommunityDistrictService {
   constructor(
     @Inject(CommunityDistrictRepository)
