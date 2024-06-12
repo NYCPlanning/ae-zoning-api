@@ -1,16 +1,35 @@
-import { Controller, Get, Param, Res, UseFilters } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Param,
+  Res,
+  UseFilters,
+  UsePipes,
+} from "@nestjs/common";
 import { Response } from "express";
 import { CommunityDistrictService } from "./community-district.service";
-import { InternalServerErrorExceptionFilter } from "src/filter";
-import { FindCommunityDistrictTilesPathParams } from "../gen";
+import {
+  BadRequestExceptionFilter,
+  InternalServerErrorExceptionFilter,
+} from "src/filter";
+import {
+  FindCommunityDistrictTilesPathParams,
+  findCommunityDistrictTilesPathParamsSchema,
+} from "../gen";
+import { DecodeParamsPipe } from "src/pipes/decode-params-pipe";
+import { ZodValidationPipe } from "src/pipes/zod-validation-pipe";
 
-@UseFilters(InternalServerErrorExceptionFilter)
+@UseFilters(BadRequestExceptionFilter, InternalServerErrorExceptionFilter)
 @Controller("community-districts")
 export class CommunityDistrictController {
   constructor(
     private readonly communityDistrictService: CommunityDistrictService,
   ) {}
 
+  @UsePipes(
+    new DecodeParamsPipe(findCommunityDistrictTilesPathParamsSchema),
+    new ZodValidationPipe(findCommunityDistrictTilesPathParamsSchema),
+  )
   @Get("/:z/:x/:y.pbf")
   async findTiles(
     @Param() params: FindCommunityDistrictTilesPathParams,
