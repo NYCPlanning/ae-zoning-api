@@ -17,6 +17,7 @@ export const communityDistrict = pgTable(
   (table) => {
     return {
       pk: primaryKey({ columns: [table.boroughId, table.id] }),
+      liFtGix: index().using("GIST", table.liFt),
       mercatorFillGix: index().using("GIST", table.mercatorFill),
       mercatorLabelGix: index().using("GIST", table.mercatorLabel),
     };

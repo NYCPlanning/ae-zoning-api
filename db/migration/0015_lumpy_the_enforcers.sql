@@ -1,0 +1,1 @@
+CREATE INDEX IF NOT EXISTS "community_district_li_ft_index" ON "community_district" USING GIST ("li_ft");
