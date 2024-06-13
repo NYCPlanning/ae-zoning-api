@@ -12,6 +12,7 @@ export * from "./errorSchema";
 export * from "./findAgenciesSchema";
 export * from "./findBoroughsSchema";
 export * from "./findCapitalCommitmentsByManagingCodeCapitalProjectIdSchema";
+export * from "./findCapitalProjectByManagingCodeCapitalProjectIdSchema";
 export * from "./findCapitalProjectTilesSchema";
 export * from "./findCapitalProjectsByBoroughIdCommunityDistrictIdSchema";
 export * from "./findCapitalProjectsByCityCouncilIdSchema";
