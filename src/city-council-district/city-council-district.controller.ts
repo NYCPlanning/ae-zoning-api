@@ -11,6 +11,6 @@ export class CityCouncilDistrictController {
 
   @Get()
   async findMany() {
-    return this.cityCouncilDistrictService.findMany();
+    return await this.cityCouncilDistrictService.findMany();
   }
 }
