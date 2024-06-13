@@ -12,6 +12,7 @@ export * from "./Error";
 export * from "./FindAgencies";
 export * from "./FindBoroughs";
 export * from "./FindCapitalCommitmentsByManagingCodeCapitalProjectId";
+export * from "./FindCapitalProjectByManagingCodeCapitalProjectId";
 export * from "./FindCapitalProjectTiles";
 export * from "./FindCapitalProjectsByBoroughIdCommunityDistrictId";
 export * from "./FindCapitalProjectsByCityCouncilId";

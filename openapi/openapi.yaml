@@ -98,6 +98,8 @@ paths:
       parameters:
         - $ref: "#/components/parameters/boroughIdParam"
         - $ref: "#/components/parameters/communityDistrictIdParam"
+        - $ref: "#/components/parameters/limitParam"
+        - $ref: "#/components/parameters/offsetParam"
       responses:
         '200':
           description: An object containing pagination metadata and an array of capital projects for the community district
@@ -212,6 +214,8 @@ paths:
         - Capital Projects
       parameters:
         - $ref: "#/components/parameters/cityCouncilDistrictIdParam"
+        - $ref: "#/components/parameters/limitParam"
+        - $ref: "#/components/parameters/offsetParam"
       responses:
         '200':
           description: An object containing pagination metadata and an array of capital projects for the city council district
