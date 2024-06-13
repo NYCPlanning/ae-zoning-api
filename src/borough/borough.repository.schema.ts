@@ -1,3 +1,4 @@
+import { capitalProjectSchema } from "src/gen";
 import { boroughEntitySchema, communityDistrictEntitySchema } from "src/schema";
 import { z } from "zod";
 
@@ -17,4 +18,11 @@ export const findCommunityDistrictsByBoroughIdRepoSchema = z.array(
 
 export type FindCommunityDistrictsByBoroughIdRepo = z.infer<
   typeof findCommunityDistrictsByBoroughIdRepoSchema
+>;
+
+export const findCapitalProjectsByBoroughIdCommunityDistrictIdRepoSchema =
+  z.array(capitalProjectSchema);
+
+export type FindCapitalProjectsByBoroughIdCommunityDistrictIdRepo = z.infer<
+  typeof findCapitalProjectsByBoroughIdCommunityDistrictIdRepoSchema
 >;

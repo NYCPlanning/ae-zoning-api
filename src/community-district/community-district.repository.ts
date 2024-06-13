@@ -1,7 +1,10 @@
 import { Inject } from "@nestjs/common";
 import { DB, DbType } from "src/global/providers/db.provider";
 import { FindCommunityDistrictTilesPathParams } from "src/gen";
-import { FindTilesRepo } from "./community-district.repository.schema";
+import {
+  FindTilesRepo,
+  CheckByCommunityDistrictIdRepo,
+} from "./community-district.repository.schema";
 import { borough, communityDistrict } from "src/schema";
 import { sql, isNotNull, eq } from "drizzle-orm";
 import { DataRetrievalException } from "src/exception";
@@ -11,6 +14,28 @@ export class CommunityDistrictRepository {
     @Inject(DB)
     private readonly db: DbType,
   ) {}
+
+  #checkCommunityDistrictById = this.db.query.communityDistrict
+    .findFirst({
+      columns: {
+        id: true,
+      },
+      where: (communityDistrict, { eq, sql }) =>
+        eq(communityDistrict.id, sql.placeholder("id")),
+    })
+    .prepare("checkCommunityDistrictId");
+
+  async checkCommunityDistrictById(
+    id: string,
+  ): Promise<CheckByCommunityDistrictIdRepo | undefined> {
+    try {
+      return await this.#checkCommunityDistrictById.execute({
+        id,
+      });
+    } catch {
+      throw new DataRetrievalException();
+    }
+  }
 
   async findTiles(
     params: FindCommunityDistrictTilesPathParams,

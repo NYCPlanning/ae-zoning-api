@@ -2,10 +2,16 @@ import {
   findManyRepoSchema,
   checkByIdRepoSchema,
   findCommunityDistrictsByBoroughIdRepoSchema,
+  findCapitalProjectsByBoroughIdCommunityDistrictIdRepoSchema,
 } from "src/borough/borough.repository.schema";
 import { generateMock } from "@anatine/zod-mock";
+import { CommunityDistrictRepositoryMock } from "test/community-district/community-district.repository.mock";
 
 export class BoroughRepositoryMock {
+  communityDistrictRepoMock: CommunityDistrictRepositoryMock;
+  constructor(communityDistrictRepoMock: CommunityDistrictRepositoryMock) {
+    this.communityDistrictRepoMock = communityDistrictRepoMock;
+  }
   numberOfMocks = 1;
 
   checkBoroughByIdMocks = Array.from(Array(this.numberOfMocks), (_, seed) =>
@@ -38,5 +44,27 @@ export class BoroughRepositoryMock {
     );
 
     return results === undefined ? [] : results[id];
+  }
+
+  get findCapitalProjectsByBoroughIdCommunityDistrictIdMocks() {
+    return this.communityDistrictRepoMock.checkCommunityDistrictByIdMocks.map(
+      (checkCommunityDistrict) => {
+        return {
+          [checkCommunityDistrict.id]: generateMock(
+            findCapitalProjectsByBoroughIdCommunityDistrictIdRepoSchema,
+          ),
+        };
+      },
+    );
+  }
+
+  async findCapitalProjectsByBoroughIdCommunityDistrictId(
+    communityDistrictId: string,
+  ) {
+    const results =
+      this.findCapitalProjectsByBoroughIdCommunityDistrictIdMocks.find(
+        (capitalProjects) => communityDistrictId in capitalProjects,
+      );
+    return results == undefined ? [] : results[communityDistrictId];
   }
 }
