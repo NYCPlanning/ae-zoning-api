@@ -4,6 +4,7 @@ import { BoroughRepositoryMock } from "../../test/borough/borough.repository.moc
 import { Test } from "@nestjs/testing";
 import {
   findBoroughsQueryResponseSchema,
+  findCapitalProjectsByBoroughIdCommunityDistrictIdQueryResponseSchema,
   findCommunityDistrictsByBoroughIdQueryResponseSchema,
 } from "src/gen";
 import { ResourceNotFoundException } from "src/exception";
@@ -51,6 +52,26 @@ describe("Borough service unit", () => {
       const zoningDistrict =
         boroughService.findCommunityDistrictsByBoroughId(missingId);
       expect(zoningDistrict).rejects.toThrow(ResourceNotFoundException);
+    });
+  });
+
+  describe("findCapitalProjectsByBoroughIdCommunityDistrictId", () => {
+    it("service should return a capital projects compliant object", async () => {
+      const boroughId = boroughRepositoryMock.checkBoroughByIdMocks[0].id;
+      const communityDistrictId =
+        boroughRepositoryMock.checkCommunityDistrictByIdMocks[0].id;
+
+      const capitalProjects =
+        await boroughService.findCapitalProjectsByBoroughIdCommunityDistrictId({
+          boroughId,
+          communityDistrictId,
+        });
+
+      expect(() =>
+        findCapitalProjectsByBoroughIdCommunityDistrictIdQueryResponseSchema.parse(
+          capitalProjects,
+        ),
+      ).not.toThrow();
     });
   });
 });

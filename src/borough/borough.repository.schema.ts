@@ -1,3 +1,4 @@
+import { capitalProjectSchema } from "src/gen";
 import { boroughEntitySchema, communityDistrictEntitySchema } from "src/schema";
 import { z } from "zod";
 
@@ -11,10 +12,26 @@ export const checkByIdRepoSchema = boroughEntitySchema.pick({
 
 export type CheckByIdRepo = z.infer<typeof checkByIdRepoSchema>;
 
+export const checkByCommunityDistrictIdRepoSchema =
+  communityDistrictEntitySchema.pick({
+    id: true,
+  });
+
+export type CheckByCommunityDistrictIdRepo = z.infer<
+  typeof checkByCommunityDistrictIdRepoSchema
+>;
+
 export const findCommunityDistrictsByBoroughIdRepoSchema = z.array(
   communityDistrictEntitySchema,
 );
 
 export type FindCommunityDistrictsByBoroughIdRepo = z.infer<
   typeof findCommunityDistrictsByBoroughIdRepoSchema
+>;
+
+export const findCapitalProjectsByBoroughIdCommunityDistrictIdRepoSchema =
+  z.array(capitalProjectSchema);
+
+export type FindCapitalProjectsByBoroughIdCommunityDistrictIdRepo = z.infer<
+  typeof findCapitalProjectsByBoroughIdCommunityDistrictIdRepoSchema
 >;
