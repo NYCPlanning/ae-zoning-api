@@ -60,8 +60,6 @@ export class CommunityDistrictRepository {
 
     const [fill, label] = await Promise.all([dataFill, dataLabel]);
 
-    const combined = Buffer.concat([fill[0].mvt, label[0].mvt] as Uint8Array[]);
-
-    return combined;
+    return Buffer.concat([fill[0].mvt, label[0].mvt] as Uint8Array[]);
   }
 }
