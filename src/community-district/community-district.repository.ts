@@ -2,8 +2,9 @@ import { Inject } from "@nestjs/common";
 import { DB, DbType } from "src/global/providers/db.provider";
 import { FindCommunityDistrictTilesPathParams } from "src/gen";
 import { FindTilesRepo } from "./community-district.repository.schema";
-import { communityDistrict } from "src/schema";
-import { sql, isNotNull } from "drizzle-orm";
+// import { communityDistrict } from "src/schema";
+// import { sql, isNotNull } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 
 export class CommunityDistrictRepository {
   constructor(
@@ -15,64 +16,87 @@ export class CommunityDistrictRepository {
     params: FindCommunityDistrictTilesPathParams,
   ): Promise<FindTilesRepo> {
     const { z, x, y } = params;
-    const tileFill = this.db
-      .select({
-        communityDistrictId: sql<string>`${communityDistrict.id}`.as(
-          `communityDistrictId`,
-        ),
-        geom: sql<string>`
-                      ST_AsMVTGeom(
-                        ${communityDistrict.mercatorFill},
-                        ST_TileEnvelope(${z},${x},${y}),
-                        4096,
-                        64,
-                        true
-                    )
-                `.as("geom_fill"),
-      })
-      .from(communityDistrict)
-      .where(
-        sql`${communityDistrict.mercatorFill} && ST_TileEnvelope(${z},${x},${y})`,
-      )
-      .as("tileFill");
+    const data = (await this.db.execute(
+      sql`
+        WITH 
+          tileFill AS (
+            SELECT
+              id,
+              ST_AsMVTGeom(
+                mercator_fill,
+                ST_TileEnvelope(${z},${x},${y}),
+                4096, 64, true
+              ) AS geom
+            FROM community_district
+            WHERE mercator_fill && ST_TileEnvelope(${z},${x},${y})
+          ),
+          tileLabel AS (
+            SELECT
+              id,
+              ST_AsMVTGeom(
+                mercator_label,
+                ST_TileEnvelope(${z},${x},${y}),
+                4096, 64, true
+              ) AS geom
+            FROM community_district
+            WHERE mercator_label && ST_TileEnvelope(${z},${x},${y})
+          )
+          SELECT 
+            ST_AsMVT(tileLabel, 'community-district-label', 4096, 'geom') ||
+            ST_AsMVT(tileFill, 'community-district-fill', 4096, 'geom')
+             AS mvt
+          FROM tileFill, tileLabel
+          WHERE tileFill.geom IS NOT NULL
+        `,
+    )) as unknown as { rows: Array<{ mvt: string }> };
 
-    const dataFill = this.db
-      .select({
-        mvtFill: sql`ST_AsMVT(tileFill, 'community-district-fill', 4096, 'geom_fill')`,
-      })
-      .from(tileFill)
-      .where(isNotNull(tileFill.geom));
+    // console.debug(data.rows[0].mvt)
+    return data.rows[0].mvt;
 
-    const tileLabel = this.db
-      .select({
-        communityDistrictId: sql<string>`${communityDistrict.id}`.as(
-          `communityDistrictId`,
-        ),
-        geom: sql<string>`
-                    ST_AsMVTGeom(
-                        ${communityDistrict.mercatorLabel},
-                        ST_TileEnvelope(${z},${x},${y}),
-                        4096,
-                        64,
-                        true
-                    )
-                `.as("geom_label"),
-      })
-      .from(communityDistrict)
-      .where(
-        sql`${communityDistrict.mercatorFill} && ST_TileEnvelope(${z},${x},${y})`,
-      )
-      .as("tileLabel");
+    // const tileFill = this.db
+    //   .select({
+    //     id: communityDistrict.id,
+    //     geomFill: sql`ST_AsMVTGeom(
+    // 		  ${communityDistrict.mercatorFill},
+    // 		  ST_TileEnvelope(${z}, ${x}, ${y}),
+    // 		  4096, 64, true)`.as("geomFill"),
+    //   })
+    //   .from(communityDistrict)
+    //   .where(
+    //     sql`${communityDistrict.mercatorFill} && ST_TileEnvelope(${z},${x},${y})`,
+    //   )
+    //   .as("tile");
 
-    const dataLabel = this.db
-      .select({
-        mvtLabel: sql`ST_AsMVT(tileLabel, 'community-district-fill', 4096, 'geom_label')`,
-      })
-      .from(tileLabel)
-      .where(isNotNull(tileLabel.geom));
-    const [fill, label] = await Promise.all([dataFill, dataLabel]);
+    // const data = await this.db
+    //   .select({
+    //     mvt: sql`ST_AsMVT(tile, 'community_district_fill', 4096, 'geomFill')`
+    //   })
+    //   .from(tileFill)
+    //   .where(isNotNull(tileFill.geomFill));
 
-    return fill[0].mvtFill;
-    // return `${fill[0].mvtFill}${label[0].mvtLabel}`;
+    // return data[0].mvt;
+
+    // const tileLabel = this.db
+    //   .select({
+    //     id: communityDistrict.id,
+    //     geom: sql`ST_AsMVTGeom
+    // 		  ${communityDistrict.mercatorLabel},
+    // 		  ST_TileEnvelope(${z}, ${x}, ${y}),
+    // 		  4096, 64, true)`.as("geom"),
+    //   })
+    //   .from(communityDistrict)
+    //   .where(
+    //     sql`${communityDistrict.mercatorLabel} && ST_TileEnvelope(${z},${x},${y})`,
+    //   )
+    //   .as("tile");
+
+    // const dataLabel = this.db
+    //   .select({
+    //     mvt: sql`ST_AsMVT(tile, 'community_district_label', 4096, 'geom')`,
+    //   })
+    //   .from(tileLabel)
+    //   .where(isNotNull(tileLabel.geom));
+    // const [fill, label] = await Promise.all([dataFill, dataLabel])
+    // return `${label[0].mvt}${fill[0].mvt}`;
   }
 }
