@@ -29,24 +29,11 @@ export class CommunityDistrictRepository {
               ) AS geom
             FROM community_district
             WHERE mercator_fill && ST_TileEnvelope(${z},${x},${y})
-          ),
-          tileLabel AS (
-            SELECT
-              id,
-              ST_AsMVTGeom(
-                mercator_label,
-                ST_TileEnvelope(${z},${x},${y}),
-                4096, 64, true
-              ) AS geom
-            FROM community_district
-            WHERE mercator_label && ST_TileEnvelope(${z},${x},${y})
           )
           SELECT 
-            ST_AsMVT(tileLabel, 'community-district-label', 4096, 'geom') ||
-            ST_AsMVT(tileFill, 'community-district-fill', 4096, 'geom')
-             AS mvt
-          FROM tileFill, tileLabel
-          WHERE tileFill.geom IS NOT NULL
+            ST_AsMVT(tileFill, 'community-district-fill', 4096, 'geom') AS mvt
+          FROM tileFill
+          WHERE geom IS NOT NULL
         `,
     )) as unknown as { rows: Array<{ mvt: string }> };
 
