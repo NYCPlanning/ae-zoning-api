@@ -1,4 +1,4 @@
-import { char, pgTable, primaryKey } from "drizzle-orm/pg-core";
+import { char, index, pgTable, primaryKey } from "drizzle-orm/pg-core";
 import { borough } from "./borough";
 import { multiPointGeom, multiPolygonGeom, pointGeom } from "src/drizzle-pgis";
 import { z } from "zod";
@@ -17,6 +17,8 @@ export const communityDistrict = pgTable(
   (table) => {
     return {
       pk: primaryKey({ columns: [table.boroughId, table.id] }),
+      mercatorFillGix: index().using("GIST", table.mercatorFill),
+      mercatorLabelGix: index().using("GIST", table.mercatorLabel),
     };
   },
 );
