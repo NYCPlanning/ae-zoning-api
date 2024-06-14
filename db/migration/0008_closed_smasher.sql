@@ -1,0 +1,2 @@
+CREATE INDEX IF NOT EXISTS "community_district_mercator_fill_index" ON "community_district" USING GIST (mercator_fill);--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "community_district_mercator_label_index" ON "community_district" USING GIST (mercator_label);
