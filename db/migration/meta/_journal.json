@@ -64,6 +64,13 @@
       "when": 1718390401153,
       "tag": "0008_closed_smasher",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1718887974415,
+      "tag": "0009_sweet_whistler",
+      "breakpoints": true
     }
   ]
 }
