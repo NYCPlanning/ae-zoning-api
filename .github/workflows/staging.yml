@@ -9,7 +9,7 @@ jobs:
     migrate:
         name: 🧑‍🚀 Migrate
         environment:
-            name: staging
+            name: staging-zoning-api
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
@@ -36,7 +36,7 @@ jobs:
     deploy:
         name: 🚀 Deploy
         environment:
-            name: staging
+            name: staging-zoning-api
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
