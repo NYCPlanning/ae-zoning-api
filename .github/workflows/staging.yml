@@ -7,7 +7,7 @@ on:
 
 jobs:
     migrate:
-        name: Migrate
+        name: 🧑‍🚀 Migrate
         environment:
             name: staging
         runs-on: ubuntu-latest
@@ -31,10 +31,10 @@ jobs:
                 echo "DATABASE_PORT=$DATABASE_PORT" >> .env
                 echo "DATABASE_HOST=$DATABASE_HOST" >> .env
                 echo "NODE_ENV=$NODE_ENV" >> .env
-            - name: Apply Migrations
+            - name: Apply migrations
               run: npm run drizzle:migrate  
     deploy:
-        name: Deploy
+        name: 🚀 Deploy
         environment:
             name: staging
         runs-on: ubuntu-latest
@@ -50,7 +50,6 @@ jobs:
                 heroku_api_key: ${{secrets.HEROKU_API_KEY}}
                 heroku_app_name: ${{secrets.HEROKU_APP_NAME}}
                 team: ${{secrets.HEROKU_TEAM}}
-                appdir: server
               env:
                 HD_DATABASE_USER: ${{secrets.DATABASE_USER}}
                 HD_DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
