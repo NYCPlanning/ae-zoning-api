@@ -5,23 +5,35 @@ export type FindCapitalCommitmentsByManagingCodeCapitalProjectIdPathParams = {
   /**
    * @description Three character string of numbers representing managing agency
    * @type string
-   * @example 801
    */
   managingCode: string;
   /**
    * @description The id for the project, which combines with the managing code to make a unique id
    * @type string
-   * @example HWPEDSF5
    */
   capitalProjectId: string;
 };
-
+/**
+ * @description an object of capital commitments for the capital project
+ */
+export type FindCapitalCommitmentsByManagingCodeCapitalProjectId200 = {
+  /**
+   * @type array
+   */
+  capitalCommitments: CapitalCommitment[];
+};
+/**
+ * @description Invalid client request
+ */
 export type FindCapitalCommitmentsByManagingCodeCapitalProjectId400 = Error;
-
+/**
+ * @description Requested resource does not exist or is not available
+ */
 export type FindCapitalCommitmentsByManagingCodeCapitalProjectId404 = Error;
-
+/**
+ * @description Server side error
+ */
 export type FindCapitalCommitmentsByManagingCodeCapitalProjectId500 = Error;
-
 /**
  * @description an object of capital commitments for the capital project
  */
@@ -32,3 +44,11 @@ export type FindCapitalCommitmentsByManagingCodeCapitalProjectIdQueryResponse =
      */
     capitalCommitments: CapitalCommitment[];
   };
+export type FindCapitalCommitmentsByManagingCodeCapitalProjectIdQuery = {
+  Response: FindCapitalCommitmentsByManagingCodeCapitalProjectIdQueryResponse;
+  PathParams: FindCapitalCommitmentsByManagingCodeCapitalProjectIdPathParams;
+  Errors:
+    | FindCapitalCommitmentsByManagingCodeCapitalProjectId400
+    | FindCapitalCommitmentsByManagingCodeCapitalProjectId404
+    | FindCapitalCommitmentsByManagingCodeCapitalProjectId500;
+};

@@ -1,0 +1,9 @@
+{
+  "description": "The fundamental spatial construct",
+  "type": "array",
+  "items": { "type": "number" },
+  "example": [-74.010835, 40.708442],
+  "maxItems": 3,
+  "minItems": 2,
+  "x-readme-ref-name": "Position"
+}

@@ -1,0 +1,25 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "description": "A single character numeric string containing the common number used to refer to the borough. Possible values are 1-5.",
+      "type": "string",
+      "example": 1,
+      "pattern": "^([0-9])$"
+    },
+    "title": {
+      "description": "The full name of the borough.",
+      "type": "string",
+      "example": "Manhattan"
+    },
+    "abbr": {
+      "description": "The two character abbreviation for the borough.",
+      "type": "string",
+      "example": "MN",
+      "maxLength": 2,
+      "minLength": 2
+    }
+  },
+  "required": ["id", "title", "abbr"],
+  "x-readme-ref-name": "Borough"
+}

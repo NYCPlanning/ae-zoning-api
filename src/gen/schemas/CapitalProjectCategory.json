@@ -1,0 +1,7 @@
+{
+  "description": "The type of Capital Project.",
+  "type": "string",
+  "enum": ["Fixed Asset", "Lump Sum", "ITT, Vehicles and Equipment", null],
+  "nullable": true,
+  "x-readme-ref-name": "CapitalProjectCategory"
+}

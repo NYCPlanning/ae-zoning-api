@@ -1,34 +1,47 @@
 import { z } from "zod";
-
-import { errorSchema } from "./errorSchema";
 import { capitalProjectBudgetedSchema } from "./capitalProjectBudgetedSchema";
+import { errorSchema } from "./errorSchema";
 
 export const findCapitalProjectByManagingCodeCapitalProjectIdPathParamsSchema =
   z.object({
-    managingCode: z
+    managingCode: z.coerce
+      .string()
+      .regex(new RegExp("^([0-9]{3})$"))
+      .describe(
+        "Three character string of numbers representing managing agency",
+      ),
+    capitalProjectId: z.coerce
       .string()
       .describe(
-        `Three character string of numbers representing managing agency`,
-      )
-      .regex(new RegExp("^([0-9]{3})$")),
-    capitalProjectId: z
-      .string()
-      .describe(
-        `The id for the project, which combines with the managing code to make a unique id`,
+        "The id for the project, which combines with the managing code to make a unique id",
       ),
   });
+/**
+ * @description An object of capital project details
+ */
+export const findCapitalProjectByManagingCodeCapitalProjectId200Schema = z.lazy(
+  () => capitalProjectBudgetedSchema,
+);
+/**
+ * @description Invalid client request
+ */
 export const findCapitalProjectByManagingCodeCapitalProjectId400Schema = z.lazy(
   () => errorSchema,
-).schema;
+);
+/**
+ * @description Requested resource does not exist or is not available
+ */
 export const findCapitalProjectByManagingCodeCapitalProjectId404Schema = z.lazy(
   () => errorSchema,
-).schema;
+);
+/**
+ * @description Server side error
+ */
 export const findCapitalProjectByManagingCodeCapitalProjectId500Schema = z.lazy(
   () => errorSchema,
-).schema;
-
+);
 /**
  * @description An object of capital project details
  */
 export const findCapitalProjectByManagingCodeCapitalProjectIdQueryResponseSchema =
-  z.lazy(() => capitalProjectBudgetedSchema).schema;
+  z.lazy(() => capitalProjectBudgetedSchema);

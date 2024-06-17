@@ -1,5 +1,4 @@
+import { errorSchema } from "./errorSchema";
 import { z } from "zod";
 
-import { errorSchema } from "./errorSchema";
-
-export const notFoundSchema = z.lazy(() => errorSchema).schema;
+export const notFoundSchema = z.lazy(() => errorSchema);

@@ -1,1 +1,1 @@
-export type Mvt = string;
+export type Mvt = Blob;
