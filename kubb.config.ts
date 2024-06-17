@@ -1,7 +1,7 @@
 import { defineConfig } from "@kubb/core";
-import createSwagger from "@kubb/swagger";
-import createSwaggerTS from "@kubb/swagger-ts";
-import createSwaggerZod from "@kubb/swagger-zod";
+import { pluginOas } from "@kubb/plugin-oas";
+import { pluginZod } from "@kubb/swagger-zod";
+import { pluginTs } from "@kubb/swagger-ts";
 
 export default defineConfig({
   input: {
@@ -14,10 +14,10 @@ export default defineConfig({
     done: ['prettier --write "./src/gen"', 'eslint "./src/gen" --fix'],
   },
   plugins: [
-    createSwagger({ output: false }),
-    createSwaggerZod({
-      output: "./zod",
+    pluginOas(),
+    pluginZod({
+      output: { path: "./zod", },
     }),
-    createSwaggerTS({}),
+    pluginTs({}),
   ],
 });
