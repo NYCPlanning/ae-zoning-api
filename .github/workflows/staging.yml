@@ -11,6 +11,13 @@ jobs:
         environment:
             name: staging-zoning-api
         runs-on: ubuntu-latest
+        env:
+            DATABASE_USER: ${{secrets.DATABASE_USER}}
+            DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
+            DATABASE_NAME: ${{secrets.DATABASE_NAME }}
+            DATABASE_PORT: ${{secrets.DATABASE_PORT}}
+            DATABASE_HOST: ${{secrets.DATABASE_HOST}}
+            NODE_ENV: ${{secrets.NODE_ENV}}
         steps:
             - name: Checkout
               uses: actions/checkout@v4
