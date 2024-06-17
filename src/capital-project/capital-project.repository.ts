@@ -50,7 +50,7 @@ export class CapitalProjectRepository {
         .as("tile");
       const data = await this.db
         .select({
-          mvt: sql`ST_AsMVT(tile, 'capital-project-fill', 4096, 'geom')`,
+          mvt: sql<string>`ST_AsMVT(tile, 'capital-project-fill', 4096, 'geom')`,
         })
         .from(tile)
         .where(isNotNull(tile.geom));

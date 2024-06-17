@@ -29,9 +29,11 @@ describe("CapitalProjectService", () => {
         x: 1,
         y: 1,
       });
+      console.log(typeof mvt);
+      console.log("mvt", mvt);
       expect(() =>
-        findCapitalProjectTilesQueryResponseSchema.parse(mvt).not.toThrow(),
-      );
+        findCapitalProjectTilesQueryResponseSchema.parse(mvt),
+      ).not.toThrow();
     });
   });
 });
