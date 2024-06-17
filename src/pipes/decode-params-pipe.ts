@@ -1,6 +1,6 @@
 import { PipeTransform } from "@nestjs/common";
 import { InvalidRequestParameterException } from "src/exception";
-import { ZodObject, ZodRawShape } from "zod";
+import { ZodObject, ZodOptional, ZodRawShape } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
 
 type JsonSchema =
@@ -31,7 +31,7 @@ type JsonSchema =
  * to the documentation.
  */
 export class DecodeParamsPipe<T extends ZodRawShape> implements PipeTransform {
-  constructor(private schema: ZodObject<T>) {}
+  constructor(private schema: ZodObject<T> | ZodOptional<ZodObject<T>>) {}
 
   transform(params: Record<string, string | string[]>) {
     const schemaProperties = (
