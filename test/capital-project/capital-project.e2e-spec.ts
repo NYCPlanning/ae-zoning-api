@@ -37,7 +37,7 @@ describe("Capital Projects", () => {
       const y = 200;
       await request(app.getHttpServer())
         .get(`/capital-projects/${z}/${x}/${y}.pbf`)
-        .expect("Content-Type", "application/x-protobuf")
+        .expect("Content-Type", "application/x-protobuf; charset=utf-8")
         .expect(200);
     });
 
