@@ -1,10 +1,9 @@
-import type { ZoningDistrictClassCategory } from "./ZoningDistrictClassCategory";
+import { ZoningDistrictClassCategory } from "./ZoningDistrictClassCategory";
 
 export type ZoningDistrictClass = {
   /**
    * @description The code associated with the Zoning class.
    * @type string
-   * @example M1
    */
   id: string;
   category: ZoningDistrictClassCategory;
@@ -21,7 +20,6 @@ export type ZoningDistrictClass = {
   /**
    * @description Zoning classes from layer groups.
    * @type string
-   * @example #f3b3ffff
    */
   color: string;
 };

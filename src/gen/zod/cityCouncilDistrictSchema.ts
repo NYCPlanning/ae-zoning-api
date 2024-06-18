@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 export const cityCouncilDistrictSchema = z.object({
-  id: z
+  id: z.coerce
     .string()
-    .describe(`One or two character code to represent city council districts.`)
-    .regex(new RegExp("^([0-9]{1,2})$")),
+    .regex(new RegExp("^([0-9]{1,2})$"))
+    .describe("One or two character code to represent city council districts."),
 });

@@ -1,0 +1,58 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "description": "A uuid used to refer to the capital commitment.",
+      "type": "string",
+      "format": "uuid"
+    },
+    "type": {
+      "description": "A four character string used to refer to the commitment type.",
+      "type": "string",
+      "example": "DSGN",
+      "pattern": "^([A-z]{4})$"
+    },
+    "plannedDate": {
+      "description": "A string used to refer to the date when the commitment is projected to be committed.",
+      "type": "string",
+      "format": "date",
+      "example": "2012-04-23"
+    },
+    "budgetLineCode": {
+      "description": "A string used to refer to the budget line.",
+      "type": "string",
+      "example": "HW"
+    },
+    "budgetLineId": {
+      "description": "A string used to refer to the budget line.",
+      "type": "string",
+      "example": "0002Q"
+    },
+    "sponsoringAgencyInitials": {
+      "description": "A string of variable length containing the initials of the sponsoring agency.",
+      "type": "string",
+      "example": "DOT"
+    },
+    "budgetType": {
+      "description": "A string of variable length denoting the type of budget.",
+      "type": "string",
+      "example": "Highways"
+    },
+    "totalValue": {
+      "description": "A numeric string used to refer to the amount of total planned commitments.",
+      "type": "number",
+      "example": 1600000
+    }
+  },
+  "required": [
+    "id",
+    "type",
+    "plannedDate",
+    "budgetLineCode",
+    "budgetLineId",
+    "sponsoringAgencyInitials",
+    "budgetType",
+    "totalValue"
+  ],
+  "x-readme-ref-name": "CapitalCommitment"
+}

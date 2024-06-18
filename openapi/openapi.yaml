@@ -784,10 +784,12 @@ components:
         - totalValue
     CapitalProjectCategory:
       type: string
+      nullable: true
       enum:
         - "Fixed Asset"
         - "Lump Sum"
         - "ITT, Vehicles and Equipment"
+        - null
       description: The type of Capital Project.
     CapitalProject:
       type: object
@@ -1160,7 +1162,7 @@ components:
         application/x-protobuf:
           schema:
             type: string
-            format: binary
+            format: byte
     BadRequest:
       description: Invalid client request
       content:

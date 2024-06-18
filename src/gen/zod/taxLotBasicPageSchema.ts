@@ -1,10 +1,7 @@
-import { z } from "zod";
-
 import { pageSchema } from "./pageSchema";
 import { taxLotBasicSchema } from "./taxLotBasicSchema";
+import { z } from "zod";
 
 export const taxLotBasicPageSchema = z
   .lazy(() => pageSchema)
-  .schema.and(
-    z.object({ taxLots: z.array(z.lazy(() => taxLotBasicSchema).schema) }),
-  );
+  .and(z.object({ taxLots: z.array(z.lazy(() => taxLotBasicSchema)) }));

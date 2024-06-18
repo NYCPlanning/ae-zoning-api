@@ -4,25 +4,37 @@ export type FindCapitalProjectTilesPathParams = {
   /**
    * @description viewport zoom component
    * @type integer
-   * @example 7
    */
   z: number;
   /**
    * @description viewport x component
    * @type integer
-   * @example 1000
    */
   x: number;
   /**
    * @description viewport y component
    * @type integer
-   * @example 1000
    */
   y: number;
 };
-
-export type FindCapitalProjectTilesQueryResponse = any | null;
-
+/**
+ * @description A protobuf file formatted as Mapbox Vector Tile
+ */
+export type FindCapitalProjectTiles200 = string;
+/**
+ * @description Invalid client request
+ */
 export type FindCapitalProjectTiles400 = Error;
-
+/**
+ * @description Server side error
+ */
 export type FindCapitalProjectTiles500 = Error;
+/**
+ * @description A protobuf file formatted as Mapbox Vector Tile
+ */
+export type FindCapitalProjectTilesQueryResponse = string;
+export type FindCapitalProjectTilesQuery = {
+  Response: FindCapitalProjectTilesQueryResponse;
+  PathParams: FindCapitalProjectTilesPathParams;
+  Errors: FindCapitalProjectTiles400 | FindCapitalProjectTiles500;
+};

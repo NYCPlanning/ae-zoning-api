@@ -1,5 +1,4 @@
+import { errorSchema } from "./errorSchema";
 import { z } from "zod";
 
-import { errorSchema } from "./errorSchema";
-
-export const badRequestSchema = z.lazy(() => errorSchema).schema;
+export const badRequestSchema = z.lazy(() => errorSchema);

@@ -8,7 +8,6 @@ import {
   UsePipes,
 } from "@nestjs/common";
 import { ZoningDistrictService } from "./zoning-district.service";
-import { ZodValidationPipe } from "src/pipes/zod-validation-pipe";
 import {
   FindZoningDistrictByZoningDistrictIdPathParams,
   FindZoningDistrictClassesByZoningDistrictIdPathParams,
@@ -20,6 +19,7 @@ import {
   InternalServerErrorExceptionFilter,
   NotFoundExceptionFilter,
 } from "src/filter";
+import { ZodTransformPipe } from "src/pipes/zod-transform-pipe";
 
 @Injectable()
 @UseFilters(
@@ -33,7 +33,7 @@ export class ZoningDistrictController {
 
   @Get("/:id")
   @UsePipes(
-    new ZodValidationPipe(findZoningDistrictByZoningDistrictIdPathParamsSchema),
+    new ZodTransformPipe(findZoningDistrictByZoningDistrictIdPathParamsSchema),
   )
   async findById(
     @Param() params: FindZoningDistrictByZoningDistrictIdPathParams,
@@ -43,7 +43,7 @@ export class ZoningDistrictController {
 
   @Get("/:id/classes")
   @UsePipes(
-    new ZodValidationPipe(
+    new ZodTransformPipe(
       findZoningDistrictClassesByZoningDistrictIdPathParamsSchema,
     ),
   )

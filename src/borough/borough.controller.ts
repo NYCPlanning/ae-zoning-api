@@ -7,7 +7,6 @@ import {
   UsePipes,
 } from "@nestjs/common";
 import { BoroughService } from "./borough.service";
-import { ZodValidationPipe } from "src/pipes/zod-validation-pipe";
 import {
   FindCommunityDistrictsByBoroughIdPathParams,
   findCommunityDistrictsByBoroughIdPathParamsSchema,
@@ -17,6 +16,7 @@ import {
   InternalServerErrorExceptionFilter,
   NotFoundExceptionFilter,
 } from "src/filter";
+import { ZodTransformPipe } from "src/pipes/zod-transform-pipe";
 
 @Injectable()
 @UseFilters(
@@ -35,7 +35,7 @@ export class BoroughController {
 
   @Get("/:boroughId/community-districts")
   @UsePipes(
-    new ZodValidationPipe(findCommunityDistrictsByBoroughIdPathParamsSchema),
+    new ZodTransformPipe(findCommunityDistrictsByBoroughIdPathParamsSchema),
   )
   async findCommunityDistrictsById(
     @Param() params: FindCommunityDistrictsByBoroughIdPathParams,

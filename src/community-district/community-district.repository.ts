@@ -37,7 +37,7 @@ export class CommunityDistrictRepository {
 
       const dataFill = await this.db
         .select({
-          mvt: sql`ST_AsMVT(tile, 'community-district-fill', 4096, 'geomFill')`,
+          mvt: sql<Buffer>`ST_AsMVT(tile, 'community-district-fill', 4096, 'geomFill')`,
         })
         .from(tileFill)
         .where(isNotNull(tileFill.geomFill));
@@ -63,14 +63,14 @@ export class CommunityDistrictRepository {
 
       const dataLabel = this.db
         .select({
-          mvt: sql`ST_AsMVT(tile, 'community-district-label', 4096, 'geomLabel')`,
+          mvt: sql<Buffer>`ST_AsMVT(tile, 'community-district-label', 4096, 'geomLabel')`,
         })
         .from(tileLabel)
         .where(isNotNull(tileLabel.geomLabel));
 
       const [fill, label] = await Promise.all([dataFill, dataLabel]);
 
-      return Buffer.concat([fill[0].mvt, label[0].mvt] as Uint8Array[]);
+      return Buffer.concat([fill[0].mvt, label[0].mvt]);
     } catch {
       throw new DataRetrievalException();
     }

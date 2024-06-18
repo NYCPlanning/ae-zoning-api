@@ -1,36 +1,37 @@
 import { z } from "zod";
 
 export const capitalCommitmentSchema = z.object({
-  id: z
+  id: z.coerce
     .string()
-    .describe(`A uuid used to refer to the capital commitment.`)
-    .uuid(),
-  type: z
+    .uuid()
+    .describe("A uuid used to refer to the capital commitment."),
+  type: z.coerce
     .string()
-    .describe(`A four character string used to refer to the commitment type.`)
-    .regex(new RegExp("^([A-z]{4})$")),
+    .regex(new RegExp("^([A-z]{4})$"))
+    .describe("A four character string used to refer to the commitment type."),
   plannedDate: z
     .string()
+    .date()
     .describe(
-      `A string used to refer to the date when the commitment is projected to be committed.`,
+      "A string used to refer to the date when the commitment is projected to be committed.",
     ),
-  budgetLineCode: z
+  budgetLineCode: z.coerce
     .string()
-    .describe(`A string used to refer to the budget line.`),
-  budgetLineId: z
+    .describe("A string used to refer to the budget line."),
+  budgetLineId: z.coerce
     .string()
-    .describe(`A string used to refer to the budget line.`),
-  sponsoringAgencyInitials: z
+    .describe("A string used to refer to the budget line."),
+  sponsoringAgencyInitials: z.coerce
     .string()
     .describe(
-      `A string of variable length containing the initials of the sponsoring agency.`,
+      "A string of variable length containing the initials of the sponsoring agency.",
     ),
-  budgetType: z
+  budgetType: z.coerce
     .string()
-    .describe(`A string of variable length denoting the type of budget.`),
-  totalValue: z
+    .describe("A string of variable length denoting the type of budget."),
+  totalValue: z.coerce
     .number()
     .describe(
-      `A numeric string used to refer to the amount of total planned commitments.`,
+      "A numeric string used to refer to the amount of total planned commitments.",
     ),
 });

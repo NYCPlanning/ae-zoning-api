@@ -1,22 +1,24 @@
+import { capitalProjectCategorySchema } from "./capitalProjectCategorySchema";
 import { z } from "zod";
 
-import { capitalProjectCategorySchema } from "./capitalProjectCategorySchema";
-
 export const capitalProjectSchema = z.object({
-  id: z
+  id: z.coerce
     .string()
     .describe(
-      `The id for the project, which combines with the managing code to make a unique id`,
+      "The id for the project, which combines with the managing code to make a unique id",
     ),
-  description: z.string().describe(`The capital project title.`),
-  managingCode: z
+  description: z.coerce.string().describe("The capital project title."),
+  managingCode: z.coerce
     .string()
-    .describe(`Three character string of numbers representing managing agency`)
-    .regex(new RegExp("^([0-9]{3})$")),
-  managingAgencyInitials: z
+    .regex(new RegExp("^([0-9]{3})$"))
+    .describe("Three character string of numbers representing managing agency"),
+  managingAgencyInitials: z.coerce
     .string()
-    .describe(`The managing agency name abbreviation or acronym`),
-  minDate: z.string().describe(`The starting date of the capital project`),
-  maxDate: z.string().describe(`The ending date of the capital project`),
-  category: z.lazy(() => capitalProjectCategorySchema).schema,
+    .describe("The managing agency name abbreviation or acronym"),
+  minDate: z
+    .string()
+    .date()
+    .describe("The starting date of the capital project"),
+  maxDate: z.string().date().describe("The ending date of the capital project"),
+  category: z.lazy(() => capitalProjectCategorySchema),
 });

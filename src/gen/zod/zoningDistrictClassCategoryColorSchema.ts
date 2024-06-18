@@ -1,11 +1,10 @@
+import { zoningDistrictClassCategorySchema } from "./zoningDistrictClassCategorySchema";
 import { z } from "zod";
 
-import { zoningDistrictClassCategorySchema } from "./zoningDistrictClassCategorySchema";
-
 export const zoningDistrictClassCategoryColorSchema = z.object({
-  category: z.lazy(() => zoningDistrictClassCategorySchema).schema,
-  color: z
+  category: z.lazy(() => zoningDistrictClassCategorySchema),
+  color: z.coerce
     .string()
-    .describe(`The color for the zoning district class category.`)
-    .regex(new RegExp("^#([A-Fa-f0-9]{8})$")),
+    .regex(new RegExp("^#([A-Fa-f0-9]{8})$"))
+    .describe("The color for the zoning district class category."),
 });

@@ -1,0 +1,13 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "description": "One or two character code to represent city council districts.",
+      "type": "string",
+      "example": 25,
+      "pattern": "^([0-9]{1,2})$"
+    }
+  },
+  "required": ["id"],
+  "x-readme-ref-name": "CityCouncilDistrict"
+}

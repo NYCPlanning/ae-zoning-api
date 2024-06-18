@@ -1,0 +1,10 @@
+{
+  "type": "object",
+  "properties": {
+    "statusCode": { "type": "number" },
+    "message": { "type": "string" },
+    "error": { "type": "string" }
+  },
+  "required": ["statusCode", "message"],
+  "x-readme-ref-name": "Error"
+}

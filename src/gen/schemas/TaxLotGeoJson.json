@@ -1,0 +1,125 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "description": "The bbl of the tax lot.",
+      "type": "string",
+      "example": "1000477501",
+      "maxLength": 10,
+      "minLength": 10
+    },
+    "type": { "type": "string", "enum": ["Feature"] },
+    "geometry": {
+      "description": "A geojson implementation of a MultiPolygon Simple Feature",
+      "type": "object",
+      "properties": {
+        "type": { "type": "string", "enum": ["MultiPolygon"] },
+        "coordinates": {
+          "description": "Array of polygon coordinate arrays.",
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "description": "The fundamental spatial construct",
+                "type": "array",
+                "items": { "type": "number" },
+                "example": [-74.010835, 40.708442],
+                "maxItems": 3,
+                "minItems": 2,
+                "x-readme-ref-name": "Position"
+              }
+            }
+          }
+        }
+      },
+      "required": ["type", "coordinates"],
+      "x-readme-ref-name": "MultiPolygon"
+    },
+    "properties": {
+      "type": "object",
+      "properties": {
+        "bbl": {
+          "description": "The ten character code compromised of a one character borough, five character block, and four character lot codes.",
+          "type": "string",
+          "example": "1000477501",
+          "pattern": "^([0-9]{10})$"
+        },
+        "borough": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "description": "A single character numeric string containing the common number used to refer to the borough. Possible values are 1-5.",
+              "type": "string",
+              "example": 1,
+              "pattern": "^([0-9])$"
+            },
+            "title": {
+              "description": "The full name of the borough.",
+              "type": "string",
+              "example": "Manhattan"
+            },
+            "abbr": {
+              "description": "The two character abbreviation for the borough.",
+              "type": "string",
+              "example": "MN",
+              "maxLength": 2,
+              "minLength": 2
+            }
+          },
+          "required": ["id", "title", "abbr"],
+          "x-readme-ref-name": "Borough"
+        },
+        "block": {
+          "description": "The block code, without its padding zeros.",
+          "type": "string",
+          "example": 47,
+          "maxLength": 5,
+          "minLength": 1
+        },
+        "lot": {
+          "description": "The lot code, without its padding zeros.",
+          "type": "string",
+          "example": 7501,
+          "maxLength": 4,
+          "minLength": 1
+        },
+        "address": {
+          "description": "The street address.",
+          "type": "string",
+          "example": "120 BROADWAY"
+        },
+        "landUse": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "description": "The two character code to represent the land use. Possible values are 01-11.",
+              "type": "string",
+              "example": "05",
+              "maxLength": 2,
+              "minLength": 2
+            },
+            "description": {
+              "description": "The description of the land use.",
+              "type": "string",
+              "example": "Commercial and Office Buildings"
+            },
+            "color": {
+              "description": "Hex-style color code to represent the land use.",
+              "type": "string",
+              "example": "#fc2929ff",
+              "pattern": "^#([A-Fa-f0-9]{8})$"
+            }
+          },
+          "required": ["id", "description", "color"],
+          "x-readme-ref-name": "LandUse"
+        }
+      },
+      "required": ["bbl", "borough", "block", "lot", "address", "landUse"],
+      "x-readme-ref-name": "TaxLot"
+    }
+  },
+  "required": ["id", "type", "geometry", "properties"],
+  "x-readme-ref-name": "TaxLotGeoJson"
+}

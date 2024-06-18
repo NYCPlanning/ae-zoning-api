@@ -1,6 +1,5 @@
 import { Controller, Get, Param, UseFilters, UsePipes } from "@nestjs/common";
 import { ZoningDistrictClassService } from "./zoning-district-class.service";
-import { ZodValidationPipe } from "src/pipes/zod-validation-pipe";
 import {
   findZoningDistrictClassByZoningDistrictClassIdPathParamsSchema,
   FindZoningDistrictClassByZoningDistrictClassIdPathParams,
@@ -10,6 +9,7 @@ import {
   InternalServerErrorExceptionFilter,
   NotFoundExceptionFilter,
 } from "src/filter";
+import { ZodTransformPipe } from "src/pipes/zod-transform-pipe";
 
 @UseFilters(
   BadRequestExceptionFilter,
@@ -34,7 +34,7 @@ export class ZoningDistrictClassController {
 
   @Get("/:id")
   @UsePipes(
-    new ZodValidationPipe(
+    new ZodTransformPipe(
       findZoningDistrictClassByZoningDistrictClassIdPathParamsSchema,
     ),
   )

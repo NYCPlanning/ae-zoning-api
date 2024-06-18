@@ -1,10 +1,13 @@
-import type { Position } from "./Position";
+import { Position } from "./Position";
 
 export const multiPolygonType = {
   MultiPolygon: "MultiPolygon",
 } as const;
 export type MultiPolygonType =
   (typeof multiPolygonType)[keyof typeof multiPolygonType];
+/**
+ * @description A geojson implementation of a MultiPolygon Simple Feature
+ */
 export type MultiPolygon = {
   /**
    * @type string

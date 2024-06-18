@@ -16,8 +16,7 @@ import {
   FindCommunityDistrictTilesPathParams,
   findCommunityDistrictTilesPathParamsSchema,
 } from "../gen";
-import { DecodeParamsPipe } from "src/pipes/decode-params-pipe";
-import { ZodValidationPipe } from "src/pipes/zod-validation-pipe";
+import { ZodTransformPipe } from "src/pipes/zod-transform-pipe";
 
 @UseFilters(BadRequestExceptionFilter, InternalServerErrorExceptionFilter)
 @Controller("community-districts")
@@ -26,10 +25,7 @@ export class CommunityDistrictController {
     private readonly communityDistrictService: CommunityDistrictService,
   ) {}
 
-  @UsePipes(
-    new DecodeParamsPipe(findCommunityDistrictTilesPathParamsSchema),
-    new ZodValidationPipe(findCommunityDistrictTilesPathParamsSchema),
-  )
+  @UsePipes(new ZodTransformPipe(findCommunityDistrictTilesPathParamsSchema))
   @Get("/:z/:x/:y.pbf")
   async findTiles(
     @Param() params: FindCommunityDistrictTilesPathParams,

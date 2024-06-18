@@ -12,22 +12,18 @@ import {
   findCapitalProjectTilesPathParamsSchema,
 } from "src/gen";
 import { CapitalProjectService } from "./capital-project.service";
-import { DecodeParamsPipe } from "src/pipes/decode-params-pipe";
-import { ZodValidationPipe } from "src/pipes/zod-validation-pipe";
 import {
   BadRequestExceptionFilter,
   InternalServerErrorExceptionFilter,
 } from "src/filter";
+import { ZodTransformPipe } from "src/pipes/zod-transform-pipe";
 
 @UseFilters(BadRequestExceptionFilter, InternalServerErrorExceptionFilter)
 @Controller("capital-projects")
 export class CapitalProjectController {
   constructor(private readonly capitalProjectService: CapitalProjectService) {}
 
-  @UsePipes(
-    new DecodeParamsPipe(findCapitalProjectTilesPathParamsSchema),
-    new ZodValidationPipe(findCapitalProjectTilesPathParamsSchema),
-  )
+  @UsePipes(new ZodTransformPipe(findCapitalProjectTilesPathParamsSchema))
   @Get("/:z/:x/:y.pbf")
   async findTiles(
     @Param() params: FindCapitalProjectTilesPathParams,
