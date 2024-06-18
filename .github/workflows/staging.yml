@@ -17,7 +17,6 @@ jobs:
             DATABASE_NAME: ${{secrets.DATABASE_NAME }}
             DATABASE_PORT: ${{secrets.DATABASE_PORT}}
             DATABASE_HOST: ${{secrets.DATABASE_HOST}}
-            NODE_ENV: ${{secrets.NODE_ENV}}
         steps:
             - name: Checkout
               uses: actions/checkout@v4
@@ -36,7 +35,6 @@ jobs:
                 echo "DATABASE_NAME=$DATABASE_NAME" >> .env
                 echo "DATABASE_PORT=$DATABASE_PORT" >> .env
                 echo "DATABASE_HOST=$DATABASE_HOST" >> .env
-                echo "NODE_ENV=$NODE_ENV" >> .env
             - name: Apply migrations
               run: npm run drizzle:migrate  
     deploy:
