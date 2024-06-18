@@ -75,7 +75,7 @@ The generated code is kept in `/src/gen`. Never make manual changes to files in 
 
 Generate these resources with:
 ```sh
-npm run generate
+npm run kubb:generate
 ```
 
 The console may include the output below. It can be safely ignored.
