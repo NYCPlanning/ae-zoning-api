@@ -9,7 +9,6 @@ import {
   UsePipes,
 } from "@nestjs/common";
 import { TaxLotService } from "./tax-lot.service";
-import { ZodValidationPipe } from "src/pipes/zod-validation-pipe";
 import {
   findTaxLotByBblPathParamsSchema,
   findTaxLotGeoJsonByBblPathParamsSchema,
@@ -27,7 +26,7 @@ import {
   InternalServerErrorExceptionFilter,
   NotFoundExceptionFilter,
 } from "src/filter";
-import { DecodeParamsPipe } from "src/pipes/decode-params-pipe";
+import { ZodTransformPipe } from "src/pipes/zod-transform-pipe";
 
 @Injectable()
 @UseFilters(
@@ -40,10 +39,7 @@ export class TaxLotController {
   constructor(private readonly taxLotService: TaxLotService) {}
 
   @Get()
-  @UsePipes(
-    new DecodeParamsPipe(findTaxLotsQueryParamsSchema),
-    new ZodValidationPipe(findTaxLotsQueryParamsSchema),
-  )
+  @UsePipes(new ZodTransformPipe(findTaxLotsQueryParamsSchema))
   async findMany(
     @Query()
     params: FindTaxLotsQueryParams,
@@ -52,20 +48,20 @@ export class TaxLotController {
   }
 
   @Get("/:bbl")
-  @UsePipes(new ZodValidationPipe(findTaxLotByBblPathParamsSchema))
+  @UsePipes(new ZodTransformPipe(findTaxLotByBblPathParamsSchema))
   async findDetailsByBbl(@Param() params: FindTaxLotByBblPathParams) {
     return this.taxLotService.findByBbl(params.bbl);
   }
 
   @Get("/:bbl/geojson")
-  @UsePipes(new ZodValidationPipe(findTaxLotGeoJsonByBblPathParamsSchema))
+  @UsePipes(new ZodTransformPipe(findTaxLotGeoJsonByBblPathParamsSchema))
   async findBblByGeoJson(@Param() params: FindTaxLotGeoJsonByBblPathParams) {
     return this.taxLotService.findGeoJsonByBbl(params.bbl);
   }
 
   @Get("/:bbl/zoning-districts")
   @UsePipes(
-    new ZodValidationPipe(findZoningDistrictsByTaxLotBblPathParamsSchema),
+    new ZodTransformPipe(findZoningDistrictsByTaxLotBblPathParamsSchema),
   )
   async findZoningDistrictsByBbl(
     @Param() params: FindZoningDistrictsByTaxLotBblPathParams,
@@ -75,7 +71,7 @@ export class TaxLotController {
 
   @Get("/:bbl/zoning-districts/classes")
   @UsePipes(
-    new ZodValidationPipe(findZoningDistrictClassesByTaxLotBblPathParamsSchema),
+    new ZodTransformPipe(findZoningDistrictClassesByTaxLotBblPathParamsSchema),
   )
   async findZoningDistrictClassesByBbl(
     @Param() params: FindZoningDistrictClassesByTaxLotBblPathParams,

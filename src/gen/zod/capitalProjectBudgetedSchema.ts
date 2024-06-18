@@ -1,23 +1,22 @@
-import { z } from "zod";
-
 import { capitalProjectSchema } from "./capitalProjectSchema";
+import { z } from "zod";
 
 export const capitalProjectBudgetedSchema = z
   .lazy(() => capitalProjectSchema)
-  .schema.and(
+  .and(
     z.object({
-      commitmentsTotal: z
+      commitmentsTotal: z.coerce
         .number()
-        .describe(`The sum total of commitments for the capital project`),
+        .describe("The sum total of commitments for the capital project"),
       sponsoringAgencyInitials: z
-        .array(z.string())
+        .array(z.coerce.string())
         .describe(
-          `An array containing string values representing the sponsoring agencies initials.`,
+          "An array containing string values representing the sponsoring agencies initials.",
         ),
       budgetType: z
-        .array(z.string())
+        .array(z.coerce.string())
         .describe(
-          `An array containing string values representing the budget types.`,
+          "An array containing string values representing the budget types.",
         ),
     }),
   );

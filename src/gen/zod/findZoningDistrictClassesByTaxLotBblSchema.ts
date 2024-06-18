@@ -1,33 +1,42 @@
 import { z } from "zod";
-
-import { errorSchema } from "./errorSchema";
 import { zoningDistrictClassSchema } from "./zoningDistrictClassSchema";
+import { errorSchema } from "./errorSchema";
 
 export const findZoningDistrictClassesByTaxLotBblPathParamsSchema = z.object({
-  bbl: z
+  bbl: z.coerce
     .string()
+    .regex(new RegExp("^([0-9]{10})$"))
     .describe(
-      `The ten character code compromised of a one character borough, five character block, and four character lot codes.`,
-    )
-    .regex(new RegExp("^([0-9]{10})$")),
+      "The ten character code compromised of a one character borough, five character block, and four character lot codes.",
+    ),
 });
+/**
+ * @description An object containing zoning district class schemas.
+ */
+export const findZoningDistrictClassesByTaxLotBbl200Schema = z.object({
+  zoningDistrictClasses: z.array(z.lazy(() => zoningDistrictClassSchema)),
+});
+/**
+ * @description Invalid client request
+ */
 export const findZoningDistrictClassesByTaxLotBbl400Schema = z.lazy(
   () => errorSchema,
-).schema;
+);
+/**
+ * @description Requested resource does not exist or is not available
+ */
 export const findZoningDistrictClassesByTaxLotBbl404Schema = z.lazy(
   () => errorSchema,
-).schema;
+);
+/**
+ * @description Server side error
+ */
 export const findZoningDistrictClassesByTaxLotBbl500Schema = z.lazy(
   () => errorSchema,
-).schema;
-
+);
 /**
  * @description An object containing zoning district class schemas.
  */
 export const findZoningDistrictClassesByTaxLotBblQueryResponseSchema = z.object(
-  {
-    zoningDistrictClasses: z.array(
-      z.lazy(() => zoningDistrictClassSchema).schema,
-    ),
-  },
+  { zoningDistrictClasses: z.array(z.lazy(() => zoningDistrictClassSchema)) },
 );

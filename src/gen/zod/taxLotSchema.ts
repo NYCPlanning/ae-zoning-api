@@ -1,26 +1,25 @@
-import { z } from "zod";
-
 import { boroughSchema } from "./boroughSchema";
 import { landUseSchema } from "./landUseSchema";
+import { z } from "zod";
 
 export const taxLotSchema = z.object({
-  bbl: z
+  bbl: z.coerce
     .string()
+    .regex(new RegExp("^([0-9]{10})$"))
     .describe(
-      `The ten character code compromised of a one character borough, five character block, and four character lot codes.`,
-    )
-    .regex(new RegExp("^([0-9]{10})$")),
-  borough: z.lazy(() => boroughSchema).schema,
-  block: z
+      "The ten character code compromised of a one character borough, five character block, and four character lot codes.",
+    ),
+  borough: z.lazy(() => boroughSchema),
+  block: z.coerce
     .string()
-    .describe(`The block code, without its padding zeros.`)
     .min(1)
-    .max(5),
-  lot: z
+    .max(5)
+    .describe("The block code, without its padding zeros."),
+  lot: z.coerce
     .string()
-    .describe(`The lot code, without its padding zeros.`)
     .min(1)
-    .max(4),
-  address: z.string().describe(`The street address.`),
-  landUse: z.lazy(() => landUseSchema).schema,
+    .max(4)
+    .describe("The lot code, without its padding zeros."),
+  address: z.coerce.string().describe("The street address."),
+  landUse: z.lazy(() => landUseSchema),
 });

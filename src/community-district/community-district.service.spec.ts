@@ -30,8 +30,8 @@ describe("CommunityDistrictService", () => {
         y: 1,
       });
       expect(() =>
-        findCommunityDistrictTilesQueryResponseSchema.parse(mvt).not.toThrow(),
-      );
+        findCommunityDistrictTilesQueryResponseSchema.parse(mvt),
+      ).not.toThrow();
     });
   });
 });

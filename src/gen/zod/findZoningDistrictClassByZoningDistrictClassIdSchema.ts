@@ -1,22 +1,35 @@
 import { z } from "zod";
-
-import { errorSchema } from "./errorSchema";
 import { zoningDistrictClassSchema } from "./zoningDistrictClassSchema";
+import { errorSchema } from "./errorSchema";
 
 export const findZoningDistrictClassByZoningDistrictClassIdPathParamsSchema =
-  z.object({ id: z.string().regex(new RegExp("^[A-z][0-9]+$")) });
+  z.object({ id: z.coerce.string().regex(new RegExp("^[A-z][0-9]+$")) });
+/**
+ * @description A class schema for a zoning district
+ */
+export const findZoningDistrictClassByZoningDistrictClassId200Schema = z.lazy(
+  () => zoningDistrictClassSchema,
+);
+/**
+ * @description Invalid client request
+ */
 export const findZoningDistrictClassByZoningDistrictClassId400Schema = z.lazy(
   () => errorSchema,
-).schema;
+);
+/**
+ * @description Requested resource does not exist or is not available
+ */
 export const findZoningDistrictClassByZoningDistrictClassId404Schema = z.lazy(
   () => errorSchema,
-).schema;
+);
+/**
+ * @description Server side error
+ */
 export const findZoningDistrictClassByZoningDistrictClassId500Schema = z.lazy(
   () => errorSchema,
-).schema;
-
+);
 /**
  * @description A class schema for a zoning district
  */
 export const findZoningDistrictClassByZoningDistrictClassIdQueryResponseSchema =
-  z.lazy(() => zoningDistrictClassSchema).schema;
+  z.lazy(() => zoningDistrictClassSchema);

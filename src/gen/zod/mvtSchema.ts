@@ -1,3 +1,3 @@
 import { z } from "zod";
 
-export const mvtSchema = z.string();
+export const mvtSchema = z.coerce.string();

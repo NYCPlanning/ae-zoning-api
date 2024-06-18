@@ -30,8 +30,8 @@ describe("CapitalProjectService", () => {
         y: 1,
       });
       expect(() =>
-        findCapitalProjectTilesQueryResponseSchema.parse(mvt).not.toThrow(),
-      );
+        findCapitalProjectTilesQueryResponseSchema.parse(mvt),
+      ).not.toThrow();
     });
   });
 });
