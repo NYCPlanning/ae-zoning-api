@@ -38,7 +38,7 @@ jobs:
                 echo "DATABASE_HOST=$DATABASE_HOST" >> .env
                 echo "DATABASE_ENV=$DATABASE_ENV" >> .env
             - name: Apply migrations
-              run: npm run drizzle:migrate  
+              run: npm run pg:migrate  
     deploy:
         name: 🚀 Deploy
         environment:
