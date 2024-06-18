@@ -22,7 +22,7 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v4
               with:
-                ref: 'main'  
+                ref: '276/deploy-to-staging'
             - name: Setup node
               uses: actions/setup-node@v4  
               with:
