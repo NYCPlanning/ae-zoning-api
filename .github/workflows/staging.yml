@@ -40,7 +40,7 @@ jobs:
                 echo "DATABASE_ENV=$DATABASE_ENV" >> .env
             - name: Save certificate to file
               run: |
-                echo -n $DATABASE_CERT | base64 --decode ./ca-certificate.crt
+                echo $DATABASE_CERT | base64 --decode > ./ca-certificate.crt
             - name: Apply migrations
               run: npm run pg:migrate 
     deploy:
