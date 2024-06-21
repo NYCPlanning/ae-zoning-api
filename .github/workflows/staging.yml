@@ -51,7 +51,7 @@ jobs:
         steps:
             - uses: actions/checkout@v4
               with:
-                ref: 'main'
+                ref: '276/deploy-to-staging'
             - name: Deploy to Heroku
               uses: akhileshns/heroku-deploy@v3.13.15
               with:
