@@ -3,7 +3,7 @@ name: 🎭 Staging
 on:
     push:
         branches:
-            - 276/deploy-to-staging
+            - 276/draft/deploy-to-staging
 
 jobs:
     migrate:
@@ -17,13 +17,11 @@ jobs:
             DATABASE_NAME: ${{secrets.DATABASE_NAME }}
             DATABASE_PORT: ${{secrets.DATABASE_PORT}}
             DATABASE_HOST: ${{secrets.DATABASE_HOST}}
-            DATABASE_ENV: ${{secrets.DATABASE_ENV}}
-            DATABASE_CERT: ${{secrets.DATABASE_CERT}}
         steps:
             - name: Checkout
               uses: actions/checkout@v4
               with:
-                ref: '276/deploy-to-staging'
+                ref: '276/draft/deploy-to-staging'
             - name: Setup node
               uses: actions/setup-node@v4  
               with:
@@ -37,10 +35,6 @@ jobs:
                 echo "DATABASE_NAME=$DATABASE_NAME" >> .env
                 echo "DATABASE_PORT=$DATABASE_PORT" >> .env
                 echo "DATABASE_HOST=$DATABASE_HOST" >> .env
-                echo "DATABASE_ENV=$DATABASE_ENV" >> .env
-            - name: Save certificate to file
-              run: |
-                echo "${{ secrets.DATABASE_CERT }}" | base64 --decode > ca-certificate.crt
             - name: Apply migrations
               run: npm run drizzle:migrate 
     deploy:
@@ -51,7 +45,7 @@ jobs:
         steps:
             - uses: actions/checkout@v4
               with:
-                ref: '276/deploy-to-staging'
+                ref: '276/draft/deploy-to-staging'
             - name: Deploy to Heroku
               uses: akhileshns/heroku-deploy@v3.13.15
               with:
@@ -65,6 +59,5 @@ jobs:
                 HD_DATABASE_NAME: ${{secrets.DATABASE_NAME}}
                 HD_DATABASE_PORT: ${{secrets.DATABASE_PORT}}
                 HD_DATABASE_HOST: ${{secrets.DATABASE_HOST}}
-                HD_DATABASE_CERT: ${{secrets.DATABASE_CERT}}
                 HD_STORAGE_URL: ${{secrets.STORAGE_URL}}
                 HD_NODE_ENV: ${{secrets.NODE_ENV}}
