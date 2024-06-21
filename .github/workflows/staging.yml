@@ -18,6 +18,7 @@ jobs:
             DATABASE_PORT: ${{secrets.DATABASE_PORT}}
             DATABASE_HOST: ${{secrets.DATABASE_HOST}}
             DATABASE_ENV: ${{secrets.DATABASE_ENV}}
+            DATABASE_CERT: ${{secrets.DATABASE_CERT}}
         steps:
             - name: Checkout
               uses: actions/checkout@v4
@@ -37,6 +38,9 @@ jobs:
                 echo "DATABASE_PORT=$DATABASE_PORT" >> .env
                 echo "DATABASE_HOST=$DATABASE_HOST" >> .env
                 echo "DATABASE_ENV=$DATABASE_ENV" >> .env
+            - name: Save certificate to file
+              run: |
+                echo -n $DATABASE_CERT | base64 -d -o ./ca-certificate.crt
             - name: Apply migrations
               run: npm run pg:migrate 
     deploy:
