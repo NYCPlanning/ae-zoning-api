@@ -18,6 +18,9 @@ export const DbProvider: FactoryProvider = {
       user: dbConfig.user,
       password: dbConfig.password,
       database: dbConfig.name,
+      ssl: {
+        rejectUnauthorized: false,
+      },
     });
 
     return drizzle(pool, { schema });
