@@ -1,6 +1,6 @@
 // Drizzle kit configuration
 import type { Config } from "drizzle-kit";
-import fs from "fs";
+// import fs from "fs";
 
 export default {
   schema: "./src/schema/*",
@@ -14,7 +14,7 @@ export default {
     database: process.env.DATABASE_NAME!,
     ssl: process.env.DATABASE_ENV === "production" && {
       rejectUnauthorized: false,
-      ca: fs.readFileSync("ca-certificate.crt"),
+      // ca: fs.readFileSync("ca-certificate.crt"),
     },
   },
 } satisfies Config;
