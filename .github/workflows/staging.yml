@@ -65,5 +65,6 @@ jobs:
                 HD_DATABASE_NAME: ${{secrets.DATABASE_NAME}}
                 HD_DATABASE_PORT: ${{secrets.DATABASE_PORT}}
                 HD_DATABASE_HOST: ${{secrets.DATABASE_HOST}}
+                HD_DATABASE_CERT: ${{secrets.DATABASE_CERT}}
                 HD_STORAGE_URL: ${{secrets.STORAGE_URL}}
                 HD_NODE_ENV: ${{secrets.NODE_ENV}}
