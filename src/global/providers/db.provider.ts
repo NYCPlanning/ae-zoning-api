@@ -18,8 +18,8 @@ export const DbProvider: FactoryProvider = {
       user: dbConfig.user,
       password: dbConfig.password,
       database: dbConfig.name,
-      ssl: dbConfig.cert !== undefined && {
-        ca: dbConfig.cert,
+      ssl: {
+        rejectUnauthorized: false,
       },
     });
 
