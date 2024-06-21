@@ -35,11 +35,12 @@ export class BoroughRepository {
   }
 
   async findMany(): Promise<FindManyRepo> {
-    // try {
-    return await this.db.query.borough.findMany();
-    // } catch {
-    //   throw new DataRetrievalException();
-    // }
+    try {
+      return await this.db.query.borough.findMany();
+    } catch (e) {
+      console.debug("error in boroughs", e);
+      throw new DataRetrievalException();
+    }
   }
 
   async findCommunityDistrictsByBoroughId(
