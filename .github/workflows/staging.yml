@@ -42,7 +42,7 @@ jobs:
               run: |
                 echo "$DATABASE_CERT" | base64 --decode > ./ca-certificate.crt
             - name: Apply migrations
-              run: npm run pg:migrate 
+              run: npm run drizzle:migrate 
     deploy:
         name: 🚀 Deploy
         environment:
