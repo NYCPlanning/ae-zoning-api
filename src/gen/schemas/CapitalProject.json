@@ -17,7 +17,7 @@
       "example": 850,
       "pattern": "^([0-9]{3})$"
     },
-    "managingAgencyInitials": {
+    "managingAgency": {
       "description": "The managing agency name abbreviation or acronym",
       "type": "string",
       "example": "DOT"
@@ -35,10 +35,10 @@
       "example": "2024-05-15"
     },
     "category": {
+      "nullable": true,
       "description": "The type of Capital Project.",
       "type": "string",
       "enum": ["Fixed Asset", "Lump Sum", "ITT, Vehicles and Equipment", null],
-      "nullable": true,
       "x-readme-ref-name": "CapitalProjectCategory"
     }
   },
@@ -46,7 +46,7 @@
     "id",
     "description",
     "managingCode",
-    "managingAgencyInitials",
+    "managingAgency",
     "minDate",
     "maxDate",
     "category"

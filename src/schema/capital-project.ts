@@ -21,14 +21,16 @@ export const capitalProjectCategoryEnum = pgEnum("capital_project_category", [
 export const capitalProject = pgTable(
   "capital_project",
   {
-    managingCode: char("managing_code", { length: 3 }).references(
-      () => managingCode.id,
-    ),
-    id: text("id"),
-    managingAgency: text("managing_agency").references(() => agency.initials),
-    description: text("description"),
-    minDate: date("min_date"),
-    maxDate: date("max_date"),
+    managingCode: char("managing_code", { length: 3 })
+      .references(() => managingCode.id)
+      .notNull(),
+    id: text("id").notNull(),
+    managingAgency: text("managing_agency")
+      .references(() => agency.initials)
+      .notNull(),
+    description: text("description").notNull(),
+    minDate: date("min_date").notNull(),
+    maxDate: date("max_date").notNull(),
     category: capitalProjectCategoryEnum("category"),
     liFtMPnt: multiPointGeom("li_ft_m_pnt", 2263),
     liFtMPoly: multiPolygonGeom("li_ft_m_poly", 2263),
@@ -41,16 +43,24 @@ export const capitalProject = pgTable(
       pk: primaryKey({ columns: [table.managingCode, table.id] }),
       mercatorFillMPolyGix: index().using("GIST", table.mercatorFillMPoly),
       mercatorFillMPntGix: index().using("GIST", table.mercatorFillMPnt),
+      liFtMPntGix: index().using("GIST", table.liFtMPnt),
+      liFtMPolyGix: index().using("GIST", table.liFtMPoly),
     };
   },
 );
 
+export const capitalProjectCategoryEnumSchema = z.enum([
+  "Fixed Asset",
+  "Lump Sum",
+  "ITT, Vehicles and Equipment",
+]);
+
 export const capitalProjectEntitySchema = z.object({
-  managingCode: managingCodeEntitySchema,
+  managingCode: managingCodeEntitySchema.shape.id,
   id: z.string(),
-  managingAgency: agencyEntitySchema,
+  managingAgency: agencyEntitySchema.shape.initials,
   description: z.string(),
-  minDate: z.date(),
-  maxDate: z.date(),
-  category: z.string(),
+  minDate: z.string().date(),
+  maxDate: z.string().date(),
+  category: capitalProjectCategoryEnumSchema.nullable(),
 });
