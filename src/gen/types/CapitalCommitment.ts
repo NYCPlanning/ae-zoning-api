@@ -28,7 +28,7 @@ export type CapitalCommitment = {
    * @description A string of variable length containing the initials of the sponsoring agency.
    * @type string
    */
-  sponsoringAgencyInitials: string;
+  sponsoringAgencies: string;
   /**
    * @description A string of variable length denoting the type of budget.
    * @type string

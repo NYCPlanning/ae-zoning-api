@@ -1,7 +1,34 @@
 import { generateMock } from "@anatine/zod-mock";
-import { findTilesRepoSchema } from "src/capital-project/capital-project.repository.schema";
+import {
+  FindByManagingCodeCapitalProjectIdRepo,
+  findByManagingCodeCapitalProjectIdRepoSchema,
+  findTilesRepoSchema,
+} from "src/capital-project/capital-project.repository.schema";
+import { FindCapitalProjectByManagingCodeCapitalProjectIdPathParams } from "src/gen";
 
 export class CapitalProjectRepositoryMock {
+  findByManagingCodeCapitalProjectIdMock = generateMock(
+    findByManagingCodeCapitalProjectIdRepoSchema,
+    {
+      seed: 1,
+      stringMap: {
+        minDate: () => "2018-01-01",
+        maxDate: () => "2045-12-31",
+      },
+    },
+  );
+
+  async findByManagingCodeCapitalProjectId({
+    managingCode,
+    capitalProjectId,
+  }: FindCapitalProjectByManagingCodeCapitalProjectIdPathParams): Promise<FindByManagingCodeCapitalProjectIdRepo> {
+    return this.findByManagingCodeCapitalProjectIdMock.filter(
+      (capitalProject) =>
+        capitalProject.id === capitalProjectId &&
+        capitalProject.managingCode === managingCode,
+    );
+  }
+
   findTilesMock = generateMock(findTilesRepoSchema);
 
   /**

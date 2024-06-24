@@ -8,20 +8,41 @@ import {
 } from "@nestjs/common";
 import { Response } from "express";
 import {
+  FindCapitalProjectByManagingCodeCapitalProjectIdPathParams,
   FindCapitalProjectTilesPathParams,
+  findCapitalProjectByManagingCodeCapitalProjectIdPathParamsSchema,
   findCapitalProjectTilesPathParamsSchema,
 } from "src/gen";
 import { CapitalProjectService } from "./capital-project.service";
 import {
   BadRequestExceptionFilter,
   InternalServerErrorExceptionFilter,
+  NotFoundExceptionFilter,
 } from "src/filter";
 import { ZodTransformPipe } from "src/pipes/zod-transform-pipe";
 
-@UseFilters(BadRequestExceptionFilter, InternalServerErrorExceptionFilter)
+@UseFilters(
+  BadRequestExceptionFilter,
+  InternalServerErrorExceptionFilter,
+  NotFoundExceptionFilter,
+)
 @Controller("capital-projects")
 export class CapitalProjectController {
   constructor(private readonly capitalProjectService: CapitalProjectService) {}
+
+  @UsePipes(
+    new ZodTransformPipe(
+      findCapitalProjectByManagingCodeCapitalProjectIdPathParamsSchema,
+    ),
+  )
+  @Get("/:managingCode/:capitalProjectId")
+  async findByManagingCodeCapitalProjectId(
+    @Param() params: FindCapitalProjectByManagingCodeCapitalProjectIdPathParams,
+  ) {
+    return await this.capitalProjectService.findByManagingCodeCapitalProjectId(
+      params,
+    );
+  }
 
   @UsePipes(new ZodTransformPipe(findCapitalProjectTilesPathParamsSchema))
   @Get("/:z/:x/:y.pbf")

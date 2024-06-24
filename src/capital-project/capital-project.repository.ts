@@ -1,16 +1,78 @@
 import { Inject } from "@nestjs/common";
-import { isNotNull, sql } from "drizzle-orm";
+import { isNotNull, sql, and, eq, sum } from "drizzle-orm";
 import { DataRetrievalException } from "src/exception";
-import { FindCapitalProjectTilesPathParams } from "src/gen";
+import {
+  FindCapitalProjectByManagingCodeCapitalProjectIdPathParams,
+  FindCapitalProjectTilesPathParams,
+} from "src/gen";
 import { DB, DbType } from "src/global/providers/db.provider";
-import { capitalProject } from "src/schema";
-import { FindTilesRepo } from "./capital-project.repository.schema";
+import {
+  agencyBudget,
+  capitalCommitment,
+  capitalCommitmentFund,
+  capitalProject,
+} from "src/schema";
+import {
+  FindByManagingCodeCapitalProjectIdRepo,
+  FindTilesRepo,
+} from "./capital-project.repository.schema";
 
 export class CapitalProjectRepository {
   constructor(
     @Inject(DB)
     private readonly db: DbType,
   ) {}
+
+  async findByManagingCodeCapitalProjectId(
+    params: FindCapitalProjectByManagingCodeCapitalProjectIdPathParams,
+  ): Promise<FindByManagingCodeCapitalProjectIdRepo> {
+    const { managingCode, capitalProjectId } = params;
+    try {
+      return await this.db
+        .select({
+          id: capitalProject.id,
+          managingCode: capitalProject.managingCode,
+          description: capitalProject.description,
+          managingAgency: capitalProject.managingAgency,
+          minDate: capitalProject.minDate,
+          maxDate: capitalProject.maxDate,
+          category: capitalProject.category,
+          sponsoringAgencies: sql<
+            Array<string>
+          >`ARRAY_AGG(DISTINCT ${agencyBudget.sponsor})`,
+          budgetTypes: sql<
+            Array<string>
+          >`ARRAY_AGG(DISTINCT ${agencyBudget.type})`,
+          commitmentsTotal: sum(capitalCommitmentFund.value).mapWith(Number),
+        })
+        .from(capitalProject)
+        .leftJoin(
+          capitalCommitment,
+          and(
+            eq(capitalProject.managingCode, capitalCommitment.managingCode),
+            eq(capitalProject.id, capitalCommitment.capitalProjectId),
+          ),
+        )
+        .leftJoin(
+          agencyBudget,
+          eq(agencyBudget.code, capitalCommitment.budgetLineCode),
+        )
+        .leftJoin(
+          capitalCommitmentFund,
+          eq(capitalCommitmentFund.capitalCommitmentId, capitalCommitment.id),
+        )
+        .where(
+          and(
+            eq(capitalProject.managingCode, managingCode),
+            eq(capitalProject.id, capitalProjectId),
+          ),
+        )
+        .groupBy(capitalProject.managingCode, capitalProject.id)
+        .limit(1);
+    } catch {
+      throw new DataRetrievalException();
+    }
+  }
 
   async findTiles(
     params: FindCapitalProjectTilesPathParams,

@@ -68,20 +68,20 @@
           "type": "number",
           "example": 200000
         },
-        "sponsoringAgencyInitials": {
+        "sponsoringAgencies": {
           "description": "An array containing string values representing the sponsoring agencies initials.",
           "type": "array",
           "items": { "type": "string" },
           "example": ["DOT"]
         },
-        "budgetType": {
+        "budgetTypes": {
           "description": "An array containing string values representing the budget types.",
           "type": "array",
           "items": { "type": "string" },
           "example": ["Highways", "Highway Bridges"]
         }
       },
-      "required": ["commitmentsTotal", "sponsoringAgencyInitials", "budgetType"]
+      "required": ["commitmentsTotal", "sponsoringAgencies", "budgetTypes"]
     }
   ],
   "x-readme-ref-name": "CapitalProjectBudgeted"
