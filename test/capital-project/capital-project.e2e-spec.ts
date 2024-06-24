@@ -9,6 +9,7 @@ import {
   DataRetrievalException,
   InvalidRequestParameterException,
 } from "src/exception";
+import { findCapitalProjectByManagingCodeCapitalProjectIdQueryResponseSchema } from "src/gen";
 
 describe("Capital Projects", () => {
   let app: INestApplication;
@@ -28,6 +29,74 @@ describe("Capital Projects", () => {
 
   afterAll(async () => {
     await app.close();
+  });
+
+  describe("findByManagingCodeCapitalProjectId", () => {
+    it("should 200 and return a capital project with budget details", async () => {
+      const capitalProjectMock =
+        capitalProjectRepository.findByManagingCodeCapitalProjectIdMock[0];
+      const { managingCode, id: capitalProjectId } = capitalProjectMock;
+      const response = await request(app.getHttpServer())
+        .get(`/capital-projects/${managingCode}/${capitalProjectId}`)
+        .expect(200);
+
+      expect(() =>
+        findCapitalProjectByManagingCodeCapitalProjectIdQueryResponseSchema.parse(
+          response.body,
+        ),
+      ).not.toThrow();
+    });
+
+    it("should 400 when finding by a too long managing code", async () => {
+      const tooLongManagingCode = "1234";
+      const capitalProjectId = "ABCD";
+
+      const response = await request(app.getHttpServer())
+        .get(`/capital-projects/${tooLongManagingCode}/${capitalProjectId}`)
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 when finding by a lettered managing code", async () => {
+      const letteredManagingCode = "ABC";
+      const capitalProjectId = "ABCD";
+
+      const response = await request(app.getHttpServer())
+        .get(`/capital-projects/${letteredManagingCode}/${capitalProjectId}`)
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 404 when finding by missing managing code and capital project id", async () => {
+      const managingCode = "123";
+      const capitalProjectId = "ABCD";
+
+      const response = await request(app.getHttpServer())
+        .get(`/capital-projects/${managingCode}/${capitalProjectId}`)
+        .expect(404);
+
+      expect(response.body.message).toBe(HttpName.NOT_FOUND);
+    });
+
+    it("should 500 when the database errors", async () => {
+      const dataRetrievalException = new DataRetrievalException();
+      jest
+        .spyOn(capitalProjectRepository, "findByManagingCodeCapitalProjectId")
+        .mockImplementationOnce(() => {
+          throw dataRetrievalException;
+        });
+
+      const capitalProjectMock =
+        capitalProjectRepository.findByManagingCodeCapitalProjectIdMock[0];
+      const { managingCode, id: capitalProjectId } = capitalProjectMock;
+      const response = await request(app.getHttpServer())
+        .get(`/capital-projects/${managingCode}/${capitalProjectId}`)
+        .expect(500);
+      expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);
+      expect(response.body.message).toBe(dataRetrievalException.message);
+    });
   });
 
   describe("findFills", () => {

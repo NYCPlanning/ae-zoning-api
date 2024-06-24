@@ -3,7 +3,7 @@ import { z } from "zod";
 import { capitalCommitment } from "./capital-commitment";
 import { capitalFundCategoryEnum } from "./capital-project-fund";
 
-export const captialCommitmentFund = pgTable("capital_commitment_fund", {
+export const capitalCommitmentFund = pgTable("capital_commitment_fund", {
   id: uuid("id").primaryKey(),
   capitalCommitmentId: uuid("capital_commitment_id").references(
     () => capitalCommitment.id,

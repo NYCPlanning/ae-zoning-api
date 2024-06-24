@@ -144,7 +144,7 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /capital-projects/{managingCode}/{capitalProjectId}:
     get:
-      summary: 🚧 Find details about a specific capital project
+      summary: Find details about a specific capital project
       operationId: findCapitalProjectByManagingCodeCapitalProjectId
       tags:
       - Capital Projects
@@ -761,7 +761,7 @@ components:
           type: string
           description: A string used to refer to the budget line.
           example: '0002Q'
-        sponsoringAgencyInitials:
+        sponsoringAgencies:
           type: string
           description: A string of variable length containing the initials of the sponsoring agency.
           example: DOT
@@ -779,7 +779,7 @@ components:
         - plannedDate
         - budgetLineCode
         - budgetLineId
-        - sponsoringAgencyInitials
+        - sponsoringAgencies
         - budgetType
         - totalValue
     CapitalProjectCategory:
@@ -852,13 +852,13 @@ components:
               type: number
               description: The sum total of commitments for the capital project
               example: 200000
-            sponsoringAgencyInitials:
+            sponsoringAgencies:
               type: array
               items:
                 type: string
               description: An array containing string values representing the sponsoring agencies initials.
               example: ["DOT"]
-            budgetType:
+            budgetTypes:
               type: array
               items:
                   type: string
@@ -866,8 +866,8 @@ components:
               example: ["Highways", "Highway Bridges"]
           required:
             - commitmentsTotal
-            - sponsoringAgencyInitials
-            - budgetType
+            - sponsoringAgencies
+            - budgetTypes
     CityCouncilDistrict:
       type: object
       properties:

@@ -13,7 +13,7 @@ import { budgetLine } from "./budget-line";
 import { capitalCommitmentType } from "./capital-commitment-type";
 
 export const capitalCommitment = pgTable(
-  "captial_commitment",
+  "capital_commitment",
   {
     id: uuid("id").primaryKey(),
     type: char("type", { length: 4 }).references(

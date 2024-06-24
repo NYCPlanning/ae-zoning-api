@@ -10,10 +10,10 @@ export type CapitalProjectBudgeted = CapitalProject & {
    * @description An array containing string values representing the sponsoring agencies initials.
    * @type array
    */
-  sponsoringAgencyInitials: string[];
+  sponsoringAgencies: string[];
   /**
    * @description An array containing string values representing the budget types.
    * @type array
    */
-  budgetType: string[];
+  budgetTypes: string[];
 };

@@ -2,7 +2,11 @@ import { CapitalProjectRepositoryMock } from "test/capital-project/capital-proje
 import { CapitalProjectService } from "./capital-project.service";
 import { Test } from "@nestjs/testing";
 import { CapitalProjectRepository } from "./capital-project.repository";
-import { findCapitalProjectTilesQueryResponseSchema } from "src/gen";
+import {
+  findCapitalProjectByManagingCodeCapitalProjectIdQueryResponseSchema,
+  findCapitalProjectTilesQueryResponseSchema,
+} from "src/gen";
+import { ResourceNotFoundException } from "src/exception";
 
 describe("CapitalProjectService", () => {
   let capitalProjectService: CapitalProjectService;
@@ -20,6 +24,37 @@ describe("CapitalProjectService", () => {
     capitalProjectService = moduleRef.get<CapitalProjectService>(
       CapitalProjectService,
     );
+  });
+
+  describe("findByManagingCodeCapitalProjectId", () => {
+    it("should return a capital project with budget details", async () => {
+      const capitalProjectMock =
+        capitalProjectRepository.findByManagingCodeCapitalProjectIdMock[0];
+      const { managingCode, id: capitalProjectId } = capitalProjectMock;
+      const capitalProject =
+        await capitalProjectService.findByManagingCodeCapitalProjectId({
+          managingCode,
+          capitalProjectId,
+        });
+
+      expect(() =>
+        findCapitalProjectByManagingCodeCapitalProjectIdQueryResponseSchema.parse(
+          capitalProject,
+        ),
+      ).not.toThrow();
+    });
+
+    it("should throw a resource error when requesting a missing project", async () => {
+      const missingManagingCode = "890";
+      const missingCapitalProjectId = "ABCD";
+
+      expect(
+        capitalProjectService.findByManagingCodeCapitalProjectId({
+          managingCode: missingManagingCode,
+          capitalProjectId: missingCapitalProjectId,
+        }),
+      ).rejects.toThrow(ResourceNotFoundException);
+    });
   });
 
   describe("findTiles", () => {
