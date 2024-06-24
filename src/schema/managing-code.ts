@@ -6,7 +6,7 @@ export const managingCode = pgTable("managing_code", {
 });
 
 export const managingCodeEntitySchema = z.object({
-  id: z.string().regex(RegExp("^[A-Z][0-9]{3}")),
+  id: z.string().regex(RegExp("^[0-9]{3}$")),
 });
 
 export type ManagingCodeEntity = z.infer<typeof managingCodeEntitySchema>;
