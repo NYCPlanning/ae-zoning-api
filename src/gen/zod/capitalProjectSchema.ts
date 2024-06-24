@@ -12,7 +12,7 @@ export const capitalProjectSchema = z.object({
     .string()
     .regex(new RegExp("^([0-9]{3})$"))
     .describe("Three character string of numbers representing managing agency"),
-  managingAgencyInitials: z.coerce
+  managingAgency: z.coerce
     .string()
     .describe("The managing agency name abbreviation or acronym"),
   minDate: z
@@ -20,5 +20,5 @@ export const capitalProjectSchema = z.object({
     .date()
     .describe("The starting date of the capital project"),
   maxDate: z.string().date().describe("The ending date of the capital project"),
-  category: z.lazy(() => capitalProjectCategorySchema),
+  category: z.lazy(() => capitalProjectCategorySchema).nullable(),
 });

@@ -807,7 +807,7 @@ components:
           description: Three character string of numbers representing managing agency
           pattern: '^([0-9]{3})$'
           example: 850
-        managingAgencyInitials:
+        managingAgency:
           type: string
           description: The managing agency name abbreviation or acronym
           example: 'DOT'
@@ -823,11 +823,12 @@ components:
           example: '2024-05-15'
         category:
           $ref: '#/components/schemas/CapitalProjectCategory'
+          nullable: true
       required:
         - id
         - description
         - managingCode
-        - managingAgencyInitials
+        - managingAgency
         - minDate
         - maxDate
         - category

@@ -20,7 +20,7 @@ export type CapitalProject = {
    * @description The managing agency name abbreviation or acronym
    * @type string
    */
-  managingAgencyInitials: string;
+  managingAgency: string;
   /**
    * @description The starting date of the capital project
    * @type string, date
@@ -31,5 +31,5 @@ export type CapitalProject = {
    * @type string, date
    */
   maxDate: string;
-  category: CapitalProjectCategory;
+  category: CapitalProjectCategory | null;
 };

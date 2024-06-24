@@ -71,6 +71,13 @@
       "when": 1718887974415,
       "tag": "0009_sweet_whistler",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1719257023128,
+      "tag": "0010_military_mathemanic",
+      "breakpoints": true
     }
   ]
 }
