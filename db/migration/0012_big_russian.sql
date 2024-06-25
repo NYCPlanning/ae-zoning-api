@@ -1,0 +1,1 @@
+CREATE INDEX IF NOT EXISTS "city_council_district_li_ft_index" ON "city_council_district" USING GIST ("li_ft");

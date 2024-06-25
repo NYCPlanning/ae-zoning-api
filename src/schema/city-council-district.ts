@@ -14,6 +14,7 @@ export const cityCouncilDistrict = pgTable(
     return {
       mercatorFillGix: index().using("GIST", table.mercatorFill),
       mercatorLabelGix: index().using("GIST", table.mercatorLabel),
+      liFtGix: index().using("GIST", table.liFt),
     };
   },
 );

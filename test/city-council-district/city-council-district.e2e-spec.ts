@@ -9,7 +9,10 @@ import { HttpName } from "src/filter";
 import { CityCouncilDistrictRepository } from "src/city-council-district/city-council-district.repository";
 import { CityCouncilDistrictRepositoryMock } from "./city-council-district.repository.mock";
 import { CityCouncilDistrictModule } from "src/city-council-district/city-council-district.module";
-import { findCityCouncilDistrictsQueryResponseSchema } from "src/gen";
+import {
+  findCapitalProjectsByCityCouncilIdQueryResponseSchema,
+  findCityCouncilDistrictsQueryResponseSchema,
+} from "src/gen";
 
 describe("City Council District e2e", () => {
   let app: INestApplication;
@@ -102,6 +105,110 @@ describe("City Council District e2e", () => {
         .expect(500);
       expect(response.body.message).toBe(dataRetrievalException.message);
       expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);
+    });
+  });
+
+  describe("findCapitalProjectsByCityCouncilDistrictId", () => {
+    const mock =
+      cityCouncilDistrictRepositoryMock.checkCityCouncilDistrictByIdMocks[0];
+
+    it("should 200 amd return all capital projects for a city council district", async () => {
+      const response = await request(app.getHttpServer())
+        .get(`/city-council-districts/${mock.id}/capital-projects`)
+        .expect(200);
+      expect(() =>
+        findCapitalProjectsByCityCouncilIdQueryResponseSchema.parse(
+          response.body,
+        ),
+      ).not.toThrow();
+      const parsedBody =
+        findCapitalProjectsByCityCouncilIdQueryResponseSchema.parse(
+          response.body,
+        );
+      expect(parsedBody.limit).toBe(20);
+      expect(parsedBody.offset).toBe(0);
+    });
+
+    it("should 200 amd return all capital projects for a city council district with user specified offset and limit", async () => {
+      const limit = 10;
+      const offset = 3;
+      const response = await request(app.getHttpServer())
+        .get(
+          `/city-council-districts/${mock.id}/capital-projects?limit=${limit}&offset=${offset}`,
+        )
+        .expect(200);
+      expect(() =>
+        findCapitalProjectsByCityCouncilIdQueryResponseSchema.parse(
+          response.body,
+        ),
+      ).not.toThrow();
+      const parsedBody =
+        findCapitalProjectsByCityCouncilIdQueryResponseSchema.parse(
+          response.body,
+        );
+      expect(parsedBody.limit).toBe(limit);
+      expect(parsedBody.offset).toBe(offset);
+    });
+
+    it("should 400 and when finding by an invalid id", async () => {
+      const invalidId = "MN";
+      const response = await request(app.getHttpServer())
+        .get(`/city-council-districts/${invalidId}/capital-projects`)
+        .expect(400);
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 and when finding by an invalid limit", async () => {
+      const response = await request(app.getHttpServer())
+        .get(`/city-council-districts/${mock.id}/capital-projects?limit=b4d`)
+        .expect(400);
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 and when finding by an 'too-high' limit", async () => {
+      const response = await request(app.getHttpServer())
+        .get(`/city-council-districts/${mock.id}/capital-projects?limit=101`)
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+    it("should 400 and when finding by an 'too-low' limit", async () => {
+      const response = await request(app.getHttpServer())
+        .get(`/city-council-districts/${mock.id}/capital-projects?limit=0`)
+        .expect(400);
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 and when finding by an invalid offset", async () => {
+      const response = await request(app.getHttpServer())
+        .get(`/city-council-districts/${mock.id}/capital-projects?offset=b4d`)
+        .expect(400);
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 404 and when finding by an missing id", async () => {
+      const missingId = "10";
+      const response = await request(app.getHttpServer())
+        .get(`/city-council-districts/${missingId}/capital-projects`)
+        .expect(404);
+      expect(response.body.message).toBe(HttpName.NOT_FOUND);
+    });
+
+    it("should 500 when the database errors", async () => {
+      const dataRetrievalException = new DataRetrievalException();
+      jest
+        .spyOn(cityCouncilDistrictRepositoryMock, "findCapitalProjectsById")
+        .mockImplementationOnce(() => {
+          throw dataRetrievalException;
+        });
+
+      const mock =
+        cityCouncilDistrictRepositoryMock.checkCityCouncilDistrictByIdMocks[0];
+      const response = await request(app.getHttpServer())
+        .get(`/city-council-districts/${mock.id}/capital-projects`)
+        .expect(500);
+      expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);
+      expect(response.body.message).toBe(dataRetrievalException.message);
     });
   });
 });

@@ -3,6 +3,7 @@ import {
   Get,
   Param,
   Res,
+  Query,
   UseFilters,
   UsePipes,
 } from "@nestjs/common";
@@ -10,6 +11,7 @@ import { CityCouncilDistrictService } from "./city-council-district.service";
 import {
   BadRequestExceptionFilter,
   InternalServerErrorExceptionFilter,
+  NotFoundExceptionFilter,
 } from "src/filter";
 import {
   FindCityCouncilDistrictTilesPathParams,
@@ -17,8 +19,18 @@ import {
 } from "src/gen";
 import { Response } from "express";
 import { ZodTransformPipe } from "src/pipes/zod-transform-pipe";
+import {
+  FindCapitalProjectsByCityCouncilIdPathParams,
+  FindCapitalProjectsByCityCouncilIdQueryParams,
+  findCapitalProjectsByCityCouncilIdPathParamsSchema,
+  findCapitalProjectsByCityCouncilIdQueryParamsSchema,
+} from "src/gen";
 
-@UseFilters(BadRequestExceptionFilter, InternalServerErrorExceptionFilter)
+@UseFilters(
+  InternalServerErrorExceptionFilter,
+  BadRequestExceptionFilter,
+  NotFoundExceptionFilter,
+)
 @Controller("city-council-districts")
 export class CityCouncilDistrictController {
   constructor(
@@ -39,5 +51,22 @@ export class CityCouncilDistrictController {
     const tile = await this.cityCouncilDistrictService.findTiles(params);
     res.set("Content-Type", "application/x-protobuf");
     res.send(tile);
+  }
+  @Get("/:cityCouncilDistrictId/capital-projects")
+  @UsePipes(
+    new ZodTransformPipe(
+      findCapitalProjectsByCityCouncilIdPathParamsSchema
+        .merge(findCapitalProjectsByCityCouncilIdQueryParamsSchema.unwrap())
+        .partial(),
+    ),
+  )
+  async findCapitalProjectsById(
+    @Param() pathParams: FindCapitalProjectsByCityCouncilIdPathParams,
+    @Query() queryParams: FindCapitalProjectsByCityCouncilIdQueryParams,
+  ) {
+    return await this.cityCouncilDistrictService.findCapitalProjectsById({
+      ...pathParams,
+      ...queryParams,
+    });
   }
 }
