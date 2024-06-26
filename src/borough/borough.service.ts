@@ -1,5 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { BoroughRepository } from "./borough.repository";
+import { CommunityDistrictRepository } from "src/community-district/community-district.repository";
 import { ResourceNotFoundException } from "src/exception";
 import {
   FindCapitalProjectsByBoroughIdCommunityDistrictIdPathParams,
@@ -11,6 +12,8 @@ export class BoroughService {
   constructor(
     @Inject(BoroughRepository)
     private readonly boroughRepository: BoroughRepository,
+    @Inject(CommunityDistrictRepository)
+    private readonly communityDistrictRepository: CommunityDistrictRepository,
   ) {}
 
   async findMany() {
@@ -44,7 +47,7 @@ export class BoroughService {
     if (boroughCheck === undefined) throw new ResourceNotFoundException();
 
     const communityDistrictCheck =
-      await this.boroughRepository.checkCommunityDistrictById(
+      await this.communityDistrictRepository.checkCommunityDistrictById(
         communityDistrictId,
       );
     if (communityDistrictCheck === undefined)

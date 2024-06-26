@@ -2,7 +2,9 @@ import * as request from "supertest";
 import { INestApplication } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import { BoroughRepository } from "src/borough/borough.repository";
+import { CommunityDistrictRepository } from "src/community-district/community-district.repository";
 import { BoroughRepositoryMock } from "./borough.repository.mock";
+import { CommunityDistrictRepositoryMock } from "../community-district/community-district.repository.mock";
 import { BoroughModule } from "src/borough/borough.module";
 import {
   findBoroughsQueryResponseSchema,
@@ -16,6 +18,7 @@ describe("Borough e2e", () => {
   let app: INestApplication;
 
   const boroughRepositoryMock = new BoroughRepositoryMock();
+  const communityDistrictRepositoryMock = new CommunityDistrictRepositoryMock();
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -23,6 +26,8 @@ describe("Borough e2e", () => {
     })
       .overrideProvider(BoroughRepository)
       .useValue(boroughRepositoryMock)
+      .overrideProvider(CommunityDistrictRepository)
+      .useValue(communityDistrictRepositoryMock)
       .compile();
     app = moduleRef.createNestApplication();
     await app.init();
@@ -105,7 +110,7 @@ describe("Borough e2e", () => {
   describe("findCapitalProjectsByBoroughIdCommunityDistrictId", () => {
     const borough = boroughRepositoryMock.checkBoroughByIdMocks[0];
     const communityDistrict =
-      boroughRepositoryMock.checkCommunityDistrictByIdMocks[0];
+      communityDistrictRepositoryMock.checkCommunityDistrictByIdMocks[0];
     it("should 200 and return capital projects for a given borough id community district id", async () => {
       const response = await request(app.getHttpServer())
         .get(

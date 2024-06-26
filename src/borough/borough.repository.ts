@@ -35,28 +35,6 @@ export class BoroughRepository {
     }
   }
 
-  #checkCommunityDistrictById = this.db.query.communityDistrict
-    .findFirst({
-      columns: {
-        id: true,
-      },
-      where: (communityDistrict, { eq, sql }) =>
-        eq(communityDistrict.id, sql.placeholder("id")),
-    })
-    .prepare("checkCommunityDistrictId");
-
-  async checkCommunityDistrictById(
-    id: string,
-  ): Promise<CheckByIdRepo | undefined> {
-    try {
-      return await this.#checkCommunityDistrictById.execute({
-        id,
-      });
-    } catch {
-      throw new DataRetrievalException();
-    }
-  }
-
   async findMany(): Promise<FindManyRepo> {
     try {
       return await this.db.query.borough.findMany();

@@ -12,15 +12,6 @@ export const checkByIdRepoSchema = boroughEntitySchema.pick({
 
 export type CheckByIdRepo = z.infer<typeof checkByIdRepoSchema>;
 
-export const checkByCommunityDistrictIdRepoSchema =
-  communityDistrictEntitySchema.pick({
-    id: true,
-  });
-
-export type CheckByCommunityDistrictIdRepo = z.infer<
-  typeof checkByCommunityDistrictIdRepoSchema
->;
-
 export const findCommunityDistrictsByBoroughIdRepoSchema = z.array(
   communityDistrictEntitySchema,
 );
