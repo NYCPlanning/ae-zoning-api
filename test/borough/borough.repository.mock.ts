@@ -3,12 +3,15 @@ import {
   checkByIdRepoSchema,
   findCommunityDistrictsByBoroughIdRepoSchema,
   findCapitalProjectsByBoroughIdCommunityDistrictIdRepoSchema,
-  checkByCommunityDistrictIdRepoSchema,
 } from "src/borough/borough.repository.schema";
+// import { checkByCommunityDistrictIdRepoSchema, checkCommunityDistrictByIdMocks } from "src/community-district/community-district.repository.schema";
 import { generateMock } from "@anatine/zod-mock";
+import { CommunityDistrictRepositoryMock } from "test/community-district/community-district.repository.mock";
 
 export class BoroughRepositoryMock {
   numberOfMocks = 1;
+
+  communityDistrictRepoMock = new CommunityDistrictRepositoryMock();
 
   checkBoroughByIdMocks = Array.from(Array(this.numberOfMocks), (_, seed) =>
     generateMock(checkByIdRepoSchema, { seed: seed + 1 }),
@@ -16,16 +19,6 @@ export class BoroughRepositoryMock {
 
   async checkBoroughById(id: string) {
     return this.checkBoroughByIdMocks.find((row) => row.id === id);
-  }
-
-  checkCommunityDistrictByIdMocks = Array.from(
-    Array(this.numberOfMocks),
-    (_, seed) =>
-      generateMock(checkByCommunityDistrictIdRepoSchema, { seed: seed + 1 }),
-  );
-
-  async checkCommunityDistrictById(id: string) {
-    return this.checkCommunityDistrictByIdMocks.find((row) => row.id === id);
   }
 
   findManyMocks = generateMock(findManyRepoSchema);
@@ -53,13 +46,15 @@ export class BoroughRepositoryMock {
   }
 
   findCapitalProjectsByBoroughIdCommunityDistrictIdMocks =
-    this.checkCommunityDistrictByIdMocks.map((checkCommunityDistrict) => {
-      return {
-        [checkCommunityDistrict.id]: generateMock(
-          findCapitalProjectsByBoroughIdCommunityDistrictIdRepoSchema,
-        ),
-      };
-    });
+    this.communityDistrictRepoMock.checkCommunityDistrictByIdMocks.map(
+      (checkCommunityDistrict) => {
+        return {
+          [checkCommunityDistrict.id]: generateMock(
+            findCapitalProjectsByBoroughIdCommunityDistrictIdRepoSchema,
+          ),
+        };
+      },
+    );
   async findCapitalProjectsByBoroughIdCommunityDistrictId(
     communityDistrictId: string,
   ) {
