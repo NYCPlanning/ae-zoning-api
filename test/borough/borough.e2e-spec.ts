@@ -17,8 +17,10 @@ import { HttpName } from "src/filter";
 describe("Borough e2e", () => {
   let app: INestApplication;
 
-  const boroughRepositoryMock = new BoroughRepositoryMock();
   const communityDistrictRepositoryMock = new CommunityDistrictRepositoryMock();
+  const boroughRepositoryMock = new BoroughRepositoryMock(
+    communityDistrictRepositoryMock.checkCommunityDistrictByIdMocks,
+  );
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({

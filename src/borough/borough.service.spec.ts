@@ -14,8 +14,10 @@ import { CommunityDistrictRepositoryMock } from "test/community-district/communi
 describe("Borough service unit", () => {
   let boroughService: BoroughService;
 
-  const boroughRepositoryMock = new BoroughRepositoryMock();
   const communityDistrictRepositoryMock = new CommunityDistrictRepositoryMock();
+  const boroughRepositoryMock = new BoroughRepositoryMock(
+    communityDistrictRepositoryMock.checkCommunityDistrictByIdMocks,
+  );
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
