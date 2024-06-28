@@ -8,8 +8,10 @@ import {
 } from "@nestjs/common";
 import { Response } from "express";
 import {
+  FindCapitalCommitmentsByManagingCodeCapitalProjectIdPathParams,
   FindCapitalProjectByManagingCodeCapitalProjectIdPathParams,
   FindCapitalProjectTilesPathParams,
+  findCapitalCommitmentsByManagingCodeCapitalProjectIdPathParamsSchema,
   findCapitalProjectByManagingCodeCapitalProjectIdPathParamsSchema,
   findCapitalProjectTilesPathParamsSchema,
 } from "src/gen";
@@ -20,7 +22,6 @@ import {
   NotFoundExceptionFilter,
 } from "src/filter";
 import { ZodTransformPipe } from "src/pipes/zod-transform-pipe";
-
 @UseFilters(
   BadRequestExceptionFilter,
   InternalServerErrorExceptionFilter,
@@ -53,5 +54,20 @@ export class CapitalProjectController {
     const tile = await this.capitalProjectService.findTiles(params);
     res.set("Content-Type", "application/x-protobuf");
     res.send(tile);
+  }
+
+  @UsePipes(
+    new ZodTransformPipe(
+      findCapitalCommitmentsByManagingCodeCapitalProjectIdPathParamsSchema,
+    ),
+  )
+  @Get("/:managingCode/:capitalProjectId/capital-commitments")
+  async findCapitalCommitmentsByManagingCodeCapitalProjectId(
+    @Param()
+    params: FindCapitalCommitmentsByManagingCodeCapitalProjectIdPathParams,
+  ) {
+    return await this.capitalProjectService.findCapitalCommitmentsByManagingCodeCapitalProjectId(
+      params,
+    );
   }
 }

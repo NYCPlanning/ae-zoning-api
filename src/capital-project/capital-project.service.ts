@@ -1,4 +1,5 @@
 import {
+  FindCapitalCommitmentsByManagingCodeCapitalProjectIdPathParams,
   FindCapitalProjectByManagingCodeCapitalProjectIdPathParams,
   FindCapitalProjectTilesPathParams,
 } from "src/gen";
@@ -26,5 +27,16 @@ export class CapitalProjectService {
 
   async findTiles(params: FindCapitalProjectTilesPathParams) {
     return await this.capitalProjectRepository.findTiles(params);
+  }
+
+  async findCapitalCommitmentsByManagingCodeCapitalProjectId(
+    params: FindCapitalCommitmentsByManagingCodeCapitalProjectIdPathParams,
+  ) {
+    const capitalProjects =
+      await this.capitalProjectRepository.findCapitalCommitmentsByManagingCodeCapitalProjectId(
+        params,
+      );
+
+    if (capitalProjects.length < 1) throw new ResourceNotFoundException();
   }
 }

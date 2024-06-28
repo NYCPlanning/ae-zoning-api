@@ -21,14 +21,16 @@ export const capitalCommitmentSchema = z.object({
   budgetLineId: z.coerce
     .string()
     .describe("A string used to refer to the budget line."),
-  sponsoringAgencies: z.coerce
+  sponsoringAgency: z.coerce
     .string()
     .describe(
       "A string of variable length containing the initials of the sponsoring agency.",
-    ),
+    )
+    .nullable(),
   budgetType: z.coerce
     .string()
-    .describe("A string of variable length denoting the type of budget."),
+    .describe("A string of variable length denoting the type of budget.")
+    .nullable(),
   totalValue: z.coerce
     .number()
     .describe(

@@ -68,7 +68,7 @@
           "type": "number",
           "example": 200000
         },
-        "sponsoringAgencies": {
+        "sponsoringAgency": {
           "description": "An array containing string values representing the sponsoring agencies initials.",
           "type": "array",
           "items": { "type": "string" },
@@ -81,7 +81,7 @@
           "example": ["Highways", "Highway Bridges"]
         }
       },
-      "required": ["commitmentsTotal", "sponsoringAgencies", "budgetTypes"]
+      "required": ["commitmentsTotal", "sponsoringAgency", "budgetTypes"]
     }
   ],
   "x-readme-ref-name": "CapitalProjectBudgeted"

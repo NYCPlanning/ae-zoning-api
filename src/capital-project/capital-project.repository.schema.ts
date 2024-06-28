@@ -1,3 +1,4 @@
+import { capitalCommitmentSchema } from "src/gen";
 import {
   agencyBudgetEntitySchema,
   agencyEntitySchema,
@@ -9,7 +10,7 @@ import { z } from "zod";
 
 export const findByManagingCodeCapitalProjectIdRepoSchema = z.array(
   capitalProjectEntitySchema.extend({
-    sponsoringAgencies: z.array(agencyEntitySchema.shape.initials),
+    sponsoringAgency: z.array(agencyEntitySchema.shape.initials),
     budgetTypes: z.array(agencyBudgetEntitySchema.shape.type),
     commitmentsTotal: capitalCommitmentFundEntitySchema.shape.value,
   }),
@@ -22,3 +23,10 @@ export type FindByManagingCodeCapitalProjectIdRepo = z.infer<
 export const findTilesRepoSchema = mvtEntitySchema;
 
 export type FindTilesRepo = z.infer<typeof findTilesRepoSchema>;
+
+export const findCapitalCommitmentsByManagingCodeCapitalProjectIdRepoSchema =
+  z.array(capitalCommitmentSchema);
+
+export type FindCapitalCommitmentsByManagingCodeCapitalProjectIdRepo = z.infer<
+  typeof findCapitalCommitmentsByManagingCodeCapitalProjectIdRepoSchema
+>;

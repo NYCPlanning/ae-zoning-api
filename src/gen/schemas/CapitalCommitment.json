@@ -28,15 +28,17 @@
       "type": "string",
       "example": "0002Q"
     },
-    "sponsoringAgencies": {
+    "sponsoringAgency": {
       "description": "A string of variable length containing the initials of the sponsoring agency.",
       "type": "string",
-      "example": "DOT"
+      "example": "DOT",
+      "nullable": true
     },
     "budgetType": {
       "description": "A string of variable length denoting the type of budget.",
       "type": "string",
-      "example": "Highways"
+      "example": "Highways",
+      "nullable": true
     },
     "totalValue": {
       "description": "A numeric string used to refer to the amount of total planned commitments.",
@@ -50,7 +52,7 @@
     "plannedDate",
     "budgetLineCode",
     "budgetLineId",
-    "sponsoringAgencies",
+    "sponsoringAgency",
     "budgetType",
     "totalValue"
   ],
