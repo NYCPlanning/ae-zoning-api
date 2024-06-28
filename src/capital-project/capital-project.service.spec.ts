@@ -3,6 +3,7 @@ import { CapitalProjectService } from "./capital-project.service";
 import { Test } from "@nestjs/testing";
 import { CapitalProjectRepository } from "./capital-project.repository";
 import {
+  findCapitalCommitmentsByManagingCodeCapitalProjectIdQueryResponseSchema,
   findCapitalProjectByManagingCodeCapitalProjectIdQueryResponseSchema,
   findCapitalProjectTilesQueryResponseSchema,
 } from "src/gen";
@@ -67,6 +68,37 @@ describe("CapitalProjectService", () => {
       expect(() =>
         findCapitalProjectTilesQueryResponseSchema.parse(mvt),
       ).not.toThrow();
+    });
+  });
+
+  describe("findCapitalCommitmentsByManagingCodeCapitalProjectId", () => {
+    it("should return capital commitments for a capital project", async () => {
+      const { id: capitalProjectId, managingCode } =
+        capitalProjectRepository.checkByManagingCodeCapitalProjectIdMocks[0];
+      const result =
+        await capitalProjectService.findCapitalCommitmentsByManagingCodeCapitalProjectId(
+          { capitalProjectId, managingCode },
+        );
+
+      expect(() =>
+        findCapitalCommitmentsByManagingCodeCapitalProjectIdQueryResponseSchema.parse(
+          result,
+        ),
+      ).not.toThrow();
+    });
+
+    it.only("should throw a resource error when requesting a missing project", async () => {
+      const missingManagingCode = "725";
+      const missingCapitalProjectId = "JIRO";
+
+      expect(
+        capitalProjectService.findCapitalCommitmentsByManagingCodeCapitalProjectId(
+          {
+            managingCode: missingManagingCode,
+            capitalProjectId: missingCapitalProjectId,
+          },
+        ),
+      ).rejects.toThrow(ResourceNotFoundException);
     });
   });
 });

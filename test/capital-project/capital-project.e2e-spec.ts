@@ -9,7 +9,10 @@ import {
   DataRetrievalException,
   InvalidRequestParameterException,
 } from "src/exception";
-import { findCapitalProjectByManagingCodeCapitalProjectIdQueryResponseSchema } from "src/gen";
+import {
+  findCapitalCommitmentsByManagingCodeCapitalProjectIdQueryResponseSchema,
+  findCapitalProjectByManagingCodeCapitalProjectIdQueryResponseSchema,
+} from "src/gen";
 
 describe("Capital Projects", () => {
   let app: INestApplication;
@@ -143,6 +146,89 @@ describe("Capital Projects", () => {
         .expect(500);
       expect(response.body.message).toBe(dataRetrievalException.message);
       expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);
+    });
+  });
+
+  describe("findCapitalCommitmentsByManagingCodeCapitalProjectId", () => {
+    it("should 200 and return an array of capital commitments", async () => {
+      const capitalProjectMock =
+        capitalProjectRepository.checkByManagingCodeCapitalProjectIdMocks[0];
+
+      const { managingCode, id: capitalProjectId } = capitalProjectMock;
+      const response = await request(app.getHttpServer())
+        .get(
+          `/capital-projects/${managingCode}/${capitalProjectId}/capital-commitments`,
+        )
+        .expect(200);
+
+      expect(() =>
+        findCapitalCommitmentsByManagingCodeCapitalProjectIdQueryResponseSchema.parse(
+          response.body,
+        ),
+      ).not.toThrow();
+    });
+
+    it("should 400 when finding by a too long managing code", async () => {
+      const tooLongManagingCode = "0725";
+      const capitalProjectId = "JIRO";
+
+      const response = await request(app.getHttpServer())
+        .get(
+          `/capital-projects/${tooLongManagingCode}/${capitalProjectId}/capital-commitments`,
+        )
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 when finding by a lettered managing code", async () => {
+      const letteredManagingCode = "FUJI";
+      const capitalProjectId = "JIRO";
+
+      const response = await request(app.getHttpServer())
+        .get(
+          `/capital-projects/${letteredManagingCode}/${capitalProjectId}/capital-commitments`,
+        )
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 404 when finding by missing managing code and capital project id", async () => {
+      const missingManagingCode = "567";
+      const missingCapitalProjectId = "JIRO";
+
+      const response = await request(app.getHttpServer())
+        .get(
+          `/capital-projects/${missingManagingCode}/${missingCapitalProjectId}/capital-commitments`,
+        )
+        .expect(404);
+
+      expect(response.body.message).toBe(HttpName.NOT_FOUND);
+    });
+
+    it("should 500 when the database errors", async () => {
+      const dataRetrievalException = new DataRetrievalException();
+      jest
+        .spyOn(
+          capitalProjectRepository,
+          "findCapitalCommitmentsByManagingCodeCapitalProjectId",
+        )
+        .mockImplementationOnce(() => {
+          throw dataRetrievalException;
+        });
+
+      const capitalProjectMock =
+        capitalProjectRepository.checkByManagingCodeCapitalProjectIdMocks[0];
+
+      const { managingCode, id: capitalProjectId } = capitalProjectMock;
+      const response = await request(app.getHttpServer())
+        .get(
+          `/capital-projects/${managingCode}/${capitalProjectId}/capital-commitments`,
+        )
+        .expect(500);
+      expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);
+      expect(response.body.message).toBe(dataRetrievalException.message);
     });
   });
 });

@@ -2,18 +2,22 @@ import { Inject } from "@nestjs/common";
 import { isNotNull, sql, and, eq, sum } from "drizzle-orm";
 import { DataRetrievalException } from "src/exception";
 import {
+  FindCapitalCommitmentsByManagingCodeCapitalProjectIdPathParams,
   FindCapitalProjectByManagingCodeCapitalProjectIdPathParams,
   FindCapitalProjectTilesPathParams,
 } from "src/gen";
 import { DB, DbType } from "src/global/providers/db.provider";
 import {
   agencyBudget,
+  budgetLine,
   capitalCommitment,
   capitalCommitmentFund,
   capitalProject,
 } from "src/schema";
 import {
+  CheckByManagingCodeCapitalProjectIdRepo,
   FindByManagingCodeCapitalProjectIdRepo,
+  FindCapitalCommitmentsByManagingCodeCapitalProjectIdRepo,
   FindTilesRepo,
 } from "./capital-project.repository.schema";
 
@@ -22,6 +26,30 @@ export class CapitalProjectRepository {
     @Inject(DB)
     private readonly db: DbType,
   ) {}
+
+  #checkByManagingCodeCapitalProjectId = this.db.query.capitalProject
+    .findFirst({
+      columns: {
+        managingCode: true,
+        id: true,
+      },
+      where: (capitalProject, { and, eq, sql }) =>
+        and(
+          eq(capitalProject.managingCode, sql.placeholder("managingCode")),
+          eq(capitalProject.id, sql.placeholder("capitalProjectId")),
+        ),
+    })
+    .prepare("checkByManagingCodeCapitalProjectId");
+
+  async checkByManagingCodeCapitalProjectId(
+    managingCode: string,
+    capitalProjectId: string,
+  ): Promise<CheckByManagingCodeCapitalProjectIdRepo | undefined> {
+    return await this.#checkByManagingCodeCapitalProjectId.execute({
+      managingCode,
+      capitalProjectId,
+    });
+  }
 
   async findByManagingCodeCapitalProjectId(
     params: FindCapitalProjectByManagingCodeCapitalProjectIdPathParams,
@@ -117,6 +145,47 @@ export class CapitalProjectRepository {
         .from(tile)
         .where(isNotNull(tile.geom));
       return data[0].mvt;
+    } catch {
+      throw new DataRetrievalException();
+    }
+  }
+
+  async findCapitalCommitmentsByManagingCodeCapitalProjectId(
+    params: FindCapitalCommitmentsByManagingCodeCapitalProjectIdPathParams,
+  ): Promise<FindCapitalCommitmentsByManagingCodeCapitalProjectIdRepo> {
+    const { managingCode, capitalProjectId } = params;
+    try {
+      return await this.db
+        .select({
+          id: capitalCommitment.id,
+          type: capitalCommitment.type,
+          plannedDate: capitalCommitment.plannedDate,
+          budgetLineCode: capitalCommitment.budgetLineCode,
+          budgetLineId: capitalCommitment.budgetLineId,
+          sponsoringAgency: sql<string>`${agencyBudget.sponsor}`,
+          budgetType: sql<string>`${agencyBudget.type}`,
+          totalValue: sql`${capitalCommitmentFund.value}`.mapWith(Number),
+        })
+        .from(capitalCommitment)
+        .leftJoin(
+          budgetLine,
+          and(
+            eq(budgetLine.id, capitalCommitment.budgetLineId),
+            eq(budgetLine.code, capitalCommitment.budgetLineCode),
+          ),
+        )
+        .leftJoin(agencyBudget, eq(agencyBudget.code, budgetLine.code))
+        .leftJoin(
+          capitalCommitmentFund,
+          eq(capitalCommitmentFund.capitalCommitmentId, capitalCommitment.id),
+        )
+        .where(
+          and(
+            eq(capitalCommitmentFund.category, "total"),
+            eq(capitalCommitment.managingCode, managingCode),
+            eq(capitalCommitment.capitalProjectId, capitalProjectId),
+          ),
+        );
     } catch {
       throw new DataRetrievalException();
     }

@@ -4,8 +4,10 @@ import { agency } from "./agency";
 
 export const agencyBudget = pgTable("agency_budget", {
   code: text("code").primaryKey(),
-  type: text("type"),
-  sponsor: text("sponsor").references(() => agency.initials),
+  type: text("type").notNull(),
+  sponsor: text("sponsor")
+    .notNull()
+    .references(() => agency.initials),
 });
 
 export const agencyBudgetEntitySchema = z.object({

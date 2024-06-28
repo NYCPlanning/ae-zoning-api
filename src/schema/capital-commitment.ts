@@ -16,14 +16,14 @@ export const capitalCommitment = pgTable(
   "capital_commitment",
   {
     id: uuid("id").primaryKey(),
-    type: char("type", { length: 4 }).references(
-      () => capitalCommitmentType.code,
-    ),
-    plannedDate: date("planned_date"),
+    type: char("type", { length: 4 })
+      .notNull()
+      .references(() => capitalCommitmentType.code),
+    plannedDate: date("planned_date").notNull(),
     managingCode: char("managing_code", { length: 3 }),
     capitalProjectId: text("capital_project_id"),
-    budgetLineCode: text("budget_line_code"),
-    budgetLineId: text("budget_line_id"),
+    budgetLineCode: text("budget_line_code").notNull(),
+    budgetLineId: text("budget_line_id").notNull(),
   },
   (table) => {
     return {
@@ -42,7 +42,7 @@ export const capitalCommitment = pgTable(
 export const capitalCommitmentEntitySchema = z.object({
   id: z.string().uuid(),
   type: z.string().length(4),
-  plannedDate: z.date(),
+  plannedDate: z.string().date(),
   managingCode: managingCodeEntitySchema,
   capitalProjectId: z.string(),
   budgetLineCode: z.string(),

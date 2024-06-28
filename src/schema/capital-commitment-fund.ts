@@ -9,7 +9,7 @@ export const capitalCommitmentFund = pgTable("capital_commitment_fund", {
     () => capitalCommitment.id,
   ),
   category: capitalFundCategoryEnum("capital_fund_category"),
-  value: numeric("value"),
+  value: numeric("value").notNull(),
 });
 
 export const capitalCommitmentFundEntitySchema = z.object({
