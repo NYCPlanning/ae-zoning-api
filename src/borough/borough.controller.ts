@@ -3,12 +3,17 @@ import {
   Get,
   Injectable,
   Param,
+  Query,
   UseFilters,
   UsePipes,
 } from "@nestjs/common";
 import { BoroughService } from "./borough.service";
 import {
+  FindCapitalProjectsByBoroughIdCommunityDistrictIdPathParams,
+  FindCapitalProjectsByBoroughIdCommunityDistrictIdQueryParams,
   FindCommunityDistrictsByBoroughIdPathParams,
+  findCapitalProjectsByBoroughIdCommunityDistrictIdPathParamsSchema,
+  findCapitalProjectsByBoroughIdCommunityDistrictIdQueryParamsSchema,
   findCommunityDistrictsByBoroughIdPathParamsSchema,
 } from "src/gen";
 import {
@@ -42,6 +47,26 @@ export class BoroughController {
   ) {
     return this.boroughService.findCommunityDistrictsByBoroughId(
       params.boroughId,
+    );
+  }
+
+  @Get("/:boroughId/community-districts/:communityDistrictId/capital-projects")
+  async findCapitalProjectsByBoroughIdCommunityDistrictId(
+    @Param(
+      new ZodTransformPipe(
+        findCapitalProjectsByBoroughIdCommunityDistrictIdPathParamsSchema,
+      ),
+    )
+    pathParams: FindCapitalProjectsByBoroughIdCommunityDistrictIdPathParams,
+    @Query(
+      new ZodTransformPipe(
+        findCapitalProjectsByBoroughIdCommunityDistrictIdQueryParamsSchema,
+      ),
+    )
+    queryParams: FindCapitalProjectsByBoroughIdCommunityDistrictIdQueryParams,
+  ) {
+    return this.boroughService.findCapitalProjectsByBoroughIdCommunityDistrictId(
+      { ...pathParams, ...queryParams },
     );
   }
 }
