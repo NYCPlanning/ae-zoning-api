@@ -115,7 +115,7 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /capital-projects/{managingCode}/{capitalProjectId}/capital-commitments:
     get:
-      summary: 🚧 Find capital commitments associated with a specific capital project
+      summary: Find capital commitments associated with a specific capital project
       operationId: findCapitalCommitmentsByManagingCodeCapitalProjectId
       tags: 
         - Capital Commitments
@@ -761,12 +761,14 @@ components:
           type: string
           description: A string used to refer to the budget line.
           example: '0002Q'
-        sponsoringAgencies:
+        sponsoringAgency:
           type: string
+          nullable: true
           description: A string of variable length containing the initials of the sponsoring agency.
           example: DOT
         budgetType:
           type: string
+          nullable: true
           description: A string of variable length denoting the type of budget.
           example: 'Highways'
         totalValue:
@@ -779,7 +781,7 @@ components:
         - plannedDate
         - budgetLineCode
         - budgetLineId
-        - sponsoringAgencies
+        - sponsoringAgency
         - budgetType
         - totalValue
     CapitalProjectCategory:

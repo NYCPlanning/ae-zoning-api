@@ -98,6 +98,12 @@ The application is running on port `3000`
 This site reflects the documentation at the point where the command was written. Viewing changes to
 the OpenAPI documentation requires restarting the development server).
 
+### Schema changes
+If you make changes to any database schema in `src/schema`, it will be necessary to generate migration files in order for the changes to be reflected in the database. Database schemas are indicated by their use of the drizzle `pgTable` method. (Changes to the Zod "entity" schemas do not require database migrations)
+```sh
+npm run drizzle:generate
+```
+
 ## Production builds
 Running a production version of the site is a two step process.
 First, generate production versions of the OpenAPI documentation and API.
