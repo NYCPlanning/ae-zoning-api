@@ -5,9 +5,10 @@ import {
   CheckByIdRepo,
   FindManyRepo,
   FindCommunityDistrictsByBoroughIdRepo,
+  FindCapitalProjectsByBoroughIdCommunityDistrictIdRepo,
 } from "./borough.repository.schema";
-import { communityDistrict } from "src/schema";
-import { eq } from "drizzle-orm";
+import { capitalProject, communityDistrict } from "src/schema";
+import { eq, sql, and } from "drizzle-orm";
 
 export class BoroughRepository {
   constructor(
@@ -53,6 +54,49 @@ export class BoroughRepository {
         },
         where: eq(communityDistrict.boroughId, id),
       });
+    } catch {
+      throw new DataRetrievalException();
+    }
+  }
+
+  async findCapitalProjectsByBoroughIdCommunityDistrictId({
+    boroughId,
+    communityDistrictId,
+    limit,
+    offset,
+  }: {
+    boroughId: string;
+    communityDistrictId: string;
+    limit: number;
+    offset: number;
+  }): Promise<FindCapitalProjectsByBoroughIdCommunityDistrictIdRepo> {
+    try {
+      return await this.db
+        .select({
+          id: capitalProject.id,
+          description: capitalProject.description,
+          managingCode: capitalProject.managingCode,
+          managingAgency: capitalProject.managingAgency,
+          maxDate: capitalProject.maxDate,
+          minDate: capitalProject.minDate,
+          category: capitalProject.category,
+        })
+        .from(capitalProject)
+        .leftJoin(
+          communityDistrict,
+          sql`
+          ST_Intersects(${communityDistrict.liFt}, ${capitalProject.liFtMPoly})
+          OR ST_Intersects(${communityDistrict.liFt}, ${capitalProject.liFtMPnt})`,
+        )
+        .where(
+          and(
+            eq(communityDistrict.boroughId, boroughId),
+            eq(communityDistrict.id, communityDistrictId),
+          ),
+        )
+        .limit(limit)
+        .offset(offset)
+        .orderBy(capitalProject.managingCode, capitalProject.id);
     } catch {
       throw new DataRetrievalException();
     }
