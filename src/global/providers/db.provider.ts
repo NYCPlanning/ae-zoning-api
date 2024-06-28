@@ -18,7 +18,7 @@ export const DbProvider: FactoryProvider = {
       user: dbConfig.user,
       password: dbConfig.password,
       database: dbConfig.name,
-      ssl: {
+      ssl: dbConfig.nodeEnv === "production" && {
         rejectUnauthorized: false,
       },
     });
