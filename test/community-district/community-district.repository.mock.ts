@@ -1,7 +1,22 @@
 import { generateMock } from "@anatine/zod-mock";
-import { findTilesRepoSchema } from "src/community-district/community-district.repository.schema";
+import {
+  findTilesRepoSchema,
+  checkByCommunityDistrictIdRepoSchema,
+} from "src/community-district/community-district.repository.schema";
 
 export class CommunityDistrictRepositoryMock {
+  numberOfMocks = 1;
+
+  checkCommunityDistrictByIdMocks = Array.from(
+    Array(this.numberOfMocks),
+    (_, seed) =>
+      generateMock(checkByCommunityDistrictIdRepoSchema, { seed: seed + 1 }),
+  );
+
+  async checkCommunityDistrictById(id: string) {
+    return this.checkCommunityDistrictByIdMocks.find((row) => row.id === id);
+  }
+
   findTilesMock = generateMock(findTilesRepoSchema);
 
   /**
