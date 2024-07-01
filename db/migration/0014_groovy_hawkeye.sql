@@ -1,0 +1,1 @@
+ALTER TABLE "community_district" ALTER COLUMN "li_ft" SET DATA TYPE geometry(multiPolygon,2263);
