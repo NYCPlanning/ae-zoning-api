@@ -1,0 +1,1 @@
+ALTER TABLE "community_district" ADD COLUMN "li_ft" geometry(multiPolygon,2263);
