@@ -1,0 +1,1 @@
+ALTER TABLE "community_district" DROP COLUMN IF EXISTS "li_ft";

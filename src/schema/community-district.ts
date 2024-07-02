@@ -1,6 +1,6 @@
 import { char, index, pgTable, primaryKey } from "drizzle-orm/pg-core";
 import { borough } from "./borough";
-import { multiPointGeom, multiPolygonGeom, pointGeom } from "src/drizzle-pgis";
+import { multiPolygonGeom, pointGeom } from "src/drizzle-pgis";
 import { z } from "zod";
 
 export const communityDistrict = pgTable(
@@ -10,7 +10,7 @@ export const communityDistrict = pgTable(
       .notNull()
       .references(() => borough.id),
     id: char("id", { length: 2 }).notNull(),
-    liFt: multiPointGeom("li_ft", 2263),
+    liFt: multiPolygonGeom("li_ft", 2263),
     mercatorFill: multiPolygonGeom("mercator_fill", 3857),
     mercatorLabel: pointGeom("mercator_label", 3857),
   },
