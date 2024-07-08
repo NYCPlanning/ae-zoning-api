@@ -69,4 +69,8 @@ describe("CapitalProjectService", () => {
       ).not.toThrow();
     });
   });
+
+  describe("findCapitalCommitmentsByManagingCodeCapitalProjectId", () => {
+    return "hello";
+  });
 });

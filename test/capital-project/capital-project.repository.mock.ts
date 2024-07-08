@@ -1,11 +1,16 @@
 import { generateMock } from "@anatine/zod-mock";
 import {
   FindByManagingCodeCapitalProjectIdRepo,
+  FindCapitalCommitmentsByManagingCodeCapitalProjectIdRepo,
   findByManagingCodeCapitalProjectIdRepoSchema,
+  findCapitalCommitmentsByManagingCodeCapitalProjectIdRepoSchema,
   findTilesRepoSchema,
 } from "src/capital-project/capital-project.repository.schema";
-import { FindCapitalProjectByManagingCodeCapitalProjectIdPathParams } from "src/gen";
-
+import {
+  FindCapitalCommitmentsByManagingCodeCapitalProjectIdPathParams,
+  FindCapitalProjectByManagingCodeCapitalProjectIdPathParams,
+} from "src/gen";
+import { capitalCommitment } from "src/schema";
 export class CapitalProjectRepositoryMock {
   findByManagingCodeCapitalProjectIdMock = generateMock(
     findByManagingCodeCapitalProjectIdRepoSchema,
@@ -44,5 +49,20 @@ export class CapitalProjectRepositoryMock {
    */
   async findTiles() {
     return this.findTilesMock;
+  }
+
+  findCapitalCommitmentsByManagingCodeCapitalProjectIdMocks = generateMock(
+    findCapitalCommitmentsByManagingCodeCapitalProjectIdRepoSchema,
+  );
+
+  async findCapitalCommitmentsByManagingCodeCapitalProjectId({
+    managingCode,
+    capitalProjectId,
+  }: FindCapitalCommitmentsByManagingCodeCapitalProjectIdPathParams): Promise<FindCapitalCommitmentsByManagingCodeCapitalProjectIdRepo> {
+    return this.findCapitalCommitmentsByManagingCodeCapitalProjectIdMocks.filter(
+      (capitalCommitments) =>
+        capitalCommitments.id === capitalProjectId &&
+        capitalCommitment.managingCode === managingCode,
+    );
   }
 }
