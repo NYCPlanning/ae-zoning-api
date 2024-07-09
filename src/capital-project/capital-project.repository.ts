@@ -26,6 +26,30 @@ export class CapitalProjectRepository {
     private readonly db: DbType,
   ) {}
 
+  #checkByManagingCodeCapitalProjectId = this.db.query.capitalProject
+    .findFirst({
+      columns: {
+        managingCode: true,
+        id: true,
+      },
+      where: (capitalProject, { and, eq, sql }) =>
+        and(
+          eq(capitalProject.managingCode, sql.placeholder("managingCode")),
+          eq(capitalProject.id, sql.placeholder("capitalProjectId")),
+        ),
+    })
+    .prepare("checkByManagingCodeCapitalProjectId");
+
+  async checkByManagingCodeCapitalProjectId(
+    managingCode: string,
+    capitalProjectId: string,
+  ) {
+    return await this.#checkByManagingCodeCapitalProjectId.execute({
+      managingCode,
+      capitalProjectId,
+    });
+  }
+
   async findByManagingCodeCapitalProjectId(
     params: FindCapitalProjectByManagingCodeCapitalProjectIdPathParams,
   ): Promise<FindByManagingCodeCapitalProjectIdRepo> {

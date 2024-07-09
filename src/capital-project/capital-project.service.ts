@@ -32,11 +32,21 @@ export class CapitalProjectService {
   async findCapitalCommitmentsByManagingCodeCapitalProjectId(
     params: FindCapitalCommitmentsByManagingCodeCapitalProjectIdPathParams,
   ) {
-    const capitalProjects =
+    const capitalProjectCheck =
+      this.capitalProjectRepository.checkByManagingCodeCapitalProjectId(
+        params.managingCode,
+        params.capitalProjectId,
+      );
+    if (capitalProjectCheck === undefined)
+      throw new ResourceNotFoundException();
+
+    const capitalCommitments =
       await this.capitalProjectRepository.findCapitalCommitmentsByManagingCodeCapitalProjectId(
         params,
       );
 
-    if (capitalProjects.length < 1) throw new ResourceNotFoundException();
+    return {
+      capitalCommitments,
+    };
   }
 }

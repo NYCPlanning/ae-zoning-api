@@ -18,6 +18,17 @@ export class CapitalProjectRepositoryMock {
     },
   );
 
+  async findCapitalCommitmentsByManagingCodeCapitalProjectId({
+    managingCode,
+    capitalProjectId,
+  }: FindCapitalProjectByManagingCodeCapitalProjectIdPathParams): Promise<FindByManagingCodeCapitalProjectIdRepo> {
+    return this.findByManagingCodeCapitalProjectIdMock.filter(
+      (capitalProject) =>
+        capitalProject.id === capitalProjectId &&
+        capitalProject.managingCode === managingCode,
+    );
+  }
+
   async findByManagingCodeCapitalProjectId({
     managingCode,
     capitalProjectId,

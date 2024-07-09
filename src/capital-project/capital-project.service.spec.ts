@@ -71,6 +71,26 @@ describe("CapitalProjectService", () => {
   });
 
   describe("findCapitalCommitmentsByManagingCodeCapitalProjectId", () => {
-    return "hello";
+    it.only("should return a capital project with budget details", async () => {
+      const capitalProjectMock =
+        capitalProjectRepository.findByManagingCodeCapitalProjectIdMock[0];
+      const { managingCode, id: capitalProjectId } = capitalProjectMock;
+      const capitalProject =
+        await capitalProjectService.findCapitalCommitmentsByManagingCodeCapitalProjectId(
+          {
+            managingCode,
+            capitalProjectId,
+          },
+        );
+
+      console.debug("help", capitalProject);
+      expect(() =>
+        findCapitalProjectByManagingCodeCapitalProjectIdQueryResponseSchema.parse(
+          capitalProject,
+        ),
+      ).not.toThrow();
+    });
+
+    it.todo("should throw a resource error when requesting a missing project");
   });
 });
