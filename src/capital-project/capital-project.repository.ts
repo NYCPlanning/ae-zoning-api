@@ -15,6 +15,7 @@ import {
   capitalProject,
 } from "src/schema";
 import {
+  CheckByManagingCodeCapitalProjectIdRepo,
   FindByManagingCodeCapitalProjectIdRepo,
   FindCapitalCommitmentsByManagingCodeCapitalProjectIdRepo,
   FindTilesRepo,
@@ -43,7 +44,7 @@ export class CapitalProjectRepository {
   async checkByManagingCodeCapitalProjectId(
     managingCode: string,
     capitalProjectId: string,
-  ) {
+  ): Promise<CheckByManagingCodeCapitalProjectIdRepo | undefined> {
     return await this.#checkByManagingCodeCapitalProjectId.execute({
       managingCode,
       capitalProjectId,

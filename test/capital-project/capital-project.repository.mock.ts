@@ -1,12 +1,34 @@
 import { generateMock } from "@anatine/zod-mock";
 import {
+  checkByManagingCodeCapitalProjectIdRepoSchema,
   FindByManagingCodeCapitalProjectIdRepo,
   findByManagingCodeCapitalProjectIdRepoSchema,
+  FindCapitalCommitmentsByManagingCodeCapitalProjectIdRepo,
+  findCapitalCommitmentsByManagingCodeCapitalProjectIdRepoSchema,
   findTilesRepoSchema,
 } from "src/capital-project/capital-project.repository.schema";
-import { FindCapitalProjectByManagingCodeCapitalProjectIdPathParams } from "src/gen";
+import {
+  FindCapitalCommitmentsByManagingCodeCapitalProjectIdPathParams,
+  FindCapitalCommitmentsByManagingCodeCapitalProjectIdQueryResponse,
+  FindCapitalProjectByManagingCodeCapitalProjectIdPathParams,
+} from "src/gen";
 
 export class CapitalProjectRepositoryMock {
+  checkByManagingCodeCapitalProjectIdMocks = Array.from(Array(5), (_, i) =>
+    generateMock(checkByManagingCodeCapitalProjectIdRepoSchema, {
+      seed: i + 1,
+    }),
+  );
+
+  async checkByManagingCodeCapitalProjectId(
+    managingCode: string,
+    capitalProjectId: string,
+  ) {
+    return this.checkByManagingCodeCapitalProjectIdMocks.find((row) => {
+      return row.id === capitalProjectId && row.managingCode === managingCode;
+    });
+  }
+
   findByManagingCodeCapitalProjectIdMock = generateMock(
     findByManagingCodeCapitalProjectIdRepoSchema,
     {
@@ -18,15 +40,29 @@ export class CapitalProjectRepositoryMock {
     },
   );
 
+ findCapitalCommitmentsByManagingCodeCapitalProjectIdMocks = 
+    this.checkByManagingCodeCapitalProjectIdMocks.map(
+      (checkCapitalCommitment) => {
+        return {
+          [`${checkCapitalCommitment.managingCode}${checkCapitalCommitment.id}`]:
+            generateMock(
+              findCapitalCommitmentsByManagingCodeCapitalProjectIdRepoSchema,
+            ),
+        };
+      },
+    );
   async findCapitalCommitmentsByManagingCodeCapitalProjectId({
     managingCode,
     capitalProjectId,
-  }: FindCapitalProjectByManagingCodeCapitalProjectIdPathParams): Promise<FindByManagingCodeCapitalProjectIdRepo> {
-    return this.findByManagingCodeCapitalProjectIdMock.filter(
-      (capitalProject) =>
-        capitalProject.id === capitalProjectId &&
-        capitalProject.managingCode === managingCode,
-    );
+  }: FindCapitalCommitmentsByManagingCodeCapitalProjectIdPathParams): Promise<FindCapitalCommitmentsByManagingCodeCapitalProjectIdRepo> {
+    console.debug("mocks", this.findCapitalCommitmentsByManagingCodeCapitalProjectIdMocks);
+    const compositeKey = `${managingCode}${capitalProjectId}` 
+    const results = this.findCapitalCommitmentsByManagingCodeCapitalProjectIdMocks.find(
+      (capitalProjectCapitalCommitments) => compositeKey in capitalProjectCapitalCommitments
+    )
+    console.debug("results", results);
+
+    return results === undefined ? [] : results[compositeKey];
   }
 
   async findByManagingCodeCapitalProjectId({

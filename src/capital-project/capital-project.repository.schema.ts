@@ -8,6 +8,16 @@ import {
 import { mvtEntitySchema } from "src/schema/mvt";
 import { z } from "zod";
 
+export const checkByManagingCodeCapitalProjectIdRepoSchema =
+  capitalProjectEntitySchema.pick({
+    id: true,
+    managingCode: true,
+  });
+
+export type CheckByManagingCodeCapitalProjectIdRepo = z.infer<
+  typeof checkByManagingCodeCapitalProjectIdRepoSchema
+>;
+
 export const findByManagingCodeCapitalProjectIdRepoSchema = z.array(
   capitalProjectEntitySchema.extend({
     sponsoringAgencies: z.array(agencyEntitySchema.shape.initials),
