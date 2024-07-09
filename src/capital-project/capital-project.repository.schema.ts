@@ -1,7 +1,7 @@
-import { capitalCommitmentSchema } from "src/gen";
 import {
   agencyBudgetEntitySchema,
   agencyEntitySchema,
+  capitalCommitmentEntitySchema,
   capitalCommitmentFundEntitySchema,
   capitalProjectEntitySchema,
 } from "src/schema";
@@ -25,7 +25,21 @@ export const findTilesRepoSchema = mvtEntitySchema;
 export type FindTilesRepo = z.infer<typeof findTilesRepoSchema>;
 
 export const findCapitalCommitmentsByManagingCodeCapitalProjectIdRepoSchema =
-  z.array(capitalCommitmentSchema);
+  z.array(
+    capitalCommitmentEntitySchema
+      .pick({
+        id: true,
+        type: true,
+        plannedDate: true,
+        budgetLineCode: true,
+        budgetLineId: true,
+      })
+      .extend({
+        sponsoringAgency: agencyBudgetEntitySchema.shape.sponsor,
+        budgetType: agencyBudgetEntitySchema.shape.type,
+        totalValue: capitalCommitmentFundEntitySchema.shape.value,
+      }),
+  );
 
 export type FindCapitalCommitmentsByManagingCodeCapitalProjectIdRepo = z.infer<
   typeof findCapitalCommitmentsByManagingCodeCapitalProjectIdRepoSchema

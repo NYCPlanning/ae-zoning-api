@@ -1,20 +1,12 @@
 import { generateMock } from "@anatine/zod-mock";
 import {
   FindByManagingCodeCapitalProjectIdRepo,
-  FindCapitalCommitmentsByManagingCodeCapitalProjectIdRepo,
   findByManagingCodeCapitalProjectIdRepoSchema,
-  findCapitalCommitmentsByManagingCodeCapitalProjectIdRepoSchema,
   findTilesRepoSchema,
 } from "src/capital-project/capital-project.repository.schema";
-import {
-  FindCapitalCommitmentsByManagingCodeCapitalProjectIdPathParams,
-  FindCapitalProjectByManagingCodeCapitalProjectIdPathParams,
-} from "src/gen";
-import { capitalProject, managingCode } from "src/schema";
-// import { capitalCommitment } from "src/schema";
-export class CapitalProjectRepositoryMock {
-  numberOfMocks = 1;
+import { FindCapitalProjectByManagingCodeCapitalProjectIdPathParams } from "src/gen";
 
+export class CapitalProjectRepositoryMock {
   findByManagingCodeCapitalProjectIdMock = generateMock(
     findByManagingCodeCapitalProjectIdRepoSchema,
     {
@@ -25,21 +17,6 @@ export class CapitalProjectRepositoryMock {
       },
     },
   );
-
-  /*
-    capitalProjectMock {
-      managingCode: '158',
-      id: 'modi',
-      managingAgency: 'modi',
-      description: 'modi',
-      minDate: '2018-01-01',
-      maxDate: '2045-12-31',
-      category: 'Fixed Asset',
-      sponsoringAgencies: [ 'modi' ],
-      budgetTypes: [ 'modi' ],
-      commitmentsTotal: 1210245525274624
-    }
-  */
 
   async findByManagingCodeCapitalProjectId({
     managingCode,
@@ -67,35 +44,5 @@ export class CapitalProjectRepositoryMock {
    */
   async findTiles() {
     return this.findTilesMock;
-  }
-
-  findCapitalCommitmentsByManagingCodeCapitalProjectIdMocks = 
-  generateMock(
-    findCapitalCommitmentsByManagingCodeCapitalProjectIdRepoSchema,
-  );
-
-  async findCapitalCommitmentsByManagingCodeCapitalProjectIdMocksTWO({
-    managingCode,
-    capitalProjectId,
-  }: FindCapitalProjectByManagingCodeCapitalProjectIdPathParams) {
-    this.findByManagingCodeCapitalProjectIdMock.filter(
-      (capitalProject) => { 
-        if (capitalProject.id === capitalProjectId && capitalProject.managingCode === managingCode) 
-          return {
-            [`${managingCode}${capitalProjectId}`]: generateMock(findCapitalCommitmentsByManagingCodeCapitalProjectIdRepoSchema,)
-          }
-      }
-    );
-  } 
-  
-  async findCapitalCommitmentsByManagingCodeCapitalProjectId({
-    managingCode,
-    capitalProjectId,
-  }: FindCapitalCommitmentsByManagingCodeCapitalProjectIdPathParams): Promise<FindCapitalCommitmentsByManagingCodeCapitalProjectIdRepo> {
-    return this.findCapitalCommitmentsByManagingCodeCapitalProjectIdMocksTWO.filter(
-      (capitalCommitments) =>
-        capitalCommitments.id === capitalProjectId &&
-        capitalCommitments. === managingCode,
-    );
   }
 }

@@ -42,7 +42,7 @@ export const capitalCommitment = pgTable(
 export const capitalCommitmentEntitySchema = z.object({
   id: z.string().uuid(),
   type: z.string().length(4),
-  plannedDate: z.date(),
+  plannedDate: z.string().date(),
   managingCode: managingCodeEntitySchema,
   capitalProjectId: z.string(),
   budgetLineCode: z.string(),
