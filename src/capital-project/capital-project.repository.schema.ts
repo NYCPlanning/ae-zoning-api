@@ -10,7 +10,7 @@ import { z } from "zod";
 
 export const findByManagingCodeCapitalProjectIdRepoSchema = z.array(
   capitalProjectEntitySchema.extend({
-    sponsoringAgency: z.array(agencyEntitySchema.shape.initials),
+    sponsoringAgencies: z.array(agencyEntitySchema.shape.initials),
     budgetTypes: z.array(agencyBudgetEntitySchema.shape.type),
     commitmentsTotal: capitalCommitmentFundEntitySchema.shape.value,
   }),

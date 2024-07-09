@@ -40,7 +40,7 @@ export class CapitalProjectRepository {
           minDate: capitalProject.minDate,
           maxDate: capitalProject.maxDate,
           category: capitalProject.category,
-          sponsoringAgency: sql<
+          sponsoringAgencies: sql<
             Array<string>
           >`ARRAY_AGG(DISTINCT ${agencyBudget.sponsor})`,
           budgetTypes: sql<

@@ -145,4 +145,20 @@ describe("Capital Projects", () => {
       expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);
     });
   });
+
+   describe("findCapitalCommitmentsByManagingCodeCapitalProjectId", () => {
+    it("should 200 and return a capital project with budget details", async () => {
+      const capitalProjectMock =
+        capitalProjectRepository.findCapitalCommitmentsByManagingCodeCapitalProjectId;
+      const { managingCode, id: capitalProjectId } = capitalProjectMock;
+      const response = await request(app.getHttpServer())
+        .get(`/capital-projects/${managingCode}/${capitalProjectId}`)
+        .expect(200);
+
+      expect(() =>
+        findCapitalProjectByManagingCodeCapitalProjectIdQueryResponseSchema.parse(
+          response.body,
+        ),
+      ).not.toThrow();
+    });
 });

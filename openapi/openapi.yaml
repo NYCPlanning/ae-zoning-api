@@ -854,7 +854,7 @@ components:
               type: number
               description: The sum total of commitments for the capital project
               example: 200000
-            sponsoringAgency:
+            sponsoringAgencies:
               type: array
               items:
                 type: string
@@ -868,7 +868,7 @@ components:
               example: ["Highways", "Highway Bridges"]
           required:
             - commitmentsTotal
-            - sponsoringAgency
+            - sponsoringAgencies
             - budgetTypes
     CityCouncilDistrict:
       type: object

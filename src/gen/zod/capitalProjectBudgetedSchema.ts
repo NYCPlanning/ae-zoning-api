@@ -8,7 +8,7 @@ export const capitalProjectBudgetedSchema = z
       commitmentsTotal: z.coerce
         .number()
         .describe("The sum total of commitments for the capital project"),
-      sponsoringAgency: z
+      sponsoringAgencies: z
         .array(z.coerce.string())
         .describe(
           "An array containing string values representing the sponsoring agencies initials.",

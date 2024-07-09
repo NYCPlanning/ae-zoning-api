@@ -10,8 +10,11 @@ import {
   FindCapitalCommitmentsByManagingCodeCapitalProjectIdPathParams,
   FindCapitalProjectByManagingCodeCapitalProjectIdPathParams,
 } from "src/gen";
-import { capitalCommitment } from "src/schema";
+import { capitalProject, managingCode } from "src/schema";
+// import { capitalCommitment } from "src/schema";
 export class CapitalProjectRepositoryMock {
+  numberOfMocks = 1;
+
   findByManagingCodeCapitalProjectIdMock = generateMock(
     findByManagingCodeCapitalProjectIdRepoSchema,
     {
@@ -22,6 +25,21 @@ export class CapitalProjectRepositoryMock {
       },
     },
   );
+
+  /*
+    capitalProjectMock {
+      managingCode: '158',
+      id: 'modi',
+      managingAgency: 'modi',
+      description: 'modi',
+      minDate: '2018-01-01',
+      maxDate: '2045-12-31',
+      category: 'Fixed Asset',
+      sponsoringAgencies: [ 'modi' ],
+      budgetTypes: [ 'modi' ],
+      commitmentsTotal: 1210245525274624
+    }
+  */
 
   async findByManagingCodeCapitalProjectId({
     managingCode,
@@ -51,18 +69,33 @@ export class CapitalProjectRepositoryMock {
     return this.findTilesMock;
   }
 
-  findCapitalCommitmentsByManagingCodeCapitalProjectIdMocks = generateMock(
+  findCapitalCommitmentsByManagingCodeCapitalProjectIdMocks = 
+  generateMock(
     findCapitalCommitmentsByManagingCodeCapitalProjectIdRepoSchema,
   );
 
+  async findCapitalCommitmentsByManagingCodeCapitalProjectIdMocksTWO({
+    managingCode,
+    capitalProjectId,
+  }: FindCapitalProjectByManagingCodeCapitalProjectIdPathParams) {
+    this.findByManagingCodeCapitalProjectIdMock.filter(
+      (capitalProject) => { 
+        if (capitalProject.id === capitalProjectId && capitalProject.managingCode === managingCode) 
+          return {
+            [`${managingCode}${capitalProjectId}`]: generateMock(findCapitalCommitmentsByManagingCodeCapitalProjectIdRepoSchema,)
+          }
+      }
+    );
+  } 
+  
   async findCapitalCommitmentsByManagingCodeCapitalProjectId({
     managingCode,
     capitalProjectId,
   }: FindCapitalCommitmentsByManagingCodeCapitalProjectIdPathParams): Promise<FindCapitalCommitmentsByManagingCodeCapitalProjectIdRepo> {
-    return this.findCapitalCommitmentsByManagingCodeCapitalProjectIdMocks.filter(
+    return this.findCapitalCommitmentsByManagingCodeCapitalProjectIdMocksTWO.filter(
       (capitalCommitments) =>
         capitalCommitments.id === capitalProjectId &&
-        capitalCommitment.managingCode === managingCode,
+        capitalCommitments. === managingCode,
     );
   }
 }
