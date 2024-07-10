@@ -158,6 +158,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CapitalProjectBudgeted'
+            application/geo+json:
+              schema: 
+                $ref: '#/components/schemas/MultiPolygon'
         '400':
           $ref: "#/components/responses/BadRequest"
         '404':
