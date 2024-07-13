@@ -39,13 +39,6 @@ Structure the database tables with drizzle
 npm run drizzle:migrate
 ```
 
-### Data loading
-Load the data into the tables. Under the hood, this uses the Postgres COPY command.
-
-```sh
-npm run pg:copy
-```
-
 ## Local development
 The OpenAPI documentation and the API implementation complement each other. 
 The OpenAPI documentation is written first, defining expectations for endpoints.
