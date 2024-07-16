@@ -1,0 +1,22 @@
+{
+  "description": "A geojson implementation of a MultiPoint Simple Feature",
+  "type": "object",
+  "properties": {
+    "type": { "type": "string", "enum": ["MultiPoint"] },
+    "coordinates": {
+      "description": "Array of position coordinate arrays.",
+      "type": "array",
+      "items": {
+        "description": "The fundamental spatial construct",
+        "type": "array",
+        "items": { "type": "number" },
+        "example": [-74.010835, 40.708442],
+        "maxItems": 3,
+        "minItems": 2,
+        "x-readme-ref-name": "Position"
+      }
+    }
+  },
+  "required": ["type", "coordinates"],
+  "x-readme-ref-name": "MultiPoint"
+}
