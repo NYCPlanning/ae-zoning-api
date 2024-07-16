@@ -31,6 +31,13 @@ import {
   findCapitalCommitmentsByManagingCodeCapitalProjectIdPathParamsSchema,
 } from "./findCapitalCommitmentsByManagingCodeCapitalProjectIdSchema";
 import {
+  findCapitalProjectGeoJsonByManagingCodeCapitalProjectIdQueryResponseSchema,
+  findCapitalProjectGeoJsonByManagingCodeCapitalProjectId400Schema,
+  findCapitalProjectGeoJsonByManagingCodeCapitalProjectId404Schema,
+  findCapitalProjectGeoJsonByManagingCodeCapitalProjectId500Schema,
+  findCapitalProjectGeoJsonByManagingCodeCapitalProjectIdPathParamsSchema,
+} from "./findCapitalProjectGeoJsonByManagingCodeCapitalProjectIdSchema";
+import {
   findCapitalProjectByManagingCodeCapitalProjectIdQueryResponseSchema,
   findCapitalProjectByManagingCodeCapitalProjectId400Schema,
   findCapitalProjectByManagingCodeCapitalProjectId404Schema,
@@ -206,6 +213,20 @@ export const operations = {
       400: findCapitalCommitmentsByManagingCodeCapitalProjectId400Schema,
       404: findCapitalCommitmentsByManagingCodeCapitalProjectId404Schema,
       500: findCapitalCommitmentsByManagingCodeCapitalProjectId500Schema,
+    },
+  },
+  findCapitalProjectGeoJsonByManagingCodeCapitalProjectId: {
+    request: undefined,
+    parameters: {
+      path: findCapitalProjectGeoJsonByManagingCodeCapitalProjectIdPathParamsSchema,
+      query: undefined,
+      header: undefined,
+    },
+    responses: {
+      200: findCapitalProjectGeoJsonByManagingCodeCapitalProjectIdQueryResponseSchema,
+      400: findCapitalProjectGeoJsonByManagingCodeCapitalProjectId400Schema,
+      404: findCapitalProjectGeoJsonByManagingCodeCapitalProjectId404Schema,
+      500: findCapitalProjectGeoJsonByManagingCodeCapitalProjectId500Schema,
     },
   },
   findCapitalProjectByManagingCodeCapitalProjectId: {
@@ -455,6 +476,9 @@ export const paths = {
     },
   "/capital-projects/{managingCode}/{capitalProjectId}/capital-commitments": {
     get: operations["findCapitalCommitmentsByManagingCodeCapitalProjectId"],
+  },
+  "/capital-projects/{managingCode}/{capitalProjectId}/geojson": {
+    get: operations["findCapitalProjectGeoJsonByManagingCodeCapitalProjectId"],
   },
   "/capital-projects/{managingCode}/{capitalProjectId}": {
     get: operations["findCapitalProjectByManagingCodeCapitalProjectId"],

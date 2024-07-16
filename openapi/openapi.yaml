@@ -142,6 +142,29 @@ paths:
           $ref: "#/components/responses/NotFound"
         '500':
           $ref: "#/components/responses/InternalServerError"
+  /capital-projects/{managingCode}/{capitalProjectId}/geojson:
+    get:
+      summary: 🚧 Find a single capital project as a geojson feature
+      operationId: findCapitalProjectGeoJsonByManagingCodeCapitalProjectId
+      tags: 
+        - Capital Projects
+        - GeoJSON
+      parameters:
+        - $ref: '#/components/parameters/managingCodeParam'
+        - $ref: '#/components/parameters/capitalProjectIdParam'
+      responses:
+        '200':
+          description: A capital project geojson object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CapitalProjectBudgetedGeoJson'
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
   /capital-projects/{managingCode}/{capitalProjectId}:
     get:
       summary: Find details about a specific capital project
@@ -870,6 +893,28 @@ components:
             - commitmentsTotal
             - sponsoringAgencies
             - budgetTypes
+    CapitalProjectBudgetedGeoJson:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The concatenation of the managing code and capital project id.
+          example: '806RAMALG'
+        type:
+          type: string
+          enum:
+            - Feature
+        geometry:
+          oneOf:
+            - $ref: '#/components/schemas/MultiPoint'
+            - $ref: '#/components/schemas/MultiPolygon'
+        properties:
+          $ref: '#/components/schemas/CapitalProjectBudgeted'
+      required:
+        - id
+        - type
+        - geometry
+        - properties
     CityCouncilDistrict:
       type: object
       properties:
@@ -1087,6 +1132,22 @@ components:
       items:
         type: number
       example: [-74.010835, 40.708442]
+    MultiPoint:
+      type: object
+      description: A geojson implementation of a MultiPoint Simple Feature
+      properties:
+        type: 
+          type: string
+          enum:
+            - "MultiPoint"
+        coordinates:
+          type: array
+          description: Array of position coordinate arrays.
+          items:
+            $ref: '#/components/schemas/Position'
+      required: 
+        - type
+        - coordinates
     MultiPolygon:
       type: object
       description: A geojson implementation of a MultiPolygon Simple Feature

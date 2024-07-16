@@ -1,0 +1,155 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "description": "The concatenation of the managing code and capital project id.",
+      "type": "string",
+      "example": "806RAMALG"
+    },
+    "type": { "type": "string", "enum": ["Feature"] },
+    "geometry": {
+      "oneOf": [
+        {
+          "description": "A geojson implementation of a MultiPoint Simple Feature",
+          "type": "object",
+          "properties": {
+            "type": { "type": "string", "enum": ["MultiPoint"] },
+            "coordinates": {
+              "description": "Array of position coordinate arrays.",
+              "type": "array",
+              "items": {
+                "description": "The fundamental spatial construct",
+                "type": "array",
+                "items": { "type": "number" },
+                "example": [-74.010835, 40.708442],
+                "maxItems": 3,
+                "minItems": 2,
+                "x-readme-ref-name": "Position"
+              }
+            }
+          },
+          "required": ["type", "coordinates"],
+          "x-readme-ref-name": "MultiPoint"
+        },
+        {
+          "description": "A geojson implementation of a MultiPolygon Simple Feature",
+          "type": "object",
+          "properties": {
+            "type": { "type": "string", "enum": ["MultiPolygon"] },
+            "coordinates": {
+              "description": "Array of polygon coordinate arrays.",
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "description": "The fundamental spatial construct",
+                    "type": "array",
+                    "items": { "type": "number" },
+                    "example": [-74.010835, 40.708442],
+                    "maxItems": 3,
+                    "minItems": 2,
+                    "x-readme-ref-name": "Position"
+                  }
+                }
+              }
+            }
+          },
+          "required": ["type", "coordinates"],
+          "x-readme-ref-name": "MultiPolygon"
+        }
+      ]
+    },
+    "properties": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "description": "The id for the project, which combines with the managing code to make a unique id",
+              "type": "string",
+              "example": "HWPEDSF5"
+            },
+            "description": {
+              "description": "The capital project title.",
+              "type": "string",
+              "example": "Multi-Site Pedestrian Safety Phase 5"
+            },
+            "managingCode": {
+              "description": "Three character string of numbers representing managing agency",
+              "type": "string",
+              "example": 850,
+              "pattern": "^([0-9]{3})$"
+            },
+            "managingAgency": {
+              "description": "The managing agency name abbreviation or acronym",
+              "type": "string",
+              "example": "DOT"
+            },
+            "minDate": {
+              "description": "The starting date of the capital project",
+              "type": "string",
+              "format": "date",
+              "example": "2024-05-15"
+            },
+            "maxDate": {
+              "description": "The ending date of the capital project",
+              "type": "string",
+              "format": "date",
+              "example": "2024-05-15"
+            },
+            "category": {
+              "nullable": true,
+              "description": "The type of Capital Project.",
+              "type": "string",
+              "enum": [
+                "Fixed Asset",
+                "Lump Sum",
+                "ITT, Vehicles and Equipment",
+                null
+              ],
+              "x-readme-ref-name": "CapitalProjectCategory"
+            }
+          },
+          "required": [
+            "id",
+            "description",
+            "managingCode",
+            "managingAgency",
+            "minDate",
+            "maxDate",
+            "category"
+          ],
+          "x-readme-ref-name": "CapitalProject"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "commitmentsTotal": {
+              "description": "The sum total of commitments for the capital project",
+              "type": "number",
+              "example": 200000
+            },
+            "sponsoringAgencies": {
+              "description": "An array containing string values representing the sponsoring agencies initials.",
+              "type": "array",
+              "items": { "type": "string" },
+              "example": ["DOT"]
+            },
+            "budgetTypes": {
+              "description": "An array containing string values representing the budget types.",
+              "type": "array",
+              "items": { "type": "string" },
+              "example": ["Highways", "Highway Bridges"]
+            }
+          },
+          "required": ["commitmentsTotal", "sponsoringAgencies", "budgetTypes"]
+        }
+      ],
+      "x-readme-ref-name": "CapitalProjectBudgeted"
+    }
+  },
+  "required": ["id", "type", "geometry", "properties"],
+  "x-readme-ref-name": "CapitalProjectBudgetedGeoJson"
+}
