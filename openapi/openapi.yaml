@@ -6,12 +6,18 @@ info:
   version: 0.1.0
 servers:
   - url: https://zoning.planningdigital.com/api 
+security: []
 tags:
   - name: Boroughs
+    description: An endpoint that returns or is otherwise related to NYC boroughs
   - name: Land Uses
+    description: An endpoint that returns or is otherwise related to land uses
   - name: Tax Lots
+    description: An endpoint that returns or is otherwise related to tax lots
   - name: Zoning Districts
+    description: An endpoint that returns or is otherwise related to zoning districts
   - name: GeoJSON
+    description: An endpoint that returns spatial data in a geojson format
 paths:
   /agencies:
     get:
