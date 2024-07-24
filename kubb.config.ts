@@ -17,6 +17,7 @@ export default defineConfig({
     pluginOas(),
     pluginZod({
       output: { path: "./zod" },
+      coercion: true,
     }),
     pluginTs({}),
   ],
