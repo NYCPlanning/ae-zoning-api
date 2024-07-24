@@ -158,6 +158,11 @@ export const operations = {
       200: findAgenciesQueryResponseSchema,
       400: findAgencies400Schema,
       500: findAgencies500Schema,
+      default: findAgenciesQueryResponseSchema,
+    },
+    errors: {
+      400: findAgencies400Schema,
+      500: findAgencies500Schema,
     },
   },
   findBoroughs: {
@@ -171,6 +176,11 @@ export const operations = {
       200: findBoroughsQueryResponseSchema,
       400: findBoroughs400Schema,
       500: findBoroughs500Schema,
+      default: findBoroughsQueryResponseSchema,
+    },
+    errors: {
+      400: findBoroughs400Schema,
+      500: findBoroughs500Schema,
     },
   },
   findCommunityDistrictsByBoroughId: {
@@ -182,6 +192,12 @@ export const operations = {
     },
     responses: {
       200: findCommunityDistrictsByBoroughIdQueryResponseSchema,
+      400: findCommunityDistrictsByBoroughId400Schema,
+      404: findCommunityDistrictsByBoroughId404Schema,
+      500: findCommunityDistrictsByBoroughId500Schema,
+      default: findCommunityDistrictsByBoroughIdQueryResponseSchema,
+    },
+    errors: {
       400: findCommunityDistrictsByBoroughId400Schema,
       404: findCommunityDistrictsByBoroughId404Schema,
       500: findCommunityDistrictsByBoroughId500Schema,
@@ -199,6 +215,13 @@ export const operations = {
       400: findCapitalProjectsByBoroughIdCommunityDistrictId400Schema,
       404: findCapitalProjectsByBoroughIdCommunityDistrictId404Schema,
       500: findCapitalProjectsByBoroughIdCommunityDistrictId500Schema,
+      default:
+        findCapitalProjectsByBoroughIdCommunityDistrictIdQueryResponseSchema,
+    },
+    errors: {
+      400: findCapitalProjectsByBoroughIdCommunityDistrictId400Schema,
+      404: findCapitalProjectsByBoroughIdCommunityDistrictId404Schema,
+      500: findCapitalProjectsByBoroughIdCommunityDistrictId500Schema,
     },
   },
   findCapitalCommitmentsByManagingCodeCapitalProjectId: {
@@ -210,6 +233,13 @@ export const operations = {
     },
     responses: {
       200: findCapitalCommitmentsByManagingCodeCapitalProjectIdQueryResponseSchema,
+      400: findCapitalCommitmentsByManagingCodeCapitalProjectId400Schema,
+      404: findCapitalCommitmentsByManagingCodeCapitalProjectId404Schema,
+      500: findCapitalCommitmentsByManagingCodeCapitalProjectId500Schema,
+      default:
+        findCapitalCommitmentsByManagingCodeCapitalProjectIdQueryResponseSchema,
+    },
+    errors: {
       400: findCapitalCommitmentsByManagingCodeCapitalProjectId400Schema,
       404: findCapitalCommitmentsByManagingCodeCapitalProjectId404Schema,
       500: findCapitalCommitmentsByManagingCodeCapitalProjectId500Schema,
@@ -227,6 +257,13 @@ export const operations = {
       400: findCapitalProjectGeoJsonByManagingCodeCapitalProjectId400Schema,
       404: findCapitalProjectGeoJsonByManagingCodeCapitalProjectId404Schema,
       500: findCapitalProjectGeoJsonByManagingCodeCapitalProjectId500Schema,
+      default:
+        findCapitalProjectGeoJsonByManagingCodeCapitalProjectIdQueryResponseSchema,
+    },
+    errors: {
+      400: findCapitalProjectGeoJsonByManagingCodeCapitalProjectId400Schema,
+      404: findCapitalProjectGeoJsonByManagingCodeCapitalProjectId404Schema,
+      500: findCapitalProjectGeoJsonByManagingCodeCapitalProjectId500Schema,
     },
   },
   findCapitalProjectByManagingCodeCapitalProjectId: {
@@ -238,6 +275,13 @@ export const operations = {
     },
     responses: {
       200: findCapitalProjectByManagingCodeCapitalProjectIdQueryResponseSchema,
+      400: findCapitalProjectByManagingCodeCapitalProjectId400Schema,
+      404: findCapitalProjectByManagingCodeCapitalProjectId404Schema,
+      500: findCapitalProjectByManagingCodeCapitalProjectId500Schema,
+      default:
+        findCapitalProjectByManagingCodeCapitalProjectIdQueryResponseSchema,
+    },
+    errors: {
       400: findCapitalProjectByManagingCodeCapitalProjectId400Schema,
       404: findCapitalProjectByManagingCodeCapitalProjectId404Schema,
       500: findCapitalProjectByManagingCodeCapitalProjectId500Schema,
@@ -254,6 +298,11 @@ export const operations = {
       200: findCapitalProjectTilesQueryResponseSchema,
       400: findCapitalProjectTiles400Schema,
       500: findCapitalProjectTiles500Schema,
+      default: findCapitalProjectTilesQueryResponseSchema,
+    },
+    errors: {
+      400: findCapitalProjectTiles400Schema,
+      500: findCapitalProjectTiles500Schema,
     },
   },
   findCityCouncilDistricts: {
@@ -265,6 +314,11 @@ export const operations = {
     },
     responses: {
       200: findCityCouncilDistrictsQueryResponseSchema,
+      400: findCityCouncilDistricts400Schema,
+      500: findCityCouncilDistricts500Schema,
+      default: findCityCouncilDistrictsQueryResponseSchema,
+    },
+    errors: {
       400: findCityCouncilDistricts400Schema,
       500: findCityCouncilDistricts500Schema,
     },
@@ -281,6 +335,12 @@ export const operations = {
       400: findCapitalProjectsByCityCouncilId400Schema,
       404: findCapitalProjectsByCityCouncilId404Schema,
       500: findCapitalProjectsByCityCouncilId500Schema,
+      default: findCapitalProjectsByCityCouncilIdQueryResponseSchema,
+    },
+    errors: {
+      400: findCapitalProjectsByCityCouncilId400Schema,
+      404: findCapitalProjectsByCityCouncilId404Schema,
+      500: findCapitalProjectsByCityCouncilId500Schema,
     },
   },
   findCityCouncilDistrictTiles: {
@@ -292,6 +352,11 @@ export const operations = {
     },
     responses: {
       200: findCityCouncilDistrictTilesQueryResponseSchema,
+      400: findCityCouncilDistrictTiles400Schema,
+      500: findCityCouncilDistrictTiles500Schema,
+      default: findCityCouncilDistrictTilesQueryResponseSchema,
+    },
+    errors: {
       400: findCityCouncilDistrictTiles400Schema,
       500: findCityCouncilDistrictTiles500Schema,
     },
@@ -307,6 +372,11 @@ export const operations = {
       200: findCommunityDistrictTilesQueryResponseSchema,
       400: findCommunityDistrictTiles400Schema,
       500: findCommunityDistrictTiles500Schema,
+      default: findCommunityDistrictTilesQueryResponseSchema,
+    },
+    errors: {
+      400: findCommunityDistrictTiles400Schema,
+      500: findCommunityDistrictTiles500Schema,
     },
   },
   findLandUses: {
@@ -318,6 +388,11 @@ export const operations = {
     },
     responses: {
       200: findLandUsesQueryResponseSchema,
+      400: findLandUses400Schema,
+      500: findLandUses500Schema,
+      default: findLandUsesQueryResponseSchema,
+    },
+    errors: {
       400: findLandUses400Schema,
       500: findLandUses500Schema,
     },
@@ -333,6 +408,11 @@ export const operations = {
       200: findTaxLotsQueryResponseSchema,
       400: findTaxLots400Schema,
       500: findTaxLots500Schema,
+      default: findTaxLotsQueryResponseSchema,
+    },
+    errors: {
+      400: findTaxLots400Schema,
+      500: findTaxLots500Schema,
     },
   },
   findTaxLotByBbl: {
@@ -344,6 +424,12 @@ export const operations = {
     },
     responses: {
       200: findTaxLotByBblQueryResponseSchema,
+      400: findTaxLotByBbl400Schema,
+      404: findTaxLotByBbl404Schema,
+      500: findTaxLotByBbl500Schema,
+      default: findTaxLotByBblQueryResponseSchema,
+    },
+    errors: {
       400: findTaxLotByBbl400Schema,
       404: findTaxLotByBbl404Schema,
       500: findTaxLotByBbl500Schema,
@@ -361,6 +447,12 @@ export const operations = {
       400: findTaxLotGeoJsonByBbl400Schema,
       404: findTaxLotGeoJsonByBbl404Schema,
       500: findTaxLotGeoJsonByBbl500Schema,
+      default: findTaxLotGeoJsonByBblQueryResponseSchema,
+    },
+    errors: {
+      400: findTaxLotGeoJsonByBbl400Schema,
+      404: findTaxLotGeoJsonByBbl404Schema,
+      500: findTaxLotGeoJsonByBbl500Schema,
     },
   },
   findZoningDistrictsByTaxLotBbl: {
@@ -372,6 +464,12 @@ export const operations = {
     },
     responses: {
       200: findZoningDistrictsByTaxLotBblQueryResponseSchema,
+      400: findZoningDistrictsByTaxLotBbl400Schema,
+      404: findZoningDistrictsByTaxLotBbl404Schema,
+      500: findZoningDistrictsByTaxLotBbl500Schema,
+      default: findZoningDistrictsByTaxLotBblQueryResponseSchema,
+    },
+    errors: {
       400: findZoningDistrictsByTaxLotBbl400Schema,
       404: findZoningDistrictsByTaxLotBbl404Schema,
       500: findZoningDistrictsByTaxLotBbl500Schema,
@@ -389,6 +487,12 @@ export const operations = {
       400: findZoningDistrictClassesByTaxLotBbl400Schema,
       404: findZoningDistrictClassesByTaxLotBbl404Schema,
       500: findZoningDistrictClassesByTaxLotBbl500Schema,
+      default: findZoningDistrictClassesByTaxLotBblQueryResponseSchema,
+    },
+    errors: {
+      400: findZoningDistrictClassesByTaxLotBbl400Schema,
+      404: findZoningDistrictClassesByTaxLotBbl404Schema,
+      500: findZoningDistrictClassesByTaxLotBbl500Schema,
     },
   },
   findZoningDistrictByZoningDistrictId: {
@@ -400,6 +504,12 @@ export const operations = {
     },
     responses: {
       200: findZoningDistrictByZoningDistrictIdQueryResponseSchema,
+      400: findZoningDistrictByZoningDistrictId400Schema,
+      404: findZoningDistrictByZoningDistrictId404Schema,
+      500: findZoningDistrictByZoningDistrictId500Schema,
+      default: findZoningDistrictByZoningDistrictIdQueryResponseSchema,
+    },
+    errors: {
       400: findZoningDistrictByZoningDistrictId400Schema,
       404: findZoningDistrictByZoningDistrictId404Schema,
       500: findZoningDistrictByZoningDistrictId500Schema,
@@ -417,6 +527,12 @@ export const operations = {
       400: findZoningDistrictClassesByZoningDistrictId400Schema,
       404: findZoningDistrictClassesByZoningDistrictId404Schema,
       500: findZoningDistrictClassesByZoningDistrictId500Schema,
+      default: findZoningDistrictClassesByZoningDistrictIdQueryResponseSchema,
+    },
+    errors: {
+      400: findZoningDistrictClassesByZoningDistrictId400Schema,
+      404: findZoningDistrictClassesByZoningDistrictId404Schema,
+      500: findZoningDistrictClassesByZoningDistrictId500Schema,
     },
   },
   findZoningDistrictClasses: {
@@ -428,6 +544,11 @@ export const operations = {
     },
     responses: {
       200: findZoningDistrictClassesQueryResponseSchema,
+      400: findZoningDistrictClasses400Schema,
+      500: findZoningDistrictClasses500Schema,
+      default: findZoningDistrictClassesQueryResponseSchema,
+    },
+    errors: {
       400: findZoningDistrictClasses400Schema,
       500: findZoningDistrictClasses500Schema,
     },
@@ -443,6 +564,11 @@ export const operations = {
       200: findZoningDistrictClassCategoryColorsQueryResponseSchema,
       400: findZoningDistrictClassCategoryColors400Schema,
       500: findZoningDistrictClassCategoryColors500Schema,
+      default: findZoningDistrictClassCategoryColorsQueryResponseSchema,
+    },
+    errors: {
+      400: findZoningDistrictClassCategoryColors400Schema,
+      500: findZoningDistrictClassCategoryColors500Schema,
     },
   },
   findZoningDistrictClassByZoningDistrictClassId: {
@@ -454,6 +580,13 @@ export const operations = {
     },
     responses: {
       200: findZoningDistrictClassByZoningDistrictClassIdQueryResponseSchema,
+      400: findZoningDistrictClassByZoningDistrictClassId400Schema,
+      404: findZoningDistrictClassByZoningDistrictClassId404Schema,
+      500: findZoningDistrictClassByZoningDistrictClassId500Schema,
+      default:
+        findZoningDistrictClassByZoningDistrictClassIdQueryResponseSchema,
+    },
+    errors: {
       400: findZoningDistrictClassByZoningDistrictClassId400Schema,
       404: findZoningDistrictClassByZoningDistrictClassId404Schema,
       500: findZoningDistrictClassByZoningDistrictClassId500Schema,
