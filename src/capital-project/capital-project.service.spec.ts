@@ -87,7 +87,7 @@ describe("CapitalProjectService", () => {
       ).not.toThrow();
     });
 
-    it.only("should throw a resource error when requesting a missing project", async () => {
+    it("should throw a resource error when requesting a missing project", async () => {
       const missingManagingCode = "725";
       const missingCapitalProjectId = "JIRO";
 
