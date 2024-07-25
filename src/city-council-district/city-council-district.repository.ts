@@ -6,8 +6,12 @@ import {
   FindManyRepo,
   FindTilesRepo,
   FindCapitalProjectsByCityCouncilDistrictIdRepo,
+  FindGeoJsonByIdRepo,
 } from "./city-council-district.repository.schema";
-import { FindCityCouncilDistrictTilesPathParams } from "src/gen";
+import {
+  FindCityCouncilDistrictGeoJsonByCityCouncilDistrictIdPathParams,
+  FindCityCouncilDistrictTilesPathParams,
+} from "src/gen";
 import { capitalProject, cityCouncilDistrict } from "src/schema";
 import { eq, sql, isNotNull } from "drizzle-orm";
 export class CityCouncilDistrictRepository {
@@ -44,6 +48,30 @@ export class CityCouncilDistrictRepository {
         columns: {
           id: true,
         },
+      });
+    } catch {
+      throw new DataRetrievalException();
+    }
+  }
+
+  async findGeoJsonById({
+    cityCouncilDistrictId,
+  }: FindCityCouncilDistrictGeoJsonByCityCouncilDistrictIdPathParams): Promise<
+    FindGeoJsonByIdRepo | undefined
+  > {
+    try {
+      return await this.db.query.cityCouncilDistrict.findFirst({
+        columns: {
+          id: true,
+        },
+        extras: {
+          geometry:
+            sql<string>`ST_AsGeoJSON(ST_Transform(${cityCouncilDistrict.liFt}, 4326), 6)`.as(
+              "geometry",
+            ),
+        },
+        where: (cityCouncilDistrict, { eq }) =>
+          eq(cityCouncilDistrict.id, cityCouncilDistrictId),
       });
     } catch {
       throw new DataRetrievalException();

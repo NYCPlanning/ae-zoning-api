@@ -14,6 +14,8 @@ import {
   NotFoundExceptionFilter,
 } from "src/filter";
 import {
+  FindCityCouncilDistrictGeoJsonByCityCouncilDistrictIdPathParams,
+  findCityCouncilDistrictGeoJsonByCityCouncilDistrictIdPathParamsSchema,
   FindCityCouncilDistrictTilesPathParams,
   findCityCouncilDistrictTilesPathParamsSchema,
 } from "src/gen";
@@ -52,7 +54,20 @@ export class CityCouncilDistrictController {
     res.set("Content-Type", "application/x-protobuf");
     res.send(tile);
   }
-  @Get("/:cityCouncilDistrictId/capital-projects")
+
+  @UsePipes(
+    new ZodTransformPipe(
+      findCityCouncilDistrictGeoJsonByCityCouncilDistrictIdPathParamsSchema,
+    ),
+  )
+  @Get("/:cityCouncilDistrictId/geojson")
+  async findGeoJsonById(
+    @Param()
+    params: FindCityCouncilDistrictGeoJsonByCityCouncilDistrictIdPathParams,
+  ) {
+    return this.cityCouncilDistrictService.findGeoJsonById(params);
+  }
+
   @UsePipes(
     new ZodTransformPipe(
       findCapitalProjectsByCityCouncilIdPathParamsSchema
@@ -60,6 +75,7 @@ export class CityCouncilDistrictController {
         .partial(),
     ),
   )
+  @Get("/:cityCouncilDistrictId/capital-projects")
   async findCapitalProjectsById(
     @Param() pathParams: FindCapitalProjectsByCityCouncilIdPathParams,
     @Query() queryParams: FindCapitalProjectsByCityCouncilIdQueryParams,
