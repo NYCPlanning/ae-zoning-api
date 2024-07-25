@@ -237,7 +237,7 @@ paths:
           $ref: '#/components/responses/InternalServerError'
   /city-council-districts/{cityCouncilDistrictId}/geojson:
     get:
-      summary: 🚧 Find GeoJson for a specific city council district
+      summary: Find GeoJson for a specific city council district
       operationId: findCityCouncilDistrictGeoJsonByCityCouncilDistrictId
       tags: 
         - City Council Districts
