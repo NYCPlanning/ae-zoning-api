@@ -6,7 +6,7 @@ import {
   FindManyRepo,
   FindTilesRepo,
   FindCapitalProjectsByCityCouncilDistrictIdRepo,
-  CityCouncilDistrictGeoJsonEntity,
+  FindGeoJsonByIdRepo,
 } from "./city-council-district.repository.schema";
 import {
   FindCityCouncilDistrictGeoJsonByCityCouncilDistrictIdPathParams,
@@ -57,7 +57,7 @@ export class CityCouncilDistrictRepository {
   async findGeoJsonById({
     cityCouncilDistrictId,
   }: FindCityCouncilDistrictGeoJsonByCityCouncilDistrictIdPathParams): Promise<
-    CityCouncilDistrictGeoJsonEntity | undefined
+    FindGeoJsonByIdRepo | undefined
   > {
     try {
       return await this.db.query.cityCouncilDistrict.findFirst({

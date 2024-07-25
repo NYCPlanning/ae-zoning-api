@@ -5,6 +5,7 @@ import {
   findCityCouncilDistrictTilesQueryResponseSchema,
   findCapitalProjectsByCityCouncilIdQueryResponseSchema,
   findCityCouncilDistrictsQueryResponseSchema,
+  findCityCouncilDistrictGeoJsonByCityCouncilDistrictIdQueryResponseSchema,
 } from "src/gen";
 import { CityCouncilDistrictService } from "./city-council-district.service";
 
@@ -48,6 +49,28 @@ describe("City Council District service unit", () => {
         findCityCouncilDistrictTilesQueryResponseSchema.parse(mvt),
       ).not.toThrow();
     });
+  });
+
+  describe("findGeoJsonById", () => {
+    it.only("should return a city council district geojson when requesting a valid id", async () => {
+      const { id } = cityCouncilDistrictRepositoryMock.findGeoJsonByIdMocks[0];
+      const cityCouncilDistrictGeoJson =
+        await cityCouncilDistrictService.findGeoJsonById({
+          cityCouncilDistrictId: id,
+        });
+      expect(() =>
+        findCityCouncilDistrictGeoJsonByCityCouncilDistrictIdQueryResponseSchema.parse(
+          cityCouncilDistrictGeoJson,
+        ),
+      ).not.toThrow();
+    });
+
+    // it("should throw a resource error when requesting a missing bbl", async () => {
+    //   const missingBbl = "0123456789";
+    //   expect(taxLotService.findGeoJsonByBbl(missingBbl)).rejects.toThrow(
+    //     ResourceNotFoundException,
+    //   );
+    // });
   });
 
   describe("findCapitalProjectsByCityCouncilId", () => {
