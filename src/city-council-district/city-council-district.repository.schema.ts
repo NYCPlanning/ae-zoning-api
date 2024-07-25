@@ -5,6 +5,15 @@ import {
 } from "src/schema";
 import { z } from "zod";
 
+export const cityCouncilDistrictGeoJsonEntitySchema =
+  cityCouncilDistrictEntitySchema.extend({
+    geometry: z.string(),
+  });
+
+export type CityCouncilDistrictGeoJsonEntity = z.infer<
+  typeof cityCouncilDistrictGeoJsonEntitySchema
+>;
+
 export const findManyRepoSchema = z.array(cityCouncilDistrictEntitySchema);
 
 export type FindManyRepo = z.infer<typeof findManyRepoSchema>;

@@ -5,8 +5,12 @@ import {
   FindCapitalProjectsByCityCouncilIdPathParams,
   FindCapitalProjectsByCityCouncilIdQueryParams,
   FindCapitalProjectsByCityCouncilIdQueryResponse,
+  FindCityCouncilDistrictGeoJsonByCityCouncilDistrictIdPathParams,
   FindCityCouncilDistrictTilesPathParams,
 } from "src/gen";
+import { produce } from "immer";
+import { CityCouncilDistrictGeoJsonEntity } from "./city-council-district.repository.schema";
+import { CityCouncilDistrictEntity } from "src/schema";
 
 @Injectable()
 export class CityCouncilDistrictService {
@@ -26,6 +30,32 @@ export class CityCouncilDistrictService {
 
   async findTiles(params: FindCityCouncilDistrictTilesPathParams) {
     return await this.cityCouncilDistrictRepository.findTiles(params);
+  }
+
+  async findGeoJsonById({
+    cityCouncilDistrictId,
+  }: FindCityCouncilDistrictGeoJsonByCityCouncilDistrictIdPathParams) {
+    const cityCouncilDistrictGeoJson =
+      await this.cityCouncilDistrictRepository.findGeoJsonById({
+        cityCouncilDistrictId,
+      });
+    if (cityCouncilDistrictGeoJson === undefined)
+      throw new ResourceNotFoundException();
+
+    const geometry = JSON.parse(cityCouncilDistrictGeoJson.geometry);
+    const properties = produce(
+      cityCouncilDistrictGeoJson as Partial<CityCouncilDistrictGeoJsonEntity>,
+      (draft) => {
+        delete draft["geometry"];
+      },
+    ) as CityCouncilDistrictEntity;
+
+    return {
+      type: "Feature",
+      id: cityCouncilDistrictGeoJson.id,
+      properties,
+      geometry,
+    };
   }
 
   async findCapitalProjectsById({
