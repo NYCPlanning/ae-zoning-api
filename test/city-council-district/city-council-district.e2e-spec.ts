@@ -11,6 +11,7 @@ import { CityCouncilDistrictRepositoryMock } from "./city-council-district.repos
 import { CityCouncilDistrictModule } from "src/city-council-district/city-council-district.module";
 import {
   findCapitalProjectsByCityCouncilIdQueryResponseSchema,
+  findCityCouncilDistrictGeoJsonByCityCouncilDistrictIdQueryResponseSchema,
   findCityCouncilDistrictsQueryResponseSchema,
 } from "src/gen";
 
@@ -102,6 +103,65 @@ describe("City Council District e2e", () => {
 
       const response = await request(app.getHttpServer())
         .get(`/city-council-districts/${z}/${x}/${y}.pbf`)
+        .expect(500);
+      expect(response.body.message).toBe(dataRetrievalException.message);
+      expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);
+    });
+  });
+
+  describe("findCityCouncilDistrictGeoJsonByCityCouncilDistrictId", () => {
+    it("should 200 and return documented schema when finding by valid id", async () => {
+      const mock = cityCouncilDistrictRepositoryMock.findGeoJsonByIdMocks[0];
+      const response = await request(app.getHttpServer())
+        .get(`/city-council-districts/${mock.id}/geojson`)
+        .expect(200);
+      expect(() =>
+        findCityCouncilDistrictGeoJsonByCityCouncilDistrictIdQueryResponseSchema.parse(
+          response.body,
+        ),
+      ).not.toThrow();
+    });
+
+    it("should 400 when finding by too long id", async () => {
+      const longId = "100";
+      const response = await request(app.getHttpServer())
+        .get(`/city-council-districts/${longId}/geojson`)
+        .expect(400);
+      expect(response.body.message).toBe(
+        new InvalidRequestParameterException().message,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 when finding by lettered id", async () => {
+      const letterId = "Y";
+      const response = await request(app.getHttpServer())
+        .get(`/city-council-districts/${letterId}/geojson`)
+        .expect(400);
+      expect(response.body.message).toBe(
+        new InvalidRequestParameterException().message,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 404 when finding by missing id", async () => {
+      const missingId = "00";
+      const response = await request(app.getHttpServer())
+        .get(`/city-council-districts/${missingId}/geojson`)
+        .expect(404);
+      expect(response.body.message).toBe(HttpName.NOT_FOUND);
+    });
+
+    it("should 500 when the database errors", async () => {
+      const dataRetrievalException = new DataRetrievalException();
+      jest
+        .spyOn(cityCouncilDistrictRepositoryMock, "findGeoJsonById")
+        .mockImplementationOnce(() => {
+          throw dataRetrievalException;
+        });
+      const mock = cityCouncilDistrictRepositoryMock.findGeoJsonByIdMocks[0];
+      const response = await request(app.getHttpServer())
+        .get(`/city-council-districts/${mock.id}/geojson`)
         .expect(500);
       expect(response.body.message).toBe(dataRetrievalException.message);
       expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);

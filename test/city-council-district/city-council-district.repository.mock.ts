@@ -3,8 +3,10 @@ import {
   findTilesRepoSchema,
   checkByIdRepoSchema,
   findCapitalProjectsByCityCouncilDistrictIdRepoSchema,
+  findGeoJsonByIdRepoSchema,
 } from "src/city-council-district/city-council-district.repository.schema";
 import { generateMock } from "@anatine/zod-mock";
+import { FindCityCouncilDistrictGeoJsonByCityCouncilDistrictIdPathParams } from "src/gen";
 
 export class CityCouncilDistrictRepositoryMock {
   numberOfMocks = 1;
@@ -31,6 +33,18 @@ export class CityCouncilDistrictRepositoryMock {
 
   async findTiles() {
     return this.findTilesMock;
+  }
+
+  findGeoJsonByIdMocks = Array.from(Array(this.numberOfMocks), (_, seed) =>
+    generateMock(findGeoJsonByIdRepoSchema, { seed: seed + 1 }),
+  );
+
+  async findGeoJsonById({
+    cityCouncilDistrictId,
+  }: FindCityCouncilDistrictGeoJsonByCityCouncilDistrictIdPathParams) {
+    return this.findGeoJsonByIdMocks.find(
+      (row) => row.id === cityCouncilDistrictId,
+    );
   }
 
   checkCityCouncilDistrictByIdMocks = Array.from(

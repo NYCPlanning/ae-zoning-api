@@ -5,8 +5,10 @@ import {
   findCityCouncilDistrictTilesQueryResponseSchema,
   findCapitalProjectsByCityCouncilIdQueryResponseSchema,
   findCityCouncilDistrictsQueryResponseSchema,
+  findCityCouncilDistrictGeoJsonByCityCouncilDistrictIdQueryResponseSchema,
 } from "src/gen";
 import { CityCouncilDistrictService } from "./city-council-district.service";
+import { ResourceNotFoundException } from "src/exception";
 
 describe("City Council District service unit", () => {
   let cityCouncilDistrictService: CityCouncilDistrictService;
@@ -47,6 +49,30 @@ describe("City Council District service unit", () => {
       expect(() =>
         findCityCouncilDistrictTilesQueryResponseSchema.parse(mvt),
       ).not.toThrow();
+    });
+  });
+
+  describe("findGeoJsonById", () => {
+    it("should return a city council district geojson when requesting a valid id", async () => {
+      const { id } = cityCouncilDistrictRepositoryMock.findGeoJsonByIdMocks[0];
+      const cityCouncilDistrictGeoJson =
+        await cityCouncilDistrictService.findGeoJsonById({
+          cityCouncilDistrictId: id,
+        });
+      expect(() =>
+        findCityCouncilDistrictGeoJsonByCityCouncilDistrictIdQueryResponseSchema.parse(
+          cityCouncilDistrictGeoJson,
+        ),
+      ).not.toThrow();
+    });
+
+    it("should throw a resource error when requesting a missing id", async () => {
+      const missingId = "00";
+      expect(
+        cityCouncilDistrictService.findGeoJsonById({
+          cityCouncilDistrictId: missingId,
+        }),
+      ).rejects.toThrow(ResourceNotFoundException);
     });
   });
 
