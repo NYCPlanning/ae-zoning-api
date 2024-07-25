@@ -19,6 +19,6 @@ export const capitalCommitmentFundEntitySchema = z.object({
   value: z.number(),
 });
 
-export type commitmentFundEntitySchema = z.infer<
+export type CapitalCommitmentFundEntitySchema = z.infer<
   typeof capitalCommitmentFundEntitySchema
 >;

@@ -173,7 +173,7 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /capital-projects/{managingCode}/{capitalProjectId}/geojson:
     get:
-      summary: 🚧 Find a single capital project as a geojson feature
+      summary: Find a single capital project as a geojson feature
       operationId: findCapitalProjectGeoJsonByManagingCodeCapitalProjectId
       tags: 
         - Capital Projects

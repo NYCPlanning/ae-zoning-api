@@ -5,6 +5,7 @@ import { CapitalProjectRepository } from "./capital-project.repository";
 import {
   findCapitalCommitmentsByManagingCodeCapitalProjectIdQueryResponseSchema,
   findCapitalProjectByManagingCodeCapitalProjectIdQueryResponseSchema,
+  findCapitalProjectGeoJsonByManagingCodeCapitalProjectIdQueryResponseSchema,
   findCapitalProjectTilesQueryResponseSchema,
 } from "src/gen";
 import { ResourceNotFoundException } from "src/exception";
@@ -51,6 +52,38 @@ describe("CapitalProjectService", () => {
 
       expect(
         capitalProjectService.findByManagingCodeCapitalProjectId({
+          managingCode: missingManagingCode,
+          capitalProjectId: missingCapitalProjectId,
+        }),
+      ).rejects.toThrow(ResourceNotFoundException);
+    });
+  });
+
+  describe("findGeoJsonByManagingCodeCapitalProjectId", () => {
+    it("should return a capital project geojson with a valid request", async () => {
+      const capitalProjectGeoJsonMock =
+        capitalProjectRepository
+          .findGeoJsonByManagingCodeCapitalProjectIdMock[0];
+      const { managingCode, id: capitalProjectId } = capitalProjectGeoJsonMock;
+      const capitalProjectGeoJson =
+        await capitalProjectService.findGeoJsonByManagingCodeCapitalProjectId({
+          managingCode,
+          capitalProjectId,
+        });
+
+      expect(() =>
+        findCapitalProjectGeoJsonByManagingCodeCapitalProjectIdQueryResponseSchema.parse(
+          capitalProjectGeoJson,
+        ),
+      ).not.toThrow();
+    });
+
+    it("should throw a resource error when requesting a missing project", async () => {
+      const missingManagingCode = "890";
+      const missingCapitalProjectId = "ABCD";
+
+      expect(
+        capitalProjectService.findGeoJsonByManagingCodeCapitalProjectId({
           managingCode: missingManagingCode,
           capitalProjectId: missingCapitalProjectId,
         }),

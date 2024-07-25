@@ -4,6 +4,7 @@ import { DataRetrievalException } from "src/exception";
 import {
   FindCapitalCommitmentsByManagingCodeCapitalProjectIdPathParams,
   FindCapitalProjectByManagingCodeCapitalProjectIdPathParams,
+  FindCapitalProjectGeoJsonByManagingCodeCapitalProjectIdPathParams,
   FindCapitalProjectTilesPathParams,
 } from "src/gen";
 import { DB, DbType } from "src/global/providers/db.provider";
@@ -18,6 +19,7 @@ import {
   CheckByManagingCodeCapitalProjectIdRepo,
   FindByManagingCodeCapitalProjectIdRepo,
   FindCapitalCommitmentsByManagingCodeCapitalProjectIdRepo,
+  FindGeoJsonByManagingCodeCapitalProjectIdRepo,
   FindTilesRepo,
 } from "./capital-project.repository.schema";
 
@@ -72,6 +74,68 @@ export class CapitalProjectRepository {
             Array<string>
           >`ARRAY_AGG(DISTINCT ${agencyBudget.type})`,
           commitmentsTotal: sum(capitalCommitmentFund.value).mapWith(Number),
+        })
+        .from(capitalProject)
+        .leftJoin(
+          capitalCommitment,
+          and(
+            eq(capitalProject.managingCode, capitalCommitment.managingCode),
+            eq(capitalProject.id, capitalCommitment.capitalProjectId),
+          ),
+        )
+        .leftJoin(
+          agencyBudget,
+          eq(agencyBudget.code, capitalCommitment.budgetLineCode),
+        )
+        .leftJoin(
+          capitalCommitmentFund,
+          eq(capitalCommitmentFund.capitalCommitmentId, capitalCommitment.id),
+        )
+        .where(
+          and(
+            eq(capitalProject.managingCode, managingCode),
+            eq(capitalProject.id, capitalProjectId),
+            eq(capitalCommitmentFund.category, "total"),
+          ),
+        )
+        .groupBy(capitalProject.managingCode, capitalProject.id)
+        .limit(1);
+    } catch {
+      throw new DataRetrievalException();
+    }
+  }
+
+  async findGeoJsonByManagingCodeCapitalProjectId(
+    params: FindCapitalProjectGeoJsonByManagingCodeCapitalProjectIdPathParams,
+  ): Promise<FindGeoJsonByManagingCodeCapitalProjectIdRepo> {
+    const { managingCode, capitalProjectId } = params;
+    try {
+      return await this.db
+        .select({
+          id: capitalProject.id,
+          managingCode: capitalProject.managingCode,
+          description: capitalProject.description,
+          managingAgency: capitalProject.managingAgency,
+          minDate: capitalProject.minDate,
+          maxDate: capitalProject.maxDate,
+          category: capitalProject.category,
+          sponsoringAgencies: sql<
+            Array<string>
+          >`ARRAY_AGG(DISTINCT ${agencyBudget.sponsor})`,
+          budgetTypes: sql<
+            Array<string>
+          >`ARRAY_AGG(DISTINCT ${agencyBudget.type})`,
+          commitmentsTotal: sum(capitalCommitmentFund.value).mapWith(Number),
+          geometry: sql<string | null>`
+            CASE
+            WHEN 
+              ${capitalProject.liFtMPoly} IS NOT null
+            THEN
+              ST_asGeoJSON(ST_Transform(${capitalProject.liFtMPoly}, 4326),6)	
+            ELSE
+              ST_asGeoJSON(ST_Transform(${capitalProject.liFtMPnt}, 4326),6)
+            END
+          `.as("geometry"),
         })
         .from(capitalProject)
         .leftJoin(

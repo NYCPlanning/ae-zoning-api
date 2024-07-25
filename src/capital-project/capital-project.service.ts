@@ -1,11 +1,17 @@
+import { produce } from "immer";
 import {
   FindCapitalCommitmentsByManagingCodeCapitalProjectIdPathParams,
   FindCapitalProjectByManagingCodeCapitalProjectIdPathParams,
+  FindCapitalProjectGeoJsonByManagingCodeCapitalProjectIdPathParams,
   FindCapitalProjectTilesPathParams,
 } from "src/gen";
 import { CapitalProjectRepository } from "./capital-project.repository";
 import { Inject } from "@nestjs/common";
 import { ResourceNotFoundException } from "src/exception";
+import {
+  CapitalProjectBudgetedEntity,
+  CapitalProjectBudgetedGeoJsonEntityRepo,
+} from "./capital-project.repository.schema";
 
 export class CapitalProjectService {
   constructor(
@@ -23,6 +29,38 @@ export class CapitalProjectService {
 
     if (capitalProjects.length < 1) throw new ResourceNotFoundException();
     return capitalProjects[0];
+  }
+
+  async findGeoJsonByManagingCodeCapitalProjectId(
+    params: FindCapitalProjectGeoJsonByManagingCodeCapitalProjectIdPathParams,
+  ) {
+    const capitalProjects =
+      await this.capitalProjectRepository.findGeoJsonByManagingCodeCapitalProjectId(
+        params,
+      );
+
+    if (capitalProjects.length < 1) throw new ResourceNotFoundException();
+
+    const capitalProject = capitalProjects[0];
+
+    const geometry =
+      capitalProject.geometry === null
+        ? null
+        : JSON.parse(capitalProject.geometry);
+
+    const properties = produce(
+      capitalProject as Partial<CapitalProjectBudgetedGeoJsonEntityRepo>,
+      (draft) => {
+        delete draft["geometry"];
+      },
+    ) as CapitalProjectBudgetedEntity;
+
+    return {
+      id: `${capitalProject.managingCode}${capitalProject.id}`,
+      type: "Feature",
+      properties,
+      geometry,
+    };
   }
 
   async findTiles(params: FindCapitalProjectTilesPathParams) {

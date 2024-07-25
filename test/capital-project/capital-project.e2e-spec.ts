@@ -12,6 +12,7 @@ import {
 import {
   findCapitalCommitmentsByManagingCodeCapitalProjectIdQueryResponseSchema,
   findCapitalProjectByManagingCodeCapitalProjectIdQueryResponseSchema,
+  findCapitalProjectGeoJsonByManagingCodeCapitalProjectIdQueryResponseSchema,
 } from "src/gen";
 
 describe("Capital Projects", () => {
@@ -96,6 +97,86 @@ describe("Capital Projects", () => {
       const { managingCode, id: capitalProjectId } = capitalProjectMock;
       const response = await request(app.getHttpServer())
         .get(`/capital-projects/${managingCode}/${capitalProjectId}`)
+        .expect(500);
+      expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);
+      expect(response.body.message).toBe(dataRetrievalException.message);
+    });
+  });
+
+  describe("findGeoJsonByManagingCodeCapitalProjectId", () => {
+    it("should 200 and return a capital project with budget details", async () => {
+      const capitalProjectGeoJsonMock =
+        capitalProjectRepository
+          .findGeoJsonByManagingCodeCapitalProjectIdMock[0];
+      const { managingCode, id: capitalProjectId } = capitalProjectGeoJsonMock;
+      const response = await request(app.getHttpServer())
+        .get(`/capital-projects/${managingCode}/${capitalProjectId}/geojson`)
+        .expect(200);
+
+      expect(() =>
+        findCapitalProjectGeoJsonByManagingCodeCapitalProjectIdQueryResponseSchema.parse(
+          response.body,
+        ),
+      ).not.toThrow();
+    });
+
+    it("should 400 when finding by a too long managing code", async () => {
+      const tooLongManagingCode = "1234";
+      const capitalProjectId = "JIRO";
+
+      const response = await request(app.getHttpServer())
+        .get(
+          `/capital-projects/${tooLongManagingCode}/${capitalProjectId}/geojson`,
+        )
+        .expect(400);
+
+      expect(response.body.message).toBe(
+        new InvalidRequestParameterException().message,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 when finding by a lettered managing code", async () => {
+      const letteredManagingCode = "ABC";
+      const capitalProjectId = "JIRO";
+
+      const response = await request(app.getHttpServer())
+        .get(
+          `/capital-projects/${letteredManagingCode}/${capitalProjectId}/geojson`,
+        )
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 404 when finding by missing managing code and capital project id", async () => {
+      const managingCode = "123";
+      const capitalProjectId = "JIRO";
+
+      const response = await request(app.getHttpServer())
+        .get(`/capital-projects/${managingCode}/${capitalProjectId}`)
+        .expect(404);
+
+      expect(response.body.message).toBe(HttpName.NOT_FOUND);
+    });
+
+    it("should 500 when the database errors", async () => {
+      const dataRetrievalException = new DataRetrievalException();
+      jest
+        .spyOn(
+          capitalProjectRepository,
+          "findGeoJsonByManagingCodeCapitalProjectId",
+        )
+        .mockImplementationOnce(() => {
+          throw dataRetrievalException;
+        });
+
+      const capitalProjectMock =
+        capitalProjectRepository
+          .findGeoJsonByManagingCodeCapitalProjectIdMock[0];
+      const { managingCode, id: capitalProjectId } = capitalProjectMock;
+      const response = await request(app.getHttpServer())
+        .get(`/capital-projects/${managingCode}/${capitalProjectId}/geojson`)
         .expect(500);
       expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);
       expect(response.body.message).toBe(dataRetrievalException.message);
