@@ -63,6 +63,13 @@ import {
   findCityCouncilDistricts500Schema,
 } from "./findCityCouncilDistrictsSchema";
 import {
+  findCityCouncilDistrictGeoJsonByCityCouncilDistrictIdQueryResponseSchema,
+  findCityCouncilDistrictGeoJsonByCityCouncilDistrictId400Schema,
+  findCityCouncilDistrictGeoJsonByCityCouncilDistrictId404Schema,
+  findCityCouncilDistrictGeoJsonByCityCouncilDistrictId500Schema,
+  findCityCouncilDistrictGeoJsonByCityCouncilDistrictIdPathParamsSchema,
+} from "./findCityCouncilDistrictGeoJsonByCityCouncilDistrictIdSchema";
+import {
   findCapitalProjectsByCityCouncilIdQueryResponseSchema,
   findCapitalProjectsByCityCouncilId400Schema,
   findCapitalProjectsByCityCouncilId404Schema,
@@ -349,6 +356,27 @@ export const operations = {
     errors: {
       400: findCityCouncilDistricts400Schema,
       500: findCityCouncilDistricts500Schema,
+    },
+  },
+  findCityCouncilDistrictGeoJsonByCityCouncilDistrictId: {
+    request: undefined,
+    parameters: {
+      path: findCityCouncilDistrictGeoJsonByCityCouncilDistrictIdPathParamsSchema,
+      query: undefined,
+      header: undefined,
+    },
+    responses: {
+      200: findCityCouncilDistrictGeoJsonByCityCouncilDistrictIdQueryResponseSchema,
+      400: findCityCouncilDistrictGeoJsonByCityCouncilDistrictId400Schema,
+      404: findCityCouncilDistrictGeoJsonByCityCouncilDistrictId404Schema,
+      500: findCityCouncilDistrictGeoJsonByCityCouncilDistrictId500Schema,
+      default:
+        findCityCouncilDistrictGeoJsonByCityCouncilDistrictIdQueryResponseSchema,
+    },
+    errors: {
+      400: findCityCouncilDistrictGeoJsonByCityCouncilDistrictId400Schema,
+      404: findCityCouncilDistrictGeoJsonByCityCouncilDistrictId404Schema,
+      500: findCityCouncilDistrictGeoJsonByCityCouncilDistrictId500Schema,
     },
   },
   findCapitalProjectsByCityCouncilId: {
@@ -654,6 +682,9 @@ export const paths = {
   },
   "/city-council-districts": {
     get: operations["findCityCouncilDistricts"],
+  },
+  "/city-council-districts/{cityCouncilDistrictId}/geojson": {
+    get: operations["findCityCouncilDistrictGeoJsonByCityCouncilDistrictId"],
   },
   "/city-council-districts/{cityCouncilDistrictId}/capital-projects": {
     get: operations["findCapitalProjectsByCityCouncilId"],

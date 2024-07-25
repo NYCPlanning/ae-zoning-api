@@ -258,6 +258,28 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '500':
           $ref: '#/components/responses/InternalServerError'
+  /city-council-districts/{cityCouncilDistrictId}/geojson:
+    get:
+      summary: 🚧 Find GeoJson for a specific city council district
+      operationId: findCityCouncilDistrictGeoJsonByCityCouncilDistrictId
+      tags: 
+        - City Council Districts
+        - GeoJSON
+      parameters:
+        - $ref: "#/components/parameters/cityCouncilDistrictIdParam"
+      responses:
+        '200':
+          description: a city council district geojson object
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/CityCouncilDistrictGeoJson'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '500':
+          $ref: '#/components/responses/InternalServerError'
   /city-council-districts/{cityCouncilDistrictId}/capital-projects:
     get:
       summary: Find paginated capital projects within a specific city council district.
@@ -283,7 +305,7 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /city-council-districts/{z}/{x}/{y}.pbf:
     get:
-      summary: 🚧 Mapbox Vector Tiles for city council districts
+      summary: Mapbox Vector Tiles for city council districts
       operationId: findCityCouncilDistrictTiles
       tags:
         - MVT
@@ -954,6 +976,27 @@ components:
           example: 25
       required:
         - id
+    CityCouncilDistrictGeoJson:
+      type: object
+      properties:
+        id:
+          type: string
+          description: One or two character code to represent city council districts.
+          pattern: '^([0-9]{1,2})$' 
+          example: 25
+        type:
+          type: string
+          enum:
+            - Feature
+        properties:
+          $ref: '#/components/schemas/CityCouncilDistrict'
+        geometry:
+          $ref: '#/components/schemas/MultiPolygon'
+      required:
+        - id
+        - type
+        - geometry
+        - properties
     CommunityDistrict:
       type: object
       properties:
