@@ -5,11 +5,14 @@ import {
   findByManagingCodeCapitalProjectIdRepoSchema,
   FindCapitalCommitmentsByManagingCodeCapitalProjectIdRepo,
   findCapitalCommitmentsByManagingCodeCapitalProjectIdRepoSchema,
+  FindGeoJsonByManagingCodeCapitalProjectIdRepo,
+  findGeoJsonByManagingCodeCapitalProjectIdRepoSchema,
   findTilesRepoSchema,
 } from "src/capital-project/capital-project.repository.schema";
 import {
   FindCapitalCommitmentsByManagingCodeCapitalProjectIdPathParams,
   FindCapitalProjectByManagingCodeCapitalProjectIdPathParams,
+  FindCapitalProjectGeoJsonByManagingCodeCapitalProjectIdPathParams,
 } from "src/gen";
 
 export class CapitalProjectRepositoryMock {
@@ -79,6 +82,30 @@ export class CapitalProjectRepositoryMock {
         capitalProject.id === capitalProjectId &&
         capitalProject.managingCode === managingCode,
     );
+  }
+
+  findGeoJsonByManagingCodeCapitalProjectIdMock = generateMock(
+    findGeoJsonByManagingCodeCapitalProjectIdRepoSchema,
+    {
+      seed: 1,
+      stringMap: {
+        minDate: () => "2018-01-01",
+        maxDate: () => "2045-12-31",
+      },
+    },
+  );
+
+  async findGeoJsonByManagingCodeCapitalProjectId({
+    managingCode,
+    capitalProjectId,
+  }: FindCapitalProjectGeoJsonByManagingCodeCapitalProjectIdPathParams): Promise<FindGeoJsonByManagingCodeCapitalProjectIdRepo> {
+    const results = this.findGeoJsonByManagingCodeCapitalProjectIdMock.filter(
+      (capitalProjectGeoJson) =>
+        capitalProjectGeoJson.id === capitalProjectId &&
+        capitalProjectGeoJson.managingCode === managingCode,
+    );
+
+    return results === undefined ? [] : results;
   }
 
   findTilesMock = generateMock(findTilesRepoSchema);

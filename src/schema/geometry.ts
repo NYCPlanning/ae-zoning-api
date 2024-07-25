@@ -1,5 +1,11 @@
 import { z } from "zod";
 
+export const MultiPointSchema = z
+  .string()
+  .regex(
+    /^{"type":"MultiPoint","coordinates":\[(\[-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?,-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?\])(,\[-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?,-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?\]){0,}\]}$/,
+  );
+
 export const MultiPolygonSchema = z
   .string()
   /**

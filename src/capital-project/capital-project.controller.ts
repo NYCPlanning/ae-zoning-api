@@ -10,9 +10,11 @@ import { Response } from "express";
 import {
   FindCapitalCommitmentsByManagingCodeCapitalProjectIdPathParams,
   FindCapitalProjectByManagingCodeCapitalProjectIdPathParams,
+  FindCapitalProjectGeoJsonByManagingCodeCapitalProjectIdPathParams,
   FindCapitalProjectTilesPathParams,
   findCapitalCommitmentsByManagingCodeCapitalProjectIdPathParamsSchema,
   findCapitalProjectByManagingCodeCapitalProjectIdPathParamsSchema,
+  findCapitalProjectGeoJsonByManagingCodeCapitalProjectIdPathParamsSchema,
   findCapitalProjectTilesPathParamsSchema,
 } from "src/gen";
 import { CapitalProjectService } from "./capital-project.service";
@@ -41,6 +43,21 @@ export class CapitalProjectController {
     @Param() params: FindCapitalProjectByManagingCodeCapitalProjectIdPathParams,
   ) {
     return await this.capitalProjectService.findByManagingCodeCapitalProjectId(
+      params,
+    );
+  }
+
+  @UsePipes(
+    new ZodTransformPipe(
+      findCapitalProjectGeoJsonByManagingCodeCapitalProjectIdPathParamsSchema,
+    ),
+  )
+  @Get("/:managingCode/:capitalProjectId/geojson")
+  async findGeoJsonByManagingCodeCapitalProjectId(
+    @Param()
+    params: FindCapitalProjectGeoJsonByManagingCodeCapitalProjectIdPathParams,
+  ) {
+    return await this.capitalProjectService.findGeoJsonByManagingCodeCapitalProjectId(
       params,
     );
   }
