@@ -6,9 +6,11 @@ import {
   FindManyRepo,
   FindCommunityDistrictsByBoroughIdRepo,
   FindCapitalProjectsByBoroughIdCommunityDistrictIdRepo,
+  FindCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdRepo,
 } from "./borough.repository.schema";
 import { capitalProject, communityDistrict } from "src/schema";
 import { eq, sql, and } from "drizzle-orm";
+import { FindCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdPathParams } from "src/gen";
 
 export class BoroughRepository {
   constructor(
@@ -53,6 +55,35 @@ export class BoroughRepository {
           boroughId: true,
         },
         where: eq(communityDistrict.boroughId, id),
+      });
+    } catch {
+      throw new DataRetrievalException();
+    }
+  }
+
+  async findCommunityDistrictGeoJsonByBoroughIdCommunityDistrictId({
+    boroughId,
+    communityDistrictId,
+  }: FindCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdPathParams): Promise<
+    FindCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdRepo | undefined
+  > {
+    try {
+      return await this.db.query.communityDistrict.findFirst({
+        columns: {
+          id: true,
+          boroughId: true,
+        },
+        extras: {
+          geometry:
+            sql<string>`ST_AsGeoJSON(ST_Transform(${communityDistrict.liFt}, 4326), 6)`.as(
+              "geometry",
+            ),
+        },
+        where: (communityDistrict, { and, eq }) =>
+          and(
+            eq(communityDistrict.boroughId, boroughId),
+            eq(communityDistrict.id, communityDistrictId),
+          ),
       });
     } catch {
       throw new DataRetrievalException();

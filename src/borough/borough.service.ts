@@ -6,6 +6,9 @@ import {
   FindCapitalProjectsByBoroughIdCommunityDistrictIdPathParams,
   FindCapitalProjectsByBoroughIdCommunityDistrictIdQueryParams,
 } from "src/gen";
+import { produce } from "immer";
+import { CommunityDistrictGeoJsonEntity } from "./borough.repository.schema";
+import { CommunityDistrictEntity } from "src/schema";
 
 @Injectable()
 export class BoroughService {
@@ -32,6 +35,32 @@ export class BoroughService {
 
     return {
       communityDistricts,
+    };
+  }
+
+  async findCommunityDistrictGeoJsonByBoroughIdCommunityDistrictId(
+    params: FindCapitalProjectsByBoroughIdCommunityDistrictIdPathParams,
+  ) {
+    const communityDistrictGeoJson =
+      await this.boroughRepository.findCommunityDistrictGeoJsonByBoroughIdCommunityDistrictId(
+        params,
+      );
+    if (communityDistrictGeoJson === undefined)
+      throw new ResourceNotFoundException();
+
+    const geometry = JSON.parse(communityDistrictGeoJson.geometry);
+    const properties = produce(
+      communityDistrictGeoJson as Partial<CommunityDistrictGeoJsonEntity>,
+      (draft) => {
+        delete draft["geometry"];
+      },
+    ) as CommunityDistrictEntity;
+
+    return {
+      type: "Feature",
+      id: `${communityDistrictGeoJson.boroughId}${communityDistrictGeoJson.id}`,
+      properties,
+      geometry,
     };
   }
 

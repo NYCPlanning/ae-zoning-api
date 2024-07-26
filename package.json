@@ -36,6 +36,7 @@
     "@nestjs/platform-express": "^10.3.7",
     "@nestjs/serve-static": "^4.0.0",
     "drizzle-orm": "^0.31.1",
+    "immer": "^10.1.1",
     "joi": "^17.11.0",
     "pg": "^8.11.3",
     "reflect-metadata": "^0.1.13",

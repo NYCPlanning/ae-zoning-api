@@ -10,6 +10,7 @@ export * from "./capital-project-checkbook";
 export * from "./capital-project-fund";
 export * from "./city-council-district";
 export * from "./community-district";
+export * from "./geometry";
 export * from "./land-use";
 export * from "./managing-code";
 export * from "./mvt";

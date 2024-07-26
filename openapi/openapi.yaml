@@ -97,7 +97,7 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /boroughs/{boroughId}/community-districts/{communityDistrictId}/geojson:
     get:
-      summary: 🚧 Find GeoJson for a specific community district
+      summary: Find GeoJson for a specific community district
       operationId: findCommunityDistrictGeoJsonByBoroughIdCommunityDistrictId
       tags: 
         - Community Districts

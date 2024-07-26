@@ -3,9 +3,11 @@ import {
   checkByIdRepoSchema,
   findCommunityDistrictsByBoroughIdRepoSchema,
   findCapitalProjectsByBoroughIdCommunityDistrictIdRepoSchema,
+  communityDistrictGeoJsonEntitySchema,
 } from "src/borough/borough.repository.schema";
 import { generateMock } from "@anatine/zod-mock";
 import { CommunityDistrictRepositoryMock } from "test/community-district/community-district.repository.mock";
+import { FindCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdPathParams } from "src/gen";
 
 export class BoroughRepositoryMock {
   communityDistrictRepoMock: CommunityDistrictRepositoryMock;
@@ -55,6 +57,21 @@ export class BoroughRepositoryMock {
           ),
         };
       },
+    );
+  }
+
+  findCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdMocks = Array.from(
+    Array(this.numberOfMocks),
+    (_, seed) =>
+      generateMock(communityDistrictGeoJsonEntitySchema, { seed: seed + 1 }),
+  );
+
+  async findCommunityDistrictGeoJsonByBoroughIdCommunityDistrictId({
+    boroughId,
+    communityDistrictId,
+  }: FindCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdPathParams) {
+    return this.findCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdMocks.find(
+      (row) => row.id === communityDistrictId && row.boroughId === boroughId,
     );
   }
 
