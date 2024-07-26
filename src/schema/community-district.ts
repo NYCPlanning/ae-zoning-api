@@ -28,3 +28,7 @@ export const communityDistrictEntitySchema = z.object({
   boroughId: z.string().length(1).regex(new RegExp("[0-9]")),
   id: z.string().length(2).regex(new RegExp("^([0-9]{2})$")),
 });
+
+export type CommunityDistrictEntity = z.infer<
+  typeof communityDistrictEntitySchema
+>;

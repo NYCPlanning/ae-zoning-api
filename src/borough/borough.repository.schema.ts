@@ -1,5 +1,9 @@
 import { capitalProjectSchema } from "src/gen";
-import { boroughEntitySchema, communityDistrictEntitySchema } from "src/schema";
+import {
+  boroughEntitySchema,
+  communityDistrictEntitySchema,
+  MultiPolygonSchema,
+} from "src/schema";
 import { z } from "zod";
 
 export const findManyRepoSchema = z.array(boroughEntitySchema);
@@ -19,6 +23,23 @@ export const findCommunityDistrictsByBoroughIdRepoSchema = z.array(
 export type FindCommunityDistrictsByBoroughIdRepo = z.infer<
   typeof findCommunityDistrictsByBoroughIdRepoSchema
 >;
+
+export const communityDistrictGeoJsonEntitySchema =
+  communityDistrictEntitySchema.extend({
+    geometry: MultiPolygonSchema,
+  });
+
+export type CommunityDistrictGeoJsonEntity = z.infer<
+  typeof communityDistrictGeoJsonEntitySchema
+>;
+
+export const findCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdRepoSchema =
+  communityDistrictGeoJsonEntitySchema;
+
+export type FindCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdRepo =
+  z.infer<
+    typeof findCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdRepoSchema
+  >;
 
 export const findCapitalProjectsByBoroughIdCommunityDistrictIdRepoSchema =
   z.array(capitalProjectSchema);

@@ -6,6 +6,7 @@ import { Test } from "@nestjs/testing";
 import {
   findBoroughsQueryResponseSchema,
   findCapitalProjectsByBoroughIdCommunityDistrictIdQueryResponseSchema,
+  findCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdQueryResponseSchema,
   findCommunityDistrictsByBoroughIdQueryResponseSchema,
 } from "src/gen";
 import { ResourceNotFoundException } from "src/exception";
@@ -63,6 +64,39 @@ describe("Borough service unit", () => {
       const zoningDistrict =
         boroughService.findCommunityDistrictsByBoroughId(missingId);
       expect(zoningDistrict).rejects.toThrow(ResourceNotFoundException);
+    });
+  });
+
+  describe("findCommunityDistrictGeoJsonByBoroughIdCommunityDistrictId", () => {
+    it("should return a community district geojson when requesting a valid id", async () => {
+      const { boroughId, id: communityDistrictId } =
+        boroughRepositoryMock
+          .findCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdMocks[0];
+      const communityDistrictGeoJson =
+        await boroughService.findCommunityDistrictGeoJsonByBoroughIdCommunityDistrictId(
+          {
+            boroughId,
+            communityDistrictId,
+          },
+        );
+      expect(() =>
+        findCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdQueryResponseSchema.parse(
+          communityDistrictGeoJson,
+        ),
+      ).not.toThrow();
+    });
+
+    it("should throw a resource error when requesting a missing id", async () => {
+      const boroughId = "1";
+      const missingId = "00";
+      expect(
+        boroughService.findCommunityDistrictGeoJsonByBoroughIdCommunityDistrictId(
+          {
+            boroughId,
+            communityDistrictId: missingId,
+          },
+        ),
+      ).rejects.toThrow(ResourceNotFoundException);
     });
   });
 

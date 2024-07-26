@@ -11,9 +11,11 @@ import { BoroughService } from "./borough.service";
 import {
   FindCapitalProjectsByBoroughIdCommunityDistrictIdPathParams,
   FindCapitalProjectsByBoroughIdCommunityDistrictIdQueryParams,
+  FindCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdPathParams,
   FindCommunityDistrictsByBoroughIdPathParams,
   findCapitalProjectsByBoroughIdCommunityDistrictIdPathParamsSchema,
   findCapitalProjectsByBoroughIdCommunityDistrictIdQueryParamsSchema,
+  findCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdPathParamsSchema,
   findCommunityDistrictsByBoroughIdPathParamsSchema,
 } from "src/gen";
 import {
@@ -47,6 +49,21 @@ export class BoroughController {
   ) {
     return this.boroughService.findCommunityDistrictsByBoroughId(
       params.boroughId,
+    );
+  }
+
+  @UsePipes(
+    new ZodTransformPipe(
+      findCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdPathParamsSchema,
+    ),
+  )
+  @Get("/:boroughId/community-districts/:communityDistrictId/geojson")
+  async findCommunityDistrictGeoJsonByBoroughIdCommunityDistrictId(
+    @Param()
+    params: FindCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdPathParams,
+  ) {
+    return this.boroughService.findCommunityDistrictGeoJsonByBoroughIdCommunityDistrictId(
+      params,
     );
   }
 
