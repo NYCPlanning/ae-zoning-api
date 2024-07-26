@@ -55,7 +55,6 @@ describe("City Council District service unit", () => {
   describe("findGeoJsonById", () => {
     it("should return a city council district geojson when requesting a valid id", async () => {
       const { id } = cityCouncilDistrictRepositoryMock.findGeoJsonByIdMocks[0];
-      console.debug("found id", id);
       const cityCouncilDistrictGeoJson =
         await cityCouncilDistrictService.findGeoJsonById({
           cityCouncilDistrictId: id,
