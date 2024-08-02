@@ -93,6 +93,7 @@ export class CapitalProjectRepository {
           and(
             eq(capitalProject.managingCode, managingCode),
             eq(capitalProject.id, capitalProjectId),
+            eq(capitalCommitmentFund.category, "total"),
           ),
         )
         .groupBy(capitalProject.managingCode, capitalProject.id)
