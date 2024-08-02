@@ -12,6 +12,8 @@ tags:
     description: An endpoint that returns or is otherwise related to NYC agencies
   - name: Boroughs
     description: An endpoint that returns or is otherwise related to NYC boroughs
+  - name: Capital Commitment Types
+    description: An endpoint that return the types of capital commitments
   - name: Capital Commitments
     description: An endpoint that returns or is otherwise related to capital commitments
   - name: Capital Projects
@@ -152,6 +154,30 @@ paths:
           $ref: "#/components/responses/BadRequest"
         '404':
           $ref: "#/components/responses/NotFound"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
+  /capital-commitment-types:
+    get: 
+      summary: 🚧 Capital Commitment Types
+      operationId: findCapitalCommitmentTypes
+      tags:
+      - Capital Commitment Types
+      responses:
+        '200':
+          description: An object containing all capital commitment types.
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  capitalCommitmentTypes:
+                    type: array
+                    items: 
+                      $ref: '#/components/schemas/CapitalCommitmentType'
+                required:
+                  - capitalCommitmentTypes
+        '400':
+          $ref: "#/components/responses/BadRequest"
         '500':
           $ref: "#/components/responses/InternalServerError"
   /capital-projects/{managingCode}/{capitalProjectId}/capital-commitments:
@@ -822,6 +848,22 @@ components:
         - id
         - title
         - abbr
+    CapitalCommitmentType:
+      type: object
+      properties:
+        code:
+          type: string
+          description: The four character code to represent the capital commitment type
+          minLength: 4
+          maxLength: 4
+          example: CONS
+        description:
+          type: string
+          description: The description of the capital commitment type.
+          example: CONSTRUCTION
+      required:
+        - code
+        - description
     CapitalCommitment:
       type: object
       properties:
