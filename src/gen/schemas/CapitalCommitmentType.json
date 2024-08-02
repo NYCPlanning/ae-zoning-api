@@ -1,0 +1,19 @@
+{
+  "type": "object",
+  "properties": {
+    "code": {
+      "description": "The four character code to represent the capital commitment type",
+      "type": "string",
+      "example": "CONS",
+      "maxLength": 4,
+      "minLength": 4
+    },
+    "description": {
+      "description": "The description of the capital commitment type.",
+      "type": "string",
+      "example": "CONSTRUCTION"
+    }
+  },
+  "required": ["code", "description"],
+  "x-readme-ref-name": "CapitalCommitmentType"
+}

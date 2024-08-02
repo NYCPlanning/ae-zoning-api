@@ -31,6 +31,11 @@ import {
   findCapitalProjectsByBoroughIdCommunityDistrictIdQueryParamsSchema,
 } from "./findCapitalProjectsByBoroughIdCommunityDistrictIdSchema";
 import {
+  findCapitalCommitmentTypesQueryResponseSchema,
+  findCapitalCommitmentTypes400Schema,
+  findCapitalCommitmentTypes500Schema,
+} from "./findCapitalCommitmentTypesSchema";
+import {
   findCapitalCommitmentsByManagingCodeCapitalProjectIdQueryResponseSchema,
   findCapitalCommitmentsByManagingCodeCapitalProjectId400Schema,
   findCapitalCommitmentsByManagingCodeCapitalProjectId404Schema,
@@ -257,6 +262,24 @@ export const operations = {
       400: findCapitalProjectsByBoroughIdCommunityDistrictId400Schema,
       404: findCapitalProjectsByBoroughIdCommunityDistrictId404Schema,
       500: findCapitalProjectsByBoroughIdCommunityDistrictId500Schema,
+    },
+  },
+  findCapitalCommitmentTypes: {
+    request: undefined,
+    parameters: {
+      path: undefined,
+      query: undefined,
+      header: undefined,
+    },
+    responses: {
+      200: findCapitalCommitmentTypesQueryResponseSchema,
+      400: findCapitalCommitmentTypes400Schema,
+      500: findCapitalCommitmentTypes500Schema,
+      default: findCapitalCommitmentTypesQueryResponseSchema,
+    },
+    errors: {
+      400: findCapitalCommitmentTypes400Schema,
+      500: findCapitalCommitmentTypes500Schema,
     },
   },
   findCapitalCommitmentsByManagingCodeCapitalProjectId: {
@@ -668,6 +691,9 @@ export const paths = {
     {
       get: operations["findCapitalProjectsByBoroughIdCommunityDistrictId"],
     },
+  "/capital-commitment-types": {
+    get: operations["findCapitalCommitmentTypes"],
+  },
   "/capital-projects/{managingCode}/{capitalProjectId}/capital-commitments": {
     get: operations["findCapitalCommitmentsByManagingCodeCapitalProjectId"],
   },

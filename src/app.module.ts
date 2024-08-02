@@ -16,6 +16,7 @@ import { AgencyModule } from "./agency/agency.module";
 import { CityCouncilDistrictModule } from "./city-council-district/city-council-district.module";
 import { CapitalProjectModule } from "./capital-project/capital-project.module";
 import { CommunityDistrictModule } from "./community-district/community-district.module";
+import { CapitalCommitmentTypeModule } from "./capital-commitment-type/capital-commitment-type.module";
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { CommunityDistrictModule } from "./community-district/community-district
     AgencyModule,
     BoroughModule,
     CityCouncilDistrictModule,
+    CapitalCommitmentTypeModule,
     CapitalProjectModule,
     CommunityDistrictModule,
     LandUseModule,

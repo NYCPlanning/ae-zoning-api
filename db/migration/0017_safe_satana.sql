@@ -1,0 +1,1 @@
+ALTER TABLE "capital_commitment_type" ALTER COLUMN "description" SET NOT NULL;
