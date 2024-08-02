@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export const capitalCommitmentType = pgTable("capital_commitment_type", {
   code: char("code", { length: 4 }).primaryKey(),
-  description: text("description"),
+  description: text("description").notNull(),
 });
 
 export const capitalCommitmentTypeEntitySchema = z.object({
@@ -11,6 +11,6 @@ export const capitalCommitmentTypeEntitySchema = z.object({
   description: z.string(),
 });
 
-export type CaptialCommitmentTypeEntitySchema = z.infer<
+export type CapitalCommitmentTypeEntitySchema = z.infer<
   typeof capitalCommitmentTypeEntitySchema
 >;
