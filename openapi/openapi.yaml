@@ -8,16 +8,28 @@ servers:
   - url: https://zoning.planningdigital.com/api 
 security: []
 tags:
+  - name: Agencies
+    description: An endpoint that returns or is otherwise related to NYC agencies
   - name: Boroughs
     description: An endpoint that returns or is otherwise related to NYC boroughs
+  - name: Capital Commitments
+    description: An endpoint that returns or is otherwise related to capital commitments
+  - name: Capital Projects
+    description: An endpoint that returns or is otherwise related to capital projects
+  - name: City Council Districts
+    description: An endpoint that returns or is otherwise related to NYC city council districts
+  - name: Community Districts
+    description: An endpoint that returns or is otherwise related to NYC community districts
+  - name: GeoJSON
+    description: An endpoint that returns spatial data in a geojson format
   - name: Land Uses
     description: An endpoint that returns or is otherwise related to land uses
+  - name: MVT
+    description: An endpoint that returns spatial data in a mapbox vector tile format
   - name: Tax Lots
     description: An endpoint that returns or is otherwise related to tax lots
   - name: Zoning Districts
     description: An endpoint that returns or is otherwise related to zoning districts
-  - name: GeoJSON
-    description: An endpoint that returns spatial data in a geojson format
 paths:
   /agencies:
     get:
