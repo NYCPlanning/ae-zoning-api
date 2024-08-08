@@ -3,6 +3,7 @@ import {
   boroughEntitySchema,
   communityDistrictEntitySchema,
   MultiPolygonSchema,
+  mvtEntitySchema,
 } from "src/schema";
 import { z } from "zod";
 
@@ -46,4 +47,11 @@ export const findCapitalProjectsByBoroughIdCommunityDistrictIdRepoSchema =
 
 export type FindCapitalProjectsByBoroughIdCommunityDistrictIdRepo = z.infer<
   typeof findCapitalProjectsByBoroughIdCommunityDistrictIdRepoSchema
+>;
+
+export const findCapitalProjectTilesByBoroughIdCommunityDistrictIdRepoSchema =
+  mvtEntitySchema;
+
+export type FindCapitalProjectTilesByBoroughIdCommunityDistrictIdRepo = z.infer<
+  typeof findCapitalProjectTilesByBoroughIdCommunityDistrictIdRepoSchema
 >;

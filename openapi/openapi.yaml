@@ -158,7 +158,7 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /boroughs/{boroughId}/community-districts/{communityDistrictId}/capital-projects/{z}/{x}/{y}.pbf:
     get:
-      summary: 🚧 Mapbox Vector Tiles for capital projects intersecting a community district
+      summary: Mapbox Vector Tiles for capital projects intersecting a community district
       operationId: findCapitalProjectTilesByBoroughIdCommunityDistrictId
       tags:
         - MVT
