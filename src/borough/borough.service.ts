@@ -5,6 +5,7 @@ import { ResourceNotFoundException } from "src/exception";
 import {
   FindCapitalProjectsByBoroughIdCommunityDistrictIdPathParams,
   FindCapitalProjectsByBoroughIdCommunityDistrictIdQueryParams,
+  FindCapitalProjectTilesByBoroughIdCommunityDistrictIdPathParams,
 } from "src/gen";
 import { produce } from "immer";
 import { CommunityDistrictGeoJsonEntity } from "./borough.repository.schema";
@@ -99,5 +100,13 @@ export class BoroughService {
       order: "managingCode, capitalProjectId",
       capitalProjects,
     };
+  }
+
+  async findCapitalProjectTilesByBoroughIdCommunityDistrictId(
+    params: FindCapitalProjectTilesByBoroughIdCommunityDistrictIdPathParams,
+  ) {
+    return this.boroughRepository.findCapitalProjectTilesByBoroughIdCommunityDistrictId(
+      params,
+    );
   }
 }

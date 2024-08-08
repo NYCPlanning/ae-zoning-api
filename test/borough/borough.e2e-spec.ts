@@ -329,6 +329,102 @@ describe("Borough e2e", () => {
     });
   });
 
+  describe("findCapitalProjectTilesByBoroughIdCommunityDistrictId", () => {
+    const borough = boroughRepositoryMock.checkBoroughByIdMocks[0];
+    const communityDistrict =
+      communityDistrictRepositoryMock.checkCommunityDistrictByIdMocks[0];
+
+    it("should 200 and return capital project tiles for a given borough id and community district id", async () => {
+      const z = 1;
+      const x = 100;
+      const y = 200;
+      await request(app.getHttpServer())
+        .get(
+          `/boroughs/${borough.id}/community-districts/${communityDistrict.id}/capital-projects/${z}/${x}/${y}.pbf`,
+        )
+        .expect("Content-Type", "application/x-protobuf")
+        .expect(200);
+    });
+
+    it("should 400 and when finding by an invalid borough id", async () => {
+      const invalidId = "MN";
+
+      const z = 1;
+      const x = 100;
+      const y = 200;
+      const response = await request(app.getHttpServer())
+        .get(
+          `/boroughs/${invalidId}/community-districts/${communityDistrict.id}/capital-projects/${z}/${x}/${y}.pbf`,
+        )
+        .expect(400);
+
+      expect(response.body.message).toBe(
+        new InvalidRequestParameterException().message,
+      );
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 and when finding by an invalid community district id", async () => {
+      const invalidId = "Q1";
+
+      const z = 1;
+      const x = 100;
+      const y = 200;
+      const response = await request(app.getHttpServer())
+        .get(
+          `/boroughs/${borough.id}/community-districts/${invalidId}/capital-projects/${z}/${x}/${y}.pbf`,
+        )
+        .expect(400);
+
+      expect(response.body.message).toBe(
+        new InvalidRequestParameterException().message,
+      );
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 and when finding by a lettered viewport", async () => {
+      const z = "foo";
+      const x = "bar";
+      const y = "baz";
+      const response = await request(app.getHttpServer())
+        .get(
+          `/boroughs/${borough.id}/community-districts/${communityDistrict.id}/capital-projects/${z}/${x}/${y}.pbf`,
+        )
+        .expect(400);
+
+      expect(response.body.message).toBe(
+        new InvalidRequestParameterException().message,
+      );
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 500 when the database errors", async () => {
+      const dataRetrievalException = new DataRetrievalException();
+      jest
+        .spyOn(
+          boroughRepositoryMock,
+          "findCapitalProjectTilesByBoroughIdCommunityDistrictId",
+        )
+        .mockImplementationOnce(() => {
+          throw dataRetrievalException;
+        });
+
+      const z = 1;
+      const x = 100;
+      const y = 200;
+      const response = await request(app.getHttpServer())
+        .get(
+          `/boroughs/${borough.id}/community-districts/${communityDistrict.id}/capital-projects/${z}/${x}/${y}.pbf`,
+        )
+        .expect(500);
+      expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);
+      expect(response.body.message).toBe(dataRetrievalException.message);
+    });
+  });
+
   afterAll(async () => {
     await app.close();
   });
