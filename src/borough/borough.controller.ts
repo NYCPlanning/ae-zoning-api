@@ -9,10 +9,12 @@ import {
 } from "@nestjs/common";
 import { BoroughService } from "./borough.service";
 import {
+  FindCapitalProjectTilesByBoroughIdCommunityDistrictIdPathParams,
   FindCapitalProjectsByBoroughIdCommunityDistrictIdPathParams,
   FindCapitalProjectsByBoroughIdCommunityDistrictIdQueryParams,
   FindCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdPathParams,
   FindCommunityDistrictsByBoroughIdPathParams,
+  findCapitalProjectTilesByBoroughIdCommunityDistrictIdPathParamsSchema,
   findCapitalProjectsByBoroughIdCommunityDistrictIdPathParamsSchema,
   findCapitalProjectsByBoroughIdCommunityDistrictIdQueryParamsSchema,
   findCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdPathParamsSchema,
@@ -85,5 +87,22 @@ export class BoroughController {
     return this.boroughService.findCapitalProjectsByBoroughIdCommunityDistrictId(
       { ...pathParams, ...queryParams },
     );
+  }
+
+  @UsePipes(
+    new ZodTransformPipe(
+      findCapitalProjectTilesByBoroughIdCommunityDistrictIdPathParamsSchema,
+    ),
+  )
+  @Get(
+    "/:boroughId/community-districts/:communityDistrictId/capital-projects/:z/:x/:y.pbf",
+  )
+  async findCapitalProjectTilesByBoroughIdCommunityDistrictId(
+    @Param()
+    pathParams: FindCapitalProjectTilesByBoroughIdCommunityDistrictIdPathParams,
+  ) {
+    return {
+      controller: pathParams,
+    };
   }
 }
