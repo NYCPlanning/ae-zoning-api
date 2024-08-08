@@ -4,6 +4,7 @@ import {
   findCommunityDistrictsByBoroughIdRepoSchema,
   findCapitalProjectsByBoroughIdCommunityDistrictIdRepoSchema,
   communityDistrictGeoJsonEntitySchema,
+  findCapitalProjectTilesByBoroughIdCommunityDistrictIdRepoSchema,
 } from "src/borough/borough.repository.schema";
 import { generateMock } from "@anatine/zod-mock";
 import { CommunityDistrictRepositoryMock } from "test/community-district/community-district.repository.mock";
@@ -83,5 +84,24 @@ export class BoroughRepositoryMock {
         (capitalProjects) => communityDistrictId in capitalProjects,
       );
     return results == undefined ? [] : results[communityDistrictId];
+  }
+
+  findCapitalProjectTilesByBoroughIdCommunityDistrictIdMock = generateMock(
+    findCapitalProjectTilesByBoroughIdCommunityDistrictIdRepoSchema,
+  );
+
+  /**
+   * The database will always return tiles,
+   * even when the view is outside the extents.
+   * These would merely be empty tiles.
+   *
+   * To reflect this behavior in the mock,
+   * we disregard any viewport parameters and
+   * always return something.
+   *
+   * This applies to all mvt-related mocks
+   */
+  async findCapitalProjectTilesByBoroughIdCommunityDistrictId() {
+    return this.findCapitalProjectTilesByBoroughIdCommunityDistrictIdMock;
   }
 }

@@ -6,6 +6,7 @@ import { Test } from "@nestjs/testing";
 import {
   findBoroughsQueryResponseSchema,
   findCapitalProjectsByBoroughIdCommunityDistrictIdQueryResponseSchema,
+  findCapitalProjectTilesByBoroughIdCommunityDistrictIdQueryResponseSchema,
   findCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdQueryResponseSchema,
   findCommunityDistrictsByBoroughIdQueryResponseSchema,
 } from "src/gen";
@@ -151,6 +152,26 @@ describe("Borough service unit", () => {
       expect(parsedBody.offset).toBe(3);
       expect(parsedBody.total).toBe(parsedBody.capitalProjects.length);
       expect(parsedBody.order).toBe("managingCode, capitalProjectId");
+    });
+  });
+
+  describe("findCapitalProjectTilesByBoroughIdCommunityDistrictId", () => {
+    it("should return an mvt when requesting coordinates", async () => {
+      const mvt =
+        await boroughService.findCapitalProjectTilesByBoroughIdCommunityDistrictId(
+          {
+            boroughId: "1",
+            communityDistrictId: "01",
+            z: 1,
+            x: 1,
+            y: 1,
+          },
+        );
+      expect(() =>
+        findCapitalProjectTilesByBoroughIdCommunityDistrictIdQueryResponseSchema.parse(
+          mvt,
+        ),
+      ).not.toThrow();
     });
   });
 });

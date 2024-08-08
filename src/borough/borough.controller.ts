@@ -4,15 +4,19 @@ import {
   Injectable,
   Param,
   Query,
+  Res,
   UseFilters,
   UsePipes,
 } from "@nestjs/common";
 import { BoroughService } from "./borough.service";
+import { Response } from "express";
 import {
+  FindCapitalProjectTilesByBoroughIdCommunityDistrictIdPathParams,
   FindCapitalProjectsByBoroughIdCommunityDistrictIdPathParams,
   FindCapitalProjectsByBoroughIdCommunityDistrictIdQueryParams,
   FindCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdPathParams,
   FindCommunityDistrictsByBoroughIdPathParams,
+  findCapitalProjectTilesByBoroughIdCommunityDistrictIdPathParamsSchema,
   findCapitalProjectsByBoroughIdCommunityDistrictIdPathParamsSchema,
   findCapitalProjectsByBoroughIdCommunityDistrictIdQueryParamsSchema,
   findCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdPathParamsSchema,
@@ -85,5 +89,26 @@ export class BoroughController {
     return this.boroughService.findCapitalProjectsByBoroughIdCommunityDistrictId(
       { ...pathParams, ...queryParams },
     );
+  }
+
+  @UsePipes(
+    new ZodTransformPipe(
+      findCapitalProjectTilesByBoroughIdCommunityDistrictIdPathParamsSchema,
+    ),
+  )
+  @Get(
+    "/:boroughId/community-districts/:communityDistrictId/capital-projects/:z/:x/:y.pbf",
+  )
+  async findCapitalProjectTilesByBoroughIdCommunityDistrictId(
+    @Param()
+    params: FindCapitalProjectTilesByBoroughIdCommunityDistrictIdPathParams,
+    @Res() res: Response,
+  ) {
+    const tiles =
+      await this.boroughService.findCapitalProjectTilesByBoroughIdCommunityDistrictId(
+        params,
+      );
+    res.set("Content-Type", "application/x-protobuf");
+    res.send(tiles);
   }
 }

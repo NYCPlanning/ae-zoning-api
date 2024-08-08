@@ -19,6 +19,7 @@ export * from "./findCapitalCommitmentTypesSchema";
 export * from "./findCapitalCommitmentsByManagingCodeCapitalProjectIdSchema";
 export * from "./findCapitalProjectByManagingCodeCapitalProjectIdSchema";
 export * from "./findCapitalProjectGeoJsonByManagingCodeCapitalProjectIdSchema";
+export * from "./findCapitalProjectTilesByBoroughIdCommunityDistrictIdSchema";
 export * from "./findCapitalProjectTilesSchema";
 export * from "./findCapitalProjectsByBoroughIdCommunityDistrictIdSchema";
 export * from "./findCapitalProjectsByCityCouncilIdSchema";

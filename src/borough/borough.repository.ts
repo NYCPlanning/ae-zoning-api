@@ -7,10 +7,14 @@ import {
   FindCommunityDistrictsByBoroughIdRepo,
   FindCapitalProjectsByBoroughIdCommunityDistrictIdRepo,
   FindCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdRepo,
+  FindCapitalProjectTilesByBoroughIdCommunityDistrictIdRepo,
 } from "./borough.repository.schema";
 import { capitalProject, communityDistrict } from "src/schema";
-import { eq, sql, and } from "drizzle-orm";
-import { FindCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdPathParams } from "src/gen";
+import { eq, sql, and, isNotNull } from "drizzle-orm";
+import {
+  FindCapitalProjectTilesByBoroughIdCommunityDistrictIdPathParams,
+  FindCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdPathParams,
+} from "src/gen";
 
 export class BoroughRepository {
   constructor(
@@ -128,6 +132,69 @@ export class BoroughRepository {
         .limit(limit)
         .offset(offset)
         .orderBy(capitalProject.managingCode, capitalProject.id);
+    } catch {
+      throw new DataRetrievalException();
+    }
+  }
+
+  async findCapitalProjectTilesByBoroughIdCommunityDistrictId({
+    boroughId,
+    communityDistrictId,
+    z,
+    x,
+    y,
+  }: FindCapitalProjectTilesByBoroughIdCommunityDistrictIdPathParams): Promise<FindCapitalProjectTilesByBoroughIdCommunityDistrictIdRepo> {
+    try {
+      const tile = this.db
+        .select({
+          managingCodeCapitalProjectId:
+            sql<string>`${capitalProject.managingCode} || ${capitalProject.id}`.as(
+              `managingCodeCapitalProjectId`,
+            ),
+          managingAgency: sql`${capitalProject.managingAgency}`.as(
+            `managingAgency`,
+          ),
+          geom: sql<string>`
+            CASE 
+              WHEN ${capitalProject.mercatorFillMPoly} && ST_TileEnvelope(${z},${x},${y})
+                THEN ST_AsMVTGeom(
+                  ${capitalProject.mercatorFillMPoly},
+                  ST_TileEnvelope(${z},${x},${y}),
+                  4096,
+                  64,
+                  true
+                )
+              WHEN ${capitalProject.mercatorFillMPnt} && ST_TileEnvelope(${z},${x},${y})
+                THEN ST_AsMVTGeom(
+                  ${capitalProject.mercatorFillMPnt},
+                  ST_TileEnvelope(${z},${x},${y}),
+                  4096,
+                  64,
+                  true
+                )
+            END`.as("geom"),
+        })
+        .from(capitalProject)
+        .leftJoin(
+          communityDistrict,
+          sql`
+            ST_Intersects(${communityDistrict.mercatorFill}, ${capitalProject.mercatorFillMPoly}) 
+            OR ST_Intersects(${communityDistrict.mercatorFill}, ${capitalProject.mercatorFillMPnt})`,
+        )
+        .where(
+          and(
+            eq(communityDistrict.id, communityDistrictId),
+            eq(communityDistrict.boroughId, boroughId),
+          ),
+        )
+        .as("tile");
+      const data = await this.db
+        .select({
+          mvt: sql<Buffer>`ST_AsMVT(tile, 'capital-project-fill', 4096, 'geom')`,
+        })
+        .from(tile)
+        .where(isNotNull(tile.geom));
+      return data[0].mvt;
     } catch {
       throw new DataRetrievalException();
     }
