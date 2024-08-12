@@ -339,6 +339,26 @@ paths:
           $ref: "#/components/responses/NotFound"
         '500':
           $ref: '#/components/responses/InternalServerError'
+  /city-council-districts/{cityCouncilDistrictId}/capital-projects/{z}/{x}/{y}.pbf:
+    get:
+      summary: 🚧 Mapbox Vector Tiles for capital projects intersecting a city council district
+      operationId: findCapitalProjectTilesByCityCouncilDistrictId
+      tags:
+        - MVT
+        - Capital Projects
+        - City Council Districts
+      parameters:
+        - $ref: "#/components/parameters/cityCouncilDistrictIdParam"
+        - $ref: '#/components/parameters/viewportZoomParam'
+        - $ref: '#/components/parameters/viewportXParam'
+        - $ref: '#/components/parameters/viewportYParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/MVT'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
   /city-council-districts/{cityCouncilDistrictId}/capital-projects:
     get:
       summary: Find paginated capital projects within a specific city council district.
