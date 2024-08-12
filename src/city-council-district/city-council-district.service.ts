@@ -5,6 +5,7 @@ import {
   FindCapitalProjectsByCityCouncilIdPathParams,
   FindCapitalProjectsByCityCouncilIdQueryParams,
   FindCapitalProjectsByCityCouncilIdQueryResponse,
+  FindCapitalProjectTilesByCityCouncilDistrictIdPathParams,
   FindCityCouncilDistrictGeoJsonByCityCouncilDistrictIdPathParams,
   FindCityCouncilDistrictTilesPathParams,
 } from "src/gen";
@@ -59,6 +60,14 @@ export class CityCouncilDistrictService {
       properties,
       geometry,
     };
+  }
+
+  async findCapitalProjectTilesByCityCouncilDistrictId(
+    params: FindCapitalProjectTilesByCityCouncilDistrictIdPathParams,
+  ) {
+    return this.cityCouncilDistrictRepository.findCapitalProjectTilesByCityCouncilDistrictId(
+      params,
+    );
   }
 
   async findCapitalProjectsById({

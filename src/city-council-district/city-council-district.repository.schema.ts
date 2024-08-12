@@ -27,6 +27,13 @@ export const findTilesRepoSchema = mvtEntitySchema;
 
 export type FindTilesRepo = z.infer<typeof findTilesRepoSchema>;
 
+export const findCapitalProjectTilesByCityCouncilDistrictIdRepoSchema =
+  mvtEntitySchema;
+
+export type FindCapitalProjectTilesByCityCouncilDistrictIdRepo = z.infer<
+  typeof findCapitalProjectTilesByCityCouncilDistrictIdRepoSchema
+>;
+
 export const checkByIdRepoSchema = cityCouncilDistrictEntitySchema.pick({
   id: true,
 });
