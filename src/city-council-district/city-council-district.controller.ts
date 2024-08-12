@@ -14,6 +14,8 @@ import {
   NotFoundExceptionFilter,
 } from "src/filter";
 import {
+  FindCapitalProjectTilesByCityCouncilDistrictIdPathParams,
+  findCapitalProjectTilesByCityCouncilDistrictIdPathParamsSchema,
   FindCityCouncilDistrictGeoJsonByCityCouncilDistrictIdPathParams,
   findCityCouncilDistrictGeoJsonByCityCouncilDistrictIdPathParamsSchema,
   FindCityCouncilDistrictTilesPathParams,
@@ -66,6 +68,25 @@ export class CityCouncilDistrictController {
     params: FindCityCouncilDistrictGeoJsonByCityCouncilDistrictIdPathParams,
   ) {
     return this.cityCouncilDistrictService.findGeoJsonById(params);
+  }
+
+  @UsePipes(
+    new ZodTransformPipe(
+      findCapitalProjectTilesByCityCouncilDistrictIdPathParamsSchema,
+    ),
+  )
+  @Get("/:cityCouncilDistrictId/capital-projects/:z/:x/:y.pbf")
+  async findCapitalProjectTilesCityCouncilDistrictId(
+    @Param()
+    params: FindCapitalProjectTilesByCityCouncilDistrictIdPathParams,
+    @Res() res: Response,
+  ) {
+    const tiles =
+      await this.cityCouncilDistrictService.findCapitalProjectTilesByCityCouncilDistrictId(
+        params,
+      );
+    res.set("Content-Type", "application/x-protobuf");
+    res.send(tiles);
   }
 
   @UsePipes(

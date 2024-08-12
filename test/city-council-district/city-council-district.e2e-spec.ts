@@ -168,6 +168,82 @@ describe("City Council District e2e", () => {
     });
   });
 
+  describe("findCapitalProjectTilesByCityCouncilDistrictId", () => {
+    it("should 200 and return capital project tiles for a given city council district id", async () => {
+      const cityCouncilDistrictId = "1";
+      const z = 1;
+      const x = 100;
+      const y = 200;
+      await request(app.getHttpServer())
+        .get(
+          `/city-council-districts/${cityCouncilDistrictId}/capital-projects/${z}/${x}/${y}.pbf`,
+        )
+        .expect("Content-Type", "application/x-protobuf")
+        .expect(200);
+    });
+
+    it("should 400 and when finding by an invalid city council id", async () => {
+      const invalidId = "FOO";
+
+      const z = 1;
+      const x = 100;
+      const y = 200;
+      const response = await request(app.getHttpServer())
+        .get(
+          `/city-council-districts/${invalidId}/capital-projects/${z}/${x}/${y}.pbf`,
+        )
+        .expect(400);
+
+      expect(response.body.message).toBe(
+        new InvalidRequestParameterException().message,
+      );
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 and when finding by a lettered viewport", async () => {
+      const cityCouncilDistrictId = "1";
+      const z = "foo";
+      const x = "bar";
+      const y = "baz";
+      const response = await request(app.getHttpServer())
+        .get(
+          `/city-council-districts/${cityCouncilDistrictId}/capital-projects/${z}/${x}/${y}.pbf`,
+        )
+        .expect(400);
+
+      expect(response.body.message).toBe(
+        new InvalidRequestParameterException().message,
+      );
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 500 when the database errors", async () => {
+      const cityCouncilDistrictId = "1";
+      const dataRetrievalException = new DataRetrievalException();
+      jest
+        .spyOn(
+          cityCouncilDistrictRepositoryMock,
+          "findCapitalProjectTilesByCityCouncilDistrictId",
+        )
+        .mockImplementationOnce(() => {
+          throw dataRetrievalException;
+        });
+
+      const z = 1;
+      const x = 100;
+      const y = 200;
+      const response = await request(app.getHttpServer())
+        .get(
+          `/city-council-districts/${cityCouncilDistrictId}/capital-projects/${z}/${x}/${y}.pbf`,
+        )
+        .expect(500);
+      expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);
+      expect(response.body.message).toBe(dataRetrievalException.message);
+    });
+  });
+
   describe("findCapitalProjectsByCityCouncilDistrictId", () => {
     const mock =
       cityCouncilDistrictRepositoryMock.checkCityCouncilDistrictByIdMocks[0];
