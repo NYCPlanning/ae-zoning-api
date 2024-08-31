@@ -52,7 +52,7 @@
     "@kubb/swagger-client": "^2.23.3",
     "@kubb/swagger-ts": "^2.23.3",
     "@kubb/swagger-zod": "^2.23.3",
-    "@nestjs/cli": "^10.0.0",
+    "@nestjs/cli": "^10.4.5",
     "@nestjs/schematics": "^10.0.0",
     "@nestjs/testing": "^10.0.0",
     "@redocly/cli": "^1.5.0",
