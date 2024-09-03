@@ -27,6 +27,7 @@ export class CityCouncilDistrictService {
 
     return {
       cityCouncilDistricts,
+      order: "id",
     };
   }
 

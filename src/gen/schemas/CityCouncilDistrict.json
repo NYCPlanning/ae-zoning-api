@@ -4,7 +4,7 @@
     "id": {
       "description": "One or two character code to represent city council districts.",
       "type": "string",
-      "example": 25,
+      "example": "25",
       "pattern": "^([0-9]{1,2})$"
     }
   },
