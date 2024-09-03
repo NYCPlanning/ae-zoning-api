@@ -37,6 +37,8 @@ describe("City Council District service unit", () => {
       expect(() =>
         findCityCouncilDistrictsQueryResponseSchema.parse(cityCouncilDistricts),
       ).not.toThrow();
+
+      expect(cityCouncilDistricts.order).toBe("id");
     });
   });
 

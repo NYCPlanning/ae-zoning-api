@@ -311,8 +311,13 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/CityCouncilDistrict'
+                  order: 
+                    type: string
+                    description: City council districts ids are sorted as if numbers in ascending order
+                    example: 'id'
                 required:
                  - cityCouncilDistricts
+                 - order
         '400':
           $ref: '#/components/responses/BadRequest'
         '500':
@@ -1067,8 +1072,8 @@ components:
         id:
           type: string
           description: One or two character code to represent city council districts.
-          pattern: '^([0-9]{1,2})$' 
-          example: 25
+          pattern: '^([0-9]{1,2})$'
+          example: '25'
       required:
         - id
     CityCouncilDistrictGeoJson:

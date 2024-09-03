@@ -50,6 +50,7 @@ export class CityCouncilDistrictRepository {
         columns: {
           id: true,
         },
+        orderBy: sql`${cityCouncilDistrict.id}::integer ASC`,
       });
     } catch {
       throw new DataRetrievalException();

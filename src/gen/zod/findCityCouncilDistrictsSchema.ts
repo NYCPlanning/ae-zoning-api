@@ -7,6 +7,11 @@ import { errorSchema } from "./errorSchema";
  */
 export const findCityCouncilDistricts200Schema = z.object({
   cityCouncilDistricts: z.array(z.lazy(() => cityCouncilDistrictSchema)),
+  order: z.coerce
+    .string()
+    .describe(
+      "City council districts ids are sorted as if numbers in ascending order",
+    ),
 });
 /**
  * @description Invalid client request
@@ -21,4 +26,9 @@ export const findCityCouncilDistricts500Schema = z.lazy(() => errorSchema);
  */
 export const findCityCouncilDistrictsQueryResponseSchema = z.object({
   cityCouncilDistricts: z.array(z.lazy(() => cityCouncilDistrictSchema)),
+  order: z.coerce
+    .string()
+    .describe(
+      "City council districts ids are sorted as if numbers in ascending order",
+    ),
 });
