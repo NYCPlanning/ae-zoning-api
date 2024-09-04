@@ -36,6 +36,7 @@ export class BoroughService {
 
     return {
       communityDistricts,
+      order: "id",
     };
   }
 

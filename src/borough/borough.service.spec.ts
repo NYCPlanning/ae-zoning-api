@@ -58,6 +58,8 @@ describe("Borough service unit", () => {
           communityDistricts,
         ),
       ).not.toThrow();
+
+      expect(communityDistricts.order).toBe("id");
     });
 
     it("service should throw a resource error when requesting with a missing id", async () => {

@@ -10,7 +10,7 @@ import {
   FindCapitalProjectTilesByBoroughIdCommunityDistrictIdRepo,
 } from "./borough.repository.schema";
 import { capitalProject, communityDistrict } from "src/schema";
-import { eq, sql, and, isNotNull } from "drizzle-orm";
+import { eq, sql, and, isNotNull, asc } from "drizzle-orm";
 import {
   FindCapitalProjectTilesByBoroughIdCommunityDistrictIdPathParams,
   FindCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdPathParams,
@@ -59,6 +59,7 @@ export class BoroughRepository {
           boroughId: true,
         },
         where: eq(communityDistrict.boroughId, id),
+        orderBy: asc(communityDistrict.id),
       });
     } catch {
       throw new DataRetrievalException();
