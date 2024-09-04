@@ -15,6 +15,9 @@ export const findCommunityDistrictsByBoroughIdPathParamsSchema = z.object({
  */
 export const findCommunityDistrictsByBoroughId200Schema = z.object({
   communityDistricts: z.array(z.lazy(() => communityDistrictSchema)),
+  order: z.coerce
+    .string()
+    .describe("Community district numbers are sorted in ascending order"),
 });
 /**
  * @description Invalid client request
@@ -39,4 +42,7 @@ export const findCommunityDistrictsByBoroughId500Schema = z.lazy(
  */
 export const findCommunityDistrictsByBoroughIdQueryResponseSchema = z.object({
   communityDistricts: z.array(z.lazy(() => communityDistrictSchema)),
+  order: z.coerce
+    .string()
+    .describe("Community district numbers are sorted in ascending order"),
 });

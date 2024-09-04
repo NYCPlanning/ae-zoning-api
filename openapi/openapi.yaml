@@ -101,8 +101,13 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/CommunityDistrict'
+                  order: 
+                    type: string
+                    description: Community district numbers are sorted in ascending order
+                    example: 'id'
                 required:
                   - communityDistricts
+                  - order
         '400':
           $ref: "#/components/responses/BadRequest"
         '404':
