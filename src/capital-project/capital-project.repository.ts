@@ -1,5 +1,5 @@
 import { Inject } from "@nestjs/common";
-import { isNotNull, sql, and, eq, sum } from "drizzle-orm";
+import { isNotNull, sql, and, eq, sum, asc } from "drizzle-orm";
 import { DataRetrievalException } from "src/exception";
 import {
   FindCapitalCommitmentsByManagingCodeCapitalProjectIdPathParams,
@@ -232,6 +232,7 @@ export class CapitalProjectRepository {
           totalValue: sql`${capitalCommitmentFund.value}`.mapWith(Number),
         })
         .from(capitalCommitment)
+        .orderBy(asc(capitalCommitment.plannedDate))
         .leftJoin(
           budgetLine,
           and(

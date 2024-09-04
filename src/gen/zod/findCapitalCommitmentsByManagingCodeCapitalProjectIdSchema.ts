@@ -22,6 +22,9 @@ export const findCapitalCommitmentsByManagingCodeCapitalProjectIdPathParamsSchem
 export const findCapitalCommitmentsByManagingCodeCapitalProjectId200Schema =
   z.object({
     capitalCommitments: z.array(z.lazy(() => capitalCommitmentSchema)),
+    order: z.coerce
+      .string()
+      .describe("Capital commitment dates are sorted in ascending order"),
   });
 /**
  * @description Invalid client request
@@ -44,4 +47,7 @@ export const findCapitalCommitmentsByManagingCodeCapitalProjectId500Schema =
 export const findCapitalCommitmentsByManagingCodeCapitalProjectIdQueryResponseSchema =
   z.object({
     capitalCommitments: z.array(z.lazy(() => capitalCommitmentSchema)),
+    order: z.coerce
+      .string()
+      .describe("Capital commitment dates are sorted in ascending order"),
   });

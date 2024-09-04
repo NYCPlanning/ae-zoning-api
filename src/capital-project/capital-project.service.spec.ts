@@ -118,6 +118,8 @@ describe("CapitalProjectService", () => {
           result,
         ),
       ).not.toThrow();
+
+      expect(result.order).toBe("plannedDate");
     });
 
     it("should throw a resource error when requesting a missing project", async () => {

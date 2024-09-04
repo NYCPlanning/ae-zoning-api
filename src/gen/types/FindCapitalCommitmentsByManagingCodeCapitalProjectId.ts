@@ -21,6 +21,11 @@ export type FindCapitalCommitmentsByManagingCodeCapitalProjectId200 = {
    * @type array
    */
   capitalCommitments: CapitalCommitment[];
+  /**
+   * @description Capital commitment dates are sorted in ascending order
+   * @type string
+   */
+  order: string;
 };
 /**
  * @description Invalid client request
@@ -43,6 +48,11 @@ export type FindCapitalCommitmentsByManagingCodeCapitalProjectIdQueryResponse =
      * @type array
      */
     capitalCommitments: CapitalCommitment[];
+    /**
+     * @description Capital commitment dates are sorted in ascending order
+     * @type string
+     */
+    order: string;
   };
 export type FindCapitalCommitmentsByManagingCodeCapitalProjectIdQuery = {
   Response: FindCapitalCommitmentsByManagingCodeCapitalProjectIdQueryResponse;
