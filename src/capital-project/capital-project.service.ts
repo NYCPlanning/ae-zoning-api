@@ -85,6 +85,7 @@ export class CapitalProjectService {
 
     return {
       capitalCommitments,
+      order: "plannedDate",
     };
   }
 }

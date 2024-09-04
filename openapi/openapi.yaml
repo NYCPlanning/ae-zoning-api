@@ -222,8 +222,13 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/CapitalCommitment'
+                  order: 
+                    type: string
+                    description: Capital commitment dates are sorted in ascending order
+                    example: 'plannedDate'
                 required:
                 - capitalCommitments
+                - order
         '400':
           $ref: "#/components/responses/BadRequest"
         '404':
