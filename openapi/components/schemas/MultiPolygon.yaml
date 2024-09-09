@@ -1,0 +1,19 @@
+type: object
+description: A geojson implementation of a MultiPolygon Simple Feature
+properties:
+  type:
+    type: string
+    enum:
+      - MultiPolygon
+  coordinates:
+    type: array
+    description: Array of polygon coordinate arrays.
+    items:
+      type: array
+      items:
+        type: array
+        items:
+          $ref: ./Position.yaml
+required:
+  - type
+  - coordinates

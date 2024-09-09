@@ -1,0 +1,21 @@
+get:
+  summary: GeoJSON for a specific tax lot
+  operationId: findTaxLotGeoJsonByBbl
+  tags:
+    - Tax Lots
+    - GeoJSON
+  parameters:
+    - $ref: ../components/parameters/bblParam.yaml
+  responses:
+    '200':
+      description: A tax lot geojson object
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/TaxLotGeoJson.yaml
+    '400':
+      $ref: ../components/responses/BadRequest.yaml
+    '404':
+      $ref: ../components/responses/NotFound.yaml
+    '500':
+      $ref: ../components/responses/InternalServerError.yaml

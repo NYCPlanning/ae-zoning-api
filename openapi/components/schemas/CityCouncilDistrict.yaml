@@ -1,0 +1,9 @@
+type: object
+properties:
+  id:
+    type: string
+    description: One or two character code to represent city council districts.
+    pattern: ^([0-9]{1,2})$
+    example: '25'
+required:
+  - id

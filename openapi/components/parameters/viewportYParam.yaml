@@ -1,0 +1,7 @@
+name: 'y'
+in: path
+description: viewport y component
+required: true
+schema:
+  type: integer
+  example: 1000

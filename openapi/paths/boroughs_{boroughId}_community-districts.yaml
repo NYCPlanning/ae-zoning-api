@@ -1,0 +1,32 @@
+get:
+  summary: Find community districts within a borough
+  operationId: findCommunityDistrictsByBoroughId
+  tags:
+    - Community Districts
+  parameters:
+    - $ref: ../components/parameters/boroughIdParam.yaml
+  responses:
+    '200':
+      description: An object of community district schemas for the borough
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              communityDistricts:
+                type: array
+                items:
+                  $ref: ../components/schemas/CommunityDistrict.yaml
+              order:
+                type: string
+                description: Community district numbers are sorted in ascending order
+                example: id
+            required:
+              - communityDistricts
+              - order
+    '400':
+      $ref: ../components/responses/BadRequest.yaml
+    '404':
+      $ref: ../components/responses/NotFound.yaml
+    '500':
+      $ref: ../components/responses/InternalServerError.yaml

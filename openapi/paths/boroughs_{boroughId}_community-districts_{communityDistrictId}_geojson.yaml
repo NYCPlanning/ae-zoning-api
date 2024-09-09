@@ -1,0 +1,22 @@
+get:
+  summary: Find GeoJson for a specific community district
+  operationId: findCommunityDistrictGeoJsonByBoroughIdCommunityDistrictId
+  tags:
+    - Community Districts
+    - GeoJSON
+  parameters:
+    - $ref: ../components/parameters/boroughIdParam.yaml
+    - $ref: ../components/parameters/communityDistrictIdParam.yaml
+  responses:
+    '200':
+      description: a community district geojson object
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/CommunityDistrictGeoJson.yaml
+    '400':
+      $ref: ../components/responses/BadRequest.yaml
+    '404':
+      $ref: ../components/responses/NotFound.yaml
+    '500':
+      $ref: ../components/responses/InternalServerError.yaml

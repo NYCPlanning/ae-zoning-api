@@ -1,0 +1,8 @@
+name: managingCode
+required: true
+in: path
+schema:
+  type: string
+  pattern: ^([0-9]{3})$
+  example: '801'
+description: Three character string of numbers representing managing agency

@@ -1,0 +1,10 @@
+allOf:
+  - $ref: ./Page.yaml
+  - type: object
+    properties:
+      capitalProjects:
+        type: array
+        items:
+          $ref: ./CapitalProject.yaml
+    required:
+      - capitalProjects

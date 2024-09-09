@@ -1,0 +1,42 @@
+type: object
+properties:
+  id:
+    type: string
+    description: >-
+      The id for the project, which combines with the managing code to make a
+      unique id
+    example: HWPEDSF5
+  description:
+    type: string
+    description: The capital project title.
+    example: Multi-Site Pedestrian Safety Phase 5
+  managingCode:
+    type: string
+    description: Three character string of numbers representing managing agency
+    pattern: ^([0-9]{3})$
+    example: 850
+  managingAgency:
+    type: string
+    description: The managing agency name abbreviation or acronym
+    example: DOT
+  minDate:
+    type: string
+    format: date
+    description: The starting date of the capital project
+    example: '2024-05-15'
+  maxDate:
+    type: string
+    format: date
+    description: The ending date of the capital project
+    example: '2024-05-15'
+  category:
+    $ref: ./CapitalProjectCategory.yaml
+    nullable: true
+required:
+  - id
+  - description
+  - managingCode
+  - managingAgency
+  - minDate
+  - maxDate
+  - category

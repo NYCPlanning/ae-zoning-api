@@ -1,0 +1,6 @@
+description: A protobuf file formatted as Mapbox Vector Tile
+content:
+  application/x-protobuf:
+    schema:
+      type: string
+      format: byte

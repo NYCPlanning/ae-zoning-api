@@ -1,0 +1,23 @@
+get:
+  summary: Capital Commitment Types
+  operationId: findCapitalCommitmentTypes
+  tags:
+    - Capital Commitment Types
+  responses:
+    '200':
+      description: An object containing all capital commitment types.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              capitalCommitmentTypes:
+                type: array
+                items:
+                  $ref: ../components/schemas/CapitalCommitmentType.yaml
+            required:
+              - capitalCommitmentTypes
+    '400':
+      $ref: ../components/responses/BadRequest.yaml
+    '500':
+      $ref: ../components/responses/InternalServerError.yaml

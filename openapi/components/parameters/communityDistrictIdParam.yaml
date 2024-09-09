@@ -1,0 +1,10 @@
+name: communityDistrictId
+required: true
+in: path
+schema:
+  type: string
+  pattern: ^([0-9]{2})$
+  example: '01'
+description: >-
+  The two character numeric string containing the number used to refer to the
+  community district.

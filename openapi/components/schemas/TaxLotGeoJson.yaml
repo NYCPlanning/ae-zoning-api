@@ -1,0 +1,21 @@
+type: object
+properties:
+  id:
+    type: string
+    description: The bbl of the tax lot.
+    minLength: 10
+    maxLength: 10
+    example: '1000477501'
+  type:
+    type: string
+    enum:
+      - Feature
+  geometry:
+    $ref: ./MultiPolygon.yaml
+  properties:
+    $ref: ./TaxLot.yaml
+required:
+  - id
+  - type
+  - geometry
+  - properties

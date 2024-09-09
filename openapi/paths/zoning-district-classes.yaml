@@ -1,0 +1,23 @@
+get:
+  summary: Class schemas for all zoning districts
+  operationId: findZoningDistrictClasses
+  tags:
+    - Zoning Districts
+  responses:
+    '200':
+      description: An object containing all zoning district class schemas.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              zoningDistrictClasses:
+                type: array
+                items:
+                  $ref: ../components/schemas/ZoningDistrictClass.yaml
+            required:
+              - zoningDistrictClasses
+    '400':
+      $ref: ../components/responses/BadRequest.yaml
+    '500':
+      $ref: ../components/responses/InternalServerError.yaml

@@ -1,0 +1,7 @@
+name: z
+in: path
+description: viewport zoom component
+required: true
+schema:
+  type: integer
+  example: 7

@@ -1,0 +1,22 @@
+get:
+  summary: Find a single capital project as a geojson feature
+  operationId: findCapitalProjectGeoJsonByManagingCodeCapitalProjectId
+  tags:
+    - Capital Projects
+    - GeoJSON
+  parameters:
+    - $ref: ../components/parameters/managingCodeParam.yaml
+    - $ref: ../components/parameters/capitalProjectIdParam.yaml
+  responses:
+    '200':
+      description: A capital project geojson object
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/CapitalProjectBudgetedGeoJson.yaml
+    '400':
+      $ref: ../components/responses/BadRequest.yaml
+    '404':
+      $ref: ../components/responses/NotFound.yaml
+    '500':
+      $ref: ../components/responses/InternalServerError.yaml

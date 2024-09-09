@@ -1,0 +1,15 @@
+type: object
+properties:
+  code:
+    type: string
+    description: The four character code to represent the capital commitment type
+    minLength: 4
+    maxLength: 4
+    example: CONS
+  description:
+    type: string
+    description: The description of the capital commitment type.
+    example: CONSTRUCTION
+required:
+  - code
+  - description

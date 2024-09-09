@@ -1,0 +1,27 @@
+get:
+  summary: Non-spatial details for tax lots
+  operationId: findTaxLots
+  tags:
+    - Tax Lots
+  parameters:
+    - $ref: ../components/parameters/limitParam.yaml
+    - $ref: ../components/parameters/offsetParam.yaml
+    - $ref: ../components/parameters/geometryParam.yaml
+    - $ref: ../components/parameters/lonsParam.yaml
+    - $ref: ../components/parameters/latsParam.yaml
+    - $ref: ../components/parameters/bufferParam.yaml
+  responses:
+    '200':
+      description: >-
+        An object containing a list of tax lots and pagination metadata. An
+        optional spatial filter will return all tax lots that intersect the
+        spatial feature and its optional buffer. When applying a spatial filter,
+        tax lots are ordered by their closeness to the spatial feature.
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/TaxLotBasicPage.yaml
+    '400':
+      $ref: ../components/responses/BadRequest.yaml
+    '500':
+      $ref: ../components/responses/InternalServerError.yaml

@@ -1,0 +1,28 @@
+get:
+  summary: Class schemas for all zoning districts that spatially intersect the tax lot
+  operationId: findZoningDistrictClassesByTaxLotBbl
+  tags:
+    - Tax Lots
+    - Zoning Districts
+  parameters:
+    - $ref: ../components/parameters/bblParam.yaml
+  responses:
+    '200':
+      description: An object containing zoning district class schemas.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              zoningDistrictClasses:
+                type: array
+                items:
+                  $ref: ../components/schemas/ZoningDistrictClass.yaml
+            required:
+              - zoningDistrictClasses
+    '400':
+      $ref: ../components/responses/BadRequest.yaml
+    '404':
+      $ref: ../components/responses/NotFound.yaml
+    '500':
+      $ref: ../components/responses/InternalServerError.yaml

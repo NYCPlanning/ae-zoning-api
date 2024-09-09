@@ -1,0 +1,30 @@
+get:
+  summary: Find city council districts
+  operationId: findCityCouncilDistricts
+  tags:
+    - City Council Districts
+  responses:
+    '200':
+      description: an object of city council districts
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              cityCouncilDistricts:
+                type: array
+                items:
+                  $ref: ../components/schemas/CityCouncilDistrict.yaml
+              order:
+                type: string
+                description: >-
+                  City council districts ids are sorted as if numbers in
+                  ascending order
+                example: id
+            required:
+              - cityCouncilDistricts
+              - order
+    '400':
+      $ref: ../components/responses/BadRequest.yaml
+    '500':
+      $ref: ../components/responses/InternalServerError.yaml

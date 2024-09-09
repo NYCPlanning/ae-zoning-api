@@ -1,0 +1,26 @@
+type: object
+properties:
+  id:
+    type: string
+    description: The code associated with the Zoning class.
+    pattern: ^[A-Z][0-9]+$
+    example: M1
+  category:
+    $ref: ./ZoningDistrictClassCategory.yaml
+  description:
+    type: string
+    description: Zoning class descriptions.
+  url:
+    type: string
+    description: Planning website page that explains the Zoning District
+  color:
+    type: string
+    description: Zoning classes from layer groups.
+    pattern: ^#([A-Fa-f0-9]{8})$
+    example: '#f3b3ffff'
+required:
+  - id
+  - category
+  - description
+  - url
+  - color

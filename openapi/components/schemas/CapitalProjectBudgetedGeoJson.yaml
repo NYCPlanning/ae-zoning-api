@@ -1,0 +1,21 @@
+type: object
+properties:
+  id:
+    type: string
+    description: The concatenation of the managing code and capital project id.
+    example: 806RAMALG
+  type:
+    type: string
+    enum:
+      - Feature
+  geometry:
+    oneOf:
+      - $ref: ./MultiPoint.yaml
+      - $ref: ./MultiPolygon.yaml
+  properties:
+    $ref: ./CapitalProjectBudgeted.yaml
+required:
+  - id
+  - type
+  - geometry
+  - properties

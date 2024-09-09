@@ -1,0 +1,36 @@
+type: object
+properties:
+  bbl:
+    type: string
+    description: >-
+      The ten character code compromised of a one character borough, five
+      character block, and four character lot codes.
+    pattern: ^([0-9]{10})$
+    example: '1000477501'
+  borough:
+    $ref: ./Borough.yaml
+  block:
+    type: string
+    description: The block code, without its padding zeros.
+    minLength: 1
+    maxLength: 5
+    example: 47
+  lot:
+    type: string
+    description: The lot code, without its padding zeros.
+    minLength: 1
+    maxLength: 4
+    example: 7501
+  address:
+    type: string
+    description: The street address.
+    example: 120 BROADWAY
+  landUse:
+    $ref: ./LandUse.yaml
+required:
+  - bbl
+  - borough
+  - block
+  - lot
+  - address
+  - landUse

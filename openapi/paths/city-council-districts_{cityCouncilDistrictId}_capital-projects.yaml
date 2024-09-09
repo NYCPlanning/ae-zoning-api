@@ -1,0 +1,24 @@
+get:
+  summary: Find paginated capital projects within a specific city council district.
+  operationId: findCapitalProjectsByCityCouncilId
+  tags:
+    - Capital Projects
+  parameters:
+    - $ref: ../components/parameters/cityCouncilDistrictIdParam.yaml
+    - $ref: ../components/parameters/limitParam.yaml
+    - $ref: ../components/parameters/offsetParam.yaml
+  responses:
+    '200':
+      description: >-
+        An object containing pagination metadata and an array of capital
+        projects for the city council district
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/CapitalProjectPage.yaml
+    '400':
+      $ref: ../components/responses/BadRequest.yaml
+    '404':
+      $ref: ../components/responses/NotFound.yaml
+    '500':
+      $ref: ../components/responses/InternalServerError.yaml

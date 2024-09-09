@@ -1,0 +1,16 @@
+name: geometry
+required: false
+in: query
+schema:
+  type: string
+  enum:
+    - Point
+    - LineString
+    - Polygon
+  example: Polygon
+description: >-
+  The type of geometry used for a spatial filter. It must be provided when
+  applying a spatial filter; each geometry has its own coordinate requirements.
+  Point geometries have length of 1. LineString geometries have length of 2 to
+  5, inclusive. Polygons have length 4 to 5, inclusive; the last coordinate must
+  match the first coordinate to close the polygon.

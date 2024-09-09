@@ -1,0 +1,25 @@
+get:
+  summary: Class schema for the specified class
+  operationId: findZoningDistrictClassByZoningDistrictClassId
+  tags:
+    - Zoning Districts
+  parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        pattern: ^[A-z][0-9]+$
+  responses:
+    '200':
+      description: A class schema for a zoning district
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/ZoningDistrictClass.yaml
+    '400':
+      $ref: ../components/responses/BadRequest.yaml
+    '404':
+      $ref: ../components/responses/NotFound.yaml
+    '500':
+      $ref: ../components/responses/InternalServerError.yaml

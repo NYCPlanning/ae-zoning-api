@@ -1,0 +1,25 @@
+get:
+  summary: Non-spatial details for a specific zoning district
+  operationId: findZoningDistrictByZoningDistrictId
+  tags:
+    - Zoning Districts
+  parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+  responses:
+    '200':
+      description: A zoning district object
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/ZoningDistrict.yaml
+    '400':
+      $ref: ../components/responses/BadRequest.yaml
+    '404':
+      $ref: ../components/responses/NotFound.yaml
+    '500':
+      $ref: ../components/responses/InternalServerError.yaml

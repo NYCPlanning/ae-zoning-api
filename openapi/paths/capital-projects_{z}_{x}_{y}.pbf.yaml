@@ -1,0 +1,17 @@
+get:
+  summary: Mapbox Vector Tiles for capital projects
+  operationId: findCapitalProjectTiles
+  tags:
+    - MVT
+    - Capital Projects
+  parameters:
+    - $ref: ../components/parameters/viewportZoomParam.yaml
+    - $ref: ../components/parameters/viewportXParam.yaml
+    - $ref: ../components/parameters/viewportYParam.yaml
+  responses:
+    '200':
+      $ref: ../components/responses/MVT.yaml
+    '400':
+      $ref: ../components/responses/BadRequest.yaml
+    '500':
+      $ref: ../components/responses/InternalServerError.yaml

@@ -1,0 +1,8 @@
+name: cityCouncilDistrictId
+required: true
+in: path
+schema:
+  type: string
+  pattern: ^([0-9]{1,2})$
+  example: '25'
+description: One or two character code to represent city council districts.

@@ -1,0 +1,21 @@
+get:
+  summary: >-
+    Mapbox Vector Tiles for capital projects intersecting a city council
+    district
+  operationId: findCapitalProjectTilesByCityCouncilDistrictId
+  tags:
+    - MVT
+    - Capital Projects
+    - City Council Districts
+  parameters:
+    - $ref: ../components/parameters/cityCouncilDistrictIdParam.yaml
+    - $ref: ../components/parameters/viewportZoomParam.yaml
+    - $ref: ../components/parameters/viewportXParam.yaml
+    - $ref: ../components/parameters/viewportYParam.yaml
+  responses:
+    '200':
+      $ref: ../components/responses/MVT.yaml
+    '400':
+      $ref: ../components/responses/BadRequest.yaml
+    '500':
+      $ref: ../components/responses/InternalServerError.yaml
