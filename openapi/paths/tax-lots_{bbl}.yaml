@@ -1,0 +1,20 @@
+get:
+  summary: Non-spatial details for a specific tax lot
+  operationId: findTaxLotByBbl
+  tags:
+    - Tax Lots
+  parameters:
+    - $ref: ../components/parameters/bblParam.yaml
+  responses:
+    '200':
+      description: A tax lot object
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/TaxLot.yaml
+    '400':
+      $ref: ../components/responses/BadRequest.yaml
+    '404':
+      $ref: ../components/responses/NotFound.yaml
+    '500':
+      $ref: ../components/responses/InternalServerError.yaml

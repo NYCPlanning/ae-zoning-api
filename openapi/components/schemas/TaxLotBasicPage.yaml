@@ -1,0 +1,10 @@
+allOf:
+  - $ref: ./Page.yaml
+  - type: object
+    properties:
+      taxLots:
+        type: array
+        items:
+          $ref: ./TaxLotBasic.yaml
+    required:
+      - taxLots

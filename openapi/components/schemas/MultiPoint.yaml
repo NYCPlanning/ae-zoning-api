@@ -1,0 +1,15 @@
+type: object
+description: A geojson implementation of a MultiPoint Simple Feature
+properties:
+  type:
+    type: string
+    enum:
+      - MultiPoint
+  coordinates:
+    type: array
+    description: Array of position coordinate arrays.
+    items:
+      $ref: ./Position.yaml
+required:
+  - type
+  - coordinates

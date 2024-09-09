@@ -1,0 +1,33 @@
+get:
+  summary: Find capital commitments associated with a specific capital project
+  operationId: findCapitalCommitmentsByManagingCodeCapitalProjectId
+  tags:
+    - Capital Commitments
+  parameters:
+    - $ref: ../components/parameters/managingCodeParam.yaml
+    - $ref: ../components/parameters/capitalProjectIdParam.yaml
+  responses:
+    '200':
+      description: an object of capital commitments for the capital project
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              capitalCommitments:
+                type: array
+                items:
+                  $ref: ../components/schemas/CapitalCommitment.yaml
+              order:
+                type: string
+                description: Capital commitment dates are sorted in ascending order
+                example: plannedDate
+            required:
+              - capitalCommitments
+              - order
+    '400':
+      $ref: ../components/responses/BadRequest.yaml
+    '404':
+      $ref: ../components/responses/NotFound.yaml
+    '500':
+      $ref: ../components/responses/InternalServerError.yaml

@@ -1,0 +1,8 @@
+name: buffer
+in: query
+schema:
+  type: number
+  example: 600
+description: >-
+  A buffer around the spatial feature. Units are feet. It is optional when
+  applying a spatial filter.

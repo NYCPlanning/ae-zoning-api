@@ -1,0 +1,9 @@
+type: array
+description: The fundamental spatial construct
+minItems: 2
+maxItems: 3
+items:
+  type: number
+example:
+  - -74.010835
+  - 40.708442

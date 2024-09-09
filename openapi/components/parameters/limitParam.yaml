@@ -1,0 +1,11 @@
+name: limit
+required: false
+in: query
+schema:
+  type: integer
+  minimum: 1
+  maximum: 100
+  example: 100
+description: >-
+  The maximum number of results to be returned in each response. The default
+  value is 20. It must be between 1 and 100, inclusive.

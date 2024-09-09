@@ -1,0 +1,23 @@
+type: object
+properties:
+  id:
+    type: string
+    description: >-
+      The two character code to represent the land use. Possible values are
+      01-11.
+    minLength: 2
+    maxLength: 2
+    example: '05'
+  description:
+    type: string
+    description: The description of the land use.
+    example: Commercial and Office Buildings
+  color:
+    type: string
+    description: Hex-style color code to represent the land use.
+    pattern: ^#([A-Fa-f0-9]{8})$
+    example: '#fc2929ff'
+required:
+  - id
+  - description
+  - color

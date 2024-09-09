@@ -1,0 +1,23 @@
+get:
+  summary: List land uses
+  operationId: findLandUses
+  tags:
+    - Land Uses
+  responses:
+    '200':
+      description: An object containing all land uses.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              landUses:
+                type: array
+                items:
+                  $ref: ../components/schemas/LandUse.yaml
+            required:
+              - landUses
+    '400':
+      $ref: ../components/responses/BadRequest.yaml
+    '500':
+      $ref: ../components/responses/InternalServerError.yaml

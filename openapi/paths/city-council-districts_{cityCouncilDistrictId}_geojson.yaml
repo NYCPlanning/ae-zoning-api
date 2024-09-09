@@ -1,0 +1,21 @@
+get:
+  summary: Find GeoJson for a specific city council district
+  operationId: findCityCouncilDistrictGeoJsonByCityCouncilDistrictId
+  tags:
+    - City Council Districts
+    - GeoJSON
+  parameters:
+    - $ref: ../components/parameters/cityCouncilDistrictIdParam.yaml
+  responses:
+    '200':
+      description: a city council district geojson object
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/CityCouncilDistrictGeoJson.yaml
+    '400':
+      $ref: ../components/responses/BadRequest.yaml
+    '404':
+      $ref: ../components/responses/NotFound.yaml
+    '500':
+      $ref: ../components/responses/InternalServerError.yaml

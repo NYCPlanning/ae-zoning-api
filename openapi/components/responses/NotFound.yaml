@@ -1,0 +1,5 @@
+description: Requested resource does not exist or is not available
+content:
+  application/json:
+    schema:
+      $ref: ../schemas/Error.yaml

@@ -1,0 +1,23 @@
+get:
+  summary: List boroughs
+  operationId: findBoroughs
+  tags:
+    - Boroughs
+  responses:
+    '200':
+      description: An object containing all boroughs.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              boroughs:
+                type: array
+                items:
+                  $ref: ../components/schemas/Borough.yaml
+            required:
+              - boroughs
+    '400':
+      $ref: ../components/responses/BadRequest.yaml
+    '500':
+      $ref: ../components/responses/InternalServerError.yaml

@@ -1,0 +1,20 @@
+type: object
+properties:
+  id:
+    type: string
+    description: One or two character code to represent city council districts.
+    pattern: ^([0-9]{1,2})$
+    example: 25
+  type:
+    type: string
+    enum:
+      - Feature
+  properties:
+    $ref: ./CityCouncilDistrict.yaml
+  geometry:
+    $ref: ./MultiPolygon.yaml
+required:
+  - id
+  - type
+  - geometry
+  - properties

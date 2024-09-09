@@ -1,0 +1,28 @@
+get:
+  summary: Non-spatial details for zoning districts that spatially intersect a tax lot.
+  operationId: findZoningDistrictsByTaxLotBbl
+  tags:
+    - Tax Lots
+    - Zoning Districts
+  parameters:
+    - $ref: ../components/parameters/bblParam.yaml
+  responses:
+    '200':
+      description: An object containing zoning districts.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              zoningDistricts:
+                type: array
+                items:
+                  $ref: ../components/schemas/ZoningDistrict.yaml
+            required:
+              - zoningDistricts
+    '400':
+      $ref: ../components/responses/BadRequest.yaml
+    '404':
+      $ref: ../components/responses/NotFound.yaml
+    '500':
+      $ref: ../components/responses/InternalServerError.yaml

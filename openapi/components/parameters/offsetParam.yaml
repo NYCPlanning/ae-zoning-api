@@ -1,0 +1,10 @@
+name: offset
+required: false
+in: query
+schema:
+  type: integer
+  minimum: 0
+  example: 100
+description: >-
+  The position in the full list to begin returning results. Default offset is 0.
+  If the offset is beyond the end of the list, no results will be returned.

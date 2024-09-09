@@ -1,0 +1,51 @@
+type: object
+properties:
+  id:
+    type: string
+    description: A uuid used to refer to the capital commitment.
+    format: uuid
+  type:
+    type: string
+    description: A four character string used to refer to the commitment type.
+    pattern: ^([A-z]{4})$
+    example: DSGN
+  plannedDate:
+    type: string
+    format: date
+    description: >-
+      A string used to refer to the date when the commitment is projected to be
+      committed.
+    example: '2012-04-23'
+  budgetLineCode:
+    type: string
+    description: A string used to refer to the budget line.
+    example: HW
+  budgetLineId:
+    type: string
+    description: A string used to refer to the budget line.
+    example: 0002Q
+  sponsoringAgency:
+    type: string
+    nullable: true
+    description: >-
+      A string of variable length containing the initials of the sponsoring
+      agency.
+    example: DOT
+  budgetType:
+    type: string
+    nullable: true
+    description: A string of variable length denoting the type of budget.
+    example: Highways
+  totalValue:
+    type: number
+    description: A numeric string used to refer to the amount of total planned commitments.
+    example: 1600000
+required:
+  - id
+  - type
+  - plannedDate
+  - budgetLineCode
+  - budgetLineId
+  - sponsoringAgency
+  - budgetType
+  - totalValue

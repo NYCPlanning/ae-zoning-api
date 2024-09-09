@@ -1,0 +1,9 @@
+name: capitalProjectId
+required: true
+in: path
+schema:
+  type: string
+  example: HWPEDSF5
+description: >-
+  The id for the project, which combines with the managing code to make a unique
+  id
