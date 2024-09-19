@@ -1,15 +1,12 @@
-name: 🎭 Deploy to staging
+name: 🌠 Deploy to production
 
-on:
-    push:
-        branches:
-            - main
+on: workflow_dispatch
 
 jobs:
     migrate:
         name: 🧑‍🚀 Apply database migrations
         environment:
-            name: staging-zoning-api
+            name: production-zoning-api
         runs-on: ubuntu-latest
         env:
             DATABASE_USER: ${{secrets.DATABASE_USER}}
@@ -31,10 +28,10 @@ jobs:
             - name: Apply migrations
               run: npm run drizzle:migrate 
     deploy:
-        name: 🚀 Deploy to staging
+        name: 🚀 Deploy to production
         environment:
-            name: staging-zoning-api
-            url: https://staging-zoning-api.nycplanningdigital.com
+            name: production-zoning-api
+            url: https://zoning-api.nycplanningdigital.com
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
