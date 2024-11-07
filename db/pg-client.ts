@@ -7,4 +7,7 @@ export const pgClient = new Client({
   user: process.env.DATABASE_USER,
   password: process.env.DATABASE_PASSWORD,
   database: process.env.DATABASE_NAME!,
+  ssl: process.env.DATABASE_ENV !== "development" && {
+    rejectUnauthorized: false,
+  },
 });

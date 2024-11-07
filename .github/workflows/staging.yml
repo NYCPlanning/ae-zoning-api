@@ -32,6 +32,7 @@ jobs:
               run: npm run drizzle:migrate 
     deploy:
         name: 🚀 Deploy to staging
+        needs: migrate
         environment:
             name: staging-zoning-api
             url: https://staging-zoning-api.nycplanningdigital.com
