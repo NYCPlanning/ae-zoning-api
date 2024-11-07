@@ -29,6 +29,7 @@ jobs:
               run: npm run drizzle:migrate 
     deploy:
         name: 🚀 Deploy to production
+        needs: migrate
         environment:
             name: production-zoning-api
             url: https://zoning-api.nycplanningdigital.com
