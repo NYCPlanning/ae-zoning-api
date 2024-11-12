@@ -1,7 +1,7 @@
 // Drizzle kit configuration
-import type { Config } from "drizzle-kit";
+import { defineConfig } from "drizzle-kit";
 
-export default {
+export default defineConfig({
   schema: "./src/schema/*",
   dialect: "postgresql",
   out: "db/migration",
@@ -15,4 +15,4 @@ export default {
       rejectUnauthorized: false,
     },
   },
-} satisfies Config;
+});

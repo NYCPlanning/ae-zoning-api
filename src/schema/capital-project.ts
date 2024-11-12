@@ -38,15 +38,13 @@ export const capitalProject = pgTable(
     mercatorFillMPnt: multiPointGeom("mercator_fill_m_pnt", 3857),
     mercatorFillMPoly: multiPolygonGeom("mercator_fill_m_poly", 3857),
   },
-  (table) => {
-    return {
-      pk: primaryKey({ columns: [table.managingCode, table.id] }),
-      mercatorFillMPolyGix: index().using("GIST", table.mercatorFillMPoly),
-      mercatorFillMPntGix: index().using("GIST", table.mercatorFillMPnt),
-      liFtMPntGix: index().using("GIST", table.liFtMPnt),
-      liFtMPolyGix: index().using("GIST", table.liFtMPoly),
-    };
-  },
+  (table) => [
+    primaryKey({ columns: [table.managingCode, table.id] }),
+    index().using("GIST", table.mercatorFillMPoly),
+    index().using("GIST", table.mercatorFillMPnt),
+    index().using("GIST", table.liFtMPnt),
+    index().using("GIST", table.liFtMPoly),
+  ],
 );
 
 export const capitalProjectCategoryEnumSchema = z.enum([

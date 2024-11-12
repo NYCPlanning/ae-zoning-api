@@ -37,15 +37,13 @@ export const capitalProjectFund = pgTable(
     stage: capitalProjectFundStageEnum("stage"),
     value: numeric("value"),
   },
-  (table) => {
-    return {
-      fk: foreignKey({
-        columns: [table.managingCode, table.capitalProjectId],
-        foreignColumns: [capitalProject.managingCode, capitalProject.id],
-        name: "custom_fk",
-      }),
-    };
-  },
+  (table) => [
+    foreignKey({
+      columns: [table.managingCode, table.capitalProjectId],
+      foreignColumns: [capitalProject.managingCode, capitalProject.id],
+      name: "custom_fk",
+    }),
+  ],
 );
 
 export const capitalProjectFundEntitySchema = z.object({
