@@ -25,18 +25,16 @@ export const capitalCommitment = pgTable(
     budgetLineCode: text("budget_line_code").notNull(),
     budgetLineId: text("budget_line_id").notNull(),
   },
-  (table) => {
-    return {
-      capitalProjectFk: foreignKey({
-        columns: [table.managingCode, table.capitalProjectId],
-        foreignColumns: [capitalProject.managingCode, capitalProject.id],
-      }),
-      budgetLineFk: foreignKey({
-        columns: [table.budgetLineCode, table.budgetLineId],
-        foreignColumns: [budgetLine.code, budgetLine.id],
-      }),
-    };
-  },
+  (table) => [
+    foreignKey({
+      columns: [table.managingCode, table.capitalProjectId],
+      foreignColumns: [capitalProject.managingCode, capitalProject.id],
+    }),
+    foreignKey({
+      columns: [table.budgetLineCode, table.budgetLineId],
+      foreignColumns: [budgetLine.code, budgetLine.id],
+    }),
+  ],
 );
 
 export const capitalCommitmentEntitySchema = z.object({

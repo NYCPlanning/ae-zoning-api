@@ -10,13 +10,11 @@ export const cityCouncilDistrict = pgTable(
     mercatorFill: multiPolygonGeom("mercator_fill", 3857),
     mercatorLabel: pointGeom("mercator_label", 3857),
   },
-  (table) => {
-    return {
-      mercatorFillGix: index().using("GIST", table.mercatorFill),
-      mercatorLabelGix: index().using("GIST", table.mercatorLabel),
-      liFtGix: index().using("GIST", table.liFt),
-    };
-  },
+  (table) => [
+    index().using("GIST", table.mercatorFill),
+    index().using("GIST", table.mercatorLabel),
+    index().using("GIST", table.liFt),
+  ],
 );
 
 export const cityCouncilDistrictEntitySchema = z.object({
