@@ -18,15 +18,13 @@ export const capitalProjectCheckbook = pgTable(
     capitalProjectId: text("capital_project_id"),
     value: numeric("value"),
   },
-  (table) => {
-    return {
-      fk: foreignKey({
-        columns: [table.managingCode, table.capitalProjectId],
-        foreignColumns: [capitalProject.managingCode, capitalProject.id],
-        name: "custom_fk",
-      }),
-    };
-  },
+  (table) => [
+    foreignKey({
+      columns: [table.managingCode, table.capitalProjectId],
+      foreignColumns: [capitalProject.managingCode, capitalProject.id],
+      name: "custom_fk",
+    }),
+  ],
 );
 
 export const capitalProjectCategoryEntitySchema = z.object({

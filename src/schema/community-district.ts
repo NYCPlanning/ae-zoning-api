@@ -14,14 +14,12 @@ export const communityDistrict = pgTable(
     mercatorFill: multiPolygonGeom("mercator_fill", 3857),
     mercatorLabel: pointGeom("mercator_label", 3857),
   },
-  (table) => {
-    return {
-      pk: primaryKey({ columns: [table.boroughId, table.id] }),
-      liFtGix: index().using("GIST", table.liFt),
-      mercatorFillGix: index().using("GIST", table.mercatorFill),
-      mercatorLabelGix: index().using("GIST", table.mercatorLabel),
-    };
-  },
+  (table) => [
+    primaryKey({ columns: [table.boroughId, table.id] }),
+    index().using("GIST", table.liFt),
+    index().using("GIST", table.mercatorFill),
+    index().using("GIST", table.mercatorLabel),
+  ],
 );
 
 export const communityDistrictEntitySchema = z.object({

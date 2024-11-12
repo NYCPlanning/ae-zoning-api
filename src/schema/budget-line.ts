@@ -8,11 +8,7 @@ export const budgetLine = pgTable(
     code: text("code").references(() => agencyBudget.code),
     id: text("id"),
   },
-  (table) => {
-    return {
-      pk: primaryKey({ columns: [table.code, table.id] }),
-    };
-  },
+  (table) => [primaryKey({ columns: [table.code, table.id] })],
 );
 
 export const budgetLineEntitySchema = z.object({
