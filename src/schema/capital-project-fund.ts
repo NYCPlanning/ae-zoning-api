@@ -1,5 +1,6 @@
 import {
   char,
+  check,
   foreignKey,
   numeric,
   pgEnum,
@@ -10,11 +11,7 @@ import {
 import { capitalProject } from "./capital-project";
 import { z } from "zod";
 import { managingCodeEntitySchema } from "./managing-code";
-
-export const capitalProjectFundStageEnum = pgEnum(
-  "capital_project_fund_stage",
-  ["adopt", "allocate", "commit", "spent"],
-);
+import { sql } from "drizzle-orm";
 
 export const capitalFundCategoryEnum = pgEnum("capital_fund_category", [
   "city-non-exempt",
@@ -34,7 +31,7 @@ export const capitalProjectFund = pgTable(
     managingCode: char("managing_code", { length: 3 }),
     capitalProjectId: text("capital_project_id"),
     capitalFundCategory: capitalFundCategoryEnum("capital_fund_category"),
-    stage: capitalProjectFundStageEnum("stage"),
+    stage: text("stage"),
     value: numeric("value"),
   },
   (table) => [
@@ -43,6 +40,10 @@ export const capitalProjectFund = pgTable(
       foreignColumns: [capitalProject.managingCode, capitalProject.id],
       name: "custom_fk",
     }),
+    check(
+      "capital_project_fund_stage_options",
+      sql`${table.stage} IN ('adopt', 'allocate', 'commit', 'spent')`,
+    ),
   ],
 );
 
