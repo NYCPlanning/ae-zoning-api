@@ -1,6 +1,6 @@
 services:
   db:
-    build: 
+    build:
       context: ./db
     environment:
       - POSTGRES_USER=${DATABASE_USER}
@@ -12,5 +12,10 @@ services:
       - data
     volumes:
       - ./db-volume:/var/lib/postgresql/data
+  cache:
+    image: redis:alpine
+    ports:
+      - 6379:6379
+    mem_limit: 2gb
 networks:
   data:

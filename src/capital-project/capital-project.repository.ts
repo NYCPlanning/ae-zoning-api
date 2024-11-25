@@ -8,6 +8,8 @@ import {
   FindCapitalProjectTilesPathParams,
 } from "src/gen";
 import { DB, DbType } from "src/global/providers/db.provider";
+import { CACHE, RedisCacheClient } from "src/global/providers/config.provider";
+
 import {
   agencyBudget,
   budgetLine,
@@ -27,6 +29,9 @@ export class CapitalProjectRepository {
   constructor(
     @Inject(DB)
     private readonly db: DbType,
+
+    @Inject(CACHE)
+    private readonly cache: RedisCacheClient,
   ) {}
 
   #checkByManagingCodeCapitalProjectId = this.db.query.capitalProject
@@ -58,7 +63,15 @@ export class CapitalProjectRepository {
   ): Promise<FindByManagingCodeCapitalProjectIdRepo> {
     const { managingCode, capitalProjectId } = params;
     try {
-      return await this.db
+      const cacheKey = `capital-project:${managingCode}:${capitalProjectId}`;
+      const start = performance.now();
+      const cacheValue = await this.cache.get(cacheKey);
+      if (cacheValue !== null) {
+        const value = JSON.parse(cacheValue);
+        console.info("cache read", cacheKey, performance.now() - start);
+        return value;
+      }
+      const value = await this.db
         .select({
           id: capitalProject.id,
           managingCode: capitalProject.managingCode,
@@ -100,6 +113,9 @@ export class CapitalProjectRepository {
         )
         .groupBy(capitalProject.managingCode, capitalProject.id)
         .limit(1);
+      console.info("database read", cacheKey, performance.now() - start);
+      this.cache.set(cacheKey, JSON.stringify(value));
+      return value;
     } catch {
       throw new DataRetrievalException();
     }
@@ -128,10 +144,10 @@ export class CapitalProjectRepository {
           commitmentsTotal: sum(capitalCommitmentFund.value).mapWith(Number),
           geometry: sql<string | null>`
             CASE
-            WHEN 
+            WHEN
               ${capitalProject.liFtMPoly} IS NOT null
             THEN
-              ST_asGeoJSON(ST_Transform(${capitalProject.liFtMPoly}, 4326),6)	
+              ST_asGeoJSON(ST_Transform(${capitalProject.liFtMPoly}, 4326),6)
             ELSE
               ST_asGeoJSON(ST_Transform(${capitalProject.liFtMPnt}, 4326),6)
             END
@@ -171,7 +187,16 @@ export class CapitalProjectRepository {
     params: FindCapitalProjectTilesPathParams,
   ): Promise<FindTilesRepo> {
     const { z, x, y } = params;
+    const cacheKey = `capital-project-tiles:${z}:${x}:${y}`;
     try {
+      // const start = performance.now();
+      const tileCache = await this.cache.get(cacheKey);
+      if (tileCache !== null) {
+        const mvt = Buffer.from(tileCache, "binary");
+        // const end = performance.now();
+        // console.info("cache read", end - start);
+        return mvt;
+      }
       const tile = this.db
         .select({
           managingCodeCapitalProjectId:
@@ -182,7 +207,7 @@ export class CapitalProjectRepository {
             `managingAgency`,
           ),
           geom: sql<string>`
-            CASE 
+            CASE
               WHEN ${capitalProject.mercatorFillMPoly} && ST_TileEnvelope(${z},${x},${y})
                 THEN ST_AsMVTGeom(
                   ${capitalProject.mercatorFillMPoly},
@@ -209,7 +234,11 @@ export class CapitalProjectRepository {
         })
         .from(tile)
         .where(isNotNull(tile.geom));
-      return data[0].mvt;
+      const { mvt } = data[0];
+      // const end = performance.now();
+      // console.info("database read", end - start);
+      this.cache.set(cacheKey, mvt.toString("binary"));
+      return mvt;
     } catch {
       throw new DataRetrievalException();
     }

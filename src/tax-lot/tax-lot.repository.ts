@@ -1,5 +1,6 @@
 import { Inject } from "@nestjs/common";
 import { DB, DbType } from "src/global/providers/db.provider";
+import { CACHE, RedisCacheClient } from "src/global/providers/config.provider";
 import { StorageConfig } from "src/config";
 import { ConfigType } from "@nestjs/config";
 import { eq, sql } from "drizzle-orm";
@@ -30,6 +31,10 @@ export class TaxLotRepository {
   constructor(
     @Inject(DB)
     private readonly db: DbType,
+
+    @Inject(CACHE)
+    private readonly cache: RedisCacheClient,
+
     @Inject(StorageConfig.KEY)
     private storageConfig: ConfigType<typeof StorageConfig>,
   ) {}
@@ -194,8 +199,17 @@ export class TaxLotRepository {
   async findByBblSpatial(
     bbl: string,
   ): Promise<FindByBblSpatialRepo | undefined> {
+    const cacheKey = `tax-lot-geojson:${bbl}`;
+    console.info("cache key", cacheKey);
     try {
-      return await this.db.query.taxLot.findFirst({
+      const start = performance.now();
+      const cacheValue = await this.cache.get(cacheKey);
+      if (cacheValue !== null) {
+        const value = JSON.parse(cacheValue);
+        console.info("cache lookup", performance.now() - start);
+        return value;
+      }
+      const result = await this.db.query.taxLot.findFirst({
         columns: {
           bbl: true,
           block: true,
@@ -213,6 +227,9 @@ export class TaxLotRepository {
           landUse: true,
         },
       });
+      console.info("database read", cacheKey, performance.now() - start);
+      this.cache.set(cacheKey, JSON.stringify(result));
+      return result;
     } catch {
       throw new DataRetrievalException();
     }

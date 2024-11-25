@@ -16,10 +16,15 @@ import {
 } from "src/gen";
 import { capitalProject, cityCouncilDistrict } from "src/schema";
 import { eq, sql, isNotNull } from "drizzle-orm";
+import { CACHE, RedisCacheClient } from "src/global/providers/config.provider";
+import { performance } from "perf_hooks";
 export class CityCouncilDistrictRepository {
   constructor(
     @Inject(DB)
     private readonly db: DbType,
+
+    @Inject(CACHE)
+    private readonly cache: RedisCacheClient,
   ) {}
 
   #checkCityCouncilDistrictById = this.db.query.cityCouncilDistrict
@@ -88,6 +93,14 @@ export class CityCouncilDistrictRepository {
     y,
   }: FindCapitalProjectTilesByCityCouncilDistrictIdPathParams): Promise<FindCapitalProjectTilesByCityCouncilDistrictIdRepo> {
     try {
+      const start = performance.now();
+      const cacheKey = `captial-project-tiles:city-council-districts:${z}:${x}:${y}`;
+      const cacheValue = await this.cache.get(cacheKey);
+      if (cacheValue !== null) {
+        const value = Buffer.from(cacheValue, "binary");
+        console.info("cache read:", cacheKey, performance.now() - start);
+        return value;
+      }
       const tile = this.db
         .select({
           managingCodeCapitalProjectId:
@@ -98,7 +111,7 @@ export class CityCouncilDistrictRepository {
             `managingAgency`,
           ),
           geom: sql<string>`
-            CASE 
+            CASE
               WHEN ${capitalProject.mercatorFillMPoly} && ST_TileEnvelope(${z},${x},${y})
                 THEN ST_AsMVTGeom(
                   ${capitalProject.mercatorFillMPoly},
@@ -121,7 +134,7 @@ export class CityCouncilDistrictRepository {
         .leftJoin(
           cityCouncilDistrict,
           sql`
-            ST_Intersects(${cityCouncilDistrict.mercatorFill}, ${capitalProject.mercatorFillMPoly}) 
+            ST_Intersects(${cityCouncilDistrict.mercatorFill}, ${capitalProject.mercatorFillMPoly})
             OR ST_Intersects(${cityCouncilDistrict.mercatorFill}, ${capitalProject.mercatorFillMPnt})`,
         )
         .where(eq(cityCouncilDistrict.id, cityCouncilDistrictId))
@@ -132,7 +145,10 @@ export class CityCouncilDistrictRepository {
         })
         .from(tile)
         .where(isNotNull(tile.geom));
-      return data[0].mvt;
+      console.info("database read", cacheKey, performance.now() - start);
+      const { mvt } = data[0];
+      this.cache.set(cacheKey, mvt.toString("binary"));
+      return mvt;
     } catch {
       throw new DataRetrievalException();
     }
@@ -204,7 +220,15 @@ export class CityCouncilDistrictRepository {
     cityCouncilDistrictId: string;
   }): Promise<FindCapitalProjectsByCityCouncilDistrictIdRepo> {
     try {
-      return await this.db
+      const start = performance.now();
+      const cacheKey = `capital-projects:city-council-district:${cityCouncilDistrictId}:${limit}:${offset}`;
+      const cacheValue = await this.cache.get(cacheKey);
+      if (cacheValue !== null) {
+        const value = JSON.parse(cacheValue);
+        console.info("cache lookup", cacheKey, performance.now() - start);
+        return value;
+      }
+      const value = await this.db
         .select({
           id: capitalProject.id,
           description: capitalProject.description,
@@ -218,13 +242,16 @@ export class CityCouncilDistrictRepository {
         .leftJoin(
           cityCouncilDistrict,
           sql`
-            ST_Intersects(${cityCouncilDistrict.liFt}, ${capitalProject.liFtMPoly}) 
+            ST_Intersects(${cityCouncilDistrict.liFt}, ${capitalProject.liFtMPoly})
             OR ST_Intersects(${cityCouncilDistrict.liFt}, ${capitalProject.liFtMPnt})`,
         )
         .where(eq(cityCouncilDistrict.id, cityCouncilDistrictId))
         .limit(limit)
         .offset(offset)
         .orderBy(capitalProject.managingCode, capitalProject.id);
+      console.info("database read", cacheKey, performance.now() - start);
+      this.cache.set(cacheKey, JSON.stringify(value));
+      return value;
     } catch {
       throw new DataRetrievalException();
     }

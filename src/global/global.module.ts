@@ -1,9 +1,10 @@
 import { Global, Module } from "@nestjs/common";
 import { DB, DbProvider } from "src/global/providers/db.provider";
+import { CACHE, CacheProvider } from "src/global/providers/config.provider";
 
 @Global()
 @Module({
-  providers: [DbProvider],
-  exports: [DB],
+  providers: [DbProvider, CacheProvider],
+  exports: [DB, CACHE],
 })
 export class GlobalModule {}
