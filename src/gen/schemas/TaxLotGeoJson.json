@@ -2,32 +2,32 @@
   "type": "object",
   "properties": {
     "id": {
-      "description": "The bbl of the tax lot.",
       "type": "string",
-      "example": "1000477501",
+      "description": "The bbl of the tax lot.",
+      "minLength": 10,
       "maxLength": 10,
-      "minLength": 10
+      "example": "1000477501"
     },
     "type": { "type": "string", "enum": ["Feature"] },
     "geometry": {
-      "description": "A geojson implementation of a MultiPolygon Simple Feature",
       "type": "object",
+      "description": "A geojson implementation of a MultiPolygon Simple Feature",
       "properties": {
         "type": { "type": "string", "enum": ["MultiPolygon"] },
         "coordinates": {
-          "description": "Array of polygon coordinate arrays.",
           "type": "array",
+          "description": "Array of polygon coordinate arrays.",
           "items": {
             "type": "array",
             "items": {
               "type": "array",
               "items": {
-                "description": "The fundamental spatial construct",
                 "type": "array",
+                "description": "The fundamental spatial construct",
+                "minItems": 2,
+                "maxItems": 3,
                 "items": { "type": "number" },
                 "example": [-74.010835, 40.708442],
-                "maxItems": 3,
-                "minItems": 2,
                 "x-readme-ref-name": "Position"
               }
             }
@@ -40,76 +40,68 @@
     "properties": {
       "type": "object",
       "properties": {
-        "bbl": {
-          "description": "The ten character code compromised of a one character borough, five character block, and four character lot codes.",
-          "type": "string",
-          "example": "1000477501",
-          "pattern": "^([0-9]{10})$"
-        },
         "borough": {
           "type": "object",
           "properties": {
             "id": {
-              "description": "A single character numeric string containing the common number used to refer to the borough. Possible values are 1-5.",
               "type": "string",
-              "example": 1,
-              "pattern": "^([0-9])$"
+              "description": "A single character numeric string containing the common number used to refer to the borough. Possible values are 1-5.",
+              "pattern": "^([0-9])$",
+              "example": 1
             },
             "title": {
-              "description": "The full name of the borough.",
               "type": "string",
+              "description": "The full name of the borough.",
               "example": "Manhattan"
             },
             "abbr": {
-              "description": "The two character abbreviation for the borough.",
               "type": "string",
-              "example": "MN",
+              "description": "The two character abbreviation for the borough.",
+              "minLength": 2,
               "maxLength": 2,
-              "minLength": 2
+              "example": "MN"
             }
           },
           "required": ["id", "title", "abbr"],
           "x-readme-ref-name": "Borough"
         },
-        "block": {
-          "description": "The block code, without its padding zeros.",
+        "blockId": {
           "type": "string",
-          "example": 47,
-          "maxLength": 5,
-          "minLength": 1
+          "description": "The block code for the bbl",
+          "pattern": "^([0-9]{5})$",
+          "example": "00047"
         },
-        "lot": {
-          "description": "The lot code, without its padding zeros.",
+        "lotId": {
           "type": "string",
-          "example": 7501,
-          "maxLength": 4,
-          "minLength": 1
+          "description": "The lot code for the bbl",
+          "pattern": "^([0-9]{4})$",
+          "example": "7501"
         },
         "address": {
-          "description": "The street address.",
           "type": "string",
+          "description": "The street address.",
           "example": "120 BROADWAY"
         },
         "landUse": {
           "type": "object",
           "properties": {
             "id": {
-              "description": "The two character code to represent the land use. Possible values are 01-11.",
               "type": "string",
-              "example": "05",
+              "description": "The two character code to represent the land use. Possible values are 01-11.",
+              "minLength": 2,
               "maxLength": 2,
-              "minLength": 2
+              "example": "05"
             },
             "description": {
-              "description": "The description of the land use.",
               "type": "string",
+              "description": "The description of the land use.",
               "example": "Commercial and Office Buildings"
             },
             "color": {
-              "description": "Hex-style color code to represent the land use.",
               "type": "string",
-              "example": "#fc2929ff",
-              "pattern": "^#([A-Fa-f0-9]{8})$"
+              "description": "Hex-style color code to represent the land use.",
+              "pattern": "^#([A-Fa-f0-9]{8})$",
+              "example": "#fc2929ff"
             }
           },
           "required": ["id", "description", "color"],

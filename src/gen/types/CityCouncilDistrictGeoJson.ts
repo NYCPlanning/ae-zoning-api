@@ -1,5 +1,5 @@
-import { CityCouncilDistrict } from "./CityCouncilDistrict";
-import { MultiPolygon } from "./MultiPolygon";
+import type { CityCouncilDistrict } from "./CityCouncilDistrict";
+import type { MultiPolygon } from "./MultiPolygon";
 
 export const cityCouncilDistrictGeoJsonType = {
   Feature: "Feature",
@@ -16,6 +16,12 @@ export type CityCouncilDistrictGeoJson = {
    * @type string
    */
   type: CityCouncilDistrictGeoJsonType;
+  /**
+   * @type object
+   */
   properties: CityCouncilDistrict;
+  /**
+   * @type object
+   */
   geometry: MultiPolygon;
 };

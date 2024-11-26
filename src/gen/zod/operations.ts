@@ -785,16 +785,16 @@ export const paths = {
   "/tax-lots": {
     get: operations["findTaxLots"],
   },
-  "/tax-lots/{bbl}": {
+  "/tax-lots/{boroughId}/{blockId}/{lotId}": {
     get: operations["findTaxLotByBbl"],
   },
-  "/tax-lots/{bbl}/geojson": {
+  "/tax-lots/{boroughId}/{blockId}/{lotId}/geojson": {
     get: operations["findTaxLotGeoJsonByBbl"],
   },
-  "/tax-lots/{bbl}/zoning-districts": {
+  "/tax-lots/{boroughId}/{blockId}/{lotId}/zoning-districts": {
     get: operations["findZoningDistrictsByTaxLotBbl"],
   },
-  "/tax-lots/{bbl}/zoning-districts/classes": {
+  "/tax-lots/{boroughId}/{blockId}/{lotId}/zoning-districts/classes": {
     get: operations["findZoningDistrictClassesByTaxLotBbl"],
   },
   "/zoning-districts/{id}": {

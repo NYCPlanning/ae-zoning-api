@@ -1,5 +1,5 @@
-import type { Error } from "./Error";
 import type { CommunityDistrict } from "./CommunityDistrict";
+import type { Error } from "./Error";
 
 export type FindCommunityDistrictsByBoroughIdPathParams = {
   /**

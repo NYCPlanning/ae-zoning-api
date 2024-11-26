@@ -1,5 +1,5 @@
-import type { Error } from "./Error";
 import type { LandUse } from "./LandUse";
+import type { Error } from "./Error";
 
 /**
  * @description An object containing all land uses.

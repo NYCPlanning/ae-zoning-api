@@ -2,7 +2,7 @@ import { Inject } from "@nestjs/common";
 import { DB, DbType } from "src/global/providers/db.provider";
 import { StorageConfig } from "src/config";
 import { ConfigType } from "@nestjs/config";
-import { eq, sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { DataRetrievalException } from "src/exception";
 import {
   taxLot,
@@ -25,6 +25,12 @@ import {
 } from "./tax-lot.repository.schema";
 import { Geometry } from "geojson";
 import { Geom } from "src/types";
+import {
+  FindTaxLotByBblPathParams,
+  FindTaxLotGeoJsonByBblPathParams,
+  FindZoningDistrictClassesByTaxLotBblPathParams,
+  FindZoningDistrictsByTaxLotBblPathParams,
+} from "src/gen";
 
 export class TaxLotRepository {
   constructor(
@@ -37,15 +43,34 @@ export class TaxLotRepository {
   #checkTaxLotByBbl = this.db.query.taxLot
     .findFirst({
       columns: {
-        bbl: true,
+        boroughId: true,
+        blockId: true,
+        lotId: true,
       },
-      where: (taxLot, { eq, sql }) => eq(taxLot.bbl, sql.placeholder("bbl")),
+      where: (taxLot, { and, eq, sql }) =>
+        and(
+          eq(taxLot.boroughId, sql.placeholder("boroughId")),
+          eq(taxLot.blockId, sql.placeholder("blockId")),
+          eq(taxLot.lotId, sql.placeholder("lotId")),
+        ),
     })
     .prepare("checkByBbl");
 
-  async checkByBbl(bbl: string): Promise<CheckByBblRepo | undefined> {
+  async checkByBbl({
+    boroughId,
+    blockId,
+    lotId,
+  }: {
+    boroughId: string;
+    blockId: string;
+    lotId: string;
+  }): Promise<CheckByBblRepo | undefined> {
     try {
-      return await this.#checkTaxLotByBbl.execute({ bbl });
+      return await this.#checkTaxLotByBbl.execute({
+        boroughId,
+        blockId,
+        lotId,
+      });
     } catch {
       throw new DataRetrievalException();
     }
@@ -61,16 +86,15 @@ export class TaxLotRepository {
     try {
       return await this.db.query.taxLot.findMany({
         columns: {
-          bbl: true,
           boroughId: true,
-          block: true,
-          lot: true,
+          blockId: true,
+          lotId: true,
           address: true,
           landUseId: true,
         },
         limit,
         offset,
-        orderBy: taxLot.bbl,
+        orderBy: [taxLot.boroughId, taxLot.blockId, taxLot.lotId],
       });
     } catch {
       throw new DataRetrievalException();
@@ -132,10 +156,9 @@ export class TaxLotRepository {
   #findManyBySpatialFilter = this.db.query.taxLot
     .findMany({
       columns: {
-        bbl: true,
         boroughId: true,
-        block: true,
-        lot: true,
+        blockId: true,
+        lotId: true,
         address: true,
         landUseId: true,
       },
@@ -171,7 +194,11 @@ export class TaxLotRepository {
     }
   }
 
-  async findByBbl(bbl: string): Promise<FindByBblRepo | undefined> {
+  async findByBbl({
+    boroughId,
+    blockId,
+    lotId,
+  }: FindTaxLotByBblPathParams): Promise<FindByBblRepo | undefined> {
     try {
       return await this.db.query.taxLot.findFirst({
         columns: {
@@ -180,7 +207,12 @@ export class TaxLotRepository {
           wgs84: false,
           liFt: false,
         },
-        where: (taxLot, { eq }) => eq(taxLot.bbl, bbl),
+        where: (taxLot, { eq, and }) =>
+          and(
+            eq(taxLot.boroughId, boroughId),
+            eq(taxLot.blockId, blockId),
+            eq(taxLot.lotId, lotId),
+          ),
         with: {
           borough: true,
           landUse: true,
@@ -191,15 +223,18 @@ export class TaxLotRepository {
     }
   }
 
-  async findByBblSpatial(
-    bbl: string,
-  ): Promise<FindByBblSpatialRepo | undefined> {
+  async findByBblSpatial({
+    boroughId,
+    blockId,
+    lotId,
+  }: FindTaxLotGeoJsonByBblPathParams): Promise<
+    FindByBblSpatialRepo | undefined
+  > {
     try {
       return await this.db.query.taxLot.findFirst({
         columns: {
-          bbl: true,
-          block: true,
-          lot: true,
+          blockId: true,
+          lotId: true,
           address: true,
         },
         extras: {
@@ -207,7 +242,12 @@ export class TaxLotRepository {
             "geometry",
           ),
         },
-        where: (taxLot, { eq }) => eq(taxLot.bbl, bbl),
+        where: (taxLot, { and, eq }) =>
+          and(
+            eq(taxLot.boroughId, boroughId),
+            eq(taxLot.blockId, blockId),
+            eq(taxLot.lotId, lotId),
+          ),
         with: {
           borough: true,
           landUse: true,
@@ -218,9 +258,11 @@ export class TaxLotRepository {
     }
   }
 
-  async findZoningDistrictsByBbl(
-    bbl: string,
-  ): Promise<FindZoningDistrictsByBblRepo> {
+  async findZoningDistrictsByBbl({
+    boroughId,
+    blockId,
+    lotId,
+  }: FindZoningDistrictsByTaxLotBblPathParams): Promise<FindZoningDistrictsByBblRepo> {
     try {
       return await this.db
         .select({
@@ -232,15 +274,23 @@ export class TaxLotRepository {
           taxLot,
           sql`ST_Intersects(${taxLot.liFt}, ${zoningDistrict.liFt})`,
         )
-        .where(eq(taxLot.bbl, bbl));
+        .where(
+          and(
+            eq(taxLot.boroughId, boroughId),
+            eq(taxLot.blockId, blockId),
+            eq(taxLot.lotId, lotId),
+          ),
+        );
     } catch {
       throw new DataRetrievalException();
     }
   }
 
-  async findZoningDistrictClassesByBbl(
-    bbl: string,
-  ): Promise<FindZoningDistrictClassesByBblRepo> {
+  async findZoningDistrictClassesByBbl({
+    boroughId,
+    blockId,
+    lotId,
+  }: FindZoningDistrictClassesByTaxLotBblPathParams): Promise<FindZoningDistrictClassesByBblRepo> {
     try {
       return await this.db
         .select({
@@ -269,7 +319,13 @@ export class TaxLotRepository {
           taxLot,
           sql`ST_Intersects(${taxLot.liFt}, ${zoningDistrict.liFt})`,
         )
-        .where(eq(taxLot.bbl, bbl));
+        .where(
+          and(
+            eq(taxLot.boroughId, boroughId),
+            eq(taxLot.blockId, blockId),
+            eq(taxLot.lotId, lotId),
+          ),
+        );
     } catch {
       throw new DataRetrievalException();
     }

@@ -23,6 +23,7 @@ export const findCapitalProjectsByBoroughIdCommunityDistrictIdQueryParamsSchema 
     .object({
       limit: z.coerce
         .number()
+        .int()
         .min(1)
         .max(100)
         .describe(
@@ -31,6 +32,7 @@ export const findCapitalProjectsByBoroughIdCommunityDistrictIdQueryParamsSchema 
         .optional(),
       offset: z.coerce
         .number()
+        .int()
         .min(0)
         .describe(
           "The position in the full list to begin returning results. Default offset is 0. If the offset is beyond the end of the list, no results will be returned.",

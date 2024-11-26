@@ -47,36 +47,36 @@ export class TaxLotController {
     return await this.taxLotService.findMany(params);
   }
 
-  @Get("/:bbl")
+  @Get("/:boroughId/:blockId/:lotId")
   @UsePipes(new ZodTransformPipe(findTaxLotByBblPathParamsSchema))
   async findDetailsByBbl(@Param() params: FindTaxLotByBblPathParams) {
-    return this.taxLotService.findByBbl(params.bbl);
+    return this.taxLotService.findByBbl(params);
   }
 
-  @Get("/:bbl/geojson")
+  @Get("/:boroughId/:blockId/:lotId/geojson")
   @UsePipes(new ZodTransformPipe(findTaxLotGeoJsonByBblPathParamsSchema))
   async findBblByGeoJson(@Param() params: FindTaxLotGeoJsonByBblPathParams) {
-    return this.taxLotService.findGeoJsonByBbl(params.bbl);
+    return this.taxLotService.findGeoJsonByBbl(params);
   }
 
-  @Get("/:bbl/zoning-districts")
+  @Get("/:boroughId/:blockId/:lotId/zoning-districts")
   @UsePipes(
     new ZodTransformPipe(findZoningDistrictsByTaxLotBblPathParamsSchema),
   )
   async findZoningDistrictsByBbl(
     @Param() params: FindZoningDistrictsByTaxLotBblPathParams,
   ) {
-    return this.taxLotService.findZoningDistrictsByBbl(params.bbl);
+    return this.taxLotService.findZoningDistrictsByBbl(params);
   }
 
-  @Get("/:bbl/zoning-districts/classes")
+  @Get("/:boroughId/:blockId/:lotId/zoning-districts/classes")
   @UsePipes(
     new ZodTransformPipe(findZoningDistrictClassesByTaxLotBblPathParamsSchema),
   )
   async findZoningDistrictClassesByBbl(
     @Param() params: FindZoningDistrictClassesByTaxLotBblPathParams,
   ) {
-    return this.taxLotService.findZoningDistrictClassesByBbl(params.bbl);
+    return this.taxLotService.findZoningDistrictClassesByBbl(params);
   }
 
   @Get("/:z/:x/:y.pbf")

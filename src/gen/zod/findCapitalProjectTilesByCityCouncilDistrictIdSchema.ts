@@ -9,9 +9,9 @@ export const findCapitalProjectTilesByCityCouncilDistrictIdPathParamsSchema =
       .describe(
         "One or two character code to represent city council districts.",
       ),
-    z: z.coerce.number().describe("viewport zoom component"),
-    x: z.coerce.number().describe("viewport x component"),
-    y: z.coerce.number().describe("viewport y component"),
+    z: z.coerce.number().int().describe("viewport zoom component"),
+    x: z.coerce.number().int().describe("viewport x component"),
+    y: z.coerce.number().int().describe("viewport y component"),
   });
 /**
  * @description A protobuf file formatted as Mapbox Vector Tile

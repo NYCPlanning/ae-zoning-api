@@ -10,7 +10,9 @@ import { taxLotEntitySchema } from "src/schema/tax-lot";
 import { geomSchema } from "src/types";
 
 export const checkByBblRepoSchema = taxLotEntitySchema.pick({
-  bbl: true,
+  boroughId: true,
+  blockId: true,
+  lotId: true,
 });
 
 export type CheckByBblRepo = z.infer<typeof checkByBblRepoSchema>;

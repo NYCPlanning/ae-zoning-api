@@ -1,12 +1,22 @@
-import type { Error } from "./Error";
 import type { ZoningDistrict } from "./ZoningDistrict";
+import type { Error } from "./Error";
 
 export type FindZoningDistrictsByTaxLotBblPathParams = {
   /**
-   * @description The ten character code compromised of a one character borough, five character block, and four character lot codes.
+   * @description A single character numeric string containing the common number used to refer to the borough. Possible values are 1-5.
    * @type string
    */
-  bbl: string;
+  boroughId: string;
+  /**
+   * @description A multi-character numeric string containing the common number used to refer to the block of a bbl.
+   * @type string
+   */
+  blockId: string;
+  /**
+   * @description A multi-character numeric string containing the common number used to refer to the lot of a bbl.
+   * @type string
+   */
+  lotId: string;
 };
 /**
  * @description An object containing zoning districts.

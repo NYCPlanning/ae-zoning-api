@@ -110,8 +110,8 @@ describe("TaxLotController", () => {
       const parsedResource = findTaxLotsQueryResponseSchema.parse(resource);
       expect(parsedResource.total).toBe(2);
       expect(
-        parsedResource.taxLots[0].bbl >=
-          parsedResource.taxLots[parsedResource.taxLots.length - 1].bbl,
+        `${parsedResource.taxLots[0].boroughId}${parsedResource.taxLots[0].blockId}${parsedResource.taxLots[0].lotId}` >=
+          `${parsedResource.taxLots[parsedResource.taxLots.length - 1].boroughId}${parsedResource.taxLots[parsedResource.taxLots.length - 1].blockId}${parsedResource.taxLots[parsedResource.taxLots.length - 1].lotId}`,
       ).toBe(true);
       expect(parsedResource.order).toBe("distance");
     });
@@ -129,8 +129,8 @@ describe("TaxLotController", () => {
       const parsedResource = findTaxLotsQueryResponseSchema.parse(resource);
       expect(parsedResource.total).toBe(10);
       expect(
-        parsedResource.taxLots[0].bbl >=
-          parsedResource.taxLots[parsedResource.taxLots.length - 1].bbl,
+        `${parsedResource.taxLots[0].boroughId}${parsedResource.taxLots[0].blockId}${parsedResource.taxLots[0].lotId}` >=
+          `${parsedResource.taxLots[parsedResource.taxLots.length - 1].boroughId}${parsedResource.taxLots[parsedResource.taxLots.length - 1].blockId}${parsedResource.taxLots[parsedResource.taxLots.length - 1].lotId}`,
       ).toBe(true);
       expect(parsedResource.order).toBe("distance");
     });
@@ -147,8 +147,8 @@ describe("TaxLotController", () => {
       const parsedResource = findTaxLotsQueryResponseSchema.parse(resource);
       expect(parsedResource.total).toBe(2);
       expect(
-        parsedResource.taxLots[0].bbl >=
-          parsedResource.taxLots[parsedResource.taxLots.length - 1].bbl,
+        `${parsedResource.taxLots[0].boroughId}${parsedResource.taxLots[0].blockId}${parsedResource.taxLots[0].lotId}` >=
+          `${parsedResource.taxLots[parsedResource.taxLots.length - 1].boroughId}${parsedResource.taxLots[parsedResource.taxLots.length - 1].blockId}${parsedResource.taxLots[parsedResource.taxLots.length - 1].lotId}`,
       ).toBe(true);
       expect(parsedResource.order).toBe("distance");
     });
@@ -166,8 +166,8 @@ describe("TaxLotController", () => {
       const parsedResource = findTaxLotsQueryResponseSchema.parse(resource);
       expect(parsedResource.total).toBe(10);
       expect(
-        parsedResource.taxLots[0].bbl >=
-          parsedResource.taxLots[parsedResource.taxLots.length - 1].bbl,
+        `${parsedResource.taxLots[0].boroughId}${parsedResource.taxLots[0].blockId}${parsedResource.taxLots[0].lotId}` >=
+          `${parsedResource.taxLots[parsedResource.taxLots.length - 1].boroughId}${parsedResource.taxLots[parsedResource.taxLots.length - 1].blockId}${parsedResource.taxLots[parsedResource.taxLots.length - 1].lotId}`,
       ).toBe(true);
       expect(parsedResource.order).toBe("distance");
     });
@@ -194,8 +194,8 @@ describe("TaxLotController", () => {
       const parsedResource = findTaxLotsQueryResponseSchema.parse(resource);
       expect(parsedResource.total).toBe(2);
       expect(
-        parsedResource.taxLots[0].bbl <=
-          parsedResource.taxLots[parsedResource.taxLots.length - 1].bbl,
+        `${parsedResource.taxLots[0].boroughId}${parsedResource.taxLots[0].blockId}${parsedResource.taxLots[0].lotId}` >=
+          `${parsedResource.taxLots[parsedResource.taxLots.length - 1].boroughId}${parsedResource.taxLots[parsedResource.taxLots.length - 1].blockId}${parsedResource.taxLots[parsedResource.taxLots.length - 1].lotId}`,
       ).toBe(true);
       expect(parsedResource.order).toBe("distance");
     });
@@ -213,8 +213,8 @@ describe("TaxLotController", () => {
       const parsedResource = findTaxLotsQueryResponseSchema.parse(resource);
       expect(parsedResource.total).toBe(10);
       expect(
-        parsedResource.taxLots[0].bbl <=
-          parsedResource.taxLots[parsedResource.taxLots.length - 1].bbl,
+        `${parsedResource.taxLots[0].boroughId}${parsedResource.taxLots[0].blockId}${parsedResource.taxLots[0].lotId}` >=
+          `${parsedResource.taxLots[parsedResource.taxLots.length - 1].boroughId}${parsedResource.taxLots[parsedResource.taxLots.length - 1].blockId}${parsedResource.taxLots[parsedResource.taxLots.length - 1].lotId}`,
       ).toBe(true);
       expect(parsedResource.order).toBe("distance");
     });
@@ -232,42 +232,66 @@ describe("TaxLotController", () => {
 
   describe("findByBbl", () => {
     it("should return a tax lot when requesting a valid bbl", async () => {
-      const { bbl } = taxLotRepository.findByBblMocks[0];
-      const taxLot = await taxLotService.findByBbl(bbl);
+      const {
+        borough: { id: boroughId },
+        blockId,
+        lotId,
+      } = taxLotRepository.findByBblMocks[0];
+      const taxLot = await taxLotService.findByBbl({
+        boroughId,
+        blockId,
+        lotId,
+      });
       expect(() =>
         findTaxLotByBblQueryResponseSchema.parse(taxLot),
       ).not.toThrow();
     });
 
     it("should throw a resource error when requesting a missing bbl", async () => {
-      const missingBbl = "0123456789";
-      expect(taxLotService.findByBbl(missingBbl)).rejects.toThrow(
-        ResourceNotFoundException,
-      );
+      const boroughId = "0";
+      const blockId = "12345";
+      const lotId = "6789";
+      expect(
+        taxLotService.findByBbl({ boroughId, blockId, lotId }),
+      ).rejects.toThrow(ResourceNotFoundException);
     });
   });
 
   describe("findByBblGeoJson", () => {
     it("should return a tax lot geojson when requesting a valid bbl", async () => {
-      const { bbl } = taxLotRepository.findByBblSpatialMocks[0];
-      const taxLot = await taxLotService.findGeoJsonByBbl(bbl);
+      const {
+        borough: { id: boroughId },
+        blockId,
+        lotId,
+      } = taxLotRepository.findByBblSpatialMocks[0];
+      const taxLot = await taxLotService.findGeoJsonByBbl({
+        boroughId,
+        blockId,
+        lotId,
+      });
       expect(() =>
         findTaxLotGeoJsonByBblQueryResponseSchema.parse(taxLot),
       ).not.toThrow();
     });
 
     it("should throw a resource error when requesting a missing bbl", async () => {
-      const missingBbl = "0123456789";
-      expect(taxLotService.findGeoJsonByBbl(missingBbl)).rejects.toThrow(
-        ResourceNotFoundException,
-      );
+      const boroughId = "0";
+      const blockId = "12345";
+      const lotId = "6789";
+      expect(
+        taxLotService.findGeoJsonByBbl({ boroughId, blockId, lotId }),
+      ).rejects.toThrow(ResourceNotFoundException);
     });
   });
 
   describe("findZoningDistrictsByBbl", () => {
     it("should return an array of zoning district(s) when requesting a valid bbl", async () => {
-      const { bbl } = taxLotRepository.checkByBblMocks[0];
-      const zoningDistricts = await taxLotService.findZoningDistrictsByBbl(bbl);
+      const { boroughId, blockId, lotId } = taxLotRepository.checkByBblMocks[0];
+      const zoningDistricts = await taxLotService.findZoningDistrictsByBbl({
+        boroughId,
+        blockId,
+        lotId,
+      });
       expect(() =>
         findZoningDistrictsByTaxLotBblQueryResponseSchema.parse(
           zoningDistricts,
@@ -276,18 +300,24 @@ describe("TaxLotController", () => {
     });
 
     it("should throw a resource error when requesting a missing bbl", async () => {
-      const missingBbl = "0123456789";
+      const boroughId = "0";
+      const blockId = "12345";
+      const lotId = "6789";
       expect(
-        taxLotService.findZoningDistrictsByBbl(missingBbl),
+        taxLotService.findZoningDistrictsByBbl({ boroughId, blockId, lotId }),
       ).rejects.toThrow(ResourceNotFoundException);
     });
   });
 
   describe("findZoningDistrictClassesByBbl", () => {
     it("should return zoning district classes when requesting a valid bbl", async () => {
-      const { bbl } = taxLotRepository.checkByBblMocks[0];
+      const { boroughId, blockId, lotId } = taxLotRepository.checkByBblMocks[0];
       const zoningDistrictClasses =
-        await taxLotService.findZoningDistrictClassesByBbl(bbl);
+        await taxLotService.findZoningDistrictClassesByBbl({
+          boroughId,
+          blockId,
+          lotId,
+        });
       expect(() =>
         findZoningDistrictClassesByTaxLotBblQueryResponseSchema.parse(
           zoningDistrictClasses,
@@ -296,9 +326,15 @@ describe("TaxLotController", () => {
     });
 
     it("should throw a resource error when requesting a missing bbl", async () => {
-      const missingBbl = "0123456789";
+      const boroughId = "0";
+      const blockId = "12345";
+      const lotId = "6789";
       expect(
-        taxLotService.findZoningDistrictClassesByBbl(missingBbl),
+        taxLotService.findZoningDistrictClassesByBbl({
+          boroughId,
+          blockId,
+          lotId,
+        }),
       ).rejects.toThrow(ResourceNotFoundException);
     });
   });

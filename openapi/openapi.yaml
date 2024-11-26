@@ -79,14 +79,14 @@ paths:
     $ref: paths/land-uses.yaml
   /tax-lots:
     $ref: paths/tax-lots.yaml
-  /tax-lots/{bbl}:
-    $ref: paths/tax-lots_{bbl}.yaml
-  /tax-lots/{bbl}/geojson:
-    $ref: paths/tax-lots_{bbl}_geojson.yaml
-  /tax-lots/{bbl}/zoning-districts:
-    $ref: paths/tax-lots_{bbl}_zoning-districts.yaml
-  /tax-lots/{bbl}/zoning-districts/classes:
-    $ref: paths/tax-lots_{bbl}_zoning-districts_classes.yaml
+  /tax-lots/{boroughId}/{blockId}/{lotId}:
+    $ref: paths/tax-lots_{boroughId}_{blockId}_{lotId}.yaml
+  /tax-lots/{boroughId}/{blockId}/{lotId}/geojson:
+    $ref: paths/tax-lots_{boroughId}_{blockId}_{lotId}_geojson.yaml
+  /tax-lots/{boroughId}/{blockId}/{lotId}/zoning-districts:
+    $ref: paths/tax-lots_{boroughId}_{blockId}_{lotId}_zoning-districts.yaml
+  /tax-lots/{boroughId}/{blockId}/{lotId}/zoning-districts/classes:
+    $ref: paths/tax-lots_{boroughId}_{blockId}_{lotId}_zoning-districts_classes.yaml
   /zoning-districts/{id}:
     $ref: paths/zoning-districts_{id}.yaml
   /zoning-districts/{id}/classes:

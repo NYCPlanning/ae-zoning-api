@@ -1,4 +1,4 @@
-import { CapitalProjectCategory } from "./CapitalProjectCategory";
+import type { CapitalProjectCategory } from "./CapitalProjectCategory";
 
 export type CapitalProject = {
   /**
@@ -31,5 +31,8 @@ export type CapitalProject = {
    * @type string, date
    */
   maxDate: string;
+  /**
+   * @type string
+   */
   category: CapitalProjectCategory | null;
 };
