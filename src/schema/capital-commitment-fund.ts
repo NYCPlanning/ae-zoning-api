@@ -1,16 +1,25 @@
-import { numeric, pgTable, uuid } from "drizzle-orm/pg-core";
+import { numeric, pgTable, uuid, check, text } from "drizzle-orm/pg-core";
 import { z } from "zod";
 import { capitalCommitment } from "./capital-commitment";
-import { capitalFundCategoryEnum } from "./capital-project-fund";
+import { sql } from "drizzle-orm";
 
-export const capitalCommitmentFund = pgTable("capital_commitment_fund", {
-  id: uuid("id").primaryKey(),
-  capitalCommitmentId: uuid("capital_commitment_id").references(
-    () => capitalCommitment.id,
-  ),
-  category: capitalFundCategoryEnum("capital_fund_category"),
-  value: numeric("value").notNull(),
-});
+export const capitalCommitmentFund = pgTable(
+  "capital_commitment_fund",
+  {
+    id: uuid("id").primaryKey(),
+    capitalCommitmentId: uuid("capital_commitment_id").references(
+      () => capitalCommitment.id,
+    ),
+    category: text("capital_fund_category"),
+    value: numeric("value").notNull(),
+  },
+  (table) => [
+    check(
+      "capital_commitment_fund_capital_fund_category",
+      sql`${table.category} IN ('city-non-exempt', 'city-exempt', 'city-cost', 'non-city-state', 'non-city-federal', 'non-city-other', 'non-city-cost', 'total')`,
+    ),
+  ],
+);
 
 export const capitalCommitmentFundEntitySchema = z.object({
   id: z.string().uuid(),

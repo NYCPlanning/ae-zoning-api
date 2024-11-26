@@ -1,0 +1,5 @@
+ALTER TABLE "capital_commitment_fund" ALTER COLUMN "capital_fund_category" SET DATA TYPE text;--> statement-breakpoint
+ALTER TABLE "capital_project_fund" ALTER COLUMN "capital_fund_category" SET DATA TYPE text;--> statement-breakpoint
+ALTER TABLE "capital_commitment_fund" ADD CONSTRAINT "capital_commitment_fund_capital_fund_category" CHECK ("capital_commitment_fund"."capital_fund_category" IN ('city-non-exempt', 'city-exempt', 'city-cost', 'non-city-state', 'non-city-federal', 'non-city-other', 'non-city-cost', 'total'));--> statement-breakpoint
+ALTER TABLE "capital_project_fund" ADD CONSTRAINT "capital_project_fund_capital_fund_category" CHECK ("capital_project_fund"."capital_fund_category" IN ('city-non-exempt', 'city-exempt', 'city-cost', 'non-city-state', 'non-city-federal', 'non-city-other', 'non-city-cost', 'total'));--> statement-breakpoint
+DROP TYPE "public"."capital_fund_category";

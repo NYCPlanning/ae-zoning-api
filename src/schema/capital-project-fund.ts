@@ -3,7 +3,6 @@ import {
   check,
   foreignKey,
   numeric,
-  pgEnum,
   pgTable,
   text,
   uuid,
@@ -13,24 +12,13 @@ import { z } from "zod";
 import { managingCodeEntitySchema } from "./managing-code";
 import { sql } from "drizzle-orm";
 
-export const capitalFundCategoryEnum = pgEnum("capital_fund_category", [
-  "city-non-exempt",
-  "city-exempt",
-  "city-cost",
-  "non-city-state",
-  "non-city-federal",
-  "non-city-other",
-  "non-city-cost",
-  "total",
-]);
-
 export const capitalProjectFund = pgTable(
   "capital_project_fund",
   {
     id: uuid("id").primaryKey(),
     managingCode: char("managing_code", { length: 3 }),
     capitalProjectId: text("capital_project_id"),
-    capitalFundCategory: capitalFundCategoryEnum("capital_fund_category"),
+    capitalFundCategory: text("capital_fund_category"),
     stage: text("stage"),
     value: numeric("value"),
   },
@@ -43,6 +31,10 @@ export const capitalProjectFund = pgTable(
     check(
       "capital_project_fund_stage_options",
       sql`${table.stage} IN ('adopt', 'allocate', 'commit', 'spent')`,
+    ),
+    check(
+      "capital_project_fund_capital_fund_category",
+      sql`${table.capitalFundCategory} IN ('city-non-exempt', 'city-exempt', 'city-cost', 'non-city-state', 'non-city-federal', 'non-city-other', 'non-city-cost', 'total')`,
     ),
   ],
 );
