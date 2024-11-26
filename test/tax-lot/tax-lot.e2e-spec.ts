@@ -193,7 +193,7 @@ describe("TaxLots", () => {
       const mock = taxLotRepository.findByBblMocks[0];
 
       const response = await request(app.getHttpServer())
-        .get(`/tax-lots/${mock.bbl}`)
+        .get(`/tax-lots/${mock.borough.id}/${mock.blockId}/${mock.lotId}`)
         .expect(200);
       expect(() =>
         findTaxLotByBblQueryResponseSchema.parse(response.body),
@@ -201,9 +201,11 @@ describe("TaxLots", () => {
     });
 
     it("should 400 when finding by too short bbl", async () => {
-      const shortBbl = "012345678";
+      const boroughId = "0";
+      const blockId = "12345";
+      const shortLotId = "678";
       const response = await request(app.getHttpServer())
-        .get(`/tax-lots/${shortBbl}`)
+        .get(`/tax-lots/${boroughId}/${blockId}/${shortLotId}`)
         .expect(400);
       expect(response.body.message).toBe(
         new InvalidRequestParameterException().message,
@@ -212,9 +214,11 @@ describe("TaxLots", () => {
     });
 
     it("should 400 when finding by lettered bbl", async () => {
-      const letterBbl = "012345678Y";
+      const boroughId = "0";
+      const blockId = "12345";
+      const letterLotId = "678Y";
       const response = await request(app.getHttpServer())
-        .get(`/tax-lots/${letterBbl}`)
+        .get(`/tax-lots/${boroughId}/${blockId}/${letterLotId}`)
         .expect(400);
       expect(response.body.message).toBe(
         new InvalidRequestParameterException().message,
@@ -223,9 +227,11 @@ describe("TaxLots", () => {
     });
 
     it("should 404 when finding by missing bbl", async () => {
-      const missingBbl = "0123456789";
+      const boroughId = "0";
+      const blockId = "12345";
+      const lotId = "6789";
       const response = await request(app.getHttpServer())
-        .get(`/tax-lots/${missingBbl}`)
+        .get(`/tax-lots/${boroughId}/${blockId}/${lotId}`)
         .expect(404);
       expect(response.body.message).toBe(HttpName.NOT_FOUND);
     });
@@ -237,7 +243,7 @@ describe("TaxLots", () => {
       });
       const mock = taxLotRepository.findByBblMocks[0];
       const response = await request(app.getHttpServer())
-        .get(`/tax-lots/${mock.bbl}`)
+        .get(`/tax-lots/${mock.borough.id}/${mock.blockId}/${mock.lotId}`)
         .expect(500);
       expect(response.body.message).toBe(dataRetrievalException.message);
       expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);
@@ -248,7 +254,9 @@ describe("TaxLots", () => {
     it("should 200 and return documented schema when finding by valid bbl", async () => {
       const mock = taxLotRepository.findByBblSpatialMocks[0];
       const response = await request(app.getHttpServer())
-        .get(`/tax-lots/${mock.bbl}/geojson`)
+        .get(
+          `/tax-lots/${mock.borough.id}/${mock.blockId}/${mock.lotId}/geojson`,
+        )
         .expect(200);
       expect(() =>
         findTaxLotGeoJsonByBblQueryResponseSchema.parse(response.body),
@@ -256,9 +264,11 @@ describe("TaxLots", () => {
     });
 
     it("should 400 when finding by too short bbl", async () => {
-      const shortBbl = "012345678";
+      const boroughId = "0";
+      const blockId = "12345";
+      const shortLotId = "678";
       const response = await request(app.getHttpServer())
-        .get(`/tax-lots/${shortBbl}/geojson`)
+        .get(`/tax-lots/${boroughId}/${blockId}/${shortLotId}/geojson`)
         .expect(400);
       expect(response.body.message).toBe(
         new InvalidRequestParameterException().message,
@@ -267,9 +277,11 @@ describe("TaxLots", () => {
     });
 
     it("should 400 when finding by lettered bbl", async () => {
-      const letterBbl = "012345678Y";
+      const boroughId = "0";
+      const blockId = "12345";
+      const letterLotId = "678Y";
       const response = await request(app.getHttpServer())
-        .get(`/tax-lots/${letterBbl}/geojson`)
+        .get(`/tax-lots/${boroughId}/${blockId}/${letterLotId}/geojson`)
         .expect(400);
       expect(response.body.message).toBe(
         new InvalidRequestParameterException().message,
@@ -278,9 +290,11 @@ describe("TaxLots", () => {
     });
 
     it("should 404 when finding by missing bbl", async () => {
-      const missingBbl = "0123456789";
+      const boroughId = "0";
+      const blockId = "12345";
+      const lotId = "6789";
       const response = await request(app.getHttpServer())
-        .get(`/tax-lots/${missingBbl}/geojson`)
+        .get(`/tax-lots/${boroughId}/${blockId}/${lotId}/geojson`)
         .expect(404);
       expect(response.body.message).toBe(HttpName.NOT_FOUND);
     });
@@ -294,7 +308,9 @@ describe("TaxLots", () => {
         });
       const mock = taxLotRepository.findByBblSpatialMocks[0];
       const response = await request(app.getHttpServer())
-        .get(`/tax-lots/${mock.bbl}/geojson`)
+        .get(
+          `/tax-lots/${mock.borough.id}/${mock.blockId}/${mock.lotId}/geojson`,
+        )
         .expect(500);
       expect(response.body.message).toBe(dataRetrievalException.message);
       expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);
@@ -305,7 +321,9 @@ describe("TaxLots", () => {
     it("should 200 and return documented schema when finding by valid bbl", async () => {
       const mock = taxLotRepository.checkByBblMocks[0];
       const response = await request(app.getHttpServer())
-        .get(`/tax-lots/${mock.bbl}/zoning-districts`)
+        .get(
+          `/tax-lots/${mock.boroughId}/${mock.blockId}/${mock.lotId}/zoning-districts`,
+        )
         .expect(200);
       expect(() =>
         findZoningDistrictsByTaxLotBblQueryResponseSchema.parse(response.body),
@@ -313,9 +331,11 @@ describe("TaxLots", () => {
     });
 
     it("should 400 when finding by too short bbl", async () => {
-      const shortBbl = "012345678";
+      const boroughId = "0";
+      const blockId = "12345";
+      const shortLotId = "678";
       const response = await request(app.getHttpServer())
-        .get(`/tax-lots/${shortBbl}/zoning-districts`)
+        .get(`/tax-lots/${boroughId}/${blockId}/${shortLotId}/zoning-districts`)
         .expect(400);
       expect(response.body.message).toBe(
         new InvalidRequestParameterException().message,
@@ -324,19 +344,26 @@ describe("TaxLots", () => {
     });
 
     it("should 400 when finding by lettered bbl", async () => {
-      const letterBbl = "012345678Y";
+      const boroughId = "0";
+      const blockId = "12345";
+      const letterLotId = "678Y";
       const response = await request(app.getHttpServer())
-        .get(`/tax-lots/${letterBbl}/zoning-districts`)
+        .get(
+          `/tax-lots/${boroughId}/${blockId}/${letterLotId}/zoning-districts`,
+        )
         .expect(400);
       expect(response.body.message).toBe(
         new InvalidRequestParameterException().message,
       );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
+
     it("should 404 when finding by missing bbl", async () => {
-      const missingBbl = "0123456789";
+      const boroughId = "0";
+      const blockId = "12345";
+      const lotId = "6789";
       const response = await request(app.getHttpServer())
-        .get(`/tax-lots/${missingBbl}/zoning-districts`)
+        .get(`/tax-lots/${boroughId}/${blockId}/${lotId}/zoning-districts`)
         .expect(404);
       expect(response.body.message).toBe(HttpName.NOT_FOUND);
     });
@@ -350,7 +377,9 @@ describe("TaxLots", () => {
         });
       const mock = taxLotRepository.checkByBblMocks[0];
       const response = await request(app.getHttpServer())
-        .get(`/tax-lots/${mock.bbl}/zoning-districts`)
+        .get(
+          `/tax-lots/${mock.boroughId}/${mock.blockId}/${mock.lotId}/zoning-districts`,
+        )
         .expect(500);
       expect(response.body.message).toBe(dataRetrievalException.message);
       expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);
@@ -361,7 +390,9 @@ describe("TaxLots", () => {
     it("should 200 and return documented schema when finding by valid bbl", async () => {
       const mock = taxLotRepository.checkByBblMocks[0];
       const response = await request(app.getHttpServer())
-        .get(`/tax-lots/${mock.bbl}/zoning-districts/classes`)
+        .get(
+          `/tax-lots/${mock.boroughId}/${mock.blockId}/${mock.lotId}/zoning-districts/classes`,
+        )
         .expect(200);
       expect(() =>
         findZoningDistrictClassesByTaxLotBblQueryResponseSchema.parse(
@@ -371,9 +402,13 @@ describe("TaxLots", () => {
     });
 
     it("should 400 when finding by too short bbl", async () => {
-      const shortBbl = "012345678";
+      const boroughId = "0";
+      const blockId = "12345";
+      const shortLotId = "678";
       const response = await request(app.getHttpServer())
-        .get(`/tax-lots/${shortBbl}/zoning-districts/classes`)
+        .get(
+          `/tax-lots/${boroughId}/${blockId}/${shortLotId}/zoning-districts/classes`,
+        )
         .expect(400);
       expect(response.body.message).toBe(
         new InvalidRequestParameterException().message,
@@ -382,9 +417,13 @@ describe("TaxLots", () => {
     });
 
     it("should 400 when finding by lettered bbl", async () => {
-      const letterBbl = "012345678Y";
+      const boroughId = "0";
+      const blockId = "12345";
+      const letterLotId = "678Y";
       const response = await request(app.getHttpServer())
-        .get(`/tax-lots/${letterBbl}/zoning-districts/classes`)
+        .get(
+          `/tax-lots/${boroughId}/${blockId}/${letterLotId}/zoning-districts/classes`,
+        )
         .expect(400);
       expect(response.body.message).toBe(
         new InvalidRequestParameterException().message,
@@ -393,9 +432,13 @@ describe("TaxLots", () => {
     });
 
     it("should 404 when finding by missing bbl", async () => {
-      const missingBbl = "0123456789";
+      const boroughId = "0";
+      const blockId = "12345";
+      const lotId = "6789";
       const response = await request(app.getHttpServer())
-        .get(`/tax-lots/${missingBbl}/zoning-districts/classes`)
+        .get(
+          `/tax-lots/${boroughId}/${blockId}/${lotId}/zoning-districts/classes`,
+        )
         .expect(404);
       expect(response.body.message).toBe(HttpName.NOT_FOUND);
     });
@@ -409,7 +452,9 @@ describe("TaxLots", () => {
         });
       const mock = taxLotRepository.checkByBblMocks[0];
       const response = await request(app.getHttpServer())
-        .get(`/tax-lots/${mock.bbl}/zoning-districts/classes`)
+        .get(
+          `/tax-lots/${mock.boroughId}/${mock.blockId}/${mock.lotId}/zoning-districts/classes`,
+        )
         .expect(500);
       expect(response.body.message).toBe(dataRetrievalException.message);
       expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);

@@ -3,9 +3,22 @@ import { TaxLotRepository } from "./tax-lot.repository";
 import { ResourceNotFoundException } from "src/exception";
 import { Geometry, MultiPolygon } from "geojson";
 import { z } from "zod";
-import { FindTaxLotsQueryParams } from "src/gen";
+import {
+  FindTaxLotBlockIdsByBoroughIdPathParams,
+  FindTaxLotBlockIdsByBoroughIdQueryParams,
+  FindTaxLotByBblPathParams,
+  FindTaxLotsByBoroughIdBlockIdPathParams,
+  FindTaxLotGeoJsonByBblPathParams,
+  FindTaxLotsQueryParams,
+  FindZoningDistrictClassesByTaxLotBblPathParams,
+  FindZoningDistrictsByTaxLotBblPathParams,
+  FindTaxLotsByBoroughIdBlockIdQueryParams,
+  FindTaxLotBlockGeoJsonByBoroughIdBlockIdPathParams,
+} from "src/gen";
 import { InvalidSpatialFilterRequestParametersException } from "src/exception/invalid-spatial-filter";
 import { Geom } from "src/types";
+import { produce } from "immer";
+import { FindBlockSpatialByBoroughIdBlockIdRepo } from "./tax-lot.repository.schema";
 
 export const spatialFilterSchema = z.object({
   geometry: z.enum(["Point", "LineString", "Polygon"]),
@@ -179,26 +192,93 @@ export class TaxLotService {
     );
   }
 
-  async findByBbl(bbl: string) {
-    const result = await this.taxLotRepository.findByBbl(bbl);
+  async findManyByBoroughIdBlockId({
+    limit = 20,
+    offset = 0,
+    lotIdQuery = "",
+    boroughId,
+    blockId,
+  }: FindTaxLotsByBoroughIdBlockIdPathParams &
+    FindTaxLotsByBoroughIdBlockIdQueryParams) {
+    const taxLots = await this.taxLotRepository.findManyByBoroughIdBlockId({
+      limit,
+      offset,
+      lotIdQuery,
+      boroughId,
+      blockId,
+    });
+    return {
+      taxLots,
+      limit,
+      offset,
+      order: "bbl",
+      total: taxLots.length,
+    };
+  }
+
+  async findBlockIdsByBoroughId({
+    limit = 20,
+    offset = 0,
+    blockIdQuery = "",
+    boroughId,
+  }: FindTaxLotBlockIdsByBoroughIdPathParams &
+    FindTaxLotBlockIdsByBoroughIdQueryParams) {
+    const blockIds = await this.taxLotRepository.findBlockIdsByBoroughId({
+      limit,
+      offset,
+      blockIdQuery,
+      boroughId,
+    });
+    return {
+      limit,
+      offset,
+      order: "blockId",
+      total: blockIds.length,
+      blockIds,
+    };
+  }
+
+  async findBlockGeoJsonByBoroughIdBlockId(
+    params: FindTaxLotBlockGeoJsonByBoroughIdBlockIdPathParams,
+  ) {
+    const taxLotBlock =
+      await this.taxLotRepository.findBlockSpatialByBoroughIdBlockId(params);
+    if (taxLotBlock === undefined) throw new ResourceNotFoundException();
+
+    const geometry = JSON.parse(taxLotBlock.geometry) as MultiPolygon;
+    const properties = produce(
+      taxLotBlock as Partial<FindBlockSpatialByBoroughIdBlockIdRepo>,
+      (draft) => {
+        delete draft["geometry"];
+      },
+    );
+    return {
+      id: `${taxLotBlock.boroughId}${taxLotBlock.blockId}`,
+      type: "Feature",
+      properties,
+      geometry,
+    };
+  }
+
+  async findByBbl(bblPathParams: FindTaxLotByBblPathParams) {
+    const result = await this.taxLotRepository.findByBbl(bblPathParams);
     if (result === undefined) throw new ResourceNotFoundException();
     return result;
   }
 
-  async findGeoJsonByBbl(bbl: string) {
-    const result = await this.taxLotRepository.findByBblSpatial(bbl);
+  async findGeoJsonByBbl(bblPathParams: FindTaxLotGeoJsonByBblPathParams) {
+    const result = await this.taxLotRepository.findByBblSpatial(bblPathParams);
     if (result === undefined) throw new ResourceNotFoundException();
 
     const geometry = JSON.parse(result.geometry) as MultiPolygon;
 
     return {
       type: "Feature",
-      id: result.bbl,
+      id: `${result.borough.id}${result.blockId}${result.lotId}`,
       properties: {
-        bbl: result.bbl,
         borough: result.borough,
-        block: result.block,
-        lot: result.lot,
+        blockId: result.blockId,
+        lotId: result.lotId,
         address: result.address,
         landUse: result.landUse,
       },
@@ -206,22 +286,26 @@ export class TaxLotService {
     };
   }
 
-  async findZoningDistrictsByBbl(bbl: string) {
-    const taxLotCheck = await this.taxLotRepository.checkByBbl(bbl);
+  async findZoningDistrictsByBbl(
+    bblPathParams: FindZoningDistrictsByTaxLotBblPathParams,
+  ) {
+    const taxLotCheck = await this.taxLotRepository.checkByBbl(bblPathParams);
     if (taxLotCheck === undefined) throw new ResourceNotFoundException();
     const zoningDistricts =
-      await this.taxLotRepository.findZoningDistrictsByBbl(bbl);
+      await this.taxLotRepository.findZoningDistrictsByBbl(bblPathParams);
     return {
       zoningDistricts,
     };
   }
 
-  async findZoningDistrictClassesByBbl(bbl: string) {
-    const taxLotCheck = await this.taxLotRepository.checkByBbl(bbl);
+  async findZoningDistrictClassesByBbl(
+    bblPathParams: FindZoningDistrictClassesByTaxLotBblPathParams,
+  ) {
+    const taxLotCheck = await this.taxLotRepository.checkByBbl(bblPathParams);
     if (taxLotCheck === undefined) throw new ResourceNotFoundException();
 
     const zoningDistrictClasses =
-      await this.taxLotRepository.findZoningDistrictClassesByBbl(bbl);
+      await this.taxLotRepository.findZoningDistrictClassesByBbl(bblPathParams);
     return {
       zoningDistrictClasses,
     };

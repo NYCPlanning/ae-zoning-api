@@ -1,0 +1,13 @@
+{
+  "type": "object",
+  "properties": {
+    "blockId": {
+      "type": "string",
+      "description": "The block code for the bbl",
+      "pattern": "^([0-9]{5})$",
+      "example": "00047"
+    }
+  },
+  "required": ["blockId"],
+  "x-readme-ref-name": "TaxLotBlockId"
+}

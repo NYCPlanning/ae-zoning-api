@@ -1,27 +1,28 @@
-import { Borough } from "./Borough";
-import { LandUse } from "./LandUse";
+import type { Borough } from "./Borough";
+import type { LandUse } from "./LandUse";
 
 export type TaxLot = {
   /**
-   * @description The ten character code compromised of a one character borough, five character block, and four character lot codes.
-   * @type string
+   * @type object
    */
-  bbl: string;
   borough: Borough;
   /**
-   * @description The block code, without its padding zeros.
-   * @type string
+   * @description The block code for the bbl
+   * @type string | undefined
    */
-  block: string;
+  blockId?: string;
   /**
-   * @description The lot code, without its padding zeros.
-   * @type string
+   * @description The lot code for the bbl
+   * @type string | undefined
    */
-  lot: string;
+  lotId?: string;
   /**
    * @description The street address.
    * @type string
    */
   address: string;
+  /**
+   * @type object
+   */
   landUse: LandUse;
 };

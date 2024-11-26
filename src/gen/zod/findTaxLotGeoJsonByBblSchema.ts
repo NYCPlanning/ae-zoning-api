@@ -3,11 +3,23 @@ import { taxLotGeoJsonSchema } from "./taxLotGeoJsonSchema";
 import { errorSchema } from "./errorSchema";
 
 export const findTaxLotGeoJsonByBblPathParamsSchema = z.object({
-  bbl: z.coerce
+  boroughId: z.coerce
     .string()
-    .regex(new RegExp("^([0-9]{10})$"))
+    .regex(new RegExp("^([0-9]{1})$"))
     .describe(
-      "The ten character code compromised of a one character borough, five character block, and four character lot codes.",
+      "A single character numeric string containing the common number used to refer to the borough. Possible values are 1-5.",
+    ),
+  blockId: z.coerce
+    .string()
+    .regex(new RegExp("^([0-9]{5})$"))
+    .describe(
+      "A multi-character numeric string containing the common number used to refer to the block of a bbl.",
+    ),
+  lotId: z.coerce
+    .string()
+    .regex(new RegExp("^([0-9]{4})$"))
+    .describe(
+      "A multi-character numeric string containing the common number used to refer to the lot of a bbl.",
     ),
 });
 /**

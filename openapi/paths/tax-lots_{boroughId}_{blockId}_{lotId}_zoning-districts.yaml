@@ -5,7 +5,9 @@ get:
     - Tax Lots
     - Zoning Districts
   parameters:
-    - $ref: ../components/parameters/bblParam.yaml
+    - $ref: ../components/parameters/boroughIdParam.yaml
+    - $ref: ../components/parameters/blockIdParam.yaml
+    - $ref: ../components/parameters/lotIdParam.yaml
   responses:
     '200':
       description: An object containing zoning districts.

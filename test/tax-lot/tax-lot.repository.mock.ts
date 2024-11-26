@@ -1,6 +1,12 @@
 import { generateMock } from "@anatine/zod-mock";
 import { Geometry } from "geojson";
 import {
+  FindTaxLotByBblPathParams,
+  FindTaxLotGeoJsonByBblPathParams,
+  FindZoningDistrictClassesByTaxLotBblPathParams,
+  FindZoningDistrictsByTaxLotBblPathParams,
+} from "src/gen";
+import {
   findByBblRepoSchema,
   findByBblSpatialRepoSchema,
   findZoningDistrictsByBblRepoSchema,
@@ -39,8 +45,20 @@ export class TaxLotRepositoryMock {
     generateMock(checkByBblRepoSchema, { seed: seed + 1 }),
   );
 
-  async checkByBbl(bbl: string) {
-    return this.checkByBblMocks.find((row) => row.bbl === bbl);
+  async checkByBbl({
+    boroughId,
+    blockId,
+    lotId,
+  }: {
+    boroughId: string;
+    blockId: string;
+    lotId: string;
+  }) {
+    return this.checkByBblMocks.find(
+      (row) =>
+        `${row.boroughId}${row.blockId}${row.lotId}` ===
+        `${boroughId}${blockId}${lotId}`,
+    );
   }
 
   findManyMocks = generateMock(findManyRepoSchema.length(10));
@@ -133,14 +151,20 @@ export class TaxLotRepositoryMock {
     const orderGeomMock: GeomMock = JSON.parse(orderGeom);
     orderGeomMock.pattern === "feature"
       ? taxLots.sort((a, b) => {
-          if (a.bbl < b.bbl) {
+          if (
+            `${a.boroughId}${a.blockId}${a.lotId}` <
+            `${b.boroughId}${b.blockId}${b.lotId}`
+          ) {
             return 1;
           } else {
             return -1;
           }
         })
       : taxLots.sort((a, b) => {
-          if (a.bbl > b.bbl) {
+          if (
+            `${a.boroughId}${a.blockId}${a.lotId}` <
+            `${b.boroughId}${b.blockId}${b.lotId}`
+          ) {
             return 1;
           } else {
             return -1;
@@ -153,27 +177,45 @@ export class TaxLotRepositoryMock {
     generateMock(findByBblRepoSchema, { seed: seed + 1 }),
   );
 
-  async findByBbl(bbl: string) {
-    return this.findByBblMocks.find((row) => row.bbl === bbl);
+  async findByBbl({ boroughId, blockId, lotId }: FindTaxLotByBblPathParams) {
+    return this.findByBblMocks.find(
+      (row) =>
+        `${row.borough.id}${row.blockId}${row.lotId}` ===
+        `${boroughId}${blockId}${lotId}`,
+    );
   }
 
   findByBblSpatialMocks = Array.from(Array(this.numberOfMocks), (_, seed) =>
     generateMock(findByBblSpatialRepoSchema, { seed: seed + 1 }),
   );
 
-  async findByBblSpatial(bbl: string) {
-    return this.findByBblSpatialMocks.find((row) => row.bbl === bbl);
+  async findByBblSpatial({
+    boroughId,
+    blockId,
+    lotId,
+  }: FindTaxLotGeoJsonByBblPathParams) {
+    return this.findByBblSpatialMocks.find(
+      (row) =>
+        `${row.borough.id}${row.blockId}${row.lotId}` ===
+        `${boroughId}${blockId}${lotId}`,
+    );
   }
 
   findZoningDistrictByTaxLotBblMocks = this.checkByBblMocks.map(
     (checkTaxLot) => {
       return {
-        [checkTaxLot.bbl]: generateMock(findZoningDistrictsByBblRepoSchema),
+        [`${checkTaxLot.boroughId}${checkTaxLot.blockId}${checkTaxLot.lotId}`]:
+          generateMock(findZoningDistrictsByBblRepoSchema),
       };
     },
   );
 
-  async findZoningDistrictsByBbl(bbl: string) {
+  async findZoningDistrictsByBbl({
+    boroughId,
+    blockId,
+    lotId,
+  }: FindZoningDistrictsByTaxLotBblPathParams) {
+    const bbl = `${boroughId}${blockId}${lotId}`;
     const results = this.findZoningDistrictByTaxLotBblMocks.find(
       (taxLotZoningDistrictsPair) => bbl in taxLotZoningDistrictsPair,
     );
@@ -183,14 +225,18 @@ export class TaxLotRepositoryMock {
   findZoningDistrictClassByTaxLotBblMocks = this.checkByBblMocks.map(
     (checkTaxLot) => {
       return {
-        [checkTaxLot.bbl]: generateMock(
-          findZoningDistrictClassesByBblRepoSchema,
-        ),
+        [`${checkTaxLot.boroughId}${checkTaxLot.blockId}${checkTaxLot.lotId}`]:
+          generateMock(findZoningDistrictClassesByBblRepoSchema),
       };
     },
   );
 
-  async findZoningDistrictClassesByBbl(bbl: string) {
+  async findZoningDistrictClassesByBbl({
+    boroughId,
+    blockId,
+    lotId,
+  }: FindZoningDistrictClassesByTaxLotBblPathParams) {
+    const bbl = `${boroughId}${blockId}${lotId}`;
     const results = this.findZoningDistrictClassByTaxLotBblMocks.find(
       (taxLotZoningDistrictClasses) => bbl in taxLotZoningDistrictClasses,
     );
