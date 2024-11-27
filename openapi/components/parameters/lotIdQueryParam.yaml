@@ -1,10 +1,10 @@
-name: lotId
-required: true
-in: path
+name: lotIdQuery
+required: false
+in: query
 schema:
   type: string
-  pattern: ^([0-9]{4})$
+  pattern: ^([0-9]{1,4})$
   example: '7501'
 description: >-
   A multi-character numeric string containing the common number used to refer
-  to the lot of a bbl.
+  to the lot of a bbl. Does not need to include leading zeros.

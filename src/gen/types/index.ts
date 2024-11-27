@@ -34,6 +34,8 @@ export * from "./FindLandUses";
 export * from "./FindTaxLotByBbl";
 export * from "./FindTaxLotGeoJsonByBbl";
 export * from "./FindTaxLots";
+export * from "./FindTaxLotsByBoroughId";
+export * from "./FindTaxLotsByBoroughIdBlockId";
 export * from "./FindZoningDistrictByZoningDistrictId";
 export * from "./FindZoningDistrictClassByZoningDistrictClassId";
 export * from "./FindZoningDistrictClassCategoryColors";

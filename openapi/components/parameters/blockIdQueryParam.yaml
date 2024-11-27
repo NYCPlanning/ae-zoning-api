@@ -1,0 +1,10 @@
+name: blockIdQuery
+required: false
+in: query
+schema:
+  type: string
+  pattern: ^([0-9]{1,5})$
+  example: '47'
+description: >-
+  A multi-character numeric string containing the common number used to refer
+  to the block of a bbl. Does not need to include leading zeros.

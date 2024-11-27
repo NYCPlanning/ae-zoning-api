@@ -118,6 +118,20 @@ import {
   findTaxLotsQueryParamsSchema,
 } from "./findTaxLotsSchema";
 import {
+  findTaxLotsByBoroughIdQueryResponseSchema,
+  findTaxLotsByBoroughId400Schema,
+  findTaxLotsByBoroughId500Schema,
+  findTaxLotsByBoroughIdPathParamsSchema,
+  findTaxLotsByBoroughIdQueryParamsSchema,
+} from "./findTaxLotsByBoroughIdSchema";
+import {
+  findTaxLotsByBoroughIdBlockIdQueryResponseSchema,
+  findTaxLotsByBoroughIdBlockId400Schema,
+  findTaxLotsByBoroughIdBlockId500Schema,
+  findTaxLotsByBoroughIdBlockIdPathParamsSchema,
+  findTaxLotsByBoroughIdBlockIdQueryParamsSchema,
+} from "./findTaxLotsByBoroughIdBlockIdSchema";
+import {
   findTaxLotByBblQueryResponseSchema,
   findTaxLotByBbl400Schema,
   findTaxLotByBbl404Schema,
@@ -544,6 +558,42 @@ export const operations = {
       500: findTaxLots500Schema,
     },
   },
+  findTaxLotsByBoroughId: {
+    request: undefined,
+    parameters: {
+      path: findTaxLotsByBoroughIdPathParamsSchema,
+      query: findTaxLotsByBoroughIdQueryParamsSchema,
+      header: undefined,
+    },
+    responses: {
+      200: findTaxLotsByBoroughIdQueryResponseSchema,
+      400: findTaxLotsByBoroughId400Schema,
+      500: findTaxLotsByBoroughId500Schema,
+      default: findTaxLotsByBoroughIdQueryResponseSchema,
+    },
+    errors: {
+      400: findTaxLotsByBoroughId400Schema,
+      500: findTaxLotsByBoroughId500Schema,
+    },
+  },
+  findTaxLotsByBoroughIdBlockId: {
+    request: undefined,
+    parameters: {
+      path: findTaxLotsByBoroughIdBlockIdPathParamsSchema,
+      query: findTaxLotsByBoroughIdBlockIdQueryParamsSchema,
+      header: undefined,
+    },
+    responses: {
+      200: findTaxLotsByBoroughIdBlockIdQueryResponseSchema,
+      400: findTaxLotsByBoroughIdBlockId400Schema,
+      500: findTaxLotsByBoroughIdBlockId500Schema,
+      default: findTaxLotsByBoroughIdBlockIdQueryResponseSchema,
+    },
+    errors: {
+      400: findTaxLotsByBoroughIdBlockId400Schema,
+      500: findTaxLotsByBoroughIdBlockId500Schema,
+    },
+  },
   findTaxLotByBbl: {
     request: undefined,
     parameters: {
@@ -784,6 +834,12 @@ export const paths = {
   },
   "/tax-lots": {
     get: operations["findTaxLots"],
+  },
+  "/tax-lots/{boroughId}": {
+    get: operations["findTaxLotsByBoroughId"],
+  },
+  "/tax-lots/{boroughId}/{blockId}": {
+    get: operations["findTaxLotsByBoroughIdBlockId"],
   },
   "/tax-lots/{boroughId}/{blockId}/{lotId}": {
     get: operations["findTaxLotByBbl"],

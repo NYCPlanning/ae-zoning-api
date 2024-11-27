@@ -33,6 +33,8 @@ export * from "./findCommunityDistrictsByBoroughIdSchema";
 export * from "./findLandUsesSchema";
 export * from "./findTaxLotByBblSchema";
 export * from "./findTaxLotGeoJsonByBblSchema";
+export * from "./findTaxLotsByBoroughIdBlockIdSchema";
+export * from "./findTaxLotsByBoroughIdSchema";
 export * from "./findTaxLotsSchema";
 export * from "./findZoningDistrictByZoningDistrictIdSchema";
 export * from "./findZoningDistrictClassByZoningDistrictClassIdSchema";

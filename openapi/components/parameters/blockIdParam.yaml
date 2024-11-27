@@ -4,7 +4,7 @@ in: path
 schema:
   type: string
   pattern: ^([0-9]{5})$
-  example: '1'
+  example: '00047'
 description: >-
   A multi-character numeric string containing the common number used to refer
   to the block of a bbl.

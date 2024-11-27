@@ -1,0 +1,24 @@
+get:
+  summary: Non-spatial details for tax lots in a borough
+  operationId: findTaxLotsByBoroughId
+  tags:
+    - Tax Lots
+  parameters:
+    - $ref: ../components/parameters/boroughIdParam.yaml
+    - $ref: ../components/parameters/blockIdQueryParam.yaml
+    - $ref: ../components/parameters/limitParam.yaml
+    - $ref: ../components/parameters/offsetParam.yaml
+  responses:
+    '200':
+      description: >-
+        An object containing a list of tax lots and pagination metadata for
+        tax lots in a borough. Optionally, results may be limited to blocks
+        matching a query.
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/TaxLotBasicPage.yaml
+    '400':
+      $ref: ../components/responses/BadRequest.yaml
+    '500':
+      $ref: ../components/responses/InternalServerError.yaml
