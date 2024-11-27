@@ -22,6 +22,7 @@ import {
   FindMaximumInscribedCircleCenterRepo,
   CheckGeomIsValidRepo,
   FindGeomFromGeoJsonRepo,
+  FindBlockIdsByBoroughIdRepo,
 } from "./tax-lot.repository.schema";
 import { Geometry } from "geojson";
 import { Geom } from "src/types";
@@ -99,6 +100,33 @@ export class TaxLotRepository {
     } catch {
       throw new DataRetrievalException();
     }
+  }
+
+  async findBlockIdsByBoroughId({
+    boroughId,
+    limit,
+    offset,
+    blockIdQuery,
+  }: {
+    boroughId: string;
+    limit: number;
+    offset: number;
+    blockIdQuery: string;
+  }): Promise<FindBlockIdsByBoroughIdRepo> {
+    return await this.db
+      .selectDistinct({
+        blockId: taxLot.blockId,
+      })
+      .from(taxLot)
+      .where(
+        and(
+          eq(taxLot.boroughId, boroughId),
+          sql`${taxLot.blockId} SIMILAR TO '0*${sql.raw(blockIdQuery)}%'`,
+        ),
+      )
+      .limit(limit)
+      .offset(offset)
+      .orderBy(taxLot.blockId);
   }
 
   async findGeomFromGeoJson(

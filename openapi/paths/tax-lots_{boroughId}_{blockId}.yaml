@@ -1,6 +1,6 @@
 get:
-  summary: Non-spatial details for tax lots in a block
-  operationId: findTaxLotsByBoroughIdBlockId
+  summary: Lot ids for tax lots in a block
+  operationId: findTaxLotLotIdsByBoroughIdBlockId
   tags:
     - Tax Lots
   parameters:
@@ -12,13 +12,13 @@ get:
   responses:
     '200':
       description: >-
-        An object containing a list of tax lots and pagination metadata for
+        An object containing a list of lot ids and pagination metadata for
         tax lots in a block. Optionally, results may be limited to lots
         matching a query.
       content:
         application/json:
           schema:
-            $ref: ../components/schemas/TaxLotBasicPage.yaml
+            $ref: ../components/schemas/TaxLotLotIdPage.yaml
     '400':
       $ref: ../components/responses/BadRequest.yaml
     '500':

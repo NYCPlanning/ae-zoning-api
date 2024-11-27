@@ -7,6 +7,7 @@ import {
   zoningDistrictEntitySchema,
 } from "src/schema";
 import { taxLotEntitySchema } from "src/schema/tax-lot";
+import { taxLotBlockIdSchema, taxLotLotIdSchema } from "src/gen";
 import { geomSchema } from "src/types";
 
 export const checkByBblRepoSchema = taxLotEntitySchema.pick({
@@ -14,6 +15,19 @@ export const checkByBblRepoSchema = taxLotEntitySchema.pick({
   blockId: true,
   lotId: true,
 });
+
+export const findBlockIdsByBoroughIdRepoSchema = z.array(taxLotBlockIdSchema);
+
+export type FindBlockIdsByBoroughIdRepo = z.infer<
+  typeof findBlockIdsByBoroughIdRepoSchema
+>;
+
+export const findLotIdsByBoroughIdBlockIdRepoSchema =
+  z.array(taxLotLotIdSchema);
+
+export type FindLotIdsByBoroughIdBlockIdRepo = z.infer<
+  typeof findLotIdsByBoroughIdBlockIdRepoSchema
+>;
 
 export type CheckByBblRepo = z.infer<typeof checkByBblRepoSchema>;
 

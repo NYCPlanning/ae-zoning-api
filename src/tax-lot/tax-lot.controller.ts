@@ -20,6 +20,10 @@ import {
   FindZoningDistrictClassesByTaxLotBblPathParams,
   findTaxLotsQueryParamsSchema,
   FindTaxLotsQueryParams,
+  findTaxLotBlockIdsByBoroughIdPathParamsSchema,
+  FindTaxLotBlockIdsByBoroughIdPathParams,
+  findTaxLotBlockIdsByBoroughIdQueryParamsSchema,
+  FindTaxLotBlockIdsByBoroughIdQueryParams,
 } from "../gen";
 import {
   BadRequestExceptionFilter,
@@ -45,6 +49,19 @@ export class TaxLotController {
     params: FindTaxLotsQueryParams,
   ) {
     return await this.taxLotService.findMany(params);
+  }
+
+  @Get("/:boroughId")
+  async findBlockIdsByBoroughId(
+    @Param(new ZodTransformPipe(findTaxLotBlockIdsByBoroughIdPathParamsSchema))
+    pathParams: FindTaxLotBlockIdsByBoroughIdPathParams,
+    @Query(new ZodTransformPipe(findTaxLotBlockIdsByBoroughIdQueryParamsSchema))
+    queryParams: FindTaxLotBlockIdsByBoroughIdQueryParams,
+  ) {
+    return await this.taxLotService.findBlockIdsByBoroughId({
+      ...pathParams,
+      ...queryParams,
+    });
   }
 
   @Get("/:boroughId/:blockId/:lotId")

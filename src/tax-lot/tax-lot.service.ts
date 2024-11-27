@@ -4,6 +4,8 @@ import { ResourceNotFoundException } from "src/exception";
 import { Geometry, MultiPolygon } from "geojson";
 import { z } from "zod";
 import {
+  FindTaxLotBlockIdsByBoroughIdPathParams,
+  FindTaxLotBlockIdsByBoroughIdQueryParams,
   FindTaxLotByBblPathParams,
   FindTaxLotGeoJsonByBblPathParams,
   FindTaxLotsQueryParams,
@@ -183,6 +185,28 @@ export class TaxLotService {
     throw new InvalidSpatialFilterRequestParametersException(
       "missing required parameters",
     );
+  }
+
+  async findBlockIdsByBoroughId({
+    limit = 10,
+    offset = 0,
+    blockIdQuery = "",
+    boroughId,
+  }: FindTaxLotBlockIdsByBoroughIdPathParams &
+    FindTaxLotBlockIdsByBoroughIdQueryParams) {
+    const blockIds = await this.taxLotRepository.findBlockIdsByBoroughId({
+      limit,
+      offset,
+      blockIdQuery,
+      boroughId,
+    });
+    return {
+      limit,
+      offset,
+      order: "blockId",
+      total: blockIds.length,
+      blockIds,
+    };
   }
 
   async findByBbl(bblPathParams: FindTaxLotByBblPathParams) {

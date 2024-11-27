@@ -1,0 +1,9 @@
+type: object
+properties:
+  lotId:
+    type: string
+    description: The lot code for the bbl
+    pattern: ^([0-9]{4})$
+    example: '7501'
+required:
+  - lotId

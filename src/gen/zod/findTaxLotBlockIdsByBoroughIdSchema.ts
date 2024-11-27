@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { taxLotBasicPageSchema } from "./taxLotBasicPageSchema";
+import { taxLotBlockIdPageSchema } from "./taxLotBlockIdPageSchema";
 import { errorSchema } from "./errorSchema";
 
-export const findTaxLotsByBoroughIdPathParamsSchema = z.object({
+export const findTaxLotBlockIdsByBoroughIdPathParamsSchema = z.object({
   boroughId: z.coerce
     .string()
     .regex(new RegExp("^([0-9]{1})$"))
@@ -11,7 +11,7 @@ export const findTaxLotsByBoroughIdPathParamsSchema = z.object({
     ),
 });
 
-export const findTaxLotsByBoroughIdQueryParamsSchema = z
+export const findTaxLotBlockIdsByBoroughIdQueryParamsSchema = z
   .object({
     blockIdQuery: z.coerce
       .string()
@@ -40,22 +40,22 @@ export const findTaxLotsByBoroughIdQueryParamsSchema = z
   })
   .optional();
 /**
- * @description An object containing a list of tax lots and pagination metadata for tax lots in a borough. Optionally, results may be limited to blocks matching a query.
+ * @description An object containing a list of block ids and pagination metadata for tax lots in a borough. Optionally, results may be limited to blocks matching a query.
  */
-export const findTaxLotsByBoroughId200Schema = z.lazy(
-  () => taxLotBasicPageSchema,
+export const findTaxLotBlockIdsByBoroughId200Schema = z.lazy(
+  () => taxLotBlockIdPageSchema,
 );
 /**
  * @description Invalid client request
  */
-export const findTaxLotsByBoroughId400Schema = z.lazy(() => errorSchema);
+export const findTaxLotBlockIdsByBoroughId400Schema = z.lazy(() => errorSchema);
 /**
  * @description Server side error
  */
-export const findTaxLotsByBoroughId500Schema = z.lazy(() => errorSchema);
+export const findTaxLotBlockIdsByBoroughId500Schema = z.lazy(() => errorSchema);
 /**
- * @description An object containing a list of tax lots and pagination metadata for tax lots in a borough. Optionally, results may be limited to blocks matching a query.
+ * @description An object containing a list of block ids and pagination metadata for tax lots in a borough. Optionally, results may be limited to blocks matching a query.
  */
-export const findTaxLotsByBoroughIdQueryResponseSchema = z.lazy(
-  () => taxLotBasicPageSchema,
+export const findTaxLotBlockIdsByBoroughIdQueryResponseSchema = z.lazy(
+  () => taxLotBlockIdPageSchema,
 );
