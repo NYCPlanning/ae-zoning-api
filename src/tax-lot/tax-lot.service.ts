@@ -7,13 +7,18 @@ import {
   FindTaxLotBlockIdsByBoroughIdPathParams,
   FindTaxLotBlockIdsByBoroughIdQueryParams,
   FindTaxLotByBblPathParams,
+  FindTaxLotsByBoroughIdBlockIdPathParams,
   FindTaxLotGeoJsonByBblPathParams,
   FindTaxLotsQueryParams,
   FindZoningDistrictClassesByTaxLotBblPathParams,
   FindZoningDistrictsByTaxLotBblPathParams,
+  FindTaxLotsByBoroughIdBlockIdQueryParams,
+  FindTaxLotBlockGeoJsonByBoroughIdBlockIdPathParams,
 } from "src/gen";
 import { InvalidSpatialFilterRequestParametersException } from "src/exception/invalid-spatial-filter";
 import { Geom } from "src/types";
+import { produce } from "immer";
+import { FindBlockSpatialByBoroughIdBlockIdRepo } from "./tax-lot.repository.schema";
 
 export const spatialFilterSchema = z.object({
   geometry: z.enum(["Point", "LineString", "Polygon"]),
@@ -187,8 +192,32 @@ export class TaxLotService {
     );
   }
 
+  async findManyByBoroughIdBlockId({
+    limit = 20,
+    offset = 0,
+    lotIdQuery = "",
+    boroughId,
+    blockId,
+  }: FindTaxLotsByBoroughIdBlockIdPathParams &
+    FindTaxLotsByBoroughIdBlockIdQueryParams) {
+    const taxLots = await this.taxLotRepository.findManyByBoroughIdBlockId({
+      limit,
+      offset,
+      lotIdQuery,
+      boroughId,
+      blockId,
+    });
+    return {
+      taxLots,
+      limit,
+      offset,
+      order: "bbl",
+      total: taxLots.length,
+    };
+  }
+
   async findBlockIdsByBoroughId({
-    limit = 10,
+    limit = 20,
     offset = 0,
     blockIdQuery = "",
     boroughId,
@@ -206,6 +235,28 @@ export class TaxLotService {
       order: "blockId",
       total: blockIds.length,
       blockIds,
+    };
+  }
+
+  async findBlockGeoJsonByBoroughIdBlockId(
+    params: FindTaxLotBlockGeoJsonByBoroughIdBlockIdPathParams,
+  ) {
+    const taxLotBlock =
+      await this.taxLotRepository.findBlockSpatialByBoroughIdBlockId(params);
+    if (taxLotBlock === undefined) throw new ResourceNotFoundException();
+
+    const geometry = JSON.parse(taxLotBlock.geometry) as MultiPolygon;
+    const properties = produce(
+      taxLotBlock as Partial<FindBlockSpatialByBoroughIdBlockIdRepo>,
+      (draft) => {
+        delete draft["geometry"];
+      },
+    );
+    return {
+      id: `${taxLotBlock.boroughId}${taxLotBlock.blockId}`,
+      type: "Feature",
+      properties,
+      geometry,
     };
   }
 

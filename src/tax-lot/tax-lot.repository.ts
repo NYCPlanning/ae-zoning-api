@@ -23,10 +23,13 @@ import {
   CheckGeomIsValidRepo,
   FindGeomFromGeoJsonRepo,
   FindBlockIdsByBoroughIdRepo,
+  FindManyByBoroughIdBlockIdRepo,
+  FindBlockSpatialByBoroughIdBlockIdRepo,
 } from "./tax-lot.repository.schema";
 import { Geometry } from "geojson";
 import { Geom } from "src/types";
 import {
+  FindTaxLotBlockGeoJsonByBoroughIdBlockIdPathParams,
   FindTaxLotByBblPathParams,
   FindTaxLotGeoJsonByBblPathParams,
   FindZoningDistrictClassesByTaxLotBblPathParams,
@@ -100,6 +103,60 @@ export class TaxLotRepository {
     } catch {
       throw new DataRetrievalException();
     }
+  }
+
+  async findManyByBoroughIdBlockId({
+    boroughId,
+    blockId,
+    lotIdQuery,
+    limit,
+    offset,
+  }: {
+    boroughId: string;
+    blockId: string;
+    lotIdQuery: string;
+    limit: number;
+    offset: number;
+  }): Promise<FindManyByBoroughIdBlockIdRepo> {
+    return await this.db.query.taxLot.findMany({
+      columns: {
+        boroughId: true,
+        blockId: true,
+        lotId: true,
+        address: true,
+        landUseId: true,
+      },
+      limit,
+      offset,
+      where: (table, { and, eq, sql }) =>
+        and(
+          eq(taxLot.boroughId, boroughId),
+          eq(taxLot.blockId, blockId),
+          sql`${taxLot.lotId} SIMILAR TO '0*${sql.raw(lotIdQuery)}%'`,
+        ),
+      orderBy: [taxLot.lotId],
+    });
+  }
+
+  async findBlockSpatialByBoroughIdBlockId({
+    boroughId,
+    blockId,
+  }: FindTaxLotBlockGeoJsonByBoroughIdBlockIdPathParams): Promise<
+    FindBlockSpatialByBoroughIdBlockIdRepo | undefined
+  > {
+    const data = await this.db
+      .select({
+        boroughId: taxLot.boroughId,
+        blockId: taxLot.blockId,
+        geometry:
+          sql<string>`ST_AsGeoJSON(ST_UNION(${taxLot.wgs84}::geometry), 6)`.as(
+            "geometry",
+          ),
+      })
+      .from(taxLot)
+      .where(and(eq(taxLot.boroughId, boroughId), eq(taxLot.blockId, blockId)))
+      .groupBy(taxLot.boroughId, taxLot.blockId);
+    return data[0];
   }
 
   async findBlockIdsByBoroughId({

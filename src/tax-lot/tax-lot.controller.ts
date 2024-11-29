@@ -24,6 +24,12 @@ import {
   FindTaxLotBlockIdsByBoroughIdPathParams,
   findTaxLotBlockIdsByBoroughIdQueryParamsSchema,
   FindTaxLotBlockIdsByBoroughIdQueryParams,
+  findTaxLotsByBoroughIdBlockIdPathParamsSchema,
+  FindTaxLotsByBoroughIdBlockIdPathParams,
+  findTaxLotsByBoroughIdBlockIdQueryParamsSchema,
+  FindTaxLotsByBoroughIdBlockIdQueryParams,
+  findTaxLotBlockGeoJsonByBoroughIdBlockIdPathParamsSchema,
+  FindTaxLotBlockGeoJsonByBoroughIdBlockIdPathParams,
 } from "../gen";
 import {
   BadRequestExceptionFilter,
@@ -51,7 +57,7 @@ export class TaxLotController {
     return await this.taxLotService.findMany(params);
   }
 
-  @Get("/:boroughId")
+  @Get("/:boroughId/blocks")
   async findBlockIdsByBoroughId(
     @Param(new ZodTransformPipe(findTaxLotBlockIdsByBoroughIdPathParamsSchema))
     pathParams: FindTaxLotBlockIdsByBoroughIdPathParams,
@@ -64,10 +70,37 @@ export class TaxLotController {
     });
   }
 
+  @Get("/:boroughId/blocks/:blockId/geojson")
+  async findBlockGeoJsonByBoroughIdBlockId(
+    @Param(
+      new ZodTransformPipe(
+        findTaxLotBlockGeoJsonByBoroughIdBlockIdPathParamsSchema,
+      ),
+    )
+    pathParams: FindTaxLotBlockGeoJsonByBoroughIdBlockIdPathParams,
+  ) {
+    return await this.taxLotService.findBlockGeoJsonByBoroughIdBlockId(
+      pathParams,
+    );
+  }
+
+  @Get("/:boroughId/:blockId")
+  async findManyByBoroughIdBlockId(
+    @Param(new ZodTransformPipe(findTaxLotsByBoroughIdBlockIdPathParamsSchema))
+    pathParams: FindTaxLotsByBoroughIdBlockIdPathParams,
+    @Query(new ZodTransformPipe(findTaxLotsByBoroughIdBlockIdQueryParamsSchema))
+    queryParams: FindTaxLotsByBoroughIdBlockIdQueryParams,
+  ) {
+    return await this.taxLotService.findManyByBoroughIdBlockId({
+      ...pathParams,
+      ...queryParams,
+    });
+  }
+
   @Get("/:boroughId/:blockId/:lotId")
   @UsePipes(new ZodTransformPipe(findTaxLotByBblPathParamsSchema))
   async findDetailsByBbl(@Param() params: FindTaxLotByBblPathParams) {
-    return this.taxLotService.findByBbl(params);
+    return await this.taxLotService.findByBbl(params);
   }
 
   @Get("/:boroughId/:blockId/:lotId/geojson")

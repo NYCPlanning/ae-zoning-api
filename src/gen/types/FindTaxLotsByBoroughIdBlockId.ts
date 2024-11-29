@@ -1,7 +1,7 @@
-import type { TaxLotLotIdPage } from "./TaxLotLotIdPage";
+import type { TaxLotBasicPage } from "./TaxLotBasicPage";
 import type { Error } from "./Error";
 
-export type FindTaxLotLotIdsByBoroughIdBlockIdPathParams = {
+export type FindTaxLotsByBoroughIdBlockIdPathParams = {
   /**
    * @description A single character numeric string containing the common number used to refer to the borough. Possible values are 1-5.
    * @type string
@@ -13,7 +13,7 @@ export type FindTaxLotLotIdsByBoroughIdBlockIdPathParams = {
    */
   blockId: string;
 };
-export type FindTaxLotLotIdsByBoroughIdBlockIdQueryParams = {
+export type FindTaxLotsByBoroughIdBlockIdQueryParams = {
   /**
    * @description A multi-character numeric string containing the common number used to refer to the lot of a bbl. Does not need to include leading zeros.
    * @type string | undefined
@@ -31,26 +31,24 @@ export type FindTaxLotLotIdsByBoroughIdBlockIdQueryParams = {
   offset?: number;
 };
 /**
- * @description An object containing a list of lot ids and pagination metadata for tax lots in a block. Optionally, results may be limited to lots matching a query.
+ * @description An object containing a list of tax lots and pagination metadata for lots in a block. Optionally, results may be limited to lots matching a query.
  */
-export type FindTaxLotLotIdsByBoroughIdBlockId200 = TaxLotLotIdPage;
+export type FindTaxLotsByBoroughIdBlockId200 = TaxLotBasicPage;
 /**
  * @description Invalid client request
  */
-export type FindTaxLotLotIdsByBoroughIdBlockId400 = Error;
+export type FindTaxLotsByBoroughIdBlockId400 = Error;
 /**
  * @description Server side error
  */
-export type FindTaxLotLotIdsByBoroughIdBlockId500 = Error;
+export type FindTaxLotsByBoroughIdBlockId500 = Error;
 /**
- * @description An object containing a list of lot ids and pagination metadata for tax lots in a block. Optionally, results may be limited to lots matching a query.
+ * @description An object containing a list of tax lots and pagination metadata for lots in a block. Optionally, results may be limited to lots matching a query.
  */
-export type FindTaxLotLotIdsByBoroughIdBlockIdQueryResponse = TaxLotLotIdPage;
-export type FindTaxLotLotIdsByBoroughIdBlockIdQuery = {
-  Response: FindTaxLotLotIdsByBoroughIdBlockIdQueryResponse;
-  PathParams: FindTaxLotLotIdsByBoroughIdBlockIdPathParams;
-  QueryParams: FindTaxLotLotIdsByBoroughIdBlockIdQueryParams;
-  Errors:
-    | FindTaxLotLotIdsByBoroughIdBlockId400
-    | FindTaxLotLotIdsByBoroughIdBlockId500;
+export type FindTaxLotsByBoroughIdBlockIdQueryResponse = TaxLotBasicPage;
+export type FindTaxLotsByBoroughIdBlockIdQuery = {
+  Response: FindTaxLotsByBoroughIdBlockIdQueryResponse;
+  PathParams: FindTaxLotsByBoroughIdBlockIdPathParams;
+  QueryParams: FindTaxLotsByBoroughIdBlockIdQueryParams;
+  Errors: FindTaxLotsByBoroughIdBlockId400 | FindTaxLotsByBoroughIdBlockId500;
 };

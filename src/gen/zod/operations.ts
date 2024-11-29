@@ -118,19 +118,25 @@ import {
   findTaxLotsQueryParamsSchema,
 } from "./findTaxLotsSchema";
 import {
+  findTaxLotBlockGeoJsonByBoroughIdBlockIdQueryResponseSchema,
+  findTaxLotBlockGeoJsonByBoroughIdBlockId400Schema,
+  findTaxLotBlockGeoJsonByBoroughIdBlockId500Schema,
+  findTaxLotBlockGeoJsonByBoroughIdBlockIdPathParamsSchema,
+} from "./findTaxLotBlockGeoJsonByBoroughIdBlockIdSchema";
+import {
+  findTaxLotsByBoroughIdBlockIdQueryResponseSchema,
+  findTaxLotsByBoroughIdBlockId400Schema,
+  findTaxLotsByBoroughIdBlockId500Schema,
+  findTaxLotsByBoroughIdBlockIdPathParamsSchema,
+  findTaxLotsByBoroughIdBlockIdQueryParamsSchema,
+} from "./findTaxLotsByBoroughIdBlockIdSchema";
+import {
   findTaxLotBlockIdsByBoroughIdQueryResponseSchema,
   findTaxLotBlockIdsByBoroughId400Schema,
   findTaxLotBlockIdsByBoroughId500Schema,
   findTaxLotBlockIdsByBoroughIdPathParamsSchema,
   findTaxLotBlockIdsByBoroughIdQueryParamsSchema,
 } from "./findTaxLotBlockIdsByBoroughIdSchema";
-import {
-  findTaxLotLotIdsByBoroughIdBlockIdQueryResponseSchema,
-  findTaxLotLotIdsByBoroughIdBlockId400Schema,
-  findTaxLotLotIdsByBoroughIdBlockId500Schema,
-  findTaxLotLotIdsByBoroughIdBlockIdPathParamsSchema,
-  findTaxLotLotIdsByBoroughIdBlockIdQueryParamsSchema,
-} from "./findTaxLotLotIdsByBoroughIdBlockIdSchema";
 import {
   findTaxLotByBblQueryResponseSchema,
   findTaxLotByBbl400Schema,
@@ -558,6 +564,42 @@ export const operations = {
       500: findTaxLots500Schema,
     },
   },
+  findTaxLotBlockGeoJsonByBoroughIdBlockId: {
+    request: undefined,
+    parameters: {
+      path: findTaxLotBlockGeoJsonByBoroughIdBlockIdPathParamsSchema,
+      query: undefined,
+      header: undefined,
+    },
+    responses: {
+      200: findTaxLotBlockGeoJsonByBoroughIdBlockIdQueryResponseSchema,
+      400: findTaxLotBlockGeoJsonByBoroughIdBlockId400Schema,
+      500: findTaxLotBlockGeoJsonByBoroughIdBlockId500Schema,
+      default: findTaxLotBlockGeoJsonByBoroughIdBlockIdQueryResponseSchema,
+    },
+    errors: {
+      400: findTaxLotBlockGeoJsonByBoroughIdBlockId400Schema,
+      500: findTaxLotBlockGeoJsonByBoroughIdBlockId500Schema,
+    },
+  },
+  findTaxLotsByBoroughIdBlockId: {
+    request: undefined,
+    parameters: {
+      path: findTaxLotsByBoroughIdBlockIdPathParamsSchema,
+      query: findTaxLotsByBoroughIdBlockIdQueryParamsSchema,
+      header: undefined,
+    },
+    responses: {
+      200: findTaxLotsByBoroughIdBlockIdQueryResponseSchema,
+      400: findTaxLotsByBoroughIdBlockId400Schema,
+      500: findTaxLotsByBoroughIdBlockId500Schema,
+      default: findTaxLotsByBoroughIdBlockIdQueryResponseSchema,
+    },
+    errors: {
+      400: findTaxLotsByBoroughIdBlockId400Schema,
+      500: findTaxLotsByBoroughIdBlockId500Schema,
+    },
+  },
   findTaxLotBlockIdsByBoroughId: {
     request: undefined,
     parameters: {
@@ -574,24 +616,6 @@ export const operations = {
     errors: {
       400: findTaxLotBlockIdsByBoroughId400Schema,
       500: findTaxLotBlockIdsByBoroughId500Schema,
-    },
-  },
-  findTaxLotLotIdsByBoroughIdBlockId: {
-    request: undefined,
-    parameters: {
-      path: findTaxLotLotIdsByBoroughIdBlockIdPathParamsSchema,
-      query: findTaxLotLotIdsByBoroughIdBlockIdQueryParamsSchema,
-      header: undefined,
-    },
-    responses: {
-      200: findTaxLotLotIdsByBoroughIdBlockIdQueryResponseSchema,
-      400: findTaxLotLotIdsByBoroughIdBlockId400Schema,
-      500: findTaxLotLotIdsByBoroughIdBlockId500Schema,
-      default: findTaxLotLotIdsByBoroughIdBlockIdQueryResponseSchema,
-    },
-    errors: {
-      400: findTaxLotLotIdsByBoroughIdBlockId400Schema,
-      500: findTaxLotLotIdsByBoroughIdBlockId500Schema,
     },
   },
   findTaxLotByBbl: {
@@ -835,11 +859,14 @@ export const paths = {
   "/tax-lots": {
     get: operations["findTaxLots"],
   },
-  "/tax-lots/{boroughId}": {
-    get: operations["findTaxLotBlockIdsByBoroughId"],
+  "/tax-lots/{boroughId}/blocks": {
+    get: operations["findTaxLotBlockGeoJsonByBoroughIdBlockId"],
   },
   "/tax-lots/{boroughId}/{blockId}": {
-    get: operations["findTaxLotLotIdsByBoroughIdBlockId"],
+    get: operations["findTaxLotsByBoroughIdBlockId"],
+  },
+  "/tax-lots/{borougId}/{blocks}/{blockId}/geojson.yaml": {
+    get: operations["findTaxLotBlockIdsByBoroughId"],
   },
   "/tax-lots/{boroughId}/{blockId}/{lotId}": {
     get: operations["findTaxLotByBbl"],

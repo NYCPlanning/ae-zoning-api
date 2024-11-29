@@ -79,10 +79,12 @@ paths:
     $ref: paths/land-uses.yaml
   /tax-lots:
     $ref: paths/tax-lots.yaml
-  /tax-lots/{boroughId}:
-    $ref: paths/tax-lots_{boroughId}.yaml
+  /tax-lots/{boroughId}/blocks:
+    $ref: paths/tax-lots_{boroughId}_blocks.yaml
   /tax-lots/{boroughId}/{blockId}:
     $ref: paths/tax-lots_{boroughId}_{blockId}.yaml
+  /tax-lots/{borougId}/{blocks}/{blockId}/geojson.yaml:
+    $ref: paths/tax-lots_{boroughId}_blocks_{blockId}_geojson.yaml
   /tax-lots/{boroughId}/{blockId}/{lotId}:
     $ref: paths/tax-lots_{boroughId}_{blockId}_{lotId}.yaml
   /tax-lots/{boroughId}/{blockId}/{lotId}/geojson:

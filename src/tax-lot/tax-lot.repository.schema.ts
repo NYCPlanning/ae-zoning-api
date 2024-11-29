@@ -7,7 +7,7 @@ import {
   zoningDistrictEntitySchema,
 } from "src/schema";
 import { taxLotEntitySchema } from "src/schema/tax-lot";
-import { taxLotBlockIdSchema, taxLotLotIdSchema } from "src/gen";
+import { taxLotBlockIdSchema } from "src/gen";
 import { geomSchema } from "src/types";
 
 export const checkByBblRepoSchema = taxLotEntitySchema.pick({
@@ -22,11 +22,17 @@ export type FindBlockIdsByBoroughIdRepo = z.infer<
   typeof findBlockIdsByBoroughIdRepoSchema
 >;
 
-export const findLotIdsByBoroughIdBlockIdRepoSchema =
-  z.array(taxLotLotIdSchema);
+export const findBlockSpatialByBoroughIdBlockIdRepoSchema = taxLotEntitySchema
+  .pick({
+    boroughId: true,
+    blockId: true,
+  })
+  .extend({
+    geometry: MultiPolygonSchema,
+  });
 
-export type FindLotIdsByBoroughIdBlockIdRepo = z.infer<
-  typeof findLotIdsByBoroughIdBlockIdRepoSchema
+export type FindBlockSpatialByBoroughIdBlockIdRepo = z.infer<
+  typeof findBlockSpatialByBoroughIdBlockIdRepoSchema
 >;
 
 export type CheckByBblRepo = z.infer<typeof checkByBblRepoSchema>;
@@ -34,6 +40,12 @@ export type CheckByBblRepo = z.infer<typeof checkByBblRepoSchema>;
 export const findManyRepoSchema = z.array(taxLotEntitySchema);
 
 export type FindManyRepo = z.infer<typeof findManyRepoSchema>;
+
+export const findManyByBoroughIdBlockIdRepoSchema = z.array(taxLotEntitySchema);
+
+export type FindManyByBoroughIdBlockIdRepo = z.infer<
+  typeof findManyByBoroughIdBlockIdRepoSchema
+>;
 
 export const findManyBySpatialFilterRepoSchema = findManyRepoSchema;
 

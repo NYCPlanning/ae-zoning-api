@@ -1,0 +1,35 @@
+type: object
+properties:
+  id:
+    type: string
+    description: The concatenated borough and block ids of the tax lot.
+    minLength: 6
+    maxLength: 6
+    example: '100047'
+  type:
+    type: string
+    enum:
+      - Feature
+  geometry:
+    $ref: ./MultiPolygon.yaml
+  properties:
+    type: object
+    properties:
+      boroughId:
+        type: string
+        description: The block code for the bbl
+        pattern: ^([0-9]{1})$
+        example: '1'
+      blockId:
+        type: string
+        description: The block code for the bbl
+        pattern: ^([0-9]{5})$
+        example: '00047'
+    required:
+      - boroughId
+      - blockId
+required:
+  - id
+  - type
+  - geometry
+  - properties
