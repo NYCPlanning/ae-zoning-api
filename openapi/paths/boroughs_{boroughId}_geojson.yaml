@@ -1,21 +1,22 @@
 get:
-  summary: GeoJSON for a block in a borough
-  operationId: findTaxLotBlockGeoJsonByBoroughIdBlockId
+  summary: GeoJSON for a specific borough
+  operationId: findBoroughGeoJsonByBoroughId
   tags:
-    - Tax Lots
+    - Boroughs
     - GeoJSON
   parameters:
     - $ref: ../components/parameters/boroughIdParam.yaml
-    - $ref: ../components/parameters/blockIdParam.yaml
   responses:
     '200':
       description: >-
-        An geojson object for a block
+        A borough geojson object
       content:
         application/json:
           schema:
-            $ref: ../components/schemas/TaxLotBlockGeoJson.yaml
+            $ref: ../components/schemas/BoroughGeoJson.yaml
     '400':
       $ref: ../components/responses/BadRequest.yaml
+    '404':
+      $ref: ../components/responses/NotFound.yaml
     '500':
       $ref: ../components/responses/InternalServerError.yaml

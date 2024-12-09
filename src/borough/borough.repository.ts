@@ -8,10 +8,12 @@ import {
   FindCapitalProjectsByBoroughIdCommunityDistrictIdRepo,
   FindCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdRepo,
   FindCapitalProjectTilesByBoroughIdCommunityDistrictIdRepo,
+  FindGeoJsonByIdRepo,
 } from "./borough.repository.schema";
-import { capitalProject, communityDistrict } from "src/schema";
+import { borough, capitalProject, communityDistrict } from "src/schema";
 import { eq, sql, and, isNotNull, asc } from "drizzle-orm";
 import {
+  FindBoroughGeoJsonByBoroughIdPathParams,
   FindCapitalProjectTilesByBoroughIdCommunityDistrictIdPathParams,
   FindCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdPathParams,
 } from "src/gen";
@@ -43,10 +45,37 @@ export class BoroughRepository {
 
   async findMany(): Promise<FindManyRepo> {
     try {
-      return await this.db.query.borough.findMany();
+      return await this.db.query.borough.findMany({
+        columns: {
+          id: true,
+          title: true,
+          abbr: true,
+        },
+        orderBy: (table) => [table.id],
+      });
     } catch {
       throw new DataRetrievalException();
     }
+  }
+
+  async findSpatialById({
+    boroughId,
+  }: FindBoroughGeoJsonByBoroughIdPathParams): Promise<
+    FindGeoJsonByIdRepo | undefined
+  > {
+    const data = await this.db
+      .select({
+        id: borough.id,
+        title: borough.title,
+        abbr: borough.abbr,
+        geometry:
+          sql<string>`ST_AsGeoJSON(ST_Transform(${borough.liFt}, 4326), 6)`.as(
+            "geometry",
+          ),
+      })
+      .from(borough)
+      .where(eq(borough.id, boroughId));
+    return data[0];
   }
 
   async findCommunityDistrictsByBoroughId(
@@ -156,7 +185,7 @@ export class BoroughRepository {
             `managingAgency`,
           ),
           geom: sql<string>`
-            CASE 
+            CASE
               WHEN ${capitalProject.mercatorFillMPoly} && ST_TileEnvelope(${z},${x},${y})
                 THEN ST_AsMVTGeom(
                   ${capitalProject.mercatorFillMPoly},
@@ -179,7 +208,7 @@ export class BoroughRepository {
         .leftJoin(
           communityDistrict,
           sql`
-            ST_Intersects(${communityDistrict.mercatorFill}, ${capitalProject.mercatorFillMPoly}) 
+            ST_Intersects(${communityDistrict.mercatorFill}, ${capitalProject.mercatorFillMPoly})
             OR ST_Intersects(${communityDistrict.mercatorFill}, ${capitalProject.mercatorFillMPnt})`,
         )
         .where(

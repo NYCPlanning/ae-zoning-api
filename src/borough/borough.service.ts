@@ -3,13 +3,17 @@ import { BoroughRepository } from "./borough.repository";
 import { CommunityDistrictRepository } from "src/community-district/community-district.repository";
 import { ResourceNotFoundException } from "src/exception";
 import {
+  FindBoroughGeoJsonByBoroughIdPathParams,
   FindCapitalProjectsByBoroughIdCommunityDistrictIdPathParams,
   FindCapitalProjectsByBoroughIdCommunityDistrictIdQueryParams,
   FindCapitalProjectTilesByBoroughIdCommunityDistrictIdPathParams,
 } from "src/gen";
 import { produce } from "immer";
-import { CommunityDistrictGeoJsonEntity } from "./borough.repository.schema";
-import { CommunityDistrictEntity } from "src/schema";
+import {
+  BoroughGeoJsonEntity,
+  CommunityDistrictGeoJsonEntity,
+} from "./borough.repository.schema";
+import { BoroughEntity, CommunityDistrictEntity } from "src/schema";
 
 @Injectable()
 export class BoroughService {
@@ -24,6 +28,26 @@ export class BoroughService {
     const boroughs = await this.boroughRepository.findMany();
     return {
       boroughs,
+    };
+  }
+
+  async findGeoJsonById(params: FindBoroughGeoJsonByBoroughIdPathParams) {
+    const boroughSpatial = await this.boroughRepository.findSpatialById(params);
+    if (boroughSpatial === undefined) throw new ResourceNotFoundException();
+
+    const geometry = JSON.parse(boroughSpatial.geometry);
+    const properties = produce(
+      boroughSpatial as Partial<BoroughGeoJsonEntity>,
+      (draft) => {
+        delete draft["geometry"];
+      },
+    ) as BoroughEntity;
+
+    return {
+      type: "Feature",
+      id: boroughSpatial.id,
+      properties,
+      geometry,
     };
   }
 

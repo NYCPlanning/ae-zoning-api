@@ -51,6 +51,8 @@ paths:
   /boroughs/{boroughId}/community-districts/{communityDistrictId}/capital-projects/{z}/{x}/{y}.pbf:
     $ref: >-
       paths/boroughs_{boroughId}_community-districts_{communityDistrictId}_capital-projects_{z}_{x}_{y}.pbf.yaml
+  /boroughs/{boroughId}/geojson:
+    $ref: paths/boroughs_{boroughId}_geojson.yaml
   /capital-commitment-types:
     $ref: paths/capital-commitment-types.yaml
   /capital-projects/{managingCode}/{capitalProjectId}/capital-commitments:
@@ -83,7 +85,7 @@ paths:
     $ref: paths/tax-lots_{boroughId}_blocks.yaml
   /tax-lots/{boroughId}/{blockId}:
     $ref: paths/tax-lots_{boroughId}_{blockId}.yaml
-  /tax-lots/{borougId}/{blocks}/{blockId}/geojson.yaml:
+  /tax-lots/{boroughId}/blocks/{blockId}/geojson.yaml:
     $ref: paths/tax-lots_{boroughId}_blocks_{blockId}_geojson.yaml
   /tax-lots/{boroughId}/{blockId}/{lotId}:
     $ref: paths/tax-lots_{boroughId}_{blockId}_{lotId}.yaml

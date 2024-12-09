@@ -1,0 +1,67 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "A single character numeric string containing the common number used to refer to the borough. Possible values are 1-5.",
+      "pattern": "^([0-9])$",
+      "example": "1"
+    },
+    "type": { "type": "string", "enum": ["Feature"] },
+    "geometry": {
+      "type": "object",
+      "description": "A geojson implementation of a MultiPolygon Simple Feature",
+      "properties": {
+        "type": { "type": "string", "enum": ["MultiPolygon"] },
+        "coordinates": {
+          "type": "array",
+          "description": "Array of polygon coordinate arrays.",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "description": "The fundamental spatial construct",
+                "minItems": 2,
+                "maxItems": 3,
+                "items": { "type": "number" },
+                "example": [-74.010835, 40.708442],
+                "x-readme-ref-name": "Position"
+              }
+            }
+          }
+        }
+      },
+      "required": ["type", "coordinates"],
+      "x-readme-ref-name": "MultiPolygon"
+    },
+    "properties": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "A single character numeric string containing the common number used to refer to the borough. Possible values are 1-5.",
+          "pattern": "^([0-9])$",
+          "example": "1"
+        },
+        "title": {
+          "type": "string",
+          "description": "The full name of the borough.",
+          "example": "Manhattan"
+        },
+        "abbr": {
+          "type": "string",
+          "description": "The two character abbreviation for the borough.",
+          "minLength": 2,
+          "maxLength": 2,
+          "example": "MN"
+        }
+      },
+      "required": ["id", "title", "abbr"],
+      "x-readme-ref-name": "Borough"
+    }
+  },
+  "required": ["id", "type", "geometry", "properties"],
+  "x-readme-ref-name": "BoroughGeoJson"
+}

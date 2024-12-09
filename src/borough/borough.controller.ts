@@ -11,11 +11,13 @@ import {
 import { BoroughService } from "./borough.service";
 import { Response } from "express";
 import {
+  FindBoroughGeoJsonByBoroughIdPathParams,
   FindCapitalProjectTilesByBoroughIdCommunityDistrictIdPathParams,
   FindCapitalProjectsByBoroughIdCommunityDistrictIdPathParams,
   FindCapitalProjectsByBoroughIdCommunityDistrictIdQueryParams,
   FindCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdPathParams,
   FindCommunityDistrictsByBoroughIdPathParams,
+  findBoroughGeoJsonByBoroughIdPathParamsSchema,
   findCapitalProjectTilesByBoroughIdCommunityDistrictIdPathParamsSchema,
   findCapitalProjectsByBoroughIdCommunityDistrictIdPathParamsSchema,
   findCapitalProjectsByBoroughIdCommunityDistrictIdQueryParamsSchema,
@@ -42,6 +44,14 @@ export class BoroughController {
   @Get()
   async findMany() {
     return this.boroughService.findMany();
+  }
+
+  @Get("/:boroughId/geojson")
+  @UsePipes(new ZodTransformPipe(findBoroughGeoJsonByBoroughIdPathParamsSchema))
+  async findGeoJsonById(
+    @Param() params: FindBoroughGeoJsonByBoroughIdPathParams,
+  ) {
+    return await this.boroughService.findGeoJsonById(params);
   }
 
   @Get("/:boroughId/community-districts")

@@ -7,17 +7,16 @@ properties:
       refer to the borough. Possible values are 1-5.
     pattern: ^([0-9])$
     example: '1'
-  title:
+  type:
     type: string
-    description: The full name of the borough.
-    example: Manhattan
-  abbr:
-    type: string
-    description: The two character abbreviation for the borough.
-    minLength: 2
-    maxLength: 2
-    example: MN
+    enum:
+      - Feature
+  geometry:
+    $ref: ./MultiPolygon.yaml
+  properties:
+    $ref: ./Borough.yaml
 required:
   - id
-  - title
-  - abbr
+  - type
+  - geometry
+  - properties

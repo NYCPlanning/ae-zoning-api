@@ -141,6 +141,13 @@
       "when": 1733264146164,
       "tag": "0019_chunky_toad_men",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1733776955441,
+      "tag": "0020_noisy_ender_wiggin",
+      "breakpoints": true
     }
   ]
 }
