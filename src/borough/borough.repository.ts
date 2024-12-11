@@ -12,6 +12,7 @@ import {
 import { capitalProject, communityDistrict } from "src/schema";
 import { eq, sql, and, isNotNull, asc } from "drizzle-orm";
 import {
+  CapitalProjectCategory,
   FindCapitalProjectTilesByBoroughIdCommunityDistrictIdPathParams,
   FindCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdPathParams,
 } from "src/gen";
@@ -115,6 +116,7 @@ export class BoroughRepository {
           managingAgency: capitalProject.managingAgency,
           maxDate: capitalProject.maxDate,
           minDate: capitalProject.minDate,
+          category: sql<CapitalProjectCategory>`${capitalProject.category}`,
         })
         .from(capitalProject)
         .leftJoin(

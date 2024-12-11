@@ -10,6 +10,7 @@ import {
   FindCapitalProjectTilesByCityCouncilDistrictIdRepo,
 } from "./city-council-district.repository.schema";
 import {
+  CapitalProjectCategory,
   FindCapitalProjectTilesByCityCouncilDistrictIdPathParams,
   FindCityCouncilDistrictGeoJsonByCityCouncilDistrictIdPathParams,
   FindCityCouncilDistrictTilesPathParams,
@@ -212,6 +213,7 @@ export class CityCouncilDistrictRepository {
           managingAgency: capitalProject.managingAgency,
           maxDate: capitalProject.maxDate,
           minDate: capitalProject.minDate,
+          category: sql<CapitalProjectCategory>`${capitalProject.category}`,
         })
         .from(capitalProject)
         .leftJoin(

@@ -1,3 +1,5 @@
+import type { CapitalProjectCategory } from "./CapitalProjectCategory";
+
 export type CapitalProject = {
   /**
    * @description The id for the project, which combines with the managing code to make a unique id
@@ -29,4 +31,8 @@ export type CapitalProject = {
    * @type string, date
    */
   maxDate: string;
+  /**
+   * @type string
+   */
+  category: CapitalProjectCategory | null;
 };
