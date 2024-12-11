@@ -148,6 +148,13 @@
       "when": 1733925963262,
       "tag": "0020_overjoyed_swordsman",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1733929910053,
+      "tag": "0021_dry_skreet",
+      "breakpoints": true
     }
   ]
 }

@@ -71,6 +71,18 @@
                 "format": "date",
                 "description": "The ending date of the capital project",
                 "example": "2024-05-15"
+              },
+              "category": {
+                "nullable": true,
+                "type": "string",
+                "enum": [
+                  "Fixed Asset",
+                  "Lump Sum",
+                  "ITT, Vehicles, and Equipment",
+                  null
+                ],
+                "description": "The type of Capital Project.",
+                "x-readme-ref-name": "CapitalProjectCategory"
               }
             },
             "required": [
@@ -79,7 +91,8 @@
               "managingCode",
               "managingAgency",
               "minDate",
-              "maxDate"
+              "maxDate",
+              "category"
             ],
             "x-readme-ref-name": "CapitalProject"
           }

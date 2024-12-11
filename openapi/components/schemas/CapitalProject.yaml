@@ -29,6 +29,9 @@ properties:
     format: date
     description: The ending date of the capital project
     example: '2024-05-15'
+  category:
+    $ref: ./CapitalProjectCategory.yaml
+    nullable: true
 required:
   - id
   - description
@@ -36,3 +39,4 @@ required:
   - managingAgency
   - minDate
   - maxDate
+  - category
