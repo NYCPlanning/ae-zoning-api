@@ -1,5 +1,5 @@
-import type { Error } from "./Error";
 import type { CapitalProjectBudgetedGeoJson } from "./CapitalProjectBudgetedGeoJson";
+import type { Error } from "./Error";
 
 export type FindCapitalProjectGeoJsonByManagingCodeCapitalProjectIdPathParams =
   {

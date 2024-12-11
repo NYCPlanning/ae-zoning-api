@@ -1,5 +1,5 @@
-import type { Error } from "./Error";
 import type { ZoningDistrict } from "./ZoningDistrict";
+import type { Error } from "./Error";
 
 export type FindZoningDistrictByZoningDistrictIdPathParams = {
   /**

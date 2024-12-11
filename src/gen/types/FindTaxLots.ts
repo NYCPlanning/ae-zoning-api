@@ -1,5 +1,5 @@
-import type { Error } from "./Error";
 import type { TaxLotBasicPage } from "./TaxLotBasicPage";
+import type { Error } from "./Error";
 
 export const findTaxLotsQueryParamsGeometry = {
   Point: "Point",

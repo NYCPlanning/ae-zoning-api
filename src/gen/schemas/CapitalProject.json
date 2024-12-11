@@ -2,44 +2,37 @@
   "type": "object",
   "properties": {
     "id": {
-      "description": "The id for the project, which combines with the managing code to make a unique id",
       "type": "string",
+      "description": "The id for the project, which combines with the managing code to make a unique id",
       "example": "HWPEDSF5"
     },
     "description": {
-      "description": "The capital project title.",
       "type": "string",
+      "description": "The capital project title.",
       "example": "Multi-Site Pedestrian Safety Phase 5"
     },
     "managingCode": {
-      "description": "Three character string of numbers representing managing agency",
       "type": "string",
-      "example": 850,
-      "pattern": "^([0-9]{3})$"
+      "description": "Three character string of numbers representing managing agency",
+      "pattern": "^([0-9]{3})$",
+      "example": 850
     },
     "managingAgency": {
-      "description": "The managing agency name abbreviation or acronym",
       "type": "string",
+      "description": "The managing agency name abbreviation or acronym",
       "example": "DOT"
     },
     "minDate": {
-      "description": "The starting date of the capital project",
       "type": "string",
       "format": "date",
+      "description": "The starting date of the capital project",
       "example": "2024-05-15"
     },
     "maxDate": {
-      "description": "The ending date of the capital project",
       "type": "string",
       "format": "date",
+      "description": "The ending date of the capital project",
       "example": "2024-05-15"
-    },
-    "category": {
-      "nullable": true,
-      "description": "The type of Capital Project.",
-      "type": "string",
-      "enum": ["Fixed Asset", "Lump Sum", "ITT, Vehicles and Equipment", null],
-      "x-readme-ref-name": "CapitalProjectCategory"
     }
   },
   "required": [
@@ -48,8 +41,7 @@
     "managingCode",
     "managingAgency",
     "minDate",
-    "maxDate",
-    "category"
+    "maxDate"
   ],
   "x-readme-ref-name": "CapitalProject"
 }
