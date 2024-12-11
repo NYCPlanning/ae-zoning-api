@@ -2,6 +2,7 @@ import { Inject } from "@nestjs/common";
 import { isNotNull, sql, and, eq, sum, asc } from "drizzle-orm";
 import { DataRetrievalException } from "src/exception";
 import {
+  CapitalProjectCategory,
   FindCapitalCommitmentsByManagingCodeCapitalProjectIdPathParams,
   FindCapitalProjectByManagingCodeCapitalProjectIdPathParams,
   FindCapitalProjectGeoJsonByManagingCodeCapitalProjectIdPathParams,
@@ -66,6 +67,7 @@ export class CapitalProjectRepository {
           managingAgency: capitalProject.managingAgency,
           minDate: capitalProject.minDate,
           maxDate: capitalProject.maxDate,
+          category: sql<CapitalProjectCategory>`${capitalProject.category}`,
           sponsoringAgencies: sql<
             Array<string>
           >`ARRAY_AGG(DISTINCT ${agencyBudget.sponsor})`,
@@ -117,6 +119,7 @@ export class CapitalProjectRepository {
           managingAgency: capitalProject.managingAgency,
           minDate: capitalProject.minDate,
           maxDate: capitalProject.maxDate,
+          category: sql<CapitalProjectCategory>`${capitalProject.category}`,
           sponsoringAgencies: sql<
             Array<string>
           >`ARRAY_AGG(DISTINCT ${agencyBudget.sponsor})`,
