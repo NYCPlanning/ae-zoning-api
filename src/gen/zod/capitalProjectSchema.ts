@@ -1,4 +1,3 @@
-import { capitalProjectCategorySchema } from "./capitalProjectCategorySchema";
 import { z } from "zod";
 
 export const capitalProjectSchema = z.object({
@@ -20,5 +19,4 @@ export const capitalProjectSchema = z.object({
     .date()
     .describe("The starting date of the capital project"),
   maxDate: z.string().date().describe("The ending date of the capital project"),
-  category: z.lazy(() => capitalProjectCategorySchema).nullable(),
 });

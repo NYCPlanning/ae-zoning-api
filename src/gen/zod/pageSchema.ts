@@ -3,6 +3,7 @@ import { z } from "zod";
 export const pageSchema = z.object({
   limit: z.coerce
     .number()
+    .int()
     .min(1)
     .max(100)
     .describe(
@@ -10,12 +11,14 @@ export const pageSchema = z.object({
     ),
   offset: z.coerce
     .number()
+    .int()
     .min(0)
     .describe(
       "The offset used for the response. Defaults to 0 when the request does not specify one.",
     ),
   total: z.coerce
     .number()
+    .int()
     .min(0)
     .describe(
       "The number of rows returned in the response. If the total is less than the limit, the user is on the last page and no more results match the query.",

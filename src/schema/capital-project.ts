@@ -4,19 +4,12 @@ import {
   pgTable,
   text,
   date,
-  pgEnum,
   primaryKey,
 } from "drizzle-orm/pg-core";
 import { managingCode, managingCodeEntitySchema } from "./managing-code";
 import { agency, agencyEntitySchema } from "./agency";
 import { z } from "zod";
 import { multiPointGeom, multiPolygonGeom, pointGeom } from "src/drizzle-pgis";
-
-export const capitalProjectCategoryEnum = pgEnum("capital_project_category", [
-  "Fixed Asset",
-  "Lump Sum",
-  "ITT, Vehicles and Equipment",
-]);
 
 export const capitalProject = pgTable(
   "capital_project",
@@ -31,7 +24,6 @@ export const capitalProject = pgTable(
     description: text("description").notNull(),
     minDate: date("min_date").notNull(),
     maxDate: date("max_date").notNull(),
-    category: capitalProjectCategoryEnum("category"),
     liFtMPnt: multiPointGeom("li_ft_m_pnt", 2263),
     liFtMPoly: multiPolygonGeom("li_ft_m_poly", 2263),
     mercatorLabel: pointGeom("mercator_label", 3857),
@@ -60,5 +52,4 @@ export const capitalProjectEntitySchema = z.object({
   description: z.string(),
   minDate: z.string().date(),
   maxDate: z.string().date(),
-  category: capitalProjectCategoryEnumSchema.nullable(),
 });

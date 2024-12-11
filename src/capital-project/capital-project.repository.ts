@@ -66,7 +66,6 @@ export class CapitalProjectRepository {
           managingAgency: capitalProject.managingAgency,
           minDate: capitalProject.minDate,
           maxDate: capitalProject.maxDate,
-          category: capitalProject.category,
           sponsoringAgencies: sql<
             Array<string>
           >`ARRAY_AGG(DISTINCT ${agencyBudget.sponsor})`,
@@ -118,7 +117,6 @@ export class CapitalProjectRepository {
           managingAgency: capitalProject.managingAgency,
           minDate: capitalProject.minDate,
           maxDate: capitalProject.maxDate,
-          category: capitalProject.category,
           sponsoringAgencies: sql<
             Array<string>
           >`ARRAY_AGG(DISTINCT ${agencyBudget.sponsor})`,
@@ -128,10 +126,10 @@ export class CapitalProjectRepository {
           commitmentsTotal: sum(capitalCommitmentFund.value).mapWith(Number),
           geometry: sql<string | null>`
             CASE
-            WHEN 
+            WHEN
               ${capitalProject.liFtMPoly} IS NOT null
             THEN
-              ST_asGeoJSON(ST_Transform(${capitalProject.liFtMPoly}, 4326),6)	
+              ST_asGeoJSON(ST_Transform(${capitalProject.liFtMPoly}, 4326),6)
             ELSE
               ST_asGeoJSON(ST_Transform(${capitalProject.liFtMPnt}, 4326),6)
             END
@@ -182,7 +180,7 @@ export class CapitalProjectRepository {
             `managingAgency`,
           ),
           geom: sql<string>`
-            CASE 
+            CASE
               WHEN ${capitalProject.mercatorFillMPoly} && ST_TileEnvelope(${z},${x},${y})
                 THEN ST_AsMVTGeom(
                   ${capitalProject.mercatorFillMPoly},

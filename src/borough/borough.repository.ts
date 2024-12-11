@@ -115,7 +115,6 @@ export class BoroughRepository {
           managingAgency: capitalProject.managingAgency,
           maxDate: capitalProject.maxDate,
           minDate: capitalProject.minDate,
-          category: capitalProject.category,
         })
         .from(capitalProject)
         .leftJoin(
@@ -156,7 +155,7 @@ export class BoroughRepository {
             `managingAgency`,
           ),
           geom: sql<string>`
-            CASE 
+            CASE
               WHEN ${capitalProject.mercatorFillMPoly} && ST_TileEnvelope(${z},${x},${y})
                 THEN ST_AsMVTGeom(
                   ${capitalProject.mercatorFillMPoly},
@@ -179,7 +178,7 @@ export class BoroughRepository {
         .leftJoin(
           communityDistrict,
           sql`
-            ST_Intersects(${communityDistrict.mercatorFill}, ${capitalProject.mercatorFillMPoly}) 
+            ST_Intersects(${communityDistrict.mercatorFill}, ${capitalProject.mercatorFillMPoly})
             OR ST_Intersects(${communityDistrict.mercatorFill}, ${capitalProject.mercatorFillMPnt})`,
         )
         .where(

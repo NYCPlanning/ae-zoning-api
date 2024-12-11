@@ -15,9 +15,9 @@ export const findCapitalProjectTilesByBoroughIdCommunityDistrictIdPathParamsSche
       .describe(
         "The two character numeric string containing the number used to refer to the community district.",
       ),
-    z: z.coerce.number().describe("viewport zoom component"),
-    x: z.coerce.number().describe("viewport x component"),
-    y: z.coerce.number().describe("viewport y component"),
+    z: z.coerce.number().int().describe("viewport zoom component"),
+    x: z.coerce.number().int().describe("viewport x component"),
+    y: z.coerce.number().int().describe("viewport y component"),
   });
 /**
  * @description A protobuf file formatted as Mapbox Vector Tile

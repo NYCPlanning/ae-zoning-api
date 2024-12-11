@@ -4,27 +4,27 @@
       "type": "object",
       "properties": {
         "limit": {
-          "description": "The limit used for the response. Defaults to 20 when the request does not specify one.",
           "type": "integer",
-          "example": 20,
+          "description": "The limit used for the response. Defaults to 20 when the request does not specify one.",
+          "minimum": 1,
           "maximum": 100,
-          "minimum": 1
+          "example": 20
         },
         "offset": {
-          "description": "The offset used for the response. Defaults to 0 when the request does not specify one.",
           "type": "integer",
-          "example": 0,
-          "minimum": 0
+          "description": "The offset used for the response. Defaults to 0 when the request does not specify one.",
+          "minimum": 0,
+          "example": 0
         },
         "total": {
-          "description": "The number of rows returned in the response. If the total is less than the limit, the user is on the last page and no more results match the query.",
           "type": "integer",
-          "example": 10,
-          "minimum": 0
+          "description": "The number of rows returned in the response. If the total is less than the limit, the user is on the last page and no more results match the query.",
+          "minimum": 0,
+          "example": 10
         },
         "order": {
-          "description": "The criteria used to sort the results. Defaults to the primary key of the table, ascending",
           "type": "string",
+          "description": "The criteria used to sort the results. Defaults to the primary key of the table, ascending",
           "example": "bbl"
         }
       },
@@ -40,42 +40,42 @@
             "type": "object",
             "properties": {
               "bbl": {
-                "description": "The ten character code compromised of a one character borough, five character block, and four character lot codes.",
                 "type": "string",
-                "example": "1000477501",
-                "pattern": "^([0-9]{10})$"
+                "description": "The ten character code compromised of a one character borough, five character block, and four character lot codes.",
+                "pattern": "^([0-9]{10})$",
+                "example": "1000477501"
               },
               "boroughId": {
-                "description": "A single character numeric string containing the common number used to refer to the borough. Possible values are 1-5.",
                 "type": "string",
-                "example": 1,
-                "pattern": "^([0-9])$"
+                "description": "A single character numeric string containing the common number used to refer to the borough. Possible values are 1-5.",
+                "pattern": "^([0-9])$",
+                "example": 1
               },
               "block": {
-                "description": "The block code, without its padding zeros.",
                 "type": "string",
-                "example": 47,
+                "description": "The block code, without its padding zeros.",
+                "minLength": 1,
                 "maxLength": 5,
-                "minLength": 1
+                "example": 47
               },
               "lot": {
-                "description": "The lot code, without its padding zeros.",
                 "type": "string",
-                "example": 7501,
+                "description": "The lot code, without its padding zeros.",
+                "minLength": 1,
                 "maxLength": 4,
-                "minLength": 1
+                "example": 7501
               },
               "address": {
-                "description": "The street address.",
                 "type": "string",
+                "description": "The street address.",
                 "example": "120 BROADWAY"
               },
               "landUseId": {
-                "description": "The two character code to represent the land use. Possible values are 01-11.",
                 "type": "string",
-                "example": "05",
+                "description": "The two character code to represent the land use. Possible values are 01-11.",
+                "minLength": 2,
                 "maxLength": 2,
-                "minLength": 2
+                "example": "05"
               }
             },
             "required": [
