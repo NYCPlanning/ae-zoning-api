@@ -1,3 +1,3 @@
-import { Error } from "./Error";
+import type { Error } from "./Error";
 
 export type InternalServerError = Error;

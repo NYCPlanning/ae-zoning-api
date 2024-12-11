@@ -1,22 +1,22 @@
 {
-  "description": "A geojson implementation of a MultiPolygon Simple Feature",
   "type": "object",
+  "description": "A geojson implementation of a MultiPolygon Simple Feature",
   "properties": {
     "type": { "type": "string", "enum": ["MultiPolygon"] },
     "coordinates": {
-      "description": "Array of polygon coordinate arrays.",
       "type": "array",
+      "description": "Array of polygon coordinate arrays.",
       "items": {
         "type": "array",
         "items": {
           "type": "array",
           "items": {
-            "description": "The fundamental spatial construct",
             "type": "array",
+            "description": "The fundamental spatial construct",
+            "minItems": 2,
+            "maxItems": 3,
             "items": { "type": "number" },
             "example": [-74.010835, 40.708442],
-            "maxItems": 3,
-            "minItems": 2,
             "x-readme-ref-name": "Position"
           }
         }

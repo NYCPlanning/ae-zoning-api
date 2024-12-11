@@ -2,47 +2,47 @@
   "type": "object",
   "properties": {
     "id": {
-      "description": "A uuid used to refer to the capital commitment.",
       "type": "string",
+      "description": "A uuid used to refer to the capital commitment.",
       "format": "uuid"
     },
     "type": {
-      "description": "A four character string used to refer to the commitment type.",
       "type": "string",
-      "example": "DSGN",
-      "pattern": "^([A-z]{4})$"
+      "description": "A four character string used to refer to the commitment type.",
+      "pattern": "^([A-z]{4})$",
+      "example": "DSGN"
     },
     "plannedDate": {
-      "description": "A string used to refer to the date when the commitment is projected to be committed.",
       "type": "string",
       "format": "date",
+      "description": "A string used to refer to the date when the commitment is projected to be committed.",
       "example": "2012-04-23"
     },
     "budgetLineCode": {
-      "description": "A string used to refer to the budget line.",
       "type": "string",
+      "description": "A string used to refer to the budget line.",
       "example": "HW"
     },
     "budgetLineId": {
-      "description": "A string used to refer to the budget line.",
       "type": "string",
+      "description": "A string used to refer to the budget line.",
       "example": "0002Q"
     },
     "sponsoringAgency": {
-      "description": "A string of variable length containing the initials of the sponsoring agency.",
       "type": "string",
-      "example": "DOT",
-      "nullable": true
+      "nullable": true,
+      "description": "A string of variable length containing the initials of the sponsoring agency.",
+      "example": "DOT"
     },
     "budgetType": {
-      "description": "A string of variable length denoting the type of budget.",
       "type": "string",
-      "example": "Highways",
-      "nullable": true
+      "nullable": true,
+      "description": "A string of variable length denoting the type of budget.",
+      "example": "Highways"
     },
     "totalValue": {
-      "description": "A numeric string used to refer to the amount of total planned commitments.",
       "type": "number",
+      "description": "A numeric string used to refer to the amount of total planned commitments.",
       "example": 1600000
     }
   },

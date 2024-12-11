@@ -1,6 +1,6 @@
-import { MultiPoint } from "./MultiPoint";
-import { MultiPolygon } from "./MultiPolygon";
-import { CapitalProjectBudgeted } from "./CapitalProjectBudgeted";
+import type { MultiPoint } from "./MultiPoint";
+import type { MultiPolygon } from "./MultiPolygon";
+import type { CapitalProjectBudgeted } from "./CapitalProjectBudgeted";
 
 export const capitalProjectBudgetedGeoJsonType = {
   Feature: "Feature",

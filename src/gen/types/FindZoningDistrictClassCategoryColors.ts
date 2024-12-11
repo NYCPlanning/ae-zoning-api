@@ -1,5 +1,5 @@
-import type { Error } from "./Error";
 import type { ZoningDistrictClassCategoryColor } from "./ZoningDistrictClassCategoryColor";
+import type { Error } from "./Error";
 
 /**
  * @description An object containing all zoning district category colors.

@@ -1,5 +1,5 @@
-import type { Error } from "./Error";
 import type { CapitalCommitment } from "./CapitalCommitment";
+import type { Error } from "./Error";
 
 export type FindCapitalCommitmentsByManagingCodeCapitalProjectIdPathParams = {
   /**

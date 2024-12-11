@@ -12,6 +12,7 @@ import {
 import { capitalProject, communityDistrict } from "src/schema";
 import { eq, sql, and, isNotNull, asc } from "drizzle-orm";
 import {
+  CapitalProjectCategory,
   FindCapitalProjectTilesByBoroughIdCommunityDistrictIdPathParams,
   FindCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdPathParams,
 } from "src/gen";
@@ -115,7 +116,7 @@ export class BoroughRepository {
           managingAgency: capitalProject.managingAgency,
           maxDate: capitalProject.maxDate,
           minDate: capitalProject.minDate,
-          category: capitalProject.category,
+          category: sql<CapitalProjectCategory>`${capitalProject.category}`,
         })
         .from(capitalProject)
         .leftJoin(
@@ -156,7 +157,7 @@ export class BoroughRepository {
             `managingAgency`,
           ),
           geom: sql<string>`
-            CASE 
+            CASE
               WHEN ${capitalProject.mercatorFillMPoly} && ST_TileEnvelope(${z},${x},${y})
                 THEN ST_AsMVTGeom(
                   ${capitalProject.mercatorFillMPoly},
@@ -179,7 +180,7 @@ export class BoroughRepository {
         .leftJoin(
           communityDistrict,
           sql`
-            ST_Intersects(${communityDistrict.mercatorFill}, ${capitalProject.mercatorFillMPoly}) 
+            ST_Intersects(${communityDistrict.mercatorFill}, ${capitalProject.mercatorFillMPoly})
             OR ST_Intersects(${communityDistrict.mercatorFill}, ${capitalProject.mercatorFillMPnt})`,
         )
         .where(

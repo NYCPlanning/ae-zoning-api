@@ -1,5 +1,5 @@
-import { MultiPolygon } from "./MultiPolygon";
-import { TaxLot } from "./TaxLot";
+import type { MultiPolygon } from "./MultiPolygon";
+import type { TaxLot } from "./TaxLot";
 
 export const taxLotGeoJsonType = {
   Feature: "Feature",
@@ -16,6 +16,12 @@ export type TaxLotGeoJson = {
    * @type string
    */
   type: TaxLotGeoJsonType;
+  /**
+   * @type object
+   */
   geometry: MultiPolygon;
+  /**
+   * @type object
+   */
   properties: TaxLot;
 };

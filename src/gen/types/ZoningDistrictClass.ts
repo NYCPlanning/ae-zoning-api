@@ -1,4 +1,4 @@
-import { ZoningDistrictClassCategory } from "./ZoningDistrictClassCategory";
+import type { ZoningDistrictClassCategory } from "./ZoningDistrictClassCategory";
 
 export type ZoningDistrictClass = {
   /**
@@ -6,6 +6,9 @@ export type ZoningDistrictClass = {
    * @type string
    */
   id: string;
+  /**
+   * @type string
+   */
   category: ZoningDistrictClassCategory;
   /**
    * @description Zoning class descriptions.

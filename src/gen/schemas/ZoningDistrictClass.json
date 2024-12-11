@@ -2,30 +2,30 @@
   "type": "object",
   "properties": {
     "id": {
-      "description": "The code associated with the Zoning class.",
       "type": "string",
-      "example": "M1",
-      "pattern": "^[A-Z][0-9]+$"
+      "description": "The code associated with the Zoning class.",
+      "pattern": "^[A-Z][0-9]+$",
+      "example": "M1"
     },
     "category": {
-      "description": "The type of zoning district.",
       "type": "string",
       "enum": ["Residential", "Commercial", "Manufacturing"],
+      "description": "The type of zoning district.",
       "x-readme-ref-name": "ZoningDistrictClassCategory"
     },
     "description": {
-      "description": "Zoning class descriptions.",
-      "type": "string"
+      "type": "string",
+      "description": "Zoning class descriptions."
     },
     "url": {
-      "description": "Planning website page that explains the Zoning District",
-      "type": "string"
+      "type": "string",
+      "description": "Planning website page that explains the Zoning District"
     },
     "color": {
-      "description": "Zoning classes from layer groups.",
       "type": "string",
-      "example": "#f3b3ffff",
-      "pattern": "^#([A-Fa-f0-9]{8})$"
+      "description": "Zoning classes from layer groups.",
+      "pattern": "^#([A-Fa-f0-9]{8})$",
+      "example": "#f3b3ffff"
     }
   },
   "required": ["id", "category", "description", "url", "color"],

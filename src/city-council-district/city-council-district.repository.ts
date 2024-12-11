@@ -10,6 +10,7 @@ import {
   FindCapitalProjectTilesByCityCouncilDistrictIdRepo,
 } from "./city-council-district.repository.schema";
 import {
+  CapitalProjectCategory,
   FindCapitalProjectTilesByCityCouncilDistrictIdPathParams,
   FindCityCouncilDistrictGeoJsonByCityCouncilDistrictIdPathParams,
   FindCityCouncilDistrictTilesPathParams,
@@ -98,7 +99,7 @@ export class CityCouncilDistrictRepository {
             `managingAgency`,
           ),
           geom: sql<string>`
-            CASE 
+            CASE
               WHEN ${capitalProject.mercatorFillMPoly} && ST_TileEnvelope(${z},${x},${y})
                 THEN ST_AsMVTGeom(
                   ${capitalProject.mercatorFillMPoly},
@@ -121,7 +122,7 @@ export class CityCouncilDistrictRepository {
         .leftJoin(
           cityCouncilDistrict,
           sql`
-            ST_Intersects(${cityCouncilDistrict.mercatorFill}, ${capitalProject.mercatorFillMPoly}) 
+            ST_Intersects(${cityCouncilDistrict.mercatorFill}, ${capitalProject.mercatorFillMPoly})
             OR ST_Intersects(${cityCouncilDistrict.mercatorFill}, ${capitalProject.mercatorFillMPnt})`,
         )
         .where(eq(cityCouncilDistrict.id, cityCouncilDistrictId))
@@ -212,13 +213,13 @@ export class CityCouncilDistrictRepository {
           managingAgency: capitalProject.managingAgency,
           maxDate: capitalProject.maxDate,
           minDate: capitalProject.minDate,
-          category: capitalProject.category,
+          category: sql<CapitalProjectCategory>`${capitalProject.category}`,
         })
         .from(capitalProject)
         .leftJoin(
           cityCouncilDistrict,
           sql`
-            ST_Intersects(${cityCouncilDistrict.liFt}, ${capitalProject.liFtMPoly}) 
+            ST_Intersects(${cityCouncilDistrict.liFt}, ${capitalProject.liFtMPoly})
             OR ST_Intersects(${cityCouncilDistrict.liFt}, ${capitalProject.liFtMPnt})`,
         )
         .where(eq(cityCouncilDistrict.id, cityCouncilDistrictId))

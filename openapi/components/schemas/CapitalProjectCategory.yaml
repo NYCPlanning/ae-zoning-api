@@ -3,6 +3,6 @@ nullable: true
 enum:
   - Fixed Asset
   - Lump Sum
-  - ITT, Vehicles and Equipment
+  - ITT, Vehicles, and Equipment
   - null
 description: The type of Capital Project.

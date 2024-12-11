@@ -2,16 +2,16 @@
   "type": "object",
   "properties": {
     "id": {
-      "description": "The two character numeric string containing the number used to refer to the community district.",
       "type": "string",
-      "example": 1,
-      "pattern": "^([0-9]{2})$"
+      "description": "The two character numeric string containing the number used to refer to the community district.",
+      "pattern": "^([0-9]{2})$",
+      "example": 1
     },
     "boroughId": {
-      "description": "A single character numeric string containing the common number used to refer to the borough. Possible values are 1-5.",
       "type": "string",
-      "example": 1,
-      "pattern": "^([0-9])$"
+      "description": "A single character numeric string containing the common number used to refer to the borough. Possible values are 1-5.",
+      "pattern": "^([0-9])$",
+      "example": 1
     }
   },
   "required": ["id", "boroughId"],

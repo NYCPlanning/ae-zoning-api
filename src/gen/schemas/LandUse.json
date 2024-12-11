@@ -2,22 +2,22 @@
   "type": "object",
   "properties": {
     "id": {
-      "description": "The two character code to represent the land use. Possible values are 01-11.",
       "type": "string",
-      "example": "05",
+      "description": "The two character code to represent the land use. Possible values are 01-11.",
+      "minLength": 2,
       "maxLength": 2,
-      "minLength": 2
+      "example": "05"
     },
     "description": {
-      "description": "The description of the land use.",
       "type": "string",
+      "description": "The description of the land use.",
       "example": "Commercial and Office Buildings"
     },
     "color": {
-      "description": "Hex-style color code to represent the land use.",
       "type": "string",
-      "example": "#fc2929ff",
-      "pattern": "^#([A-Fa-f0-9]{8})$"
+      "description": "Hex-style color code to represent the land use.",
+      "pattern": "^#([A-Fa-f0-9]{8})$",
+      "example": "#fc2929ff"
     }
   },
   "required": ["id", "description", "color"],
