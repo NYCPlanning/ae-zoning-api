@@ -2,13 +2,14 @@ import { Inject } from "@nestjs/common";
 import { DB, DbType } from "src/global/providers/db.provider";
 import { StorageConfig } from "src/config";
 import { ConfigType } from "@nestjs/config";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { DataRetrievalException } from "src/exception";
 import {
   zoningDistrict,
   zoningDistrictClass,
   zoningDistrictZoningDistrictClass,
 } from "src/schema";
+import { ZoningDistrictClassCategory } from "src/gen";
 import {
   CheckByIdRepo,
   FindByIdRepo,
@@ -61,7 +62,7 @@ export class ZoningDistrictRepository {
       return await this.db
         .select({
           id: zoningDistrictClass.id,
-          category: zoningDistrictClass.category,
+          category: sql<ZoningDistrictClassCategory>`${zoningDistrictClass.category}`,
           description: zoningDistrictClass.description,
           url: zoningDistrictClass.url,
           color: zoningDistrictClass.color,
