@@ -1,19 +1,23 @@
-import { char, pgEnum, pgTable, text } from "drizzle-orm/pg-core";
+import { char, check, pgTable, text } from "drizzle-orm/pg-core";
 import { z } from "zod";
+import { sql } from "drizzle-orm";
 
-export const categoryEnum = pgEnum("category", [
-  "Residential",
-  "Commercial",
-  "Manufacturing",
-]);
-
-export const zoningDistrictClass = pgTable("zoning_district_class", {
-  id: text("id").primaryKey(),
-  category: categoryEnum("category"),
-  description: text("description").notNull(),
-  url: text("url"),
-  color: char("color", { length: 9 }).notNull(),
-});
+export const zoningDistrictClass = pgTable(
+  "zoning_district_class",
+  {
+    id: text("id").primaryKey(),
+    category: text("category"),
+    description: text("description").notNull(),
+    url: text("url"),
+    color: char("color", { length: 9 }).notNull(),
+  },
+  (table) => [
+    check(
+      "zoning_district_class_category_options",
+      sql`${table.category} IN ('Residential', 'Commercial', 'Manufacturing')`,
+    ),
+  ],
+);
 
 export const zoningDistrictClassCategoryEntitySchema = z.enum([
   "Residential",
