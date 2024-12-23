@@ -25,6 +25,7 @@ import {
 } from "./tax-lot.repository.schema";
 import { Geometry } from "geojson";
 import { Geom } from "src/types";
+import { ZoningDistrictClassCategory } from "src/gen";
 
 export class TaxLotRepository {
   constructor(
@@ -245,7 +246,7 @@ export class TaxLotRepository {
       return await this.db
         .select({
           id: zoningDistrictClass.id,
-          category: zoningDistrictClass.category,
+          category: sql<ZoningDistrictClassCategory>`${zoningDistrictClass.category}`,
           description: zoningDistrictClass.description,
           url: zoningDistrictClass.url,
           color: zoningDistrictClass.color,
