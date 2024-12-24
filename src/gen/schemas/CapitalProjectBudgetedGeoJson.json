@@ -2,28 +2,28 @@
   "type": "object",
   "properties": {
     "id": {
-      "description": "The concatenation of the managing code and capital project id.",
       "type": "string",
+      "description": "The concatenation of the managing code and capital project id.",
       "example": "806RAMALG"
     },
     "type": { "type": "string", "enum": ["Feature"] },
     "geometry": {
       "oneOf": [
         {
-          "description": "A geojson implementation of a MultiPoint Simple Feature",
           "type": "object",
+          "description": "A geojson implementation of a MultiPoint Simple Feature",
           "properties": {
             "type": { "type": "string", "enum": ["MultiPoint"] },
             "coordinates": {
-              "description": "Array of position coordinate arrays.",
               "type": "array",
+              "description": "Array of position coordinate arrays.",
               "items": {
-                "description": "The fundamental spatial construct",
                 "type": "array",
+                "description": "The fundamental spatial construct",
+                "minItems": 2,
+                "maxItems": 3,
                 "items": { "type": "number" },
                 "example": [-74.010835, 40.708442],
-                "maxItems": 3,
-                "minItems": 2,
                 "x-readme-ref-name": "Position"
               }
             }
@@ -32,24 +32,24 @@
           "x-readme-ref-name": "MultiPoint"
         },
         {
-          "description": "A geojson implementation of a MultiPolygon Simple Feature",
           "type": "object",
+          "description": "A geojson implementation of a MultiPolygon Simple Feature",
           "properties": {
             "type": { "type": "string", "enum": ["MultiPolygon"] },
             "coordinates": {
-              "description": "Array of polygon coordinate arrays.",
               "type": "array",
+              "description": "Array of polygon coordinate arrays.",
               "items": {
                 "type": "array",
                 "items": {
                   "type": "array",
                   "items": {
-                    "description": "The fundamental spatial construct",
                     "type": "array",
+                    "description": "The fundamental spatial construct",
+                    "minItems": 2,
+                    "maxItems": 3,
                     "items": { "type": "number" },
                     "example": [-74.010835, 40.708442],
-                    "maxItems": 3,
-                    "minItems": 2,
                     "x-readme-ref-name": "Position"
                   }
                 }
@@ -67,41 +67,40 @@
           "type": "object",
           "properties": {
             "id": {
-              "description": "The id for the project, which combines with the managing code to make a unique id",
               "type": "string",
+              "description": "The id for the project, which combines with the managing code to make a unique id",
               "example": "HWPEDSF5"
             },
             "description": {
-              "description": "The capital project title.",
               "type": "string",
+              "description": "The capital project title.",
               "example": "Multi-Site Pedestrian Safety Phase 5"
             },
             "managingCode": {
-              "description": "Three character string of numbers representing managing agency",
               "type": "string",
-              "example": 850,
-              "pattern": "^([0-9]{3})$"
+              "description": "Three character string of numbers representing managing agency",
+              "pattern": "^([0-9]{3})$",
+              "example": 850
             },
             "managingAgency": {
-              "description": "The managing agency name abbreviation or acronym",
               "type": "string",
+              "description": "The managing agency name abbreviation or acronym",
               "example": "DOT"
             },
             "minDate": {
-              "description": "The starting date of the capital project",
               "type": "string",
               "format": "date",
+              "description": "The starting date of the capital project",
               "example": "2024-05-15"
             },
             "maxDate": {
-              "description": "The ending date of the capital project",
               "type": "string",
               "format": "date",
+              "description": "The ending date of the capital project",
               "example": "2024-05-15"
             },
             "category": {
               "nullable": true,
-              "description": "The type of Capital Project.",
               "type": "string",
               "enum": [
                 "Fixed Asset",
@@ -109,6 +108,7 @@
                 "ITT, Vehicles and Equipment",
                 null
               ],
+              "description": "The type of Capital Project.",
               "x-readme-ref-name": "CapitalProjectCategory"
             }
           },
@@ -127,20 +127,20 @@
           "type": "object",
           "properties": {
             "commitmentsTotal": {
-              "description": "The sum total of commitments for the capital project",
               "type": "number",
+              "description": "The sum total of commitments for the capital project",
               "example": 200000
             },
             "sponsoringAgencies": {
-              "description": "An array containing string values representing the sponsoring agencies initials.",
               "type": "array",
               "items": { "type": "string" },
+              "description": "An array containing string values representing the sponsoring agencies initials.",
               "example": ["DOT"]
             },
             "budgetTypes": {
-              "description": "An array containing string values representing the budget types.",
               "type": "array",
               "items": { "type": "string" },
+              "description": "An array containing string values representing the budget types.",
               "example": ["Highways", "Highway Bridges"]
             }
           },

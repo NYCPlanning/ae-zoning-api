@@ -1,5 +1,5 @@
-import type { Error } from "./Error";
 import type { Agency } from "./Agency";
+import type { Error } from "./Error";
 
 /**
  * @description An object containing all agencies.

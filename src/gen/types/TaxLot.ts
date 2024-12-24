@@ -1,5 +1,5 @@
-import { Borough } from "./Borough";
-import { LandUse } from "./LandUse";
+import type { Borough } from "./Borough";
+import type { LandUse } from "./LandUse";
 
 export type TaxLot = {
   /**
@@ -7,6 +7,9 @@ export type TaxLot = {
    * @type string
    */
   bbl: string;
+  /**
+   * @type object
+   */
   borough: Borough;
   /**
    * @description The block code, without its padding zeros.
@@ -23,5 +26,8 @@ export type TaxLot = {
    * @type string
    */
   address: string;
+  /**
+   * @type object
+   */
   landUse: LandUse;
 };

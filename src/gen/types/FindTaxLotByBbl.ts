@@ -1,5 +1,5 @@
-import type { Error } from "./Error";
 import type { TaxLot } from "./TaxLot";
+import type { Error } from "./Error";
 
 export type FindTaxLotByBblPathParams = {
   /**

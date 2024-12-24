@@ -2,44 +2,44 @@
   "type": "object",
   "properties": {
     "id": {
-      "description": "One or two character code to represent city council districts.",
       "type": "string",
-      "example": 25,
-      "pattern": "^([0-9]{1,2})$"
+      "description": "One or two character code to represent city council districts.",
+      "pattern": "^([0-9]{1,2})$",
+      "example": 25
     },
     "type": { "type": "string", "enum": ["Feature"] },
     "properties": {
       "type": "object",
       "properties": {
         "id": {
-          "description": "One or two character code to represent city council districts.",
           "type": "string",
-          "example": "25",
-          "pattern": "^([0-9]{1,2})$"
+          "description": "One or two character code to represent city council districts.",
+          "pattern": "^([0-9]{1,2})$",
+          "example": "25"
         }
       },
       "required": ["id"],
       "x-readme-ref-name": "CityCouncilDistrict"
     },
     "geometry": {
-      "description": "A geojson implementation of a MultiPolygon Simple Feature",
       "type": "object",
+      "description": "A geojson implementation of a MultiPolygon Simple Feature",
       "properties": {
         "type": { "type": "string", "enum": ["MultiPolygon"] },
         "coordinates": {
-          "description": "Array of polygon coordinate arrays.",
           "type": "array",
+          "description": "Array of polygon coordinate arrays.",
           "items": {
             "type": "array",
             "items": {
               "type": "array",
               "items": {
-                "description": "The fundamental spatial construct",
                 "type": "array",
+                "description": "The fundamental spatial construct",
+                "minItems": 2,
+                "maxItems": 3,
                 "items": { "type": "number" },
                 "example": [-74.010835, 40.708442],
-                "maxItems": 3,
-                "minItems": 2,
                 "x-readme-ref-name": "Position"
               }
             }

@@ -1,4 +1,4 @@
-import { CapitalProject } from "./CapitalProject";
+import type { CapitalProject } from "./CapitalProject";
 
 export type CapitalProjectBudgeted = CapitalProject & {
   /**

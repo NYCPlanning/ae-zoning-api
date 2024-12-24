@@ -1,5 +1,5 @@
-import { Page } from "./Page";
-import { CapitalProject } from "./CapitalProject";
+import type { Page } from "./Page";
+import type { CapitalProject } from "./CapitalProject";
 
 export type CapitalProjectPage = Page & {
   /**

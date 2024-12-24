@@ -2,13 +2,13 @@
   "type": "object",
   "properties": {
     "initials": {
-      "description": "A string of variable length containing the initials of the agency.",
       "type": "string",
+      "description": "A string of variable length containing the initials of the agency.",
       "example": "DOT"
     },
     "name": {
-      "description": "The full name of the agency.",
       "type": "string",
+      "description": "The full name of the agency.",
       "example": "Department of Transportation"
     }
   },

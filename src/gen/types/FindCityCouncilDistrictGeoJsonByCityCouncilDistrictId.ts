@@ -1,5 +1,5 @@
-import type { Error } from "./Error";
 import type { CityCouncilDistrictGeoJson } from "./CityCouncilDistrictGeoJson";
+import type { Error } from "./Error";
 
 export type FindCityCouncilDistrictGeoJsonByCityCouncilDistrictIdPathParams = {
   /**

@@ -1,5 +1,5 @@
-import type { Error } from "./Error";
 import type { CityCouncilDistrict } from "./CityCouncilDistrict";
+import type { Error } from "./Error";
 
 /**
  * @description an object of city council districts
