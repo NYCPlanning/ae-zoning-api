@@ -18,20 +18,15 @@ export class ZoningDistrictClassRepository {
 
   async findMany(): Promise<FindManyRepo> {
     try {
-      const result = await this.db.query.zoningDistrictClass.findMany({
-        columns: {
-          id: true,
-          description: true,
-          category: true,
-          color: true,
-          url: true,
-        },
-      });
-
-      return result.map((zoningDistrictClass: any) => ({
-        ...zoningDistrictClass,
-        category: zoningDistrictClass.category as ZoningDistrictClassCategory,
-      }));
+      return await this.db
+        .select({
+          id: zoningDistrictClass.id,
+          description: zoningDistrictClass.description,
+          category: sql<ZoningDistrictClassCategory>`${zoningDistrictClass.category}`,
+          color: zoningDistrictClass.color,
+          url: zoningDistrictClass.url,
+        })
+        .from(zoningDistrictClass);
     } catch {
       throw new DataRetrievalException();
     }
@@ -39,23 +34,17 @@ export class ZoningDistrictClassRepository {
 
   async findById(id: string): Promise<FindByIdRepo | undefined> {
     try {
-      const result = await this.db.query.zoningDistrictClass.findFirst({
-        where: eq(zoningDistrictClass.id, id),
-      });
-
-      if (!result) {
-        return undefined;
-      }
-
-      const typedResult: FindByIdRepo = {
-        id: result.id,
-        description: result.description,
-        category: result.category as ZoningDistrictClassCategory,
-        color: result.color,
-        url: result.url,
-      };
-
-      return typedResult;
+      return await this.db
+        .select({
+          id: zoningDistrictClass.id,
+          category: sql<ZoningDistrictClassCategory>`${zoningDistrictClass.category}`,
+          description: zoningDistrictClass.description,
+          color: zoningDistrictClass.color,
+          url: zoningDistrictClass.url,
+        })
+        .from(zoningDistrictClass)
+        .where(eq(zoningDistrictClass.id, id))
+        .limit(1);
     } catch {
       throw new DataRetrievalException();
     }
