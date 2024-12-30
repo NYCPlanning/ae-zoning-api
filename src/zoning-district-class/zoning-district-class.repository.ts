@@ -34,7 +34,7 @@ export class ZoningDistrictClassRepository {
 
   async findById(id: string): Promise<FindByIdRepo | undefined> {
     try {
-      return await this.db
+      const result = await this.db
         .select({
           id: zoningDistrictClass.id,
           category: sql<ZoningDistrictClassCategory>`${zoningDistrictClass.category}`,
@@ -45,6 +45,7 @@ export class ZoningDistrictClassRepository {
         .from(zoningDistrictClass)
         .where(eq(zoningDistrictClass.id, id))
         .limit(1);
+      return result.length > 0 ? result[0] : undefined;
     } catch {
       throw new DataRetrievalException();
     }
