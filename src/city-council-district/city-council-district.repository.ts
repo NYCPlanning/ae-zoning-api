@@ -206,8 +206,6 @@ export class CityCouncilDistrictRepository {
     managingAgency: string;
     cityCouncilDistrictId: string;
   }): Promise<FindCapitalProjectsByCityCouncilDistrictIdRepo> {
-    console.log("lsdkfjskl");
-    console.log(managingAgency);
     try {
       return await this.db
         .select({
@@ -229,11 +227,9 @@ export class CityCouncilDistrictRepository {
         .where(
           and(
             eq(cityCouncilDistrict.id, cityCouncilDistrictId),
-            // eq(capitalProject.managingAgency, managingAgency),
             managingAgency
               ? eq(capitalProject.managingAgency, managingAgency)
               : undefined,
-            // eq(capitalProject.managingAgency, sql.placeholder("managingAgency")),
           ),
         )
 

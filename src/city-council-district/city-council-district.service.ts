@@ -85,8 +85,6 @@ export class CityCouncilDistrictService {
 
     if (cityCouncilDistrictCheck === undefined)
       throw new ResourceNotFoundException();
-    console.log("managing agency in service", managingAgency);
-    console.log("limit", limit);
     const capitalProjects =
       await this.cityCouncilDistrictRepository.findCapitalProjectsById({
         limit,
