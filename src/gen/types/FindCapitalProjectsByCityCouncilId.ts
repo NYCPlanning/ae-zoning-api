@@ -19,6 +19,11 @@ export type FindCapitalProjectsByCityCouncilIdQueryParams = {
    * @type integer | undefined
    */
   offset?: number;
+  /**
+   * @description The acronym of the managing agency to filter the projects by.
+   * @type string | undefined
+   */
+  managingAgency?: string;
 };
 /**
  * @description An object containing pagination metadata and an array of capital projects for the city council district

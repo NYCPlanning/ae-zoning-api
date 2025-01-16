@@ -101,6 +101,7 @@ export class CityCouncilDistrictController {
     @Param() pathParams: FindCapitalProjectsByCityCouncilIdPathParams,
     @Query() queryParams: FindCapitalProjectsByCityCouncilIdQueryParams,
   ) {
+    console.log("queryParams", queryParams);
     return await this.cityCouncilDistrictService.findCapitalProjectsById({
       ...pathParams,
       ...queryParams,
