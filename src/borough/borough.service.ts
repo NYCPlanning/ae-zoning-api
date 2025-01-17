@@ -71,6 +71,7 @@ export class BoroughService {
     communityDistrictId,
     limit = 20,
     offset = 0,
+    managingAgency = "",
   }: FindCapitalProjectsByBoroughIdCommunityDistrictIdPathParams &
     FindCapitalProjectsByBoroughIdCommunityDistrictIdQueryParams) {
     const boroughCheck =
@@ -91,6 +92,7 @@ export class BoroughService {
           communityDistrictId,
           limit,
           offset,
+          managingAgency,
         },
       );
 

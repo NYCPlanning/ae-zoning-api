@@ -101,11 +101,13 @@ export class BoroughRepository {
     communityDistrictId,
     limit,
     offset,
+    managingAgency,
   }: {
     boroughId: string;
     communityDistrictId: string;
     limit: number;
     offset: number;
+    managingAgency: string;
   }): Promise<FindCapitalProjectsByBoroughIdCommunityDistrictIdRepo> {
     try {
       return await this.db
@@ -129,6 +131,9 @@ export class BoroughRepository {
           and(
             eq(communityDistrict.boroughId, boroughId),
             eq(communityDistrict.id, communityDistrictId),
+            managingAgency
+              ? eq(capitalProject.managingAgency, managingAgency)
+              : undefined,
           ),
         )
         .limit(limit)
