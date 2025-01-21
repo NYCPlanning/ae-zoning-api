@@ -142,5 +142,29 @@ describe("City Council District service unit", () => {
       expect(parsedResource.total).toBe(parsedResource.capitalProjects.length);
       expect(parsedResource.order).toBe("managingCode, capitalProjectId");
     });
+
+    it.only("service should return a list of capital projects by city council district id, using the user specified managing agency", async () => {
+      const { id } =
+        cityCouncilDistrictRepositoryMock.checkCityCouncilDistrictByIdMocks[0];
+      const resource = await cityCouncilDistrictService.findCapitalProjectsById(
+        {
+          cityCouncilDistrictId: id,
+          managingAgency: "acerbitas",
+        },
+      );
+
+      expect(() =>
+        findCapitalProjectsByCityCouncilIdQueryResponseSchema.parse(resource),
+      ).not.toThrow();
+      const parsedResource =
+        findCapitalProjectsByCityCouncilIdQueryResponseSchema.parse(resource);
+      expect(parsedResource.limit).toBe(20);
+      expect(parsedResource.offset).toBe(0);
+      expect(parsedResource.capitalProjects[0].managingAgency).toBe(
+        "acerbitas",
+      );
+      expect(parsedResource.total).toBe(parsedResource.capitalProjects.length);
+      expect(parsedResource.order).toBe("managingCode, capitalProjectId");
+    });
   });
 });

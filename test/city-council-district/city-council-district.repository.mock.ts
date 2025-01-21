@@ -95,10 +95,12 @@ export class CityCouncilDistrictRepositoryMock {
   async findCapitalProjectsById({
     limit,
     offset,
+    managingAgency,
     cityCouncilDistrictId,
   }: {
     limit: number;
     offset: number;
+    managingAgency: string;
     cityCouncilDistrictId: string;
   }) {
     const results = this.findCapitalProjectsByIdMocks.find((ccdIdToCps) => {
@@ -108,6 +110,12 @@ export class CityCouncilDistrictRepositoryMock {
     const capitalProjects =
       results === undefined ? [] : results[cityCouncilDistrictId];
 
-    return capitalProjects.slice(offset, limit + offset);
+    const filteredCapitalProjects = managingAgency
+      ? capitalProjects.filter(
+          (project) => project.managingAgency === managingAgency,
+        )
+      : capitalProjects;
+
+    return filteredCapitalProjects.slice(offset, limit + offset);
   }
 }
