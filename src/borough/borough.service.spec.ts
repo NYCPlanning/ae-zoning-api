@@ -155,6 +155,31 @@ describe("Borough service unit", () => {
       expect(parsedBody.total).toBe(parsedBody.capitalProjects.length);
       expect(parsedBody.order).toBe("managingCode, capitalProjectId");
     });
+
+    it("service should return a list of capital projects by community district id, using the user specified managing agency", async () => {
+      const capitalProjects =
+        await boroughService.findCapitalProjectsByBoroughIdCommunityDistrictId({
+          boroughId,
+          communityDistrictId,
+          managingAgency: "combibo",
+        });
+
+      expect(() =>
+        findCapitalProjectsByBoroughIdCommunityDistrictIdQueryResponseSchema.parse(
+          capitalProjects,
+        ),
+      ).not.toThrow();
+
+      const parsedBody =
+        findCapitalProjectsByBoroughIdCommunityDistrictIdQueryResponseSchema.parse(
+          capitalProjects,
+        );
+      expect(parsedBody.limit).toBe(20);
+      expect(parsedBody.offset).toBe(0);
+      expect(parsedBody.capitalProjects[0].managingAgency).toBe("combibo");
+      expect(parsedBody.total).toBe(parsedBody.capitalProjects.length);
+      expect(parsedBody.order).toBe("managingCode, capitalProjectId");
+    });
   });
 
   describe("findCapitalProjectTilesByBoroughIdCommunityDistrictId", () => {

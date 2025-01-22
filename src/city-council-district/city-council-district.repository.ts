@@ -16,7 +16,7 @@ import {
   FindCityCouncilDistrictTilesPathParams,
 } from "src/gen";
 import { capitalProject, cityCouncilDistrict } from "src/schema";
-import { eq, sql, isNotNull } from "drizzle-orm";
+import { eq, sql, isNotNull, and } from "drizzle-orm";
 export class CityCouncilDistrictRepository {
   constructor(
     @Inject(DB)
@@ -198,10 +198,12 @@ export class CityCouncilDistrictRepository {
   async findCapitalProjectsById({
     limit,
     offset,
+    managingAgency,
     cityCouncilDistrictId,
   }: {
     limit: number;
     offset: number;
+    managingAgency: string;
     cityCouncilDistrictId: string;
   }): Promise<FindCapitalProjectsByCityCouncilDistrictIdRepo> {
     try {
@@ -222,7 +224,15 @@ export class CityCouncilDistrictRepository {
             ST_Intersects(${cityCouncilDistrict.liFt}, ${capitalProject.liFtMPoly})
             OR ST_Intersects(${cityCouncilDistrict.liFt}, ${capitalProject.liFtMPnt})`,
         )
-        .where(eq(cityCouncilDistrict.id, cityCouncilDistrictId))
+        .where(
+          and(
+            eq(cityCouncilDistrict.id, cityCouncilDistrictId),
+            managingAgency
+              ? eq(capitalProject.managingAgency, managingAgency)
+              : undefined,
+          ),
+        )
+
         .limit(limit)
         .offset(offset)
         .orderBy(capitalProject.managingCode, capitalProject.id);

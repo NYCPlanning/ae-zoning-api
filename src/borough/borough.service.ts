@@ -5,6 +5,7 @@ import { ResourceNotFoundException } from "src/exception";
 import {
   FindCapitalProjectsByBoroughIdCommunityDistrictIdPathParams,
   FindCapitalProjectsByBoroughIdCommunityDistrictIdQueryParams,
+  FindCapitalProjectsByBoroughIdCommunityDistrictIdQueryResponse,
   FindCapitalProjectTilesByBoroughIdCommunityDistrictIdPathParams,
 } from "src/gen";
 import { produce } from "immer";
@@ -71,8 +72,9 @@ export class BoroughService {
     communityDistrictId,
     limit = 20,
     offset = 0,
+    managingAgency = "",
   }: FindCapitalProjectsByBoroughIdCommunityDistrictIdPathParams &
-    FindCapitalProjectsByBoroughIdCommunityDistrictIdQueryParams) {
+    FindCapitalProjectsByBoroughIdCommunityDistrictIdQueryParams): Promise<FindCapitalProjectsByBoroughIdCommunityDistrictIdQueryResponse> {
     const boroughCheck =
       await this.boroughRepository.checkBoroughById(boroughId);
     if (boroughCheck === undefined) throw new ResourceNotFoundException();
@@ -91,6 +93,7 @@ export class BoroughService {
           communityDistrictId,
           limit,
           offset,
+          managingAgency,
         },
       );
 

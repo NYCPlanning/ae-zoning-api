@@ -7,6 +7,7 @@ get:
     - $ref: ../components/parameters/cityCouncilDistrictIdParam.yaml
     - $ref: ../components/parameters/limitParam.yaml
     - $ref: ../components/parameters/offsetParam.yaml
+    - $ref: ../components/parameters/managingAgencyParam.yaml
   responses:
     '200':
       description: >-

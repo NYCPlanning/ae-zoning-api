@@ -28,6 +28,10 @@ export const findCapitalProjectsByCityCouncilIdQueryParamsSchema = z
         "The position in the full list to begin returning results. Default offset is 0. If the offset is beyond the end of the list, no results will be returned.",
       )
       .optional(),
+    managingAgency: z.coerce
+      .string()
+      .describe("The acronym of the managing agency to filter the projects by.")
+      .optional(),
   })
   .optional();
 /**

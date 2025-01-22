@@ -74,6 +74,7 @@ export class CityCouncilDistrictService {
   async findCapitalProjectsById({
     limit = 20,
     offset = 0,
+    managingAgency = "",
     cityCouncilDistrictId,
   }: FindCapitalProjectsByCityCouncilIdPathParams &
     FindCapitalProjectsByCityCouncilIdQueryParams): Promise<FindCapitalProjectsByCityCouncilIdQueryResponse> {
@@ -84,11 +85,11 @@ export class CityCouncilDistrictService {
 
     if (cityCouncilDistrictCheck === undefined)
       throw new ResourceNotFoundException();
-
     const capitalProjects =
       await this.cityCouncilDistrictRepository.findCapitalProjectsById({
         limit,
         offset,
+        managingAgency,
         cityCouncilDistrictId,
       });
 
