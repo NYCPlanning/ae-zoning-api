@@ -161,7 +161,7 @@ describe("Borough service unit", () => {
         await boroughService.findCapitalProjectsByBoroughIdCommunityDistrictId({
           boroughId,
           communityDistrictId,
-          managingAgency: "super",
+          managingAgency: "combibo",
         });
 
       expect(() =>
@@ -174,10 +174,9 @@ describe("Borough service unit", () => {
         findCapitalProjectsByBoroughIdCommunityDistrictIdQueryResponseSchema.parse(
           capitalProjects,
         );
-      console.log("parsed body", parsedBody);
       expect(parsedBody.limit).toBe(20);
       expect(parsedBody.offset).toBe(0);
-      expect(parsedBody.capitalProjects[0].managingAgency).toBe("super");
+      expect(parsedBody.capitalProjects[0].managingAgency).toBe("combibo");
       expect(parsedBody.total).toBe(parsedBody.capitalProjects.length);
       expect(parsedBody.order).toBe("managingCode, capitalProjectId");
     });
