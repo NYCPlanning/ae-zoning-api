@@ -55,6 +55,12 @@ export class BoroughRepositoryMock {
         return {
           [checkCommunityDistrict.id]: generateMock(
             findCapitalProjectsByBoroughIdCommunityDistrictIdRepoSchema,
+            {
+              stringMap: {
+                minDate: () => "2018-01-01",
+                maxDate: () => "2045-12-31",
+              },
+            },
           ),
         };
       },
@@ -76,14 +82,31 @@ export class BoroughRepositoryMock {
     );
   }
 
-  async findCapitalProjectsByBoroughIdCommunityDistrictId(
-    communityDistrictId: string,
-  ) {
+  async findCapitalProjectsByBoroughIdCommunityDistrictId({
+    limit,
+    offset,
+    managingAgency,
+    communityDistrictId,
+  }: {
+    limit: number;
+    offset: number;
+    managingAgency: string;
+    communityDistrictId: string;
+  }) {
     const results =
       this.findCapitalProjectsByBoroughIdCommunityDistrictIdMocks.find(
         (capitalProjects) => communityDistrictId in capitalProjects,
       );
-    return results == undefined ? [] : results[communityDistrictId];
+
+    const capitalProjects =
+      results == undefined ? [] : results[communityDistrictId];
+    const filteredCapitalProjects = managingAgency
+      ? capitalProjects.filter(
+          (project) => project.managingAgency === managingAgency,
+        )
+      : capitalProjects;
+
+    return filteredCapitalProjects.slice(offset, limit + offset);
   }
 
   findCapitalProjectTilesByBoroughIdCommunityDistrictIdMock = generateMock(

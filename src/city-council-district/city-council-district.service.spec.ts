@@ -143,7 +143,7 @@ describe("City Council District service unit", () => {
       expect(parsedResource.order).toBe("managingCode, capitalProjectId");
     });
 
-    it.only("service should return a list of capital projects by city council district id, using the user specified managing agency", async () => {
+    it("service should return a list of capital projects by city council district id, using the user specified managing agency", async () => {
       const { id } =
         cityCouncilDistrictRepositoryMock.checkCityCouncilDistrictByIdMocks[0];
       const resource = await cityCouncilDistrictService.findCapitalProjectsById(
