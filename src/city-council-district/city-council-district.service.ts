@@ -74,6 +74,7 @@ export class CityCouncilDistrictService {
   async findCapitalProjectsById({
     limit = 20,
     offset = 0,
+    projectTypeId = "",
     cityCouncilDistrictId,
   }: FindCapitalProjectsByCityCouncilIdPathParams &
     FindCapitalProjectsByCityCouncilIdQueryParams): Promise<FindCapitalProjectsByCityCouncilIdQueryResponse> {
@@ -89,6 +90,7 @@ export class CityCouncilDistrictService {
       await this.cityCouncilDistrictRepository.findCapitalProjectsById({
         limit,
         offset,
+        projectTypeId,
         cityCouncilDistrictId,
       });
 

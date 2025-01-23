@@ -19,6 +19,11 @@ export type FindCapitalProjectsByCityCouncilIdQueryParams = {
    * @type integer | undefined
    */
   offset?: number;
+  /**
+   * @description The id for the project, which combines with the managing code to make a unique id
+   * @type string | undefined
+   */
+  projectTypeId?: string;
 };
 /**
  * @description An object containing pagination metadata and an array of capital projects for the city council district

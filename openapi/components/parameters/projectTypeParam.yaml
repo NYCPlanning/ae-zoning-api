@@ -1,0 +1,9 @@
+name: projectTypeId
+required: false
+in: query
+schema:
+  type: string
+  example: AG
+description: >-
+  The id for the project, which combines with the managing code to make a unique
+  id
