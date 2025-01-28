@@ -9,6 +9,8 @@ security: []
 tags:
   - name: Agencies
     description: An endpoint that returns or is otherwise related to NYC agencies
+  - name: Agency Budgets
+    description: An endpoint that returns or is otherwise related to Budgets for City Agencies
   - name: Boroughs
     description: An endpoint that returns or is otherwise related to NYC boroughs
   - name: Capital Commitment Types
@@ -38,6 +40,8 @@ tags:
 paths:
   /agencies:
     $ref: paths/agencies.yaml
+  /agencyBugdets:
+    $ref: paths/agency-budgets.yaml
   /boroughs:
     $ref: paths/boroughs.yaml
   /boroughs/{boroughId}/community-districts:

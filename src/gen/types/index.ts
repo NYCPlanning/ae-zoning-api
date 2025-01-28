@@ -1,4 +1,5 @@
 export * from "./Agency";
+export * from "./AgencyBudget";
 export * from "./BadRequest";
 export * from "./Borough";
 export * from "./CapitalCommitment";
@@ -14,6 +15,7 @@ export * from "./CommunityDistrict";
 export * from "./CommunityDistrictGeoJson";
 export * from "./Error";
 export * from "./FindAgencies";
+export * from "./FindAgencyBudgets";
 export * from "./FindBoroughs";
 export * from "./FindCapitalCommitmentTypes";
 export * from "./FindCapitalCommitmentsByManagingCodeCapitalProjectId";
