@@ -1,0 +1,29 @@
+get:
+  summary: Find agency budgets
+  operationId: findAgencyBudgets
+  tags:
+    - AgencyBudgets
+  responses:
+    '200':
+      description: An object containing all agency budgets.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              agencyBudgets:
+                type: array
+                items:
+                  $ref: ../components/schemas/AgencyBudget.yaml
+              order:
+                type: string
+                description:
+                  Agency Budgets are sorted alphabetically by their codes
+                example: code
+            required:
+              - agencyBudgets
+              - order
+    '400':
+      $ref: ../components/responses/BadRequest.yaml
+    '500':
+      $ref: ../components/responses/InternalServerError.yaml
