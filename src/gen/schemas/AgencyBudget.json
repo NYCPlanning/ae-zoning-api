@@ -1,0 +1,22 @@
+{
+  "type": "object",
+  "properties": {
+    "code": {
+      "type": "string",
+      "description": "A string of variable length containing the abbreviation of the agency budget",
+      "example": "WP"
+    },
+    "type": {
+      "type": "string",
+      "description": "The title of the budget.",
+      "example": "Water Pollution Control"
+    },
+    "sponsor": {
+      "type": "string",
+      "description": "The initials of the sponsoring agency",
+      "example": "DEP"
+    }
+  },
+  "required": ["code", "type", "sponsor"],
+  "x-readme-ref-name": "AgencyBudget"
+}

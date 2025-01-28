@@ -4,6 +4,11 @@ import {
   findAgencies500Schema,
 } from "./findAgenciesSchema";
 import {
+  findAgencyBudgetsQueryResponseSchema,
+  findAgencyBudgets400Schema,
+  findAgencyBudgets500Schema,
+} from "./findAgencyBudgetsSchema";
+import {
   findBoroughsQueryResponseSchema,
   findBoroughs400Schema,
   findBoroughs500Schema,
@@ -194,6 +199,24 @@ export const operations = {
     errors: {
       400: findAgencies400Schema,
       500: findAgencies500Schema,
+    },
+  },
+  findAgencyBudgets: {
+    request: undefined,
+    parameters: {
+      path: undefined,
+      query: undefined,
+      header: undefined,
+    },
+    responses: {
+      200: findAgencyBudgetsQueryResponseSchema,
+      400: findAgencyBudgets400Schema,
+      500: findAgencyBudgets500Schema,
+      default: findAgencyBudgetsQueryResponseSchema,
+    },
+    errors: {
+      400: findAgencyBudgets400Schema,
+      500: findAgencyBudgets500Schema,
     },
   },
   findBoroughs: {
@@ -725,6 +748,9 @@ export const operations = {
 export const paths = {
   "/agencies": {
     get: operations["findAgencies"],
+  },
+  "/agencyBugdets": {
+    get: operations["findAgencyBudgets"],
   },
   "/boroughs": {
     get: operations["findBoroughs"],
