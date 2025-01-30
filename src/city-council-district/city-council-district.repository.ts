@@ -149,7 +149,7 @@ export class CityCouncilDistrictRepository {
         .select({
           id: cityCouncilDistrict.id,
           geomFill: sql`ST_AsMVTGeom(
-    		  ${cityCouncilDistrict.mercatorFill},
+    		  ST_MakeValid(ST_Simplify(${cityCouncilDistrict.mercatorFill}, 40)),
     		  ST_TileEnvelope(${z}, ${x}, ${y}),
     		  4096, 64, true)`.as("geomFill"),
         })
