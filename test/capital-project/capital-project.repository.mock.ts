@@ -8,6 +8,7 @@ import {
   FindGeoJsonByManagingCodeCapitalProjectIdRepo,
   findGeoJsonByManagingCodeCapitalProjectIdRepoSchema,
   findTilesRepoSchema,
+  findCapitalProjectsRepoSchema,
 } from "src/capital-project/capital-project.repository.schema";
 import {
   FindCapitalCommitmentsByManagingCodeCapitalProjectIdPathParams,
@@ -16,6 +17,21 @@ import {
 } from "src/gen";
 
 export class CapitalProjectRepositoryMock {
+  findCapitalProjectsMocks = Array.from(
+    Array(4),
+    (_) =>
+      generateMock(findCapitalProjectsRepoSchema, {
+        stringMap: {
+          minDate: () => "2018-01-01",
+          maxDate: () => "2045-12-31",
+        },
+      })[0],
+  );
+
+  async findMany() {
+    return this.findCapitalProjectsMocks;
+  }
+
   checkByManagingCodeCapitalProjectIdMocks = Array.from(Array(5), (_, seed) =>
     generateMock(checkByManagingCodeCapitalProjectIdRepoSchema, {
       seed: seed + 1,

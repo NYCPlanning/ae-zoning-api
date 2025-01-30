@@ -13,6 +13,7 @@ import {
   findCapitalCommitmentsByManagingCodeCapitalProjectIdQueryResponseSchema,
   findCapitalProjectByManagingCodeCapitalProjectIdQueryResponseSchema,
   findCapitalProjectGeoJsonByManagingCodeCapitalProjectIdQueryResponseSchema,
+  findCapitalProjectsQueryResponseSchema,
 } from "src/gen";
 
 describe("Capital Projects", () => {
@@ -33,6 +34,90 @@ describe("Capital Projects", () => {
 
   afterAll(async () => {
     await app.close();
+  });
+
+  describe("findMany", () => {
+    it("should 200 and return paginated capital projects", async () => {
+      const response = await request(app.getHttpServer())
+        .get("/capital-projects")
+        .expect(200);
+      expect(() =>
+        findCapitalProjectsQueryResponseSchema.parse(response.body),
+      ).not.toThrow();
+    });
+
+    it("should 200 and return capital projects with page metadata when specifying offset and limit", async () => {
+      const limit = 5;
+      const offset = 2;
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects?limit=${limit}&offset=${offset}`,
+      );
+
+      expect(() =>
+        findCapitalProjectsQueryResponseSchema.parse(response.body),
+      ).not.toThrow();
+      const parsedBody = findCapitalProjectsQueryResponseSchema.parse(
+        response.body,
+      );
+      expect(parsedBody.limit).toBe(limit);
+      expect(parsedBody.offset).toBe(offset);
+    });
+
+    it("should 400 when finding by an invalid limit", async () => {
+      const response = await request(app.getHttpServer()).get(
+        "/capital-projects?limit=b4d",
+      );
+      expect(response.body.message).toBe(
+        new InvalidRequestParameterException().message,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 when finding by a 'too-high' limit", async () => {
+      const response = await request(app.getHttpServer()).get(
+        "/capital-projects?limit=101",
+      );
+      expect(response.body.message).toBe(
+        new InvalidRequestParameterException().message,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 when finding by a 'too-low' limit", async () => {
+      const response = await request(app.getHttpServer()).get(
+        "/capital-projects?limit=0",
+      );
+      expect(response.body.message).toBe(
+        new InvalidRequestParameterException().message,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 when finding by invalid offset", async () => {
+      const response = await request(app.getHttpServer()).get(
+        "/capital-projects?offset=b4d",
+      );
+      expect(response.body.message).toBe(
+        new InvalidRequestParameterException().message,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 500 when there is a data retrieval error", async () => {
+      const dataRetrievalException = new DataRetrievalException();
+      jest
+        .spyOn(capitalProjectRepository, "findMany")
+        .mockImplementationOnce(() => {
+          throw dataRetrievalException;
+        });
+
+      const response = await request(app.getHttpServer())
+        .get("/capital-projects")
+        .expect(500);
+
+      expect(response.body.message).toBe(dataRetrievalException.message);
+      expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);
+    });
   });
 
   describe("findByManagingCodeCapitalProjectId", () => {

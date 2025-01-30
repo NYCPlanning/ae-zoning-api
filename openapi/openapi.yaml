@@ -57,6 +57,8 @@ paths:
       paths/boroughs_{boroughId}_community-districts_{communityDistrictId}_capital-projects_{z}_{x}_{y}.pbf.yaml
   /capital-commitment-types:
     $ref: paths/capital-commitment-types.yaml
+  /capital-projects:
+    $ref: paths/capital-projects.yaml
   /capital-projects/{managingCode}/{capitalProjectId}/capital-commitments:
     $ref: >-
       paths/capital-projects_{managingCode}_{capitalProjectId}_capital-commitments.yaml
