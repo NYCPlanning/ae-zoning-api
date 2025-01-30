@@ -7,6 +7,7 @@ import {
   findCapitalProjectByManagingCodeCapitalProjectIdQueryResponseSchema,
   findCapitalProjectGeoJsonByManagingCodeCapitalProjectIdQueryResponseSchema,
   findCapitalProjectTilesQueryResponseSchema,
+  findCapitalProjectsQueryResponseSchema,
 } from "src/gen";
 import { ResourceNotFoundException } from "src/exception";
 
@@ -26,6 +27,23 @@ describe("CapitalProjectService", () => {
     capitalProjectService = moduleRef.get<CapitalProjectService>(
       CapitalProjectService,
     );
+  });
+
+  describe("findMany", () => {
+    it("should return a list of capital projects", async () => {
+      const capitalProjectsResponse = await capitalProjectService.findMany({});
+      expect(() =>
+        findCapitalProjectsQueryResponseSchema.parse(capitalProjectsResponse),
+      ).not.toThrow();
+
+      const parsedBody = findCapitalProjectsQueryResponseSchema.parse(
+        capitalProjectsResponse,
+      );
+      expect(parsedBody.limit).toBe(20);
+      expect(parsedBody.offset).toBe(0);
+      expect(parsedBody.total).toBe(parsedBody.capitalProjects.length);
+      expect(parsedBody.order).toBe("managingCode, capitalProjectId");
+    });
   });
 
   describe("findByManagingCodeCapitalProjectId", () => {

@@ -4,6 +4,7 @@ import {
   FindCapitalProjectByManagingCodeCapitalProjectIdPathParams,
   FindCapitalProjectGeoJsonByManagingCodeCapitalProjectIdPathParams,
   FindCapitalProjectTilesPathParams,
+  FindCapitalProjectsQueryParams,
 } from "src/gen";
 import { CapitalProjectRepository } from "./capital-project.repository";
 import { Inject } from "@nestjs/common";
@@ -18,6 +19,21 @@ export class CapitalProjectService {
     @Inject(CapitalProjectRepository)
     private readonly capitalProjectRepository: CapitalProjectRepository,
   ) {}
+
+  async findMany({ limit = 20, offset = 0 }: FindCapitalProjectsQueryParams) {
+    const capitalProjects = await this.capitalProjectRepository.findMany({
+      limit,
+      offset,
+    });
+
+    return {
+      capitalProjects,
+      limit,
+      offset,
+      total: capitalProjects.length,
+      order: "managingCode, capitalProjectId",
+    };
+  }
 
   async findByManagingCodeCapitalProjectId(
     params: FindCapitalProjectByManagingCodeCapitalProjectIdPathParams,

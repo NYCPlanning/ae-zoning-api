@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Param,
+  Query,
   Res,
   UseFilters,
   UsePipes,
@@ -12,6 +13,7 @@ import {
   FindCapitalProjectByManagingCodeCapitalProjectIdPathParams,
   FindCapitalProjectGeoJsonByManagingCodeCapitalProjectIdPathParams,
   FindCapitalProjectTilesPathParams,
+  FindCapitalProjectsQueryParams,
   findCapitalCommitmentsByManagingCodeCapitalProjectIdPathParamsSchema,
   findCapitalProjectByManagingCodeCapitalProjectIdPathParamsSchema,
   findCapitalProjectGeoJsonByManagingCodeCapitalProjectIdPathParamsSchema,
@@ -24,6 +26,7 @@ import {
   NotFoundExceptionFilter,
 } from "src/filter";
 import { ZodTransformPipe } from "src/pipes/zod-transform-pipe";
+import { findCapitalProjectsQueryParamsSchema } from "src/gen/zod/findCapitalProjectsSchema";
 @UseFilters(
   BadRequestExceptionFilter,
   InternalServerErrorExceptionFilter,
@@ -32,6 +35,14 @@ import { ZodTransformPipe } from "src/pipes/zod-transform-pipe";
 @Controller("capital-projects")
 export class CapitalProjectController {
   constructor(private readonly capitalProjectService: CapitalProjectService) {}
+
+  @Get("/")
+  async findMany(
+    @Query(new ZodTransformPipe(findCapitalProjectsQueryParamsSchema))
+    queryParams: FindCapitalProjectsQueryParams,
+  ) {
+    return await this.capitalProjectService.findMany(queryParams);
+  }
 
   @UsePipes(
     new ZodTransformPipe(

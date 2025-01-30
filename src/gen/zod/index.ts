@@ -26,6 +26,7 @@ export * from "./findCapitalProjectTilesByCityCouncilDistrictIdSchema";
 export * from "./findCapitalProjectTilesSchema";
 export * from "./findCapitalProjectsByBoroughIdCommunityDistrictIdSchema";
 export * from "./findCapitalProjectsByCityCouncilIdSchema";
+export * from "./findCapitalProjectsSchema";
 export * from "./findCityCouncilDistrictGeoJsonByCityCouncilDistrictIdSchema";
 export * from "./findCityCouncilDistrictTilesSchema";
 export * from "./findCityCouncilDistrictsSchema";

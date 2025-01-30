@@ -47,6 +47,12 @@ import {
   findCapitalCommitmentTypes500Schema,
 } from "./findCapitalCommitmentTypesSchema";
 import {
+  findCapitalProjectsQueryResponseSchema,
+  findCapitalProjects400Schema,
+  findCapitalProjects500Schema,
+  findCapitalProjectsQueryParamsSchema,
+} from "./findCapitalProjectsSchema";
+import {
   findCapitalCommitmentsByManagingCodeCapitalProjectIdQueryResponseSchema,
   findCapitalCommitmentsByManagingCodeCapitalProjectId400Schema,
   findCapitalCommitmentsByManagingCodeCapitalProjectId404Schema,
@@ -334,6 +340,24 @@ export const operations = {
     errors: {
       400: findCapitalCommitmentTypes400Schema,
       500: findCapitalCommitmentTypes500Schema,
+    },
+  },
+  findCapitalProjects: {
+    request: undefined,
+    parameters: {
+      path: undefined,
+      query: findCapitalProjectsQueryParamsSchema,
+      header: undefined,
+    },
+    responses: {
+      200: findCapitalProjectsQueryResponseSchema,
+      400: findCapitalProjects400Schema,
+      500: findCapitalProjects500Schema,
+      default: findCapitalProjectsQueryResponseSchema,
+    },
+    errors: {
+      400: findCapitalProjects400Schema,
+      500: findCapitalProjects500Schema,
     },
   },
   findCapitalCommitmentsByManagingCodeCapitalProjectId: {
@@ -773,6 +797,9 @@ export const paths = {
     },
   "/capital-commitment-types": {
     get: operations["findCapitalCommitmentTypes"],
+  },
+  "/capital-projects": {
+    get: operations["findCapitalProjects"],
   },
   "/capital-projects/{managingCode}/{capitalProjectId}/capital-commitments": {
     get: operations["findCapitalCommitmentsByManagingCodeCapitalProjectId"],

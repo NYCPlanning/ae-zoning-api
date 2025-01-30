@@ -21,6 +21,7 @@ import {
   FindByManagingCodeCapitalProjectIdRepo,
   FindCapitalCommitmentsByManagingCodeCapitalProjectIdRepo,
   FindGeoJsonByManagingCodeCapitalProjectIdRepo,
+  FindCapitalProjectsRepo,
   FindTilesRepo,
 } from "./capital-project.repository.schema";
 
@@ -29,6 +30,33 @@ export class CapitalProjectRepository {
     @Inject(DB)
     private readonly db: DbType,
   ) {}
+
+  async findMany({
+    limit,
+    offset,
+  }: {
+    limit: number;
+    offset: number;
+  }): Promise<FindCapitalProjectsRepo> {
+    try {
+      return await this.db
+        .select({
+          id: capitalProject.id,
+          description: capitalProject.description,
+          managingCode: capitalProject.managingCode,
+          managingAgency: capitalProject.managingAgency,
+          maxDate: capitalProject.maxDate,
+          minDate: capitalProject.minDate,
+          category: sql<CapitalProjectCategory>`${capitalProject.category}`,
+        })
+        .from(capitalProject)
+        .limit(limit)
+        .offset(offset)
+        .orderBy(capitalProject.managingCode, capitalProject.id);
+    } catch {
+      throw new DataRetrievalException();
+    }
+  }
 
   #checkByManagingCodeCapitalProjectId = this.db.query.capitalProject
     .findFirst({
