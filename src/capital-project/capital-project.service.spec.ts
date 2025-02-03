@@ -1,7 +1,12 @@
 import { CapitalProjectRepositoryMock } from "test/capital-project/capital-project.repository.mock";
+import { CityCouncilDistrictRepositoryMock } from "test/city-council-district/city-council-district.repository.mock";
+import { CommunityDistrictRepositoryMock } from "test/community-district/community-district.repository.mock";
+import { BoroughRepositoryMock } from "test/borough/borough.repository.mock";
 import { CapitalProjectService } from "./capital-project.service";
 import { Test } from "@nestjs/testing";
 import { CapitalProjectRepository } from "./capital-project.repository";
+import { CityCouncilDistrictRepository } from "src/city-council-district/city-council-district.repository";
+import { CommunityDistrictRepository } from "src/community-district/community-district.repository";
 import {
   findCapitalCommitmentsByManagingCodeCapitalProjectIdQueryResponseSchema,
   findCapitalProjectByManagingCodeCapitalProjectIdQueryResponseSchema,
@@ -9,19 +14,40 @@ import {
   findCapitalProjectTilesQueryResponseSchema,
   findCapitalProjectsQueryResponseSchema,
 } from "src/gen";
-import { ResourceNotFoundException } from "src/exception";
+import {
+  InvalidRequestParameterException,
+  ResourceNotFoundException,
+} from "src/exception";
 
 describe("CapitalProjectService", () => {
   let capitalProjectService: CapitalProjectService;
 
-  const capitalProjectRepository = new CapitalProjectRepositoryMock();
+  const cityCouncilDistrictRepositoryMock =
+    new CityCouncilDistrictRepositoryMock();
+  const communityDistrictRepositoryMock = new CommunityDistrictRepositoryMock();
+  const boroughRepositoryMock = new BoroughRepositoryMock(
+    communityDistrictRepositoryMock,
+  );
+  const capitalProjectRepository = new CapitalProjectRepositoryMock(
+    cityCouncilDistrictRepositoryMock,
+    communityDistrictRepositoryMock,
+  );
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
-      providers: [CapitalProjectService, CapitalProjectRepository],
+      providers: [
+        CapitalProjectService,
+        CapitalProjectRepository,
+        CityCouncilDistrictRepository,
+        CommunityDistrictRepository,
+      ],
     })
       .overrideProvider(CapitalProjectRepository)
       .useValue(capitalProjectRepository)
+      .overrideProvider(CityCouncilDistrictRepository)
+      .useValue(cityCouncilDistrictRepositoryMock)
+      .overrideProvider(CommunityDistrictRepository)
+      .useValue(communityDistrictRepositoryMock)
       .compile();
 
     capitalProjectService = moduleRef.get<CapitalProjectService>(
@@ -43,6 +69,67 @@ describe("CapitalProjectService", () => {
       expect(parsedBody.offset).toBe(0);
       expect(parsedBody.total).toBe(parsedBody.capitalProjects.length);
       expect(parsedBody.order).toBe("managingCode, capitalProjectId");
+    });
+
+    it("should return a list of capital projects by city council district id, using the default limit and offset", async () => {
+      const { id } =
+        cityCouncilDistrictRepositoryMock.checkCityCouncilDistrictByIdMocks[0];
+
+      const resource = await capitalProjectService.findMany({
+        cityCouncilDistrictId: id,
+      });
+
+      expect(() =>
+        findCapitalProjectsQueryResponseSchema.parse(resource),
+      ).not.toThrow();
+      const parsedResource =
+        findCapitalProjectsQueryResponseSchema.parse(resource);
+      expect(parsedResource.limit).toBe(20);
+      expect(parsedResource.offset).toBe(0);
+      expect(parsedResource.total).toBe(parsedResource.capitalProjects.length);
+      expect(parsedResource.order).toBe("managingCode, capitalProjectId");
+    });
+
+    it("should return a InvalidRequestParameterException error when a city council district with the given id cannot be found", async () => {
+      const id = "60";
+
+      expect(
+        capitalProjectService.findMany({
+          cityCouncilDistrictId: id,
+        }),
+      ).rejects.toThrow(InvalidRequestParameterException);
+    });
+
+    it("should return a list of capital projects by community district id, using the user specified limit and offset", async () => {
+      const { boroughId, id: communityDistrictId } =
+        boroughRepositoryMock.communityDistrictRepoMock
+          .checkByBoroughIdCommunityDistrictIdMocks[0];
+      const capitalProjects = await capitalProjectService.findMany({
+        communityDistrictCombinedId: `${boroughId}${communityDistrictId}`,
+        limit: 10,
+        offset: 3,
+      });
+
+      expect(() =>
+        findCapitalProjectsQueryResponseSchema.parse(capitalProjects),
+      ).not.toThrow();
+
+      const parsedBody =
+        findCapitalProjectsQueryResponseSchema.parse(capitalProjects);
+      expect(parsedBody.limit).toBe(10);
+      expect(parsedBody.offset).toBe(3);
+      expect(parsedBody.total).toBe(parsedBody.capitalProjects.length);
+      expect(parsedBody.order).toBe("managingCode, capitalProjectId");
+    });
+
+    it("should return a InvalidRequestParameterException error when a community district with the given id cannot be found", async () => {
+      const id = "999";
+
+      expect(
+        capitalProjectService.findMany({
+          communityDistrictCombinedId: id,
+        }),
+      ).rejects.toThrow(InvalidRequestParameterException);
     });
   });
 

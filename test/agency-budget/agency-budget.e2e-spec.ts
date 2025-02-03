@@ -43,7 +43,6 @@ describe("Agency Budget e2e", () => {
       jest
         .spyOn(agencyBudgetRepositoryMock, "findMany")
         .mockImplementationOnce(() => {
-          console.debug("hit agency budgets repository mock");
           throw dataRetrievalException;
         });
 

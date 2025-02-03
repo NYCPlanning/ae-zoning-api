@@ -84,7 +84,9 @@ export class BoroughRepositoryMock {
         (capitalProjects) =>
           `${boroughId}${communityDistrictId}` in capitalProjects,
       );
-    return results == undefined ? [] : results[communityDistrictId];
+    return results == undefined
+      ? []
+      : results[`${boroughId}${communityDistrictId}`];
   }
 
   findCapitalProjectTilesByBoroughIdCommunityDistrictIdMock = generateMock(

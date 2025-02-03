@@ -10,7 +10,7 @@ import { generateMock } from "@anatine/zod-mock";
 import { FindCityCouncilDistrictGeoJsonByCityCouncilDistrictIdPathParams } from "src/gen";
 
 export class CityCouncilDistrictRepositoryMock {
-  numberOfMocks = 1;
+  numberOfMocks = 2;
 
   findManyMocks = generateMock(findManyRepoSchema);
 

@@ -4,6 +4,20 @@ import { errorSchema } from "./errorSchema";
 
 export const findCapitalProjectsQueryParamsSchema = z
   .object({
+    communityDistrictId: z.coerce
+      .string()
+      .regex(new RegExp("^([0-9]{3})$"))
+      .describe(
+        "The three character numeric string containing the concatenation of the borough and community district ids.",
+      )
+      .optional(),
+    cityCouncilDistrictId: z.coerce
+      .string()
+      .regex(new RegExp("^([0-9]{1,2})$"))
+      .describe(
+        "One or two character code to represent city council districts.",
+      )
+      .optional(),
     limit: z.coerce
       .number()
       .int()

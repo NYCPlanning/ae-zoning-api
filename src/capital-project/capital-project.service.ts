@@ -4,24 +4,71 @@ import {
   FindCapitalProjectByManagingCodeCapitalProjectIdPathParams,
   FindCapitalProjectGeoJsonByManagingCodeCapitalProjectIdPathParams,
   FindCapitalProjectTilesPathParams,
-  FindCapitalProjectsQueryParams,
 } from "src/gen";
 import { CapitalProjectRepository } from "./capital-project.repository";
 import { Inject } from "@nestjs/common";
-import { ResourceNotFoundException } from "src/exception";
+import {
+  InvalidRequestParameterException,
+  ResourceNotFoundException,
+} from "src/exception";
 import {
   CapitalProjectBudgetedEntity,
   CapitalProjectBudgetedGeoJsonEntityRepo,
 } from "./capital-project.repository.schema";
+import { CityCouncilDistrictRepository } from "src/city-council-district/city-council-district.repository";
+import { CommunityDistrictRepository } from "src/community-district/community-district.repository";
 
 export class CapitalProjectService {
   constructor(
     @Inject(CapitalProjectRepository)
     private readonly capitalProjectRepository: CapitalProjectRepository,
+    private readonly cityCouncilDistrictRepository: CityCouncilDistrictRepository,
+    private readonly communityDistrictRepository: CommunityDistrictRepository,
   ) {}
 
-  async findMany({ limit = 20, offset = 0 }: FindCapitalProjectsQueryParams) {
+  async findMany({
+    limit = 20,
+    offset = 0,
+    cityCouncilDistrictId = null,
+    communityDistrictCombinedId = null,
+  }: {
+    limit?: number;
+    offset?: number;
+    cityCouncilDistrictId?: string | null;
+    communityDistrictCombinedId?: string | null;
+  }) {
+    const checklist: Array<Promise<unknown | undefined>> = [];
+    if (cityCouncilDistrictId !== null)
+      checklist.push(
+        this.cityCouncilDistrictRepository.checkCityCouncilDistrictById(
+          cityCouncilDistrictId,
+        ),
+      );
+
+    const boroughId =
+      communityDistrictCombinedId !== null
+        ? communityDistrictCombinedId.slice(0, 1)
+        : null;
+    const communityDistrictId =
+      communityDistrictCombinedId !== null
+        ? communityDistrictCombinedId.slice(1, 3)
+        : null;
+
+    if (boroughId !== null && communityDistrictId !== null)
+      checklist.push(
+        this.communityDistrictRepository.checkByBoroughIdCommunityDistrictId(
+          boroughId,
+          communityDistrictId,
+        ),
+      );
+    const checkedList = await Promise.all(checklist);
+    if (checkedList.some((result) => result === undefined))
+      throw new InvalidRequestParameterException();
+
     const capitalProjects = await this.capitalProjectRepository.findMany({
+      cityCouncilDistrictId,
+      boroughId,
+      communityDistrictId,
       limit,
       offset,
     });
