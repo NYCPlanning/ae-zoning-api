@@ -20,8 +20,15 @@ export class CapitalProjectService {
     private readonly capitalProjectRepository: CapitalProjectRepository,
   ) {}
 
-  async findMany({ limit = 20, offset = 0 }: FindCapitalProjectsQueryParams) {
+  async findMany({
+    limit = 20,
+    offset = 0,
+    ccd = "",
+    cd = "",
+  }: FindCapitalProjectsQueryParams) {
     const capitalProjects = await this.capitalProjectRepository.findMany({
+      ccd,
+      cd,
       limit,
       offset,
     });

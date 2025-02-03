@@ -1,4 +1,7 @@
 import { CapitalProjectRepositoryMock } from "test/capital-project/capital-project.repository.mock";
+import { CityCouncilDistrictRepositoryMock } from "test/city-council-district/city-council-district.repository.mock";
+import { CommunityDistrictRepositoryMock } from "test/community-district/community-district.repository.mock";
+import { BoroughRepositoryMock } from "test/borough/borough.repository.mock";
 import { CapitalProjectService } from "./capital-project.service";
 import { Test } from "@nestjs/testing";
 import { CapitalProjectRepository } from "./capital-project.repository";
@@ -15,6 +18,12 @@ describe("CapitalProjectService", () => {
   let capitalProjectService: CapitalProjectService;
 
   const capitalProjectRepository = new CapitalProjectRepositoryMock();
+  const cityCouncilDistrictRepositoryMock =
+    new CityCouncilDistrictRepositoryMock();
+  const communityDistrictRepositoryMock = new CommunityDistrictRepositoryMock();
+  const boroughRepositoryMock = new BoroughRepositoryMock(
+    communityDistrictRepositoryMock,
+  );
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -41,6 +50,48 @@ describe("CapitalProjectService", () => {
       );
       expect(parsedBody.limit).toBe(20);
       expect(parsedBody.offset).toBe(0);
+      expect(parsedBody.total).toBe(parsedBody.capitalProjects.length);
+      expect(parsedBody.order).toBe("managingCode, capitalProjectId");
+    });
+
+    it("service should return a list of capital projects by city council district id, using the default limit and offset", async () => {
+      const { id } =
+        cityCouncilDistrictRepositoryMock.checkCityCouncilDistrictByIdMocks[0];
+
+      const resource = await capitalProjectService.findMany({
+        ccd: id,
+      });
+
+      expect(() =>
+        findCapitalProjectsQueryResponseSchema.parse(resource),
+      ).not.toThrow();
+      const parsedResource =
+        findCapitalProjectsQueryResponseSchema.parse(resource);
+      expect(parsedResource.limit).toBe(20);
+      expect(parsedResource.offset).toBe(0);
+      expect(parsedResource.total).toBe(parsedResource.capitalProjects.length);
+      expect(parsedResource.order).toBe("managingCode, capitalProjectId");
+    });
+
+    it("service should return a list of capital projects by community district id, using the user specified limit and offset", async () => {
+      const boroughId = boroughRepositoryMock.checkBoroughByIdMocks[0].id;
+      const communityDistrictId =
+        boroughRepositoryMock.communityDistrictRepoMock
+          .checkCommunityDistrictByIdMocks[0].id;
+      const capitalProjects = await capitalProjectService.findMany({
+        cd: `${boroughId}${communityDistrictId}`,
+        limit: 10,
+        offset: 3,
+      });
+
+      expect(() =>
+        findCapitalProjectsQueryResponseSchema.parse(capitalProjects),
+      ).not.toThrow();
+
+      const parsedBody =
+        findCapitalProjectsQueryResponseSchema.parse(capitalProjects);
+      expect(parsedBody.limit).toBe(10);
+      expect(parsedBody.offset).toBe(3);
       expect(parsedBody.total).toBe(parsedBody.capitalProjects.length);
       expect(parsedBody.order).toBe("managingCode, capitalProjectId");
     });

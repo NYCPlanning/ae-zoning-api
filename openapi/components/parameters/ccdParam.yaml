@@ -1,0 +1,8 @@
+name: ccd
+required: false
+in: query
+schema:
+  type: string
+  pattern: ^([0-9]{1,2})$
+  example: '25'
+description: One or two character code to represent city council districts.

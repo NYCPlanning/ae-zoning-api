@@ -118,6 +118,36 @@ describe("Capital Projects", () => {
       expect(response.body.message).toBe(dataRetrievalException.message);
       expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);
     });
+
+    it("should 200 and return capital projects from a specified city council district", async () => {
+      const ccd = 1;
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects?ccd=${ccd}`,
+      );
+
+      expect(() =>
+        findCapitalProjectsQueryResponseSchema.parse(response.body),
+      ).not.toThrow();
+      const parsedBody = findCapitalProjectsQueryResponseSchema.parse(
+        response.body,
+      );
+      expect(parsedBody.capitalProjects.length).toBeGreaterThanOrEqual(0);
+    });
+
+    it("should 200 and return capital projects from a specified community district", async () => {
+      const cd = 101;
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects?cd=${cd}`,
+      );
+
+      expect(() =>
+        findCapitalProjectsQueryResponseSchema.parse(response.body),
+      ).not.toThrow();
+      const parsedBody = findCapitalProjectsQueryResponseSchema.parse(
+        response.body,
+      );
+      expect(parsedBody.capitalProjects.length).toBeGreaterThanOrEqual(0);
+    });
   });
 
   describe("findByManagingCodeCapitalProjectId", () => {

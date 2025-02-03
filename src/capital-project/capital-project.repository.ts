@@ -15,6 +15,8 @@ import {
   capitalCommitment,
   capitalCommitmentFund,
   capitalProject,
+  cityCouncilDistrict,
+  communityDistrict,
 } from "src/schema";
 import {
   CheckByManagingCodeCapitalProjectIdRepo,
@@ -32,9 +34,13 @@ export class CapitalProjectRepository {
   ) {}
 
   async findMany({
+    ccd,
+    cd,
     limit,
     offset,
   }: {
+    ccd: string;
+    cd: string;
     limit: number;
     offset: number;
   }): Promise<FindCapitalProjectsRepo> {
@@ -50,6 +56,32 @@ export class CapitalProjectRepository {
           category: sql<CapitalProjectCategory>`${capitalProject.category}`,
         })
         .from(capitalProject)
+        .leftJoin(
+          cityCouncilDistrict,
+          sql`
+            ST_Intersects(${cityCouncilDistrict.liFt}, ${capitalProject.liFtMPoly})
+            OR ST_Intersects(${cityCouncilDistrict.liFt}, ${capitalProject.liFtMPnt})`,
+        )
+        .leftJoin(
+          communityDistrict,
+          sql`
+          ST_Intersects(${communityDistrict.liFt}, ${capitalProject.liFtMPoly})
+          OR ST_Intersects(${communityDistrict.liFt}, ${capitalProject.liFtMPnt})`,
+        )
+        .where(
+          and(
+            ccd ? eq(cityCouncilDistrict.id, ccd) : undefined,
+            cd
+              ? and(
+                  eq(communityDistrict.boroughId, parseInt(cd[0]).toString()),
+                  eq(
+                    communityDistrict.id,
+                    parseInt(cd.slice(1, 3)).toString().padStart(2, "0"),
+                  ),
+                )
+              : undefined,
+          ),
+        )
         .limit(limit)
         .offset(offset)
         .orderBy(capitalProject.managingCode, capitalProject.id);
