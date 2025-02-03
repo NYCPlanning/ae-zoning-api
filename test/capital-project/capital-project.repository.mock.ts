@@ -7,29 +7,121 @@ import {
   findCapitalCommitmentsByManagingCodeCapitalProjectIdRepoSchema,
   FindGeoJsonByManagingCodeCapitalProjectIdRepo,
   findGeoJsonByManagingCodeCapitalProjectIdRepoSchema,
+  FindManyRepo,
+  findManyRepoSchema,
   findTilesRepoSchema,
-  findCapitalProjectsRepoSchema,
 } from "src/capital-project/capital-project.repository.schema";
 import {
   FindCapitalCommitmentsByManagingCodeCapitalProjectIdPathParams,
   FindCapitalProjectByManagingCodeCapitalProjectIdPathParams,
   FindCapitalProjectGeoJsonByManagingCodeCapitalProjectIdPathParams,
 } from "src/gen";
+import { CityCouncilDistrictRepositoryMock } from "test/city-council-district/city-council-district.repository.mock";
+import { CommunityDistrictRepositoryMock } from "test/community-district/community-district.repository.mock";
 
 export class CapitalProjectRepositoryMock {
-  findCapitalProjectsMocks = Array.from(
-    Array(4),
-    (_) =>
-      generateMock(findCapitalProjectsRepoSchema, {
-        stringMap: {
-          minDate: () => "2018-01-01",
-          maxDate: () => "2045-12-31",
-        },
-      })[0],
-  );
+  cityCouncilDistrictRepoMock: CityCouncilDistrictRepositoryMock;
+  communityDistrictRepoMock: CommunityDistrictRepositoryMock;
+  constructor(
+    cityCouncilDistrictRepoMock: CityCouncilDistrictRepositoryMock,
+    communityDistrictRepoMock: CommunityDistrictRepositoryMock,
+  ) {
+    this.cityCouncilDistrictRepoMock = cityCouncilDistrictRepoMock;
+    this.communityDistrictRepoMock = communityDistrictRepoMock;
+  }
 
-  async findMany() {
-    return this.findCapitalProjectsMocks;
+  get findManyMocks(): Array<
+    [
+      {
+        cityCouncilDistrictId: string;
+        boroughId: string;
+        communityDistrictId: string;
+      },
+      FindManyRepo,
+    ]
+  > {
+    const cityCouncilDistrictIdMocks =
+      this.cityCouncilDistrictRepoMock.checkCityCouncilDistrictByIdMocks;
+    const communityDistrictIdMocks =
+      this.communityDistrictRepoMock.checkByBoroughIdCommunityDistrictIdMocks;
+    return [
+      [
+        {
+          cityCouncilDistrictId: cityCouncilDistrictIdMocks[0].id,
+          boroughId: communityDistrictIdMocks[0].boroughId,
+          communityDistrictId: communityDistrictIdMocks[0].id,
+        },
+        generateMock(findManyRepoSchema, {
+          seed: 1,
+          stringMap: {
+            minDate: () => "2018-01-01",
+            maxDate: () => "2045-12-31",
+          },
+        }),
+      ],
+      [
+        {
+          cityCouncilDistrictId: cityCouncilDistrictIdMocks[0].id,
+          boroughId: communityDistrictIdMocks[1].boroughId,
+          communityDistrictId: communityDistrictIdMocks[1].id,
+        },
+        generateMock(findManyRepoSchema, {
+          seed: 2,
+          stringMap: {
+            minDate: () => "2018-01-01",
+            maxDate: () => "2045-12-31",
+          },
+        }),
+      ],
+      [
+        {
+          cityCouncilDistrictId: cityCouncilDistrictIdMocks[1].id,
+          boroughId: communityDistrictIdMocks[1].boroughId,
+          communityDistrictId: communityDistrictIdMocks[1].id,
+        },
+        generateMock(findManyRepoSchema, {
+          seed: 3,
+          stringMap: {
+            minDate: () => "2018-01-01",
+            maxDate: () => "2045-12-31",
+          },
+        }),
+      ],
+    ];
+  }
+
+  async findMany({
+    boroughId,
+    communityDistrictId,
+    cityCouncilDistrictId,
+    limit,
+    offset,
+  }: {
+    cityCouncilDistrictId: string | null;
+    communityDistrictId: string | null;
+    boroughId: string | null;
+    limit: number;
+    offset: number;
+  }) {
+    return this.findManyMocks
+      .reduce((acc: FindManyRepo, [criteria, capitalProjects]) => {
+        if (
+          cityCouncilDistrictId !== null &&
+          criteria.cityCouncilDistrictId !== cityCouncilDistrictId
+        )
+          return acc;
+
+        if (boroughId !== null && criteria.boroughId !== boroughId) return acc;
+
+        if (
+          communityDistrictId !== null &&
+          criteria.communityDistrictId !== communityDistrictId
+        )
+          return acc;
+
+        return acc.concat(capitalProjects);
+      }, [])
+      .slice(offset, limit + offset);
   }
 
   checkByManagingCodeCapitalProjectIdMocks = Array.from(Array(5), (_, seed) =>

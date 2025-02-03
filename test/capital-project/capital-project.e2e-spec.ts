@@ -3,6 +3,10 @@ import { Test } from "@nestjs/testing";
 import { CapitalProjectModule } from "src/capital-project/capital-project.module";
 import { CapitalProjectRepository } from "src/capital-project/capital-project.repository";
 import { CapitalProjectRepositoryMock } from "./capital-project.repository.mock";
+import { CityCouncilDistrictRepository } from "src/city-council-district/city-council-district.repository";
+import { CityCouncilDistrictRepositoryMock } from "test/city-council-district/city-council-district.repository.mock";
+import { CommunityDistrictRepository } from "src/community-district/community-district.repository";
+import { CommunityDistrictRepositoryMock } from "test/community-district/community-district.repository.mock";
 import * as request from "supertest";
 import { HttpName } from "src/filter";
 import {
@@ -19,13 +23,22 @@ import {
 describe("Capital Projects", () => {
   let app: INestApplication;
 
-  const capitalProjectRepository = new CapitalProjectRepositoryMock();
+  const cityCouncilDistrictRepository = new CityCouncilDistrictRepositoryMock();
+  const communityDistrictRepository = new CommunityDistrictRepositoryMock();
+  const capitalProjectRepository = new CapitalProjectRepositoryMock(
+    cityCouncilDistrictRepository,
+    communityDistrictRepository,
+  );
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [CapitalProjectModule],
     })
       .overrideProvider(CapitalProjectRepository)
       .useValue(capitalProjectRepository)
+      .overrideProvider(CityCouncilDistrictRepository)
+      .useValue(cityCouncilDistrictRepository)
+      .overrideProvider(CommunityDistrictRepository)
+      .useValue(communityDistrictRepository)
       .compile();
 
     app = moduleRef.createNestApplication();
@@ -44,11 +57,18 @@ describe("Capital Projects", () => {
       expect(() =>
         findCapitalProjectsQueryResponseSchema.parse(response.body),
       ).not.toThrow();
+      const parsedBody = findCapitalProjectsQueryResponseSchema.parse(
+        response.body,
+      );
+      expect(parsedBody.limit).toBe(20);
+      expect(parsedBody.offset).toBe(0);
+      expect(parsedBody.total).toBe(8);
+      expect(parsedBody.order).toBe("managingCode, capitalProjectId");
     });
 
     it("should 200 and return capital projects with page metadata when specifying offset and limit", async () => {
       const limit = 5;
-      const offset = 2;
+      const offset = 4;
       const response = await request(app.getHttpServer()).get(
         `/capital-projects?limit=${limit}&offset=${offset}`,
       );
@@ -61,6 +81,8 @@ describe("Capital Projects", () => {
       );
       expect(parsedBody.limit).toBe(limit);
       expect(parsedBody.offset).toBe(offset);
+      expect(parsedBody.total).toBe(4);
+      expect(parsedBody.order).toBe("managingCode, capitalProjectId");
     });
 
     it("should 400 when finding by an invalid limit", async () => {
@@ -96,6 +118,68 @@ describe("Capital Projects", () => {
     it("should 400 when finding by invalid offset", async () => {
       const response = await request(app.getHttpServer()).get(
         "/capital-projects?offset=b4d",
+      );
+      expect(response.body.message).toBe(
+        new InvalidRequestParameterException().message,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 200 and return capital projects from a specified city council district", async () => {
+      const { id } =
+        capitalProjectRepository.cityCouncilDistrictRepoMock
+          .checkCityCouncilDistrictByIdMocks[0];
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects?cityCouncilDistrictId=${id}`,
+      );
+
+      expect(() =>
+        findCapitalProjectsQueryResponseSchema.parse(response.body),
+      ).not.toThrow();
+      const parsedBody = findCapitalProjectsQueryResponseSchema.parse(
+        response.body,
+      );
+      expect(parsedBody.limit).toBe(20);
+      expect(parsedBody.offset).toBe(0);
+      expect(parsedBody.total).toBe(6);
+      expect(parsedBody.order).toBe("managingCode, capitalProjectId");
+    });
+
+    it("should 400 when finding by invalid city council district id", async () => {
+      const id = "123";
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects?cityCouncilDistrictId=${id}`,
+      );
+      expect(response.body.message).toBe(
+        new InvalidRequestParameterException().message,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 200 and return capital projects from a specified community district", async () => {
+      const { boroughId, id: communityDistrictId } =
+        capitalProjectRepository.communityDistrictRepoMock
+          .checkByBoroughIdCommunityDistrictIdMocks[1];
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects?communityDistrictId=${boroughId}${communityDistrictId}`,
+      );
+
+      expect(() =>
+        findCapitalProjectsQueryResponseSchema.parse(response.body),
+      ).not.toThrow();
+      const parsedBody = findCapitalProjectsQueryResponseSchema.parse(
+        response.body,
+      );
+      expect(parsedBody.limit).toBe(20);
+      expect(parsedBody.offset).toBe(0);
+      expect(parsedBody.order).toBe("managingCode, capitalProjectId");
+      expect(parsedBody.total).toBe(7);
+    });
+
+    it("should 400 when finding by invalid community district id", async () => {
+      const id = "1234";
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects?communityDistrictId=${id}`,
       );
       expect(response.body.message).toBe(
         new InvalidRequestParameterException().message,

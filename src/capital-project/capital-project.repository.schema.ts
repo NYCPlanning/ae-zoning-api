@@ -10,13 +10,9 @@ import {
 import { mvtEntitySchema } from "src/schema/mvt";
 import { z } from "zod";
 
-export const findCapitalProjectsRepoSchema = z.array(
-  capitalProjectEntitySchema,
-);
+export const findManyRepoSchema = z.array(capitalProjectEntitySchema);
 
-export type FindCapitalProjectsRepo = z.infer<
-  typeof findCapitalProjectsRepoSchema
->;
+export type FindManyRepo = z.infer<typeof findManyRepoSchema>;
 
 export const checkByManagingCodeCapitalProjectIdRepoSchema =
   capitalProjectEntitySchema.pick({

@@ -5,7 +5,7 @@ import {
 } from "src/community-district/community-district.repository.schema";
 
 export class CommunityDistrictRepositoryMock {
-  numberOfMocks = 1;
+  numberOfMocks = 2;
 
   checkByBoroughIdCommunityDistrictIdMocks = Array.from(
     Array(this.numberOfMocks),

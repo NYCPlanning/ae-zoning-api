@@ -3,6 +3,16 @@ import type { Error } from "./Error";
 
 export type FindCapitalProjectsQueryParams = {
   /**
+   * @description The three character numeric string containing the concatenation of the borough and community district ids.
+   * @type string | undefined
+   */
+  communityDistrictId?: string;
+  /**
+   * @description One or two character code to represent city council districts.
+   * @type string | undefined
+   */
+  cityCouncilDistrictId?: string;
+  /**
    * @description The maximum number of results to be returned in each response. The default value is 20. It must be between 1 and 100, inclusive.
    * @type integer | undefined
    */

@@ -41,7 +41,12 @@ export class CapitalProjectController {
     @Query(new ZodTransformPipe(findCapitalProjectsQueryParamsSchema))
     queryParams: FindCapitalProjectsQueryParams,
   ) {
-    return await this.capitalProjectService.findMany(queryParams);
+    return await this.capitalProjectService.findMany({
+      limit: queryParams.limit,
+      offset: queryParams.offset,
+      cityCouncilDistrictId: queryParams.cityCouncilDistrictId,
+      communityDistrictCombinedId: queryParams.communityDistrictId,
+    });
   }
 
   @UsePipes(

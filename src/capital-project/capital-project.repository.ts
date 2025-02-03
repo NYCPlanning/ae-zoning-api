@@ -15,13 +15,15 @@ import {
   capitalCommitment,
   capitalCommitmentFund,
   capitalProject,
+  cityCouncilDistrict,
+  communityDistrict,
 } from "src/schema";
 import {
   CheckByManagingCodeCapitalProjectIdRepo,
   FindByManagingCodeCapitalProjectIdRepo,
   FindCapitalCommitmentsByManagingCodeCapitalProjectIdRepo,
   FindGeoJsonByManagingCodeCapitalProjectIdRepo,
-  FindCapitalProjectsRepo,
+  FindManyRepo,
   FindTilesRepo,
 } from "./capital-project.repository.schema";
 
@@ -32,12 +34,18 @@ export class CapitalProjectRepository {
   ) {}
 
   async findMany({
+    cityCouncilDistrictId,
+    communityDistrictId,
+    boroughId,
     limit,
     offset,
   }: {
+    cityCouncilDistrictId: string | null;
+    communityDistrictId: string | null;
+    boroughId: string | null;
     limit: number;
     offset: number;
-  }): Promise<FindCapitalProjectsRepo> {
+  }): Promise<FindManyRepo> {
     try {
       return await this.db
         .select({
@@ -50,6 +58,31 @@ export class CapitalProjectRepository {
           category: sql<CapitalProjectCategory>`${capitalProject.category}`,
         })
         .from(capitalProject)
+        .leftJoin(
+          cityCouncilDistrict,
+          sql`
+            ST_Intersects(${cityCouncilDistrict.liFt}, ${capitalProject.liFtMPoly})
+            OR ST_Intersects(${cityCouncilDistrict.liFt}, ${capitalProject.liFtMPnt})`,
+        )
+        .leftJoin(
+          communityDistrict,
+          sql`
+          ST_Intersects(${communityDistrict.liFt}, ${capitalProject.liFtMPoly})
+          OR ST_Intersects(${communityDistrict.liFt}, ${capitalProject.liFtMPnt})`,
+        )
+        .where(
+          and(
+            cityCouncilDistrictId !== null
+              ? eq(cityCouncilDistrict.id, cityCouncilDistrictId)
+              : undefined,
+            communityDistrictId !== null && boroughId !== null
+              ? and(
+                  eq(communityDistrict.boroughId, boroughId),
+                  eq(communityDistrict.id, communityDistrictId),
+                )
+              : undefined,
+          ),
+        )
         .limit(limit)
         .offset(offset)
         .orderBy(capitalProject.managingCode, capitalProject.id);
