@@ -28,7 +28,7 @@ export class CapitalProjectService {
   }: FindCapitalProjectsQueryParams) {
     const capitalProjects = await this.capitalProjectRepository.findMany({
       ccd,
-      boro: cd === null ? null : cd.slice(0),
+      boro: cd === null ? null : cd.slice(0, 1),
       cd: cd === null ? null : cd.slice(1, 3),
       limit,
       offset,
