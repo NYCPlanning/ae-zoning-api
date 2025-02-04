@@ -23,8 +23,8 @@ export class CapitalProjectService {
   async findMany({
     limit = 20,
     offset = 0,
-    ccd = "",
-    cd = "",
+    ccd = null,
+    cd = null,
   }: FindCapitalProjectsQueryParams) {
     const capitalProjects = await this.capitalProjectRepository.findMany({
       ccd,

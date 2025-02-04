@@ -39,8 +39,8 @@ export class CapitalProjectRepository {
     limit,
     offset,
   }: {
-    ccd: string;
-    cd: string;
+    ccd: string | null;
+    cd: string | null;
     limit: number;
     offset: number;
   }): Promise<FindCapitalProjectsRepo> {
@@ -70,8 +70,8 @@ export class CapitalProjectRepository {
         )
         .where(
           and(
-            ccd ? eq(cityCouncilDistrict.id, ccd) : undefined,
-            cd
+            ccd !== null ? eq(cityCouncilDistrict.id, ccd) : undefined,
+            cd !== null
               ? and(
                   eq(communityDistrict.boroughId, parseInt(cd[0]).toString()),
                   eq(

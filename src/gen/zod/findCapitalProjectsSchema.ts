@@ -10,14 +10,16 @@ export const findCapitalProjectsQueryParamsSchema = z
       .describe(
         "The three character numeric string containing the concatenation of the borough and community district ids.",
       )
-      .optional(),
+      .nullable()
+      .nullish(),
     ccd: z.coerce
       .string()
       .regex(new RegExp("^([0-9]{1,2})$"))
       .describe(
         "One or two character code to represent city council districts.",
       )
-      .optional(),
+      .nullable()
+      .nullish(),
     limit: z.coerce
       .number()
       .int()
