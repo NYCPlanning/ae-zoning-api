@@ -8,7 +8,10 @@ import {
 } from "src/gen";
 import { CapitalProjectRepository } from "./capital-project.repository";
 import { Inject } from "@nestjs/common";
-import { ResourceNotFoundException } from "src/exception";
+import {
+  InvalidRequestParameterException,
+  ResourceNotFoundException,
+} from "src/exception";
 import {
   CapitalProjectBudgetedEntity,
   CapitalProjectBudgetedGeoJsonEntityRepo,
@@ -45,7 +48,7 @@ export class CapitalProjectService {
     const checkedList = await Promise.all(checklist);
     for (const listItem of checkedList) {
       if (listItem === undefined) {
-        throw new ResourceNotFoundException();
+        throw new InvalidRequestParameterException();
       }
     }
 
