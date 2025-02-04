@@ -36,11 +36,13 @@ export class CapitalProjectRepository {
   async findMany({
     ccd,
     cd,
+    boro,
     limit,
     offset,
   }: {
     ccd: string | null;
     cd: string | null;
+    boro: string | null;
     limit: number;
     offset: number;
   }): Promise<FindCapitalProjectsRepo> {
@@ -71,13 +73,10 @@ export class CapitalProjectRepository {
         .where(
           and(
             ccd !== null ? eq(cityCouncilDistrict.id, ccd) : undefined,
-            cd !== null
+            cd !== null && boro !== null
               ? and(
-                  eq(communityDistrict.boroughId, parseInt(cd[0]).toString()),
-                  eq(
-                    communityDistrict.id,
-                    parseInt(cd.slice(1, 3)).toString().padStart(2, "0"),
-                  ),
+                  eq(communityDistrict.boroughId, boro),
+                  eq(communityDistrict.id, cd),
                 )
               : undefined,
           ),
