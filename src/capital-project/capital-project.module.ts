@@ -4,6 +4,7 @@ import { CapitalProjectService } from "./capital-project.service";
 import { CapitalProjectRepository } from "./capital-project.repository";
 import { CityCouncilDistrictRepository } from "src/city-council-district/city-council-district.repository";
 import { CommunityDistrictRepository } from "src/community-district/community-district.repository";
+import { AgencyBudgetRepository } from "../agency-budget/agency-budget.repository";
 import { AgencyRepository } from "src/agency/agency.repository";
 
 @Module({
@@ -14,6 +15,7 @@ import { AgencyRepository } from "src/agency/agency.repository";
     CityCouncilDistrictRepository,
     CommunityDistrictRepository,
     AgencyRepository,
+    AgencyBudgetRepository,
   ],
   controllers: [CapitalProjectController],
 })

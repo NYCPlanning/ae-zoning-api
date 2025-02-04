@@ -22,6 +22,12 @@ export const findCapitalProjectsQueryParamsSchema = z
       .string()
       .describe("The acronym of the managing agency to filter the projects by.")
       .optional(),
+    agencyBudget: z.coerce
+      .string()
+      .describe(
+        "The two character alphabetic string containing the letters used to refer to the agency budget code.",
+      )
+      .optional(),
     limit: z.coerce
       .number()
       .int()

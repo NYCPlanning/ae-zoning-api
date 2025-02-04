@@ -38,6 +38,7 @@ export class CapitalProjectRepository {
     communityDistrictId,
     boroughId,
     managingAgency,
+    agencyBudget,
     limit,
     offset,
   }: {
@@ -45,6 +46,7 @@ export class CapitalProjectRepository {
     communityDistrictId: string | null;
     boroughId: string | null;
     managingAgency: string | null;
+    agencyBudget: string | null;
     limit: number;
     offset: number;
   }): Promise<FindManyRepo> {
@@ -72,6 +74,13 @@ export class CapitalProjectRepository {
           ST_Intersects(${communityDistrict.liFt}, ${capitalProject.liFtMPoly})
           OR ST_Intersects(${communityDistrict.liFt}, ${capitalProject.liFtMPnt})`,
         )
+        .leftJoin(
+          capitalCommitment,
+          and(
+            eq(capitalProject.managingCode, capitalCommitment.managingCode),
+            eq(capitalProject.id, capitalCommitment.capitalProjectId),
+          ),
+        )
         .where(
           and(
             cityCouncilDistrictId !== null
@@ -86,11 +95,23 @@ export class CapitalProjectRepository {
             managingAgency !== null
               ? eq(capitalProject.managingAgency, managingAgency)
               : undefined,
+            agencyBudget !== null
+              ? eq(capitalCommitment.budgetLineCode, agencyBudget)
+              : undefined,
           ),
         )
         .limit(limit)
         .offset(offset)
-        .orderBy(capitalProject.managingCode, capitalProject.id);
+        .orderBy(capitalProject.managingCode, capitalProject.id)
+        .groupBy(
+          capitalProject.id,
+          capitalProject.description,
+          capitalProject.managingCode,
+          capitalProject.managingAgency,
+          capitalProject.maxDate,
+          capitalProject.minDate,
+          capitalProject.category,
+        );
     } catch {
       throw new DataRetrievalException();
     }

@@ -18,6 +18,7 @@ import {
 import { CityCouncilDistrictRepository } from "src/city-council-district/city-council-district.repository";
 import { CommunityDistrictRepository } from "src/community-district/community-district.repository";
 import { AgencyRepository } from "src/agency/agency.repository";
+import { AgencyBudgetRepository } from "src/agency-budget/agency-budget.repository";
 
 export class CapitalProjectService {
   constructor(
@@ -26,6 +27,7 @@ export class CapitalProjectService {
     private readonly cityCouncilDistrictRepository: CityCouncilDistrictRepository,
     private readonly communityDistrictRepository: CommunityDistrictRepository,
     private readonly agencyRepository: AgencyRepository,
+    private readonly agencyBudgetRepository: AgencyBudgetRepository,
   ) {}
 
   async findMany({
@@ -34,12 +36,14 @@ export class CapitalProjectService {
     cityCouncilDistrictId = null,
     communityDistrictCombinedId = null,
     managingAgency = null,
+    agencyBudget = null,
   }: {
     limit?: number;
     offset?: number;
     cityCouncilDistrictId?: string | null;
     communityDistrictCombinedId?: string | null;
     managingAgency?: string | null;
+    agencyBudget?: string | null;
   }) {
     const checklist: Array<Promise<unknown | undefined>> = [];
     if (cityCouncilDistrictId !== null)
@@ -66,10 +70,15 @@ export class CapitalProjectService {
         ),
       );
 
-    managingAgency !== null &&
+    if (managingAgency !== null) {
       checklist.push(this.agencyRepository.checkByInitials(managingAgency));
+    }
 
+    if (agencyBudget !== null) {
+      checklist.push(this.agencyBudgetRepository.checkByCode(agencyBudget));
+    }
     const checkedList = await Promise.all(checklist);
+
     if (checkedList.some((result) => result === undefined))
       throw new InvalidRequestParameterException();
 
@@ -78,6 +87,7 @@ export class CapitalProjectService {
       boroughId,
       communityDistrictId,
       managingAgency,
+      agencyBudget,
       limit,
       offset,
     });
