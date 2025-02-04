@@ -38,6 +38,7 @@ export class CapitalProjectService {
     cd !== null &&
       checklist.push(
         this.communityDistrictRepository.checkCommunityDistrictById(
+          cd.slice(0, 1),
           cd.slice(1, 3),
         ),
       );

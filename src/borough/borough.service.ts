@@ -79,6 +79,7 @@ export class BoroughService {
 
     const communityDistrictCheck =
       await this.communityDistrictRepository.checkCommunityDistrictById(
+        boroughId,
         communityDistrictId,
       );
     if (communityDistrictCheck === undefined)
