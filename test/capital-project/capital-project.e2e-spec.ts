@@ -3,6 +3,10 @@ import { Test } from "@nestjs/testing";
 import { CapitalProjectModule } from "src/capital-project/capital-project.module";
 import { CapitalProjectRepository } from "src/capital-project/capital-project.repository";
 import { CapitalProjectRepositoryMock } from "./capital-project.repository.mock";
+import { CityCouncilDistrictRepository } from "src/city-council-district/city-council-district.repository";
+import { CityCouncilDistrictRepositoryMock } from "test/city-council-district/city-council-district.repository.mock";
+import { CommunityDistrictRepository } from "src/community-district/community-district.repository";
+import { CommunityDistrictRepositoryMock } from "test/community-district/community-district.repository.mock";
 import * as request from "supertest";
 import { HttpName } from "src/filter";
 import {
@@ -20,12 +24,18 @@ describe("Capital Projects", () => {
   let app: INestApplication;
 
   const capitalProjectRepository = new CapitalProjectRepositoryMock();
+  const cityCouncilDistrictRepository = new CityCouncilDistrictRepositoryMock();
+  const communityDistrictRepository = new CommunityDistrictRepositoryMock();
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [CapitalProjectModule],
     })
       .overrideProvider(CapitalProjectRepository)
       .useValue(capitalProjectRepository)
+      .overrideProvider(CityCouncilDistrictRepository)
+      .useValue(cityCouncilDistrictRepository)
+      .overrideProvider(CommunityDistrictRepository)
+      .useValue(communityDistrictRepository)
       .compile();
 
     app = moduleRef.createNestApplication();
@@ -120,7 +130,8 @@ describe("Capital Projects", () => {
     });
 
     it("should 200 and return capital projects from a specified city council district", async () => {
-      const ccd = 1;
+      const ccd =
+        cityCouncilDistrictRepository.checkCityCouncilDistrictByIdMocks[0].id;
       const response = await request(app.getHttpServer()).get(
         `/capital-projects?ccd=${ccd}`,
       );
@@ -135,7 +146,7 @@ describe("Capital Projects", () => {
     });
 
     it("should 200 and return capital projects from a specified community district", async () => {
-      const cd = 101;
+      const cd = "215";
       const response = await request(app.getHttpServer()).get(
         `/capital-projects?cd=${cd}`,
       );
