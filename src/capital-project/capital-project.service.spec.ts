@@ -101,7 +101,7 @@ describe("CapitalProjectService", () => {
       const boroughId = boroughRepositoryMock.checkBoroughByIdMocks[0].id;
       const communityDistrictId =
         boroughRepositoryMock.communityDistrictRepoMock
-          .checkCommunityDistrictByIdMocks[0].id;
+          .checkByBoroughIdCommunityDistrictIdMocks[0].id;
       const capitalProjects = await capitalProjectService.findMany({
         communityDistrictId: `${boroughId}${communityDistrictId}`,
         limit: 10,

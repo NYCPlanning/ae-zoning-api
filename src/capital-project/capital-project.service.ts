@@ -55,7 +55,7 @@ export class CapitalProjectService {
     boroughId !== null &&
       communityDistrictId !== null &&
       checklist.push(
-        this.communityDistrictRepository.checkCommunityDistrictById(
+        this.communityDistrictRepository.checkByBoroughIdCommunityDistrictId(
           boroughId,
           communityDistrictId,
         ),
