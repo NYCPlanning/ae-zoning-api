@@ -13,7 +13,7 @@ export class CommunityDistrictRepositoryMock {
       generateMock(checkByCommunityDistrictIdRepoSchema, { seed: seed + 1 }),
   );
 
-  async checkCommunityDistrictById(id: string) {
+  async checkCommunityDistrictById(boroughId: string, id: string) {
     return this.checkCommunityDistrictByIdMocks.find((row) => row.id === id);
   }
 

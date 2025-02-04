@@ -8,6 +8,7 @@ export type FindTilesRepo = z.infer<typeof findTilesRepoSchema>;
 
 export const checkByCommunityDistrictIdRepoSchema =
   communityDistrictEntitySchema.pick({
+    boroughId: true,
     id: true,
   });
 
