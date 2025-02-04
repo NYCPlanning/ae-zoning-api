@@ -3,6 +3,7 @@ import { CityCouncilDistrictRepositoryMock } from "test/city-council-district/ci
 import { CommunityDistrictRepositoryMock } from "test/community-district/community-district.repository.mock";
 import { BoroughRepositoryMock } from "test/borough/borough.repository.mock";
 import { AgencyRepositoryMock } from "test/agency/agency.repository.mock";
+import { AgencyBudgetRepositoryMock } from "test/agency-budget/agency-budget.repository.mock";
 import { CapitalProjectService } from "./capital-project.service";
 import { Test } from "@nestjs/testing";
 import { CapitalProjectRepository } from "./capital-project.repository";
@@ -16,6 +17,7 @@ import {
   findCapitalProjectTilesQueryResponseSchema,
   findCapitalProjectsQueryResponseSchema,
 } from "src/gen";
+import { AgencyBudgetRepository } from "src/agency-budget/agency-budget.repository";
 import {
   InvalidRequestParameterException,
   ResourceNotFoundException,
@@ -23,6 +25,7 @@ import {
 
 describe("CapitalProjectService", () => {
   let capitalProjectService: CapitalProjectService;
+  const agencyBudgetRepositoryMock = new AgencyBudgetRepositoryMock();
 
   const agencyRepositoryMock = new AgencyRepositoryMock();
   const cityCouncilDistrictRepositoryMock =
@@ -35,6 +38,7 @@ describe("CapitalProjectService", () => {
     agencyRepositoryMock,
     cityCouncilDistrictRepositoryMock,
     communityDistrictRepositoryMock,
+    agencyBudgetRepositoryMock,
   );
 
   beforeEach(async () => {
@@ -45,6 +49,7 @@ describe("CapitalProjectService", () => {
         CityCouncilDistrictRepository,
         CommunityDistrictRepository,
         AgencyRepository,
+        AgencyBudgetRepository,
       ],
     })
       .overrideProvider(CapitalProjectRepository)
@@ -55,6 +60,8 @@ describe("CapitalProjectService", () => {
       .useValue(communityDistrictRepositoryMock)
       .overrideProvider(AgencyRepository)
       .useValue(agencyRepositoryMock)
+      .overrideProvider(AgencyBudgetRepository)
+      .useValue(agencyBudgetRepositoryMock)
       .compile();
 
     capitalProjectService = moduleRef.get<CapitalProjectService>(
@@ -74,6 +81,7 @@ describe("CapitalProjectService", () => {
       );
       expect(parsedBody.limit).toBe(20);
       expect(parsedBody.offset).toBe(0);
+      expect(parsedBody.capitalProjects.length).toBe(8);
       expect(parsedBody.total).toBe(parsedBody.capitalProjects.length);
       expect(parsedBody.order).toBe("managingCode, capitalProjectId");
     });
@@ -129,6 +137,25 @@ describe("CapitalProjectService", () => {
       expect(parsedBody.order).toBe("managingCode, capitalProjectId");
     });
 
+    it("should filter by an agency budget code", async () => {
+      const agencyBudget =
+        capitalProjectRepository.agencyBudgetRepositoryMock.checkByCodeMocks[1]
+          .code;
+      const capitalProjectsResponse = await capitalProjectService.findMany({
+        agencyBudget: agencyBudget,
+      });
+      expect(() =>
+        findCapitalProjectsQueryResponseSchema.parse(capitalProjectsResponse),
+      ).not.toThrow();
+
+      const parsedBody = findCapitalProjectsQueryResponseSchema.parse(
+        capitalProjectsResponse,
+      );
+      expect(parsedBody.capitalProjects.length).toBe(7);
+      expect(parsedBody.total).toBe(parsedBody.capitalProjects.length);
+      expect(parsedBody.order).toBe("managingCode, capitalProjectId");
+    });
+
     it("should return a InvalidRequestParameterException error when a community district with the given id cannot be found", async () => {
       const id = "999";
 
@@ -164,6 +191,15 @@ describe("CapitalProjectService", () => {
       expect(
         capitalProjectService.findMany({
           managingAgency,
+        }),
+      ).rejects.toThrow(InvalidRequestParameterException);
+    });
+    it("should throw an error when requesting an agency budget that does not exist", async () => {
+      const missingAgencyBudget = "hr";
+
+      expect(() =>
+        capitalProjectService.findMany({
+          agencyBudget: missingAgencyBudget,
         }),
       ).rejects.toThrow(InvalidRequestParameterException);
     });

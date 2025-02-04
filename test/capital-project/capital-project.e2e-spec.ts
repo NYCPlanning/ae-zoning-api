@@ -9,6 +9,7 @@ import { CommunityDistrictRepository } from "src/community-district/community-di
 import { CommunityDistrictRepositoryMock } from "test/community-district/community-district.repository.mock";
 import { AgencyRepository } from "src/agency/agency.repository";
 import { AgencyRepositoryMock } from "test/agency/agency.repository.mock";
+import { AgencyBudgetRepositoryMock } from "test/agency-budget/agency-budget.repository.mock";
 import * as request from "supertest";
 import { HttpName } from "src/filter";
 import {
@@ -21,17 +22,21 @@ import {
   findCapitalProjectGeoJsonByManagingCodeCapitalProjectIdQueryResponseSchema,
   findCapitalProjectsQueryResponseSchema,
 } from "src/gen";
+import { AgencyBudgetRepository } from "src/agency-budget/agency-budget.repository";
 
 describe("Capital Projects", () => {
   let app: INestApplication;
 
-  const agencyRepository = new AgencyRepositoryMock();
+  const agencyRepositoryMock = new AgencyRepositoryMock();
   const cityCouncilDistrictRepository = new CityCouncilDistrictRepositoryMock();
   const communityDistrictRepository = new CommunityDistrictRepositoryMock();
-  const capitalProjectRepository = new CapitalProjectRepositoryMock(
-    agencyRepository,
+  const agencyBudgetRepositoryMock = new AgencyBudgetRepositoryMock();
+
+  const capitalProjectRepositoryMock = new CapitalProjectRepositoryMock(
+    agencyRepositoryMock,
     cityCouncilDistrictRepository,
     communityDistrictRepository,
+    agencyBudgetRepositoryMock,
   );
 
   beforeAll(async () => {
@@ -39,13 +44,15 @@ describe("Capital Projects", () => {
       imports: [CapitalProjectModule],
     })
       .overrideProvider(CapitalProjectRepository)
-      .useValue(capitalProjectRepository)
+      .useValue(capitalProjectRepositoryMock)
       .overrideProvider(CityCouncilDistrictRepository)
       .useValue(cityCouncilDistrictRepository)
       .overrideProvider(CommunityDistrictRepository)
       .useValue(communityDistrictRepository)
       .overrideProvider(AgencyRepository)
-      .useValue(agencyRepository)
+      .useValue(agencyRepositoryMock)
+      .overrideProvider(AgencyBudgetRepository)
+      .useValue(agencyBudgetRepositoryMock)
       .compile();
 
     app = moduleRef.createNestApplication();
@@ -92,6 +99,35 @@ describe("Capital Projects", () => {
       expect(parsedBody.order).toBe("managingCode, capitalProjectId");
     });
 
+    it("should 200 and return capital projects with page metadata when specifying a valid agency budget code", async () => {
+      const agencyBudget =
+        capitalProjectRepositoryMock.agencyBudgetRepositoryMock
+          .checkByCodeMocks[0];
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects?agencyBudget=${agencyBudget.code}`,
+      );
+
+      expect(() =>
+        findCapitalProjectsQueryResponseSchema.parse(response.body),
+      ).not.toThrow();
+      const parsedBody = findCapitalProjectsQueryResponseSchema.parse(
+        response.body,
+      );
+      expect(parsedBody.total).toBe(1);
+    });
+
+    it("should 400 when finding by an agency budget code that does not exist", async () => {
+      const agencyBudgetCode = "DNE";
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects?agencyBudget=${agencyBudgetCode}`,
+      );
+
+      expect(response.body.message).toBe(
+        new InvalidRequestParameterException().message,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
     it("should 400 when finding by an invalid limit", async () => {
       const response = await request(app.getHttpServer()).get(
         "/capital-projects?limit=b4d",
@@ -134,7 +170,7 @@ describe("Capital Projects", () => {
 
     it("should 200 and return capital projects from a specified city council district", async () => {
       const { id } =
-        capitalProjectRepository.cityCouncilDistrictRepoMock
+        capitalProjectRepositoryMock.cityCouncilDistrictRepoMock
           .checkCityCouncilDistrictByIdMocks[0];
       const response = await request(app.getHttpServer()).get(
         `/capital-projects?cityCouncilDistrictId=${id}`,
@@ -165,7 +201,7 @@ describe("Capital Projects", () => {
 
     it("should 200 and return capital projects from a specified community district", async () => {
       const { boroughId, id: communityDistrictId } =
-        capitalProjectRepository.communityDistrictRepoMock
+        capitalProjectRepositoryMock.communityDistrictRepoMock
           .checkByBoroughIdCommunityDistrictIdMocks[1];
       const response = await request(app.getHttpServer()).get(
         `/capital-projects?communityDistrictId=${boroughId}${communityDistrictId}`,
@@ -196,7 +232,7 @@ describe("Capital Projects", () => {
 
     it("should 200 and return capital projects from a specified managing agency", async () => {
       const managingAgency =
-        capitalProjectRepository.agencyRepoMock.checkByInitialsMocks[0];
+        capitalProjectRepositoryMock.agencyRepoMock.checkByInitialsMocks[0];
       const response = await request(app.getHttpServer()).get(
         `/capital-projects?managingAgency=${managingAgency.initials}`,
       );
@@ -228,7 +264,7 @@ describe("Capital Projects", () => {
     it("should 500 when there is a data retrieval error", async () => {
       const dataRetrievalException = new DataRetrievalException();
       jest
-        .spyOn(capitalProjectRepository, "findMany")
+        .spyOn(capitalProjectRepositoryMock, "findMany")
         .mockImplementationOnce(() => {
           throw dataRetrievalException;
         });
@@ -245,7 +281,7 @@ describe("Capital Projects", () => {
   describe("findByManagingCodeCapitalProjectId", () => {
     it("should 200 and return a capital project with budget details", async () => {
       const capitalProjectMock =
-        capitalProjectRepository.findByManagingCodeCapitalProjectIdMock[0];
+        capitalProjectRepositoryMock.findByManagingCodeCapitalProjectIdMock[0];
       const { managingCode, id: capitalProjectId } = capitalProjectMock;
       const response = await request(app.getHttpServer())
         .get(`/capital-projects/${managingCode}/${capitalProjectId}`)
@@ -294,13 +330,16 @@ describe("Capital Projects", () => {
     it("should 500 when the database errors", async () => {
       const dataRetrievalException = new DataRetrievalException();
       jest
-        .spyOn(capitalProjectRepository, "findByManagingCodeCapitalProjectId")
+        .spyOn(
+          capitalProjectRepositoryMock,
+          "findByManagingCodeCapitalProjectId",
+        )
         .mockImplementationOnce(() => {
           throw dataRetrievalException;
         });
 
       const capitalProjectMock =
-        capitalProjectRepository.findByManagingCodeCapitalProjectIdMock[0];
+        capitalProjectRepositoryMock.findByManagingCodeCapitalProjectIdMock[0];
       const { managingCode, id: capitalProjectId } = capitalProjectMock;
       const response = await request(app.getHttpServer())
         .get(`/capital-projects/${managingCode}/${capitalProjectId}`)
@@ -313,7 +352,7 @@ describe("Capital Projects", () => {
   describe("findGeoJsonByManagingCodeCapitalProjectId", () => {
     it("should 200 and return a capital project with budget details", async () => {
       const capitalProjectGeoJsonMock =
-        capitalProjectRepository
+        capitalProjectRepositoryMock
           .findGeoJsonByManagingCodeCapitalProjectIdMock[0];
       const { managingCode, id: capitalProjectId } = capitalProjectGeoJsonMock;
       const response = await request(app.getHttpServer())
@@ -371,7 +410,7 @@ describe("Capital Projects", () => {
       const dataRetrievalException = new DataRetrievalException();
       jest
         .spyOn(
-          capitalProjectRepository,
+          capitalProjectRepositoryMock,
           "findGeoJsonByManagingCodeCapitalProjectId",
         )
         .mockImplementationOnce(() => {
@@ -379,7 +418,7 @@ describe("Capital Projects", () => {
         });
 
       const capitalProjectMock =
-        capitalProjectRepository
+        capitalProjectRepositoryMock
           .findGeoJsonByManagingCodeCapitalProjectIdMock[0];
       const { managingCode, id: capitalProjectId } = capitalProjectMock;
       const response = await request(app.getHttpServer())
@@ -420,7 +459,7 @@ describe("Capital Projects", () => {
     it("should 500 when there is a data retrieval error", async () => {
       const dataRetrievalException = new DataRetrievalException();
       jest
-        .spyOn(capitalProjectRepository, "findTiles")
+        .spyOn(capitalProjectRepositoryMock, "findTiles")
         .mockImplementationOnce(() => {
           throw dataRetrievalException;
         });
@@ -440,7 +479,8 @@ describe("Capital Projects", () => {
   describe("findCapitalCommitmentsByManagingCodeCapitalProjectId", () => {
     it("should 200 and return an array of capital commitments", async () => {
       const capitalProjectMock =
-        capitalProjectRepository.checkByManagingCodeCapitalProjectIdMocks[0];
+        capitalProjectRepositoryMock
+          .checkByManagingCodeCapitalProjectIdMocks[0];
 
       const { managingCode, id: capitalProjectId } = capitalProjectMock;
       const response = await request(app.getHttpServer())
@@ -499,7 +539,7 @@ describe("Capital Projects", () => {
       const dataRetrievalException = new DataRetrievalException();
       jest
         .spyOn(
-          capitalProjectRepository,
+          capitalProjectRepositoryMock,
           "findCapitalCommitmentsByManagingCodeCapitalProjectId",
         )
         .mockImplementationOnce(() => {
@@ -507,7 +547,8 @@ describe("Capital Projects", () => {
         });
 
       const capitalProjectMock =
-        capitalProjectRepository.checkByManagingCodeCapitalProjectIdMocks[0];
+        capitalProjectRepositoryMock
+          .checkByManagingCodeCapitalProjectIdMocks[0];
 
       const { managingCode, id: capitalProjectId } = capitalProjectMock;
       const response = await request(app.getHttpServer())

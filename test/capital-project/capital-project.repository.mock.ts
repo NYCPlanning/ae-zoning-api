@@ -11,6 +11,7 @@ import {
   findManyRepoSchema,
   findTilesRepoSchema,
 } from "src/capital-project/capital-project.repository.schema";
+import { AgencyBudgetRepositoryMock } from "test/agency-budget/agency-budget.repository.mock";
 import {
   FindCapitalCommitmentsByManagingCodeCapitalProjectIdPathParams,
   FindCapitalProjectByManagingCodeCapitalProjectIdPathParams,
@@ -24,14 +25,17 @@ export class CapitalProjectRepositoryMock {
   agencyRepoMock: AgencyRepositoryMock;
   cityCouncilDistrictRepoMock: CityCouncilDistrictRepositoryMock;
   communityDistrictRepoMock: CommunityDistrictRepositoryMock;
+  agencyBudgetRepositoryMock: AgencyBudgetRepositoryMock;
   constructor(
     agencyRepoMock: AgencyRepositoryMock,
     cityCouncilDistrictRepoMock: CityCouncilDistrictRepositoryMock,
     communityDistrictRepoMock: CommunityDistrictRepositoryMock,
+    agencyBudgetRepositoryMock: AgencyBudgetRepositoryMock,
   ) {
     this.agencyRepoMock = agencyRepoMock;
     this.cityCouncilDistrictRepoMock = cityCouncilDistrictRepoMock;
     this.communityDistrictRepoMock = communityDistrictRepoMock;
+    this.agencyBudgetRepositoryMock = agencyBudgetRepositoryMock;
   }
 
   get findManyMocks(): Array<
@@ -41,6 +45,7 @@ export class CapitalProjectRepositoryMock {
         cityCouncilDistrictId: string;
         boroughId: string;
         communityDistrictId: string;
+        agencyBudget: string;
       },
       FindManyRepo,
     ]
@@ -50,6 +55,7 @@ export class CapitalProjectRepositoryMock {
       this.cityCouncilDistrictRepoMock.checkCityCouncilDistrictByIdMocks;
     const communityDistrictIdMocks =
       this.communityDistrictRepoMock.checkByBoroughIdCommunityDistrictIdMocks;
+    const agencyBudgetMocks = this.agencyBudgetRepositoryMock.checkByCodeMocks;
     return [
       [
         {
@@ -57,6 +63,7 @@ export class CapitalProjectRepositoryMock {
           cityCouncilDistrictId: cityCouncilDistrictIdMocks[0].id,
           boroughId: communityDistrictIdMocks[0].boroughId,
           communityDistrictId: communityDistrictIdMocks[0].id,
+          agencyBudget: agencyBudgetMocks[0].code,
         },
         generateMock(findManyRepoSchema, {
           seed: 1,
@@ -72,6 +79,7 @@ export class CapitalProjectRepositoryMock {
           cityCouncilDistrictId: cityCouncilDistrictIdMocks[0].id,
           boroughId: communityDistrictIdMocks[1].boroughId,
           communityDistrictId: communityDistrictIdMocks[1].id,
+          agencyBudget: agencyBudgetMocks[1].code,
         },
         generateMock(findManyRepoSchema, {
           seed: 2,
@@ -87,6 +95,7 @@ export class CapitalProjectRepositoryMock {
           cityCouncilDistrictId: cityCouncilDistrictIdMocks[1].id,
           boroughId: communityDistrictIdMocks[1].boroughId,
           communityDistrictId: communityDistrictIdMocks[1].id,
+          agencyBudget: agencyBudgetMocks[1].code,
         },
         generateMock(findManyRepoSchema, {
           seed: 3,
@@ -104,6 +113,7 @@ export class CapitalProjectRepositoryMock {
     boroughId,
     communityDistrictId,
     cityCouncilDistrictId,
+    agencyBudget,
     limit,
     offset,
   }: {
@@ -111,6 +121,7 @@ export class CapitalProjectRepositoryMock {
     cityCouncilDistrictId: string | null;
     communityDistrictId: string | null;
     boroughId: string | null;
+    agencyBudget: string | null;
     limit: number;
     offset: number;
   }) {
@@ -134,6 +145,9 @@ export class CapitalProjectRepositoryMock {
           communityDistrictId !== null &&
           criteria.communityDistrictId !== communityDistrictId
         )
+          return acc;
+
+        if (agencyBudget !== null && criteria.agencyBudget !== agencyBudget)
           return acc;
 
         return acc.concat(capitalProjects);

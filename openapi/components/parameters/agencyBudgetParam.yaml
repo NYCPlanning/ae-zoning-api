@@ -1,0 +1,8 @@
+name: agencyBudget
+required: false
+in: query
+schema:
+  type: string
+  example: 'HR'
+description: >-
+  The two character alphabetic string containing the letters used to refer to the agency budget code.
