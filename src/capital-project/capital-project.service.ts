@@ -13,11 +13,15 @@ import {
   CapitalProjectBudgetedEntity,
   CapitalProjectBudgetedGeoJsonEntityRepo,
 } from "./capital-project.repository.schema";
+import { CityCouncilDistrictRepository } from "src/city-council-district/city-council-district.repository";
+import { CommunityDistrictRepository } from "src/community-district/community-district.repository";
 
 export class CapitalProjectService {
   constructor(
     @Inject(CapitalProjectRepository)
     private readonly capitalProjectRepository: CapitalProjectRepository,
+    private readonly cityCouncilDistrictRepository: CityCouncilDistrictRepository,
+    private readonly communityDistrictRepository: CommunityDistrictRepository,
   ) {}
 
   async findMany({
@@ -26,6 +30,24 @@ export class CapitalProjectService {
     ccd = null,
     cd = null,
   }: FindCapitalProjectsQueryParams) {
+    const checklist = [];
+    ccd !== null &&
+      checklist.push(
+        this.cityCouncilDistrictRepository.checkCityCouncilDistrictById(ccd),
+      );
+    cd !== null &&
+      checklist.push(
+        this.communityDistrictRepository.checkCommunityDistrictById(
+          cd.slice(1, 3),
+        ),
+      );
+    const checkedList = await Promise.all(checklist);
+    for (const listItem of checkedList) {
+      if (listItem === undefined) {
+        throw new ResourceNotFoundException();
+      }
+    }
+
     const capitalProjects = await this.capitalProjectRepository.findMany({
       ccd,
       boro: cd === null ? null : cd.slice(0, 1),
