@@ -1,4 +1,4 @@
-name: ccd
+name: cityCouncilDistrictId
 required: false
 in: query
 schema:

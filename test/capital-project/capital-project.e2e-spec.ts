@@ -130,10 +130,10 @@ describe("Capital Projects", () => {
     });
 
     it("should 200 and return capital projects from a specified city council district", async () => {
-      const ccd =
+      const cityCouncilDistrictId =
         cityCouncilDistrictRepository.checkCityCouncilDistrictByIdMocks[0].id;
       const response = await request(app.getHttpServer()).get(
-        `/capital-projects?ccd=${ccd}`,
+        `/capital-projects?cityCouncilDistrictId=${cityCouncilDistrictId}`,
       );
 
       expect(() =>
@@ -146,9 +146,9 @@ describe("Capital Projects", () => {
     });
 
     it("should 200 and return capital projects from a specified community district", async () => {
-      const cd = "215";
+      const communityDistrictId = "215";
       const response = await request(app.getHttpServer()).get(
-        `/capital-projects?cd=${cd}`,
+        `/capital-projects?communityDistrictId=${communityDistrictId}`,
       );
 
       expect(() =>

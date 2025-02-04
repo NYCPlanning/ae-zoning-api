@@ -30,19 +30,21 @@ export class CapitalProjectService {
   async findMany({
     limit = 20,
     offset = 0,
-    ccd = null,
-    cd = null,
+    cityCouncilDistrictId = null,
+    communityDistrictId = null,
   }: FindCapitalProjectsQueryParams) {
     const checklist = [];
-    ccd !== null &&
+    cityCouncilDistrictId !== null &&
       checklist.push(
-        this.cityCouncilDistrictRepository.checkCityCouncilDistrictById(ccd),
+        this.cityCouncilDistrictRepository.checkCityCouncilDistrictById(
+          cityCouncilDistrictId,
+        ),
       );
-    cd !== null &&
+    communityDistrictId !== null &&
       checklist.push(
         this.communityDistrictRepository.checkCommunityDistrictById(
-          cd.slice(0, 1),
-          cd.slice(1, 3),
+          communityDistrictId.slice(0, 1),
+          communityDistrictId.slice(1, 3),
         ),
       );
     const checkedList = await Promise.all(checklist);
@@ -53,9 +55,11 @@ export class CapitalProjectService {
     }
 
     const capitalProjects = await this.capitalProjectRepository.findMany({
-      ccd,
-      boro: cd === null ? null : cd.slice(0, 1),
-      cd: cd === null ? null : cd.slice(1, 3),
+      cityCouncilDistrictId,
+      boroughId:
+        communityDistrictId === null ? null : communityDistrictId.slice(0, 1),
+      communityDistrictId:
+        communityDistrictId === null ? null : communityDistrictId.slice(1, 3),
       limit,
       offset,
     });

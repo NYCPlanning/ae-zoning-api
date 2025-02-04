@@ -4,7 +4,7 @@ import { errorSchema } from "./errorSchema";
 
 export const findCapitalProjectsQueryParamsSchema = z
   .object({
-    cd: z.coerce
+    communityDistrictId: z.coerce
       .string()
       .regex(new RegExp("^([0-9]{3})$"))
       .describe(
@@ -12,7 +12,7 @@ export const findCapitalProjectsQueryParamsSchema = z
       )
       .nullable()
       .nullish(),
-    ccd: z.coerce
+    cityCouncilDistrictId: z.coerce
       .string()
       .regex(new RegExp("^([0-9]{1,2})$"))
       .describe(

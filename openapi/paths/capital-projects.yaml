@@ -4,8 +4,8 @@ get:
   tags:
     - Capital Projects
   parameters:
-    - $ref: ../components/parameters/cdParam.yaml
-    - $ref: ../components/parameters/ccdParam.yaml
+    - $ref: ../components/parameters/communityDistrictIdQueryParam.yaml
+    - $ref: ../components/parameters/cityCouncilDistrictIdQueryParam.yaml
     - $ref: ../components/parameters/limitParam.yaml
     - $ref: ../components/parameters/offsetParam.yaml
   responses:

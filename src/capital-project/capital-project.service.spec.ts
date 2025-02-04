@@ -70,7 +70,7 @@ describe("CapitalProjectService", () => {
         cityCouncilDistrictRepositoryMock.checkCityCouncilDistrictByIdMocks[0];
 
       const resource = await capitalProjectService.findMany({
-        ccd: id,
+        cityCouncilDistrictId: id,
       });
 
       expect(() =>
@@ -90,7 +90,7 @@ describe("CapitalProjectService", () => {
         boroughRepositoryMock.communityDistrictRepoMock
           .checkCommunityDistrictByIdMocks[0].id;
       const capitalProjects = await capitalProjectService.findMany({
-        cd: `${boroughId}${communityDistrictId}`,
+        communityDistrictId: `${boroughId}${communityDistrictId}`,
         limit: 10,
         offset: 3,
       });

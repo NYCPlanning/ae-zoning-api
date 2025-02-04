@@ -34,15 +34,15 @@ export class CapitalProjectRepository {
   ) {}
 
   async findMany({
-    ccd,
-    cd,
-    boro,
+    cityCouncilDistrictId,
+    communityDistrictId,
+    boroughId,
     limit,
     offset,
   }: {
-    ccd: string | null;
-    cd: string | null;
-    boro: string | null;
+    cityCouncilDistrictId: string | null;
+    communityDistrictId: string | null;
+    boroughId: string | null;
     limit: number;
     offset: number;
   }): Promise<FindCapitalProjectsRepo> {
@@ -72,11 +72,13 @@ export class CapitalProjectRepository {
         )
         .where(
           and(
-            ccd !== null ? eq(cityCouncilDistrict.id, ccd) : undefined,
-            cd !== null && boro !== null
+            cityCouncilDistrictId !== null
+              ? eq(cityCouncilDistrict.id, cityCouncilDistrictId)
+              : undefined,
+            communityDistrictId !== null && boroughId !== null
               ? and(
-                  eq(communityDistrict.boroughId, boro),
-                  eq(communityDistrict.id, cd),
+                  eq(communityDistrict.boroughId, boroughId),
+                  eq(communityDistrict.id, communityDistrictId),
                 )
               : undefined,
           ),
