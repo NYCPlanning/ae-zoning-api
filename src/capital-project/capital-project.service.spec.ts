@@ -5,6 +5,8 @@ import { BoroughRepositoryMock } from "test/borough/borough.repository.mock";
 import { CapitalProjectService } from "./capital-project.service";
 import { Test } from "@nestjs/testing";
 import { CapitalProjectRepository } from "./capital-project.repository";
+import { CityCouncilDistrictRepository } from "src/city-council-district/city-council-district.repository";
+import { CommunityDistrictRepository } from "src/community-district/community-district.repository";
 import {
   findCapitalCommitmentsByManagingCodeCapitalProjectIdQueryResponseSchema,
   findCapitalProjectByManagingCodeCapitalProjectIdQueryResponseSchema,
@@ -27,10 +29,19 @@ describe("CapitalProjectService", () => {
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
-      providers: [CapitalProjectService, CapitalProjectRepository],
+      providers: [
+        CapitalProjectService,
+        CapitalProjectRepository,
+        CityCouncilDistrictRepository,
+        CommunityDistrictRepository,
+      ],
     })
       .overrideProvider(CapitalProjectRepository)
       .useValue(capitalProjectRepository)
+      .overrideProvider(CityCouncilDistrictRepository)
+      .useValue(cityCouncilDistrictRepositoryMock)
+      .overrideProvider(CommunityDistrictRepository)
+      .useValue(communityDistrictRepositoryMock)
       .compile();
 
     capitalProjectService = moduleRef.get<CapitalProjectService>(
