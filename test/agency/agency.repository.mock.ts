@@ -7,4 +7,8 @@ export class AgencyRepositoryMock {
   async findMany() {
     return this.findManyMocks;
   }
+
+  async checkManagingAgency(managingAgency: string) {
+    return this.findManyMocks.find((row) => row.initials === managingAgency);
+  }
 }

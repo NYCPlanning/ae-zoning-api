@@ -2,11 +2,13 @@ import { CapitalProjectRepositoryMock } from "test/capital-project/capital-proje
 import { CityCouncilDistrictRepositoryMock } from "test/city-council-district/city-council-district.repository.mock";
 import { CommunityDistrictRepositoryMock } from "test/community-district/community-district.repository.mock";
 import { BoroughRepositoryMock } from "test/borough/borough.repository.mock";
+import { AgencyRepositoryMock } from "test/agency/agency.repository.mock";
 import { CapitalProjectService } from "./capital-project.service";
 import { Test } from "@nestjs/testing";
 import { CapitalProjectRepository } from "./capital-project.repository";
 import { CityCouncilDistrictRepository } from "src/city-council-district/city-council-district.repository";
 import { CommunityDistrictRepository } from "src/community-district/community-district.repository";
+import { AgencyRepository } from "src/agency/agency.repository";
 import {
   findCapitalCommitmentsByManagingCodeCapitalProjectIdQueryResponseSchema,
   findCapitalProjectByManagingCodeCapitalProjectIdQueryResponseSchema,
@@ -26,6 +28,7 @@ describe("CapitalProjectService", () => {
   const boroughRepositoryMock = new BoroughRepositoryMock(
     communityDistrictRepositoryMock,
   );
+  const agencyRepositoryMock = new AgencyRepositoryMock();
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -34,6 +37,7 @@ describe("CapitalProjectService", () => {
         CapitalProjectRepository,
         CityCouncilDistrictRepository,
         CommunityDistrictRepository,
+        AgencyRepository,
       ],
     })
       .overrideProvider(CapitalProjectRepository)
@@ -42,6 +46,8 @@ describe("CapitalProjectService", () => {
       .useValue(cityCouncilDistrictRepositoryMock)
       .overrideProvider(CommunityDistrictRepository)
       .useValue(communityDistrictRepositoryMock)
+      .overrideProvider(AgencyRepository)
+      .useValue(agencyRepositoryMock)
       .compile();
 
     capitalProjectService = moduleRef.get<CapitalProjectService>(
@@ -106,6 +112,23 @@ describe("CapitalProjectService", () => {
       expect(parsedBody.total).toBe(parsedBody.capitalProjects.length);
       expect(parsedBody.order).toBe("managingCode, capitalProjectId");
     });
+  });
+
+  it("service should return a list of capital projects by managing agency, using the default limit and offset", async () => {
+    const managingAgency = "cimentarius";
+    const resource = await capitalProjectService.findMany({
+      managingAgency,
+    });
+
+    expect(() =>
+      findCapitalProjectsQueryResponseSchema.parse(resource),
+    ).not.toThrow();
+    const parsedResource =
+      findCapitalProjectsQueryResponseSchema.parse(resource);
+    expect(parsedResource.limit).toBe(20);
+    expect(parsedResource.offset).toBe(0);
+    expect(parsedResource.total).toBe(parsedResource.capitalProjects.length);
+    expect(parsedResource.order).toBe("managingCode, capitalProjectId");
   });
 
   describe("findByManagingCodeCapitalProjectId", () => {

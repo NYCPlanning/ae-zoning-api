@@ -7,6 +7,8 @@ import { CityCouncilDistrictRepository } from "src/city-council-district/city-co
 import { CityCouncilDistrictRepositoryMock } from "test/city-council-district/city-council-district.repository.mock";
 import { CommunityDistrictRepository } from "src/community-district/community-district.repository";
 import { CommunityDistrictRepositoryMock } from "test/community-district/community-district.repository.mock";
+import { AgencyRepository } from "src/agency/agency.repository";
+import { AgencyRepositoryMock } from "test/agency/agency.repository.mock";
 import * as request from "supertest";
 import { HttpName } from "src/filter";
 import {
@@ -26,6 +28,7 @@ describe("Capital Projects", () => {
   const capitalProjectRepository = new CapitalProjectRepositoryMock();
   const cityCouncilDistrictRepository = new CityCouncilDistrictRepositoryMock();
   const communityDistrictRepository = new CommunityDistrictRepositoryMock();
+  const agencyRepository = new AgencyRepositoryMock();
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [CapitalProjectModule],
@@ -36,6 +39,8 @@ describe("Capital Projects", () => {
       .useValue(cityCouncilDistrictRepository)
       .overrideProvider(CommunityDistrictRepository)
       .useValue(communityDistrictRepository)
+      .overrideProvider(AgencyRepository)
+      .useValue(agencyRepository)
       .compile();
 
     app = moduleRef.createNestApplication();
@@ -149,6 +154,21 @@ describe("Capital Projects", () => {
       const communityDistrictId = "215";
       const response = await request(app.getHttpServer()).get(
         `/capital-projects?communityDistrictId=${communityDistrictId}`,
+      );
+
+      expect(() =>
+        findCapitalProjectsQueryResponseSchema.parse(response.body),
+      ).not.toThrow();
+      const parsedBody = findCapitalProjectsQueryResponseSchema.parse(
+        response.body,
+      );
+      expect(parsedBody.capitalProjects.length).toBeGreaterThanOrEqual(0);
+    });
+
+    it("should 200 and return capital projects from a specified managing agency", async () => {
+      const managingAgency = "tendo";
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects?managingAgency=${managingAgency}`,
       );
 
       expect(() =>

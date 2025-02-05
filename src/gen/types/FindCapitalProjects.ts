@@ -13,6 +13,11 @@ export type FindCapitalProjectsQueryParams = {
    */
   cityCouncilDistrictId?: string | null;
   /**
+   * @description The acronym of the managing agency to filter the projects by.
+   * @type string
+   */
+  managingAgency?: string | null;
+  /**
    * @description The maximum number of results to be returned in each response. The default value is 20. It must be between 1 and 100, inclusive.
    * @type integer | undefined
    */

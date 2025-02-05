@@ -37,12 +37,14 @@ export class CapitalProjectRepository {
     cityCouncilDistrictId,
     communityDistrictId,
     boroughId,
+    managingAgency,
     limit,
     offset,
   }: {
     cityCouncilDistrictId: string | null;
     communityDistrictId: string | null;
     boroughId: string | null;
+    managingAgency: string | null;
     limit: number;
     offset: number;
   }): Promise<FindCapitalProjectsRepo> {
@@ -80,6 +82,9 @@ export class CapitalProjectRepository {
                   eq(communityDistrict.boroughId, boroughId),
                   eq(communityDistrict.id, communityDistrictId),
                 )
+              : undefined,
+            managingAgency !== null
+              ? eq(capitalProject.managingAgency, managingAgency)
               : undefined,
           ),
         )

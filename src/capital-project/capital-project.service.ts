@@ -18,6 +18,7 @@ import {
 } from "./capital-project.repository.schema";
 import { CityCouncilDistrictRepository } from "src/city-council-district/city-council-district.repository";
 import { CommunityDistrictRepository } from "src/community-district/community-district.repository";
+import { AgencyRepository } from "src/agency/agency.repository";
 
 export class CapitalProjectService {
   constructor(
@@ -25,6 +26,7 @@ export class CapitalProjectService {
     private readonly capitalProjectRepository: CapitalProjectRepository,
     private readonly cityCouncilDistrictRepository: CityCouncilDistrictRepository,
     private readonly communityDistrictRepository: CommunityDistrictRepository,
+    private readonly agencyRepository: AgencyRepository,
   ) {}
 
   async findMany({
@@ -32,6 +34,7 @@ export class CapitalProjectService {
     offset = 0,
     cityCouncilDistrictId = null,
     communityDistrictId = null,
+    managingAgency = null,
   }: FindCapitalProjectsQueryParams) {
     const checklist = [];
     cityCouncilDistrictId !== null &&
@@ -47,6 +50,8 @@ export class CapitalProjectService {
           communityDistrictId.slice(1, 3),
         ),
       );
+    managingAgency !== null &&
+      checklist.push(this.agencyRepository.checkManagingAgency(managingAgency));
     const checkedList = await Promise.all(checklist);
     for (const listItem of checkedList) {
       if (listItem === undefined) {
@@ -60,6 +65,7 @@ export class CapitalProjectService {
         communityDistrictId === null ? null : communityDistrictId.slice(0, 1),
       communityDistrictId:
         communityDistrictId === null ? null : communityDistrictId.slice(1, 3),
+      managingAgency,
       limit,
       offset,
     });
