@@ -14,7 +14,10 @@ import {
   findCapitalProjectTilesQueryResponseSchema,
   findCapitalProjectsQueryResponseSchema,
 } from "src/gen";
-import { ResourceNotFoundException } from "src/exception";
+import {
+  InvalidRequestParameterException,
+  ResourceNotFoundException,
+} from "src/exception";
 
 describe("CapitalProjectService", () => {
   let capitalProjectService: CapitalProjectService;
@@ -84,6 +87,16 @@ describe("CapitalProjectService", () => {
       expect(parsedResource.order).toBe("managingCode, capitalProjectId");
     });
 
+    it("service should return a InvalidRequestParameterException error when a city council district with the given id cannot be found", async () => {
+      const id = "60";
+
+      expect(
+        capitalProjectService.findMany({
+          cityCouncilDistrictId: id,
+        }),
+      ).rejects.toThrow(InvalidRequestParameterException);
+    });
+
     it("service should return a list of capital projects by community district id, using the user specified limit and offset", async () => {
       const boroughId = boroughRepositoryMock.checkBoroughByIdMocks[0].id;
       const communityDistrictId =
@@ -105,6 +118,16 @@ describe("CapitalProjectService", () => {
       expect(parsedBody.offset).toBe(3);
       expect(parsedBody.total).toBe(parsedBody.capitalProjects.length);
       expect(parsedBody.order).toBe("managingCode, capitalProjectId");
+    });
+
+    it("service should return a InvalidRequestParameterException error when a community district with the given id cannot be found", async () => {
+      const id = "999";
+
+      expect(
+        capitalProjectService.findMany({
+          communityDistrictId: id,
+        }),
+      ).rejects.toThrow(InvalidRequestParameterException);
     });
   });
 
