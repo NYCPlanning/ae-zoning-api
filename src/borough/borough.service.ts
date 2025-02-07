@@ -73,12 +73,9 @@ export class BoroughService {
     offset = 0,
   }: FindCapitalProjectsByBoroughIdCommunityDistrictIdPathParams &
     FindCapitalProjectsByBoroughIdCommunityDistrictIdQueryParams) {
-    const boroughCheck =
-      await this.boroughRepository.checkBoroughById(boroughId);
-    if (boroughCheck === undefined) throw new ResourceNotFoundException();
-
     const communityDistrictCheck =
-      await this.communityDistrictRepository.checkCommunityDistrictById(
+      await this.communityDistrictRepository.checkByBoroughIdCommunityDistrictId(
+        boroughId,
         communityDistrictId,
       );
     if (communityDistrictCheck === undefined)

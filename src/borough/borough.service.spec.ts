@@ -104,10 +104,9 @@ describe("Borough service unit", () => {
   });
 
   describe("findCapitalProjectsByBoroughIdCommunityDistrictId", () => {
-    const boroughId = boroughRepositoryMock.checkBoroughByIdMocks[0].id;
-    const communityDistrictId =
+    const { boroughId, id: communityDistrictId } =
       boroughRepositoryMock.communityDistrictRepoMock
-        .checkCommunityDistrictByIdMocks[0].id;
+        .checkByBoroughIdCommunityDistrictIdMocks[0];
     it("service should return a capital projects compliant object using default query params", async () => {
       const capitalProjects =
         await boroughService.findCapitalProjectsByBoroughIdCommunityDistrictId({

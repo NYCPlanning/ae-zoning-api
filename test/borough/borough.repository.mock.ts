@@ -32,11 +32,9 @@ export class BoroughRepositoryMock {
   }
 
   findCommunityDistrictsByBoroughIdMocks = this.checkBoroughByIdMocks.map(
-    (checkCommunityDistrict) => {
+    (borough) => {
       return {
-        [checkCommunityDistrict.id]: generateMock(
-          findCommunityDistrictsByBoroughIdRepoSchema,
-        ),
+        [borough.id]: generateMock(findCommunityDistrictsByBoroughIdRepoSchema),
       };
     },
   );
@@ -50,12 +48,13 @@ export class BoroughRepositoryMock {
   }
 
   get findCapitalProjectsByBoroughIdCommunityDistrictIdMocks() {
-    return this.communityDistrictRepoMock.checkCommunityDistrictByIdMocks.map(
-      (checkCommunityDistrict) => {
+    return this.communityDistrictRepoMock.checkByBoroughIdCommunityDistrictIdMocks.map(
+      (communityDistrict) => {
         return {
-          [checkCommunityDistrict.id]: generateMock(
-            findCapitalProjectsByBoroughIdCommunityDistrictIdRepoSchema,
-          ),
+          [`${communityDistrict.boroughId}${communityDistrict.id}`]:
+            generateMock(
+              findCapitalProjectsByBoroughIdCommunityDistrictIdRepoSchema,
+            ),
         };
       },
     );
@@ -77,11 +76,13 @@ export class BoroughRepositoryMock {
   }
 
   async findCapitalProjectsByBoroughIdCommunityDistrictId(
+    boroughId: string,
     communityDistrictId: string,
   ) {
     const results =
       this.findCapitalProjectsByBoroughIdCommunityDistrictIdMocks.find(
-        (capitalProjects) => communityDistrictId in capitalProjects,
+        (capitalProjects) =>
+          `${boroughId}${communityDistrictId}` in capitalProjects,
       );
     return results == undefined ? [] : results[communityDistrictId];
   }
