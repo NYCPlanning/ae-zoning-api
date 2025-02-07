@@ -5,5 +5,4 @@ schema:
   type: string
   pattern: ^([0-9]{1,2})$
   example: '25'
-  nullable: true
 description: One or two character code to represent city council districts.

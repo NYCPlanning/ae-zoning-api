@@ -4,7 +4,6 @@ import {
   FindCapitalProjectByManagingCodeCapitalProjectIdPathParams,
   FindCapitalProjectGeoJsonByManagingCodeCapitalProjectIdPathParams,
   FindCapitalProjectTilesPathParams,
-  FindCapitalProjectsQueryParams,
 } from "src/gen";
 import { CapitalProjectRepository } from "./capital-project.repository";
 import { Inject } from "@nestjs/common";
@@ -31,8 +30,21 @@ export class CapitalProjectService {
     limit = 20,
     offset = 0,
     cityCouncilDistrictId = null,
-    communityDistrictId = null,
-  }: FindCapitalProjectsQueryParams) {
+    communityDistrictId: boroughIdCommunityDistrictId = null,
+  }: {
+    limit?: number;
+    offset?: number;
+    cityCouncilDistrictId?: string | null;
+    communityDistrictId?: string | null;
+  }) {
+    const boroughId =
+      boroughIdCommunityDistrictId === null
+        ? null
+        : boroughIdCommunityDistrictId.slice(0, 1);
+    const communityDistrictId =
+      boroughIdCommunityDistrictId === null
+        ? null
+        : boroughIdCommunityDistrictId.slice(1, 3);
     const checklist = [];
     cityCouncilDistrictId !== null &&
       checklist.push(
@@ -40,11 +52,12 @@ export class CapitalProjectService {
           cityCouncilDistrictId,
         ),
       );
-    communityDistrictId !== null &&
+    boroughId !== null &&
+      communityDistrictId !== null &&
       checklist.push(
         this.communityDistrictRepository.checkCommunityDistrictById(
-          communityDistrictId.slice(0, 1),
-          communityDistrictId.slice(1, 3),
+          boroughId,
+          communityDistrictId,
         ),
       );
     const checkedList = await Promise.all(checklist);
@@ -56,10 +69,9 @@ export class CapitalProjectService {
 
     const capitalProjects = await this.capitalProjectRepository.findMany({
       cityCouncilDistrictId,
-      boroughId:
-        communityDistrictId === null ? null : communityDistrictId.slice(0, 1),
+      boroughId: boroughId === null ? null : boroughId,
       communityDistrictId:
-        communityDistrictId === null ? null : communityDistrictId.slice(1, 3),
+        communityDistrictId === null ? null : communityDistrictId,
       limit,
       offset,
     });

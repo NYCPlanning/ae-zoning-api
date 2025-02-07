@@ -5,6 +5,5 @@ schema:
   type: string
   pattern: ^([0-9]{3})$
   example: '101'
-  nullable: true
 description: >-
   The three character numeric string containing the concatenation of the borough and community district ids.
