@@ -184,13 +184,13 @@ describe("Borough e2e", () => {
   });
 
   describe("findCapitalProjectsByBoroughIdCommunityDistrictId", () => {
-    const borough = boroughRepositoryMock.checkBoroughByIdMocks[0];
     const communityDistrict =
-      communityDistrictRepositoryMock.checkCommunityDistrictByIdMocks[0];
+      communityDistrictRepositoryMock
+        .checkByBoroughIdCommunityDistrictIdMocks[0];
     it("should 200 and return capital projects for a given borough id community district id", async () => {
       const response = await request(app.getHttpServer())
         .get(
-          `/boroughs/${borough.id}/community-districts/${communityDistrict.id}/capital-projects`,
+          `/boroughs/${communityDistrict.boroughId}/community-districts/${communityDistrict.id}/capital-projects`,
         )
         .expect(200);
 
@@ -214,7 +214,7 @@ describe("Borough e2e", () => {
 
       const response = await request(app.getHttpServer())
         .get(
-          `/boroughs/${borough.id}/community-districts/${communityDistrict.id}/capital-projects?limit=${limit}&offset=${offset}`,
+          `/boroughs/${communityDistrict.boroughId}/community-districts/${communityDistrict.id}/capital-projects?limit=${limit}&offset=${offset}`,
         )
         .expect(200);
 
@@ -246,7 +246,7 @@ describe("Borough e2e", () => {
       const missingId = "99";
       const response = await request(app.getHttpServer())
         .get(
-          `/boroughs/${borough.id}/community-districts/${missingId}/capital-projects`,
+          `/boroughs/${communityDistrict.boroughId}/community-districts/${missingId}/capital-projects`,
         )
         .expect(404);
       expect(response.body.message).toBe(HttpName.NOT_FOUND);
@@ -266,7 +266,7 @@ describe("Borough e2e", () => {
       const invalidId = "Q1";
       const response = await request(app.getHttpServer())
         .get(
-          `/boroughs/${borough.id}/community-districts/${invalidId}/capital-projects`,
+          `/boroughs/${communityDistrict.boroughId}/community-districts/${invalidId}/capital-projects`,
         )
         .expect(400);
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
@@ -276,7 +276,7 @@ describe("Borough e2e", () => {
       const limit = "b4d";
       const response = await request(app.getHttpServer())
         .get(
-          `/boroughs/${borough.id}/community-districts/${communityDistrict.id}/capital-projects?limit=${limit}`,
+          `/boroughs/${communityDistrict.boroughId}/community-districts/${communityDistrict.id}/capital-projects?limit=${limit}`,
         )
         .expect(400);
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
@@ -286,7 +286,7 @@ describe("Borough e2e", () => {
       const limit = 101;
       const response = await request(app.getHttpServer())
         .get(
-          `/boroughs/${borough.id}/community-districts/${communityDistrict.id}/capital-projects?limit=${limit}`,
+          `/boroughs/${communityDistrict.boroughId}/community-districts/${communityDistrict.id}/capital-projects?limit=${limit}`,
         )
         .expect(400);
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
@@ -296,7 +296,7 @@ describe("Borough e2e", () => {
       const limit = 0;
       const response = await request(app.getHttpServer())
         .get(
-          `/boroughs/${borough.id}/community-districts/${communityDistrict.id}/capital-projects?limit=${limit}`,
+          `/boroughs/${communityDistrict.boroughId}/community-districts/${communityDistrict.id}/capital-projects?limit=${limit}`,
         )
         .expect(400);
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
@@ -306,7 +306,7 @@ describe("Borough e2e", () => {
       const offset = "b4d";
       const response = await request(app.getHttpServer())
         .get(
-          `/boroughs/${borough.id}/community-districts/${communityDistrict.id}/capital-projects?offset=${offset}`,
+          `/boroughs/${communityDistrict.boroughId}/community-districts/${communityDistrict.id}/capital-projects?offset=${offset}`,
         )
         .expect(400);
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
@@ -315,14 +315,18 @@ describe("Borough e2e", () => {
     it("should 500 when the database errors", async () => {
       const dataRetrievalException = new DataRetrievalException();
       jest
-        .spyOn(boroughRepositoryMock, "checkBoroughById")
+        .spyOn(
+          boroughRepositoryMock.communityDistrictRepoMock,
+          "checkByBoroughIdCommunityDistrictId",
+        )
         .mockImplementationOnce(() => {
           throw dataRetrievalException;
         });
 
-      const boroughId = boroughRepositoryMock.checkBoroughByIdMocks[0].id;
       const response = await request(app.getHttpServer())
-        .get(`/boroughs/${boroughId}/community-districts/01/capital-projects`)
+        .get(
+          `/boroughs/${communityDistrict.boroughId}/community-districts/01/capital-projects`,
+        )
         .expect(500);
       expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);
       expect(response.body.message).toBe(dataRetrievalException.message);
@@ -330,9 +334,9 @@ describe("Borough e2e", () => {
   });
 
   describe("findCapitalProjectTilesByBoroughIdCommunityDistrictId", () => {
-    const borough = boroughRepositoryMock.checkBoroughByIdMocks[0];
     const communityDistrict =
-      communityDistrictRepositoryMock.checkCommunityDistrictByIdMocks[0];
+      communityDistrictRepositoryMock
+        .checkByBoroughIdCommunityDistrictIdMocks[0];
 
     it("should 200 and return capital project tiles for a given borough id and community district id", async () => {
       const z = 1;
@@ -340,7 +344,7 @@ describe("Borough e2e", () => {
       const y = 200;
       await request(app.getHttpServer())
         .get(
-          `/boroughs/${borough.id}/community-districts/${communityDistrict.id}/capital-projects/${z}/${x}/${y}.pbf`,
+          `/boroughs/${communityDistrict.boroughId}/community-districts/${communityDistrict.id}/capital-projects/${z}/${x}/${y}.pbf`,
         )
         .expect("Content-Type", "application/x-protobuf")
         .expect(200);
@@ -373,7 +377,7 @@ describe("Borough e2e", () => {
       const y = 200;
       const response = await request(app.getHttpServer())
         .get(
-          `/boroughs/${borough.id}/community-districts/${invalidId}/capital-projects/${z}/${x}/${y}.pbf`,
+          `/boroughs/${communityDistrict.boroughId}/community-districts/${invalidId}/capital-projects/${z}/${x}/${y}.pbf`,
         )
         .expect(400);
 
@@ -390,7 +394,7 @@ describe("Borough e2e", () => {
       const y = "baz";
       const response = await request(app.getHttpServer())
         .get(
-          `/boroughs/${borough.id}/community-districts/${communityDistrict.id}/capital-projects/${z}/${x}/${y}.pbf`,
+          `/boroughs/${communityDistrict.boroughId}/community-districts/${communityDistrict.id}/capital-projects/${z}/${x}/${y}.pbf`,
         )
         .expect(400);
 
@@ -417,7 +421,7 @@ describe("Borough e2e", () => {
       const y = 200;
       const response = await request(app.getHttpServer())
         .get(
-          `/boroughs/${borough.id}/community-districts/${communityDistrict.id}/capital-projects/${z}/${x}/${y}.pbf`,
+          `/boroughs/${communityDistrict.boroughId}/community-districts/${communityDistrict.id}/capital-projects/${z}/${x}/${y}.pbf`,
         )
         .expect(500);
       expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);
