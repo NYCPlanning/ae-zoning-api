@@ -6,12 +6,12 @@ export const findTilesRepoSchema = mvtEntitySchema;
 
 export type FindTilesRepo = z.infer<typeof findTilesRepoSchema>;
 
-export const checkByCommunityDistrictIdRepoSchema =
+export const checkByBoroughIdCommunityDistrictIdRepoSchema =
   communityDistrictEntitySchema.pick({
     boroughId: true,
     id: true,
   });
 
-export type CheckByCommunityDistrictIdRepo = z.infer<
-  typeof checkByCommunityDistrictIdRepoSchema
+export type CheckByBoroughIdCommunityDistrictIdRepo = z.infer<
+  typeof checkByBoroughIdCommunityDistrictIdRepoSchema
 >;

@@ -3,7 +3,7 @@ import { DB, DbType } from "src/global/providers/db.provider";
 import { FindCommunityDistrictTilesPathParams } from "src/gen";
 import {
   FindTilesRepo,
-  CheckByCommunityDistrictIdRepo,
+  CheckByBoroughIdCommunityDistrictIdRepo,
 } from "./community-district.repository.schema";
 import { borough, communityDistrict } from "src/schema";
 import { sql, isNotNull, eq, and } from "drizzle-orm";
@@ -15,7 +15,7 @@ export class CommunityDistrictRepository {
     private readonly db: DbType,
   ) {}
 
-  #checkCommunityDistrictById = this.db.query.communityDistrict
+  #checkByBoroughIdCommunityDistrictId = this.db.query.communityDistrict
     .findFirst({
       columns: {
         boroughId: true,
@@ -27,14 +27,14 @@ export class CommunityDistrictRepository {
           eq(communityDistrict.id, sql.placeholder("id")),
         ),
     })
-    .prepare("checkCommunityDistrictId");
+    .prepare("checkByBoroughIdCommunityDistrictId");
 
-  async checkCommunityDistrictById(
+  async checkByBoroughIdCommunityDistrictId(
     boroughId: string,
     id: string,
-  ): Promise<CheckByCommunityDistrictIdRepo | undefined> {
+  ): Promise<CheckByBoroughIdCommunityDistrictIdRepo | undefined> {
     try {
-      return await this.#checkCommunityDistrictById.execute({
+      return await this.#checkByBoroughIdCommunityDistrictId.execute({
         boroughId,
         id,
       });
