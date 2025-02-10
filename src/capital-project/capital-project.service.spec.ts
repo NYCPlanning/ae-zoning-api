@@ -98,7 +98,9 @@ describe("CapitalProjectService", () => {
     });
 
     it("service should return a list of capital projects by community district id, using the user specified limit and offset", async () => {
-      const boroughId = boroughRepositoryMock.checkBoroughByIdMocks[0].id;
+      const boroughId =
+        boroughRepositoryMock.communityDistrictRepoMock
+          .checkByBoroughIdCommunityDistrictIdMocks[0].boroughId;
       const communityDistrictId =
         boroughRepositoryMock.communityDistrictRepoMock
           .checkByBoroughIdCommunityDistrictIdMocks[0].id;

@@ -146,7 +146,7 @@ describe("Capital Projects", () => {
     });
 
     it("should 200 and return capital projects from a specified community district", async () => {
-      const communityDistrictId = "215";
+      const communityDistrictId = "115";
       const response = await request(app.getHttpServer()).get(
         `/capital-projects?communityDistrictId=${communityDistrictId}`,
       );
