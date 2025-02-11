@@ -7,6 +7,8 @@ import { CityCouncilDistrictRepository } from "src/city-council-district/city-co
 import { CityCouncilDistrictRepositoryMock } from "test/city-council-district/city-council-district.repository.mock";
 import { CommunityDistrictRepository } from "src/community-district/community-district.repository";
 import { CommunityDistrictRepositoryMock } from "test/community-district/community-district.repository.mock";
+import { AgencyRepository } from "src/agency/agency.repository";
+import { AgencyRepositoryMock } from "test/agency/agency.repository.mock";
 import * as request from "supertest";
 import { HttpName } from "src/filter";
 import {
@@ -29,6 +31,7 @@ describe("Capital Projects", () => {
     cityCouncilDistrictRepository,
     communityDistrictRepository,
   );
+  const agencyRepository = new AgencyRepositoryMock();
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [CapitalProjectModule],
@@ -39,6 +42,8 @@ describe("Capital Projects", () => {
       .useValue(cityCouncilDistrictRepository)
       .overrideProvider(CommunityDistrictRepository)
       .useValue(communityDistrictRepository)
+      .overrideProvider(AgencyRepository)
+      .useValue(agencyRepository)
       .compile();
 
     app = moduleRef.createNestApplication();
@@ -180,6 +185,35 @@ describe("Capital Projects", () => {
       const id = "1234";
       const response = await request(app.getHttpServer()).get(
         `/capital-projects?communityDistrictId=${id}`,
+      );
+      expect(response.body.message).toBe(
+        new InvalidRequestParameterException().message,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 200 and return capital projects from a specified managing agency", async () => {
+      const managingAgency = "super";
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects?managingAgency=${managingAgency}`,
+      );
+
+      expect(() =>
+        findCapitalProjectsQueryResponseSchema.parse(response.body),
+      ).not.toThrow();
+      const parsedBody = findCapitalProjectsQueryResponseSchema.parse(
+        response.body,
+      );
+      expect(parsedBody.limit).toBe(20);
+      expect(parsedBody.offset).toBe(0);
+      expect(parsedBody.order).toBe("managingCode, capitalProjectId");
+      expect(parsedBody.capitalProjects.length).toBeGreaterThanOrEqual(0);
+    });
+
+    it("should 400 when finding by invalid managing agency", async () => {
+      const managingAgency = "1234";
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects?managingAgency=${managingAgency}`,
       );
       expect(response.body.message).toBe(
         new InvalidRequestParameterException().message,
