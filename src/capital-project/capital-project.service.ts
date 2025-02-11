@@ -17,6 +17,7 @@ import {
 } from "./capital-project.repository.schema";
 import { CityCouncilDistrictRepository } from "src/city-council-district/city-council-district.repository";
 import { CommunityDistrictRepository } from "src/community-district/community-district.repository";
+import { AgencyRepository } from "src/agency/agency.repository";
 
 export class CapitalProjectService {
   constructor(
@@ -24,6 +25,7 @@ export class CapitalProjectService {
     private readonly capitalProjectRepository: CapitalProjectRepository,
     private readonly cityCouncilDistrictRepository: CityCouncilDistrictRepository,
     private readonly communityDistrictRepository: CommunityDistrictRepository,
+    private readonly agencyRepository: AgencyRepository,
   ) {}
 
   async findMany({
@@ -31,11 +33,13 @@ export class CapitalProjectService {
     offset = 0,
     cityCouncilDistrictId = null,
     communityDistrictCombinedId = null,
+    managingAgency = null,
   }: {
     limit?: number;
     offset?: number;
     cityCouncilDistrictId?: string | null;
     communityDistrictCombinedId?: string | null;
+    managingAgency?: string | null;
   }) {
     const checklist: Array<Promise<unknown | undefined>> = [];
     if (cityCouncilDistrictId !== null)
@@ -61,6 +65,10 @@ export class CapitalProjectService {
           communityDistrictId,
         ),
       );
+
+    managingAgency !== null &&
+      checklist.push(this.agencyRepository.checkByInitials(managingAgency));
+
     const checkedList = await Promise.all(checklist);
     if (checkedList.some((result) => result === undefined))
       throw new InvalidRequestParameterException();
@@ -69,6 +77,7 @@ export class CapitalProjectService {
       cityCouncilDistrictId,
       boroughId,
       communityDistrictId,
+      managingAgency,
       limit,
       offset,
     });

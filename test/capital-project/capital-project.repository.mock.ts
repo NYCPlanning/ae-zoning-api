@@ -16,16 +16,20 @@ import {
   FindCapitalProjectByManagingCodeCapitalProjectIdPathParams,
   FindCapitalProjectGeoJsonByManagingCodeCapitalProjectIdPathParams,
 } from "src/gen";
+import { AgencyRepositoryMock } from "test/agency/agency.repository.mock";
 import { CityCouncilDistrictRepositoryMock } from "test/city-council-district/city-council-district.repository.mock";
 import { CommunityDistrictRepositoryMock } from "test/community-district/community-district.repository.mock";
 
 export class CapitalProjectRepositoryMock {
+  agencyRepoMock: AgencyRepositoryMock;
   cityCouncilDistrictRepoMock: CityCouncilDistrictRepositoryMock;
   communityDistrictRepoMock: CommunityDistrictRepositoryMock;
   constructor(
+    agencyRepoMock: AgencyRepositoryMock,
     cityCouncilDistrictRepoMock: CityCouncilDistrictRepositoryMock,
     communityDistrictRepoMock: CommunityDistrictRepositoryMock,
   ) {
+    this.agencyRepoMock = agencyRepoMock;
     this.cityCouncilDistrictRepoMock = cityCouncilDistrictRepoMock;
     this.communityDistrictRepoMock = communityDistrictRepoMock;
   }
@@ -33,6 +37,7 @@ export class CapitalProjectRepositoryMock {
   get findManyMocks(): Array<
     [
       {
+        managingAgency: string;
         cityCouncilDistrictId: string;
         boroughId: string;
         communityDistrictId: string;
@@ -40,6 +45,7 @@ export class CapitalProjectRepositoryMock {
       FindManyRepo,
     ]
   > {
+    const agencyMocks = this.agencyRepoMock.checkByInitialsMocks;
     const cityCouncilDistrictIdMocks =
       this.cityCouncilDistrictRepoMock.checkCityCouncilDistrictByIdMocks;
     const communityDistrictIdMocks =
@@ -47,6 +53,7 @@ export class CapitalProjectRepositoryMock {
     return [
       [
         {
+          managingAgency: agencyMocks[0].initials,
           cityCouncilDistrictId: cityCouncilDistrictIdMocks[0].id,
           boroughId: communityDistrictIdMocks[0].boroughId,
           communityDistrictId: communityDistrictIdMocks[0].id,
@@ -61,6 +68,7 @@ export class CapitalProjectRepositoryMock {
       ],
       [
         {
+          managingAgency: agencyMocks[1].initials,
           cityCouncilDistrictId: cityCouncilDistrictIdMocks[0].id,
           boroughId: communityDistrictIdMocks[1].boroughId,
           communityDistrictId: communityDistrictIdMocks[1].id,
@@ -75,6 +83,7 @@ export class CapitalProjectRepositoryMock {
       ],
       [
         {
+          managingAgency: agencyMocks[1].initials,
           cityCouncilDistrictId: cityCouncilDistrictIdMocks[1].id,
           boroughId: communityDistrictIdMocks[1].boroughId,
           communityDistrictId: communityDistrictIdMocks[1].id,
@@ -91,12 +100,14 @@ export class CapitalProjectRepositoryMock {
   }
 
   async findMany({
+    managingAgency,
     boroughId,
     communityDistrictId,
     cityCouncilDistrictId,
     limit,
     offset,
   }: {
+    managingAgency: string | null;
     cityCouncilDistrictId: string | null;
     communityDistrictId: string | null;
     boroughId: string | null;
@@ -105,6 +116,12 @@ export class CapitalProjectRepositoryMock {
   }) {
     return this.findManyMocks
       .reduce((acc: FindManyRepo, [criteria, capitalProjects]) => {
+        if (
+          managingAgency !== null &&
+          criteria.managingAgency !== managingAgency
+        )
+          return acc;
+
         if (
           cityCouncilDistrictId !== null &&
           criteria.cityCouncilDistrictId !== cityCouncilDistrictId
