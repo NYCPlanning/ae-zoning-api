@@ -1,5 +1,5 @@
 import { Inject } from "@nestjs/common";
-import { isNotNull, sql, and, eq, sum, asc } from "drizzle-orm";
+import { isNotNull, sql, and, eq, sum, asc, count } from "drizzle-orm";
 import { DataRetrievalException } from "src/exception";
 import {
   CapitalProjectCategory,
@@ -86,6 +86,52 @@ export class CapitalProjectRepository {
         .limit(limit)
         .offset(offset)
         .orderBy(capitalProject.managingCode, capitalProject.id);
+    } catch {
+      throw new DataRetrievalException();
+    }
+  }
+
+  async findCount({
+    cityCouncilDistrictId,
+    communityDistrictId,
+    boroughId,
+  }: {
+    cityCouncilDistrictId: string | null;
+    communityDistrictId: string | null;
+    boroughId: string | null;
+  }): Promise<number> {
+    try {
+      const countObject = await this.db
+        .select({
+          totalProjects: count(),
+        })
+        .from(capitalProject)
+        .leftJoin(
+          cityCouncilDistrict,
+          sql`
+            ST_Intersects(${cityCouncilDistrict.liFt}, ${capitalProject.liFtMPoly})
+            OR ST_Intersects(${cityCouncilDistrict.liFt}, ${capitalProject.liFtMPnt})`,
+        )
+        .leftJoin(
+          communityDistrict,
+          sql`
+          ST_Intersects(${communityDistrict.liFt}, ${capitalProject.liFtMPoly})
+          OR ST_Intersects(${communityDistrict.liFt}, ${capitalProject.liFtMPnt})`,
+        )
+        .where(
+          and(
+            cityCouncilDistrictId !== null
+              ? eq(cityCouncilDistrict.id, cityCouncilDistrictId)
+              : undefined,
+            communityDistrictId !== null && boroughId !== null
+              ? and(
+                  eq(communityDistrict.boroughId, boroughId),
+                  eq(communityDistrict.id, communityDistrictId),
+                )
+              : undefined,
+          ),
+        );
+      return countObject[0].totalProjects;
     } catch {
       throw new DataRetrievalException();
     }

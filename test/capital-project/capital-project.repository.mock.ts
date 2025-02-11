@@ -124,6 +124,37 @@ export class CapitalProjectRepositoryMock {
       .slice(offset, limit + offset);
   }
 
+  async findCount({
+    boroughId,
+    communityDistrictId,
+    cityCouncilDistrictId,
+  }: {
+    cityCouncilDistrictId: string | null;
+    communityDistrictId: string | null;
+    boroughId: string | null;
+  }) {
+    return this.findManyMocks.reduce(
+      (acc: FindManyRepo, [criteria, capitalProjects]) => {
+        if (
+          cityCouncilDistrictId !== null &&
+          criteria.cityCouncilDistrictId !== cityCouncilDistrictId
+        )
+          return acc;
+
+        if (boroughId !== null && criteria.boroughId !== boroughId) return acc;
+
+        if (
+          communityDistrictId !== null &&
+          criteria.communityDistrictId !== communityDistrictId
+        )
+          return acc;
+
+        return acc.concat(capitalProjects);
+      },
+      [],
+    ).length;
+  }
+
   checkByManagingCodeCapitalProjectIdMocks = Array.from(Array(5), (_, seed) =>
     generateMock(checkByManagingCodeCapitalProjectIdRepoSchema, {
       seed: seed + 1,
