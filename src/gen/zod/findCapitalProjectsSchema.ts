@@ -21,8 +21,7 @@ export const findCapitalProjectsQueryParamsSchema = z
     managingAgency: z.coerce
       .string()
       .describe("The acronym of the managing agency to filter the projects by.")
-      .nullable()
-      .nullish(),
+      .optional(),
     limit: z.coerce
       .number()
       .int()

@@ -24,6 +24,7 @@ import {
 describe("CapitalProjectService", () => {
   let capitalProjectService: CapitalProjectService;
 
+  const agencyRepositoryMock = new AgencyRepositoryMock();
   const cityCouncilDistrictRepositoryMock =
     new CityCouncilDistrictRepositoryMock();
   const communityDistrictRepositoryMock = new CommunityDistrictRepositoryMock();
@@ -31,10 +32,10 @@ describe("CapitalProjectService", () => {
     communityDistrictRepositoryMock,
   );
   const capitalProjectRepository = new CapitalProjectRepositoryMock(
+    agencyRepositoryMock,
     cityCouncilDistrictRepositoryMock,
     communityDistrictRepositoryMock,
   );
-  const agencyRepositoryMock = new AgencyRepositoryMock();
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -139,9 +140,10 @@ describe("CapitalProjectService", () => {
     });
 
     it("service should return a list of capital projects by managing agency, using the default limit and offset", async () => {
-      const managingAgency = "super";
+      const { initials } =
+        capitalProjectRepository.agencyRepoMock.findByInitialsMocks[0];
       const resource = await capitalProjectService.findMany({
-        managingAgency,
+        managingAgency: initials,
       });
 
       expect(() =>
@@ -151,12 +153,13 @@ describe("CapitalProjectService", () => {
         findCapitalProjectsQueryResponseSchema.parse(resource);
       expect(parsedResource.limit).toBe(20);
       expect(parsedResource.offset).toBe(0);
+      expect(parsedResource.capitalProjects.length).toBe(1);
       expect(parsedResource.total).toBe(parsedResource.capitalProjects.length);
       expect(parsedResource.order).toBe("managingCode, capitalProjectId");
     });
 
     it("should return a InvalidRequestParameterException error when a managing agency with the given id cannot be found", async () => {
-      const managingAgency = "999";
+      const managingAgency = "DNE";
 
       expect(
         capitalProjectService.findMany({

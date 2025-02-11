@@ -4,6 +4,5 @@ in: query
 schema:
   type: string
   example: 'CUNY'
-  nullable: true
 description: >-
   The acronym of the managing agency to filter the projects by.

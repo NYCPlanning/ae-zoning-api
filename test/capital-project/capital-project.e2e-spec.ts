@@ -25,13 +25,15 @@ import {
 describe("Capital Projects", () => {
   let app: INestApplication;
 
+  const agencyRepository = new AgencyRepositoryMock();
   const cityCouncilDistrictRepository = new CityCouncilDistrictRepositoryMock();
   const communityDistrictRepository = new CommunityDistrictRepositoryMock();
   const capitalProjectRepository = new CapitalProjectRepositoryMock(
+    agencyRepository,
     cityCouncilDistrictRepository,
     communityDistrictRepository,
   );
-  const agencyRepository = new AgencyRepositoryMock();
+
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [CapitalProjectModule],
@@ -193,9 +195,10 @@ describe("Capital Projects", () => {
     });
 
     it("should 200 and return capital projects from a specified managing agency", async () => {
-      const managingAgency = "super";
+      const managingAgency =
+        capitalProjectRepository.agencyRepoMock.findByInitialsMocks[0];
       const response = await request(app.getHttpServer()).get(
-        `/capital-projects?managingAgency=${managingAgency}`,
+        `/capital-projects?managingAgency=${managingAgency.initials}`,
       );
 
       expect(() =>
@@ -206,12 +209,13 @@ describe("Capital Projects", () => {
       );
       expect(parsedBody.limit).toBe(20);
       expect(parsedBody.offset).toBe(0);
+      expect(parsedBody.capitalProjects.length).toBe(1);
+      expect(parsedBody.total).toBe(parsedBody.capitalProjects.length);
       expect(parsedBody.order).toBe("managingCode, capitalProjectId");
-      expect(parsedBody.capitalProjects.length).toBeGreaterThanOrEqual(0);
     });
 
-    it("should 400 when finding by invalid managing agency", async () => {
-      const managingAgency = "1234";
+    it("should 400 when finding by managing agency for agency that does not exist", async () => {
+      const managingAgency = "DNE";
       const response = await request(app.getHttpServer()).get(
         `/capital-projects?managingAgency=${managingAgency}`,
       );

@@ -67,7 +67,8 @@ export class CapitalProjectService {
       );
 
     managingAgency !== null &&
-      checklist.push(this.agencyRepository.checkManagingAgency(managingAgency));
+      checklist.push(this.agencyRepository.checkByInitials(managingAgency));
+
     const checkedList = await Promise.all(checklist);
     if (checkedList.some((result) => result === undefined))
       throw new InvalidRequestParameterException();
