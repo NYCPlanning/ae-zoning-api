@@ -46,6 +46,7 @@ export class CapitalProjectController {
       offset: queryParams.offset,
       cityCouncilDistrictId: queryParams.cityCouncilDistrictId,
       communityDistrictCombinedId: queryParams.communityDistrictId,
+      managingAgency: queryParams.managingAgency,
     });
   }
 

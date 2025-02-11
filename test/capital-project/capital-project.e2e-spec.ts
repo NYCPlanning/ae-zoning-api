@@ -7,6 +7,8 @@ import { CityCouncilDistrictRepository } from "src/city-council-district/city-co
 import { CityCouncilDistrictRepositoryMock } from "test/city-council-district/city-council-district.repository.mock";
 import { CommunityDistrictRepository } from "src/community-district/community-district.repository";
 import { CommunityDistrictRepositoryMock } from "test/community-district/community-district.repository.mock";
+import { AgencyRepository } from "src/agency/agency.repository";
+import { AgencyRepositoryMock } from "test/agency/agency.repository.mock";
 import * as request from "supertest";
 import { HttpName } from "src/filter";
 import {
@@ -23,12 +25,15 @@ import {
 describe("Capital Projects", () => {
   let app: INestApplication;
 
+  const agencyRepository = new AgencyRepositoryMock();
   const cityCouncilDistrictRepository = new CityCouncilDistrictRepositoryMock();
   const communityDistrictRepository = new CommunityDistrictRepositoryMock();
   const capitalProjectRepository = new CapitalProjectRepositoryMock(
+    agencyRepository,
     cityCouncilDistrictRepository,
     communityDistrictRepository,
   );
+
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [CapitalProjectModule],
@@ -39,6 +44,8 @@ describe("Capital Projects", () => {
       .useValue(cityCouncilDistrictRepository)
       .overrideProvider(CommunityDistrictRepository)
       .useValue(communityDistrictRepository)
+      .overrideProvider(AgencyRepository)
+      .useValue(agencyRepository)
       .compile();
 
     app = moduleRef.createNestApplication();
@@ -180,6 +187,37 @@ describe("Capital Projects", () => {
       const id = "1234";
       const response = await request(app.getHttpServer()).get(
         `/capital-projects?communityDistrictId=${id}`,
+      );
+      expect(response.body.message).toBe(
+        new InvalidRequestParameterException().message,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 200 and return capital projects from a specified managing agency", async () => {
+      const managingAgency =
+        capitalProjectRepository.agencyRepoMock.checkByInitialsMocks[0];
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects?managingAgency=${managingAgency.initials}`,
+      );
+
+      expect(() =>
+        findCapitalProjectsQueryResponseSchema.parse(response.body),
+      ).not.toThrow();
+      const parsedBody = findCapitalProjectsQueryResponseSchema.parse(
+        response.body,
+      );
+      expect(parsedBody.limit).toBe(20);
+      expect(parsedBody.offset).toBe(0);
+      expect(parsedBody.capitalProjects.length).toBe(1);
+      expect(parsedBody.total).toBe(parsedBody.capitalProjects.length);
+      expect(parsedBody.order).toBe("managingCode, capitalProjectId");
+    });
+
+    it("should 400 when finding by managing agency for agency that does not exist", async () => {
+      const managingAgency = "DNE";
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects?managingAgency=${managingAgency}`,
       );
       expect(response.body.message).toBe(
         new InvalidRequestParameterException().message,

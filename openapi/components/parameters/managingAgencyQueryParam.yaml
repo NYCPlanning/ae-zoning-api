@@ -1,0 +1,8 @@
+name: managingAgency
+required: false
+in: query
+schema:
+  type: string
+  example: 'CUNY'
+description: >-
+  The acronym of the managing agency to filter the projects by.
