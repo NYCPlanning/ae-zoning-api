@@ -194,6 +194,55 @@ describe("CapitalProjectService", () => {
         }),
       ).rejects.toThrow(InvalidRequestParameterException);
     });
+
+    it("service should return a list of capital projects with total commitments above the minimum, using the default limit and offset", async () => {
+      const commitmentsTotalMin = "0";
+      const resource = await capitalProjectService.findMany({
+        commitmentsTotalMin,
+      });
+
+      expect(() =>
+        findCapitalProjectsQueryResponseSchema.parse(resource),
+      ).not.toThrow();
+      const parsedResource =
+        findCapitalProjectsQueryResponseSchema.parse(resource);
+      expect(parsedResource.limit).toBe(20);
+      expect(parsedResource.offset).toBe(0);
+      expect(parsedResource.capitalProjects.length).toBe(8);
+      expect(parsedResource.total).toBe(parsedResource.capitalProjects.length);
+      expect(parsedResource.order).toBe("managingCode, capitalProjectId");
+    });
+
+    it("service should return a list of capital projects with total commitments below the maximum, using the default limit and offset", async () => {
+      const commitmentsTotalMax = "10000000000";
+      const resource = await capitalProjectService.findMany({
+        commitmentsTotalMax,
+      });
+
+      expect(() =>
+        findCapitalProjectsQueryResponseSchema.parse(resource),
+      ).not.toThrow();
+      const parsedResource =
+        findCapitalProjectsQueryResponseSchema.parse(resource);
+      expect(parsedResource.limit).toBe(20);
+      expect(parsedResource.offset).toBe(0);
+      expect(parsedResource.capitalProjects.length).toBe(8);
+      expect(parsedResource.total).toBe(parsedResource.capitalProjects.length);
+      expect(parsedResource.order).toBe("managingCode, capitalProjectId");
+    });
+
+    it("should return a InvalidRequestParameterException error when the maximum total commitments is less than the minimum", async () => {
+      const commitmentsTotalMin = "10000000000";
+      const commitmentsTotalMax = "0";
+
+      expect(
+        capitalProjectService.findMany({
+          commitmentsTotalMin,
+          commitmentsTotalMax,
+        }),
+      ).rejects.toThrow(InvalidRequestParameterException);
+    });
+
     it("should throw an error when requesting an agency budget that does not exist", async () => {
       const missingAgencyBudget = "hr";
 

@@ -261,6 +261,78 @@ describe("Capital Projects", () => {
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
 
+    it("should 200 and return capital projects with total capital commitments above a specified minimum", async () => {
+      const commitmentsTotalMin = "0";
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects?commitmentsTotalMin=${commitmentsTotalMin}`,
+      );
+
+      expect(() =>
+        findCapitalProjectsQueryResponseSchema.parse(response.body),
+      ).not.toThrow();
+      const parsedBody = findCapitalProjectsQueryResponseSchema.parse(
+        response.body,
+      );
+      expect(parsedBody.limit).toBe(20);
+      expect(parsedBody.offset).toBe(0);
+      expect(parsedBody.capitalProjects.length).toBe(8);
+      expect(parsedBody.total).toBe(parsedBody.capitalProjects.length);
+      expect(parsedBody.order).toBe("managingCode, capitalProjectId");
+    });
+
+    it("should 400 when filtering with an invalid commitmentsTotalMin", async () => {
+      const commitmentsTotalMin = "01,0.0001";
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects?commitmentsTotalMin=${commitmentsTotalMin}`,
+      );
+      expect(response.body.message).toBe(
+        new InvalidRequestParameterException().message,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 200 and return capital projects with total capital commitments below a specified maximum", async () => {
+      const commitmentsTotalMax = "100000000";
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects?commitmentsTotalMax=${commitmentsTotalMax}`,
+      );
+
+      expect(() =>
+        findCapitalProjectsQueryResponseSchema.parse(response.body),
+      ).not.toThrow();
+      const parsedBody = findCapitalProjectsQueryResponseSchema.parse(
+        response.body,
+      );
+      expect(parsedBody.limit).toBe(20);
+      expect(parsedBody.offset).toBe(0);
+      expect(parsedBody.capitalProjects.length).toBe(8);
+      expect(parsedBody.total).toBe(parsedBody.capitalProjects.length);
+      expect(parsedBody.order).toBe("managingCode, capitalProjectId");
+    });
+
+    it("should 400 when filtering with an invalid commitmentsTotalMax", async () => {
+      const commitmentsTotalMax = "99,99";
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects?commitmentsTotalMax=${commitmentsTotalMax}`,
+      );
+      expect(response.body.message).toBe(
+        new InvalidRequestParameterException().message,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 when the specified maximum is less than the specified minimum", async () => {
+      const commitmentsTotalMin = "100000000";
+      const commitmentsTotalMax = "10";
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects?commitmentsTotalMin=${commitmentsTotalMin}&commitmentsTotalMax=${commitmentsTotalMax}`,
+      );
+      expect(response.body.message).toBe(
+        new InvalidRequestParameterException().message,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
     it("should 500 when there is a data retrieval error", async () => {
       const dataRetrievalException = new DataRetrievalException();
       jest
