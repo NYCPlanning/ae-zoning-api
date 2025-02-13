@@ -30,6 +30,15 @@ export class CapitalProjectService {
     private readonly agencyBudgetRepository: AgencyBudgetRepository,
   ) {}
 
+  async checkCommitmentsTotalRangeIsValid(
+    commitmentsTotalMin: string,
+    commitmentsTotalMax: string,
+  ): Promise<boolean | undefined> {
+    if (parseFloat(commitmentsTotalMin) > parseFloat(commitmentsTotalMax))
+      return undefined;
+    return true;
+  }
+
   async findMany({
     limit = 20,
     offset = 0,
@@ -81,6 +90,15 @@ export class CapitalProjectService {
     if (agencyBudget !== null) {
       checklist.push(this.agencyBudgetRepository.checkByCode(agencyBudget));
     }
+    commitmentsTotalMin !== null &&
+      commitmentsTotalMax !== null &&
+      checklist.push(
+        this.checkCommitmentsTotalRangeIsValid(
+          commitmentsTotalMin,
+          commitmentsTotalMax,
+        ),
+      );
+
     const checkedList = await Promise.all(checklist);
 
     if (checkedList.some((result) => result === undefined))
