@@ -8,6 +8,8 @@ get:
     - $ref: ../components/parameters/cityCouncilDistrictIdQueryParam.yaml
     - $ref: ../components/parameters/managingAgencyQueryParam.yaml
     - $ref: ../components/parameters/agencyBudgetParam.yaml
+    - $ref: ../components/parameters/commitmentsTotalMinQueryParam.yaml
+    - $ref: ../components/parameters/commitmentsTotalMaxQueryParam.yaml
     - $ref: ../components/parameters/limitParam.yaml
     - $ref: ../components/parameters/offsetParam.yaml
   responses:

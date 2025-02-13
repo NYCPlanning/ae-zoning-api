@@ -37,6 +37,8 @@ export class CapitalProjectService {
     communityDistrictCombinedId = null,
     managingAgency = null,
     agencyBudget = null,
+    commitmentsTotalMin = null,
+    commitmentsTotalMax = null,
   }: {
     limit?: number;
     offset?: number;
@@ -44,7 +46,20 @@ export class CapitalProjectService {
     communityDistrictCombinedId?: string | null;
     managingAgency?: string | null;
     agencyBudget?: string | null;
+    commitmentsTotalMin?: string | null;
+    commitmentsTotalMax?: string | null;
   }) {
+    const min = commitmentsTotalMin
+      ? parseFloat(commitmentsTotalMin.replaceAll(",", ""))
+      : null;
+    const max = commitmentsTotalMax
+      ? parseFloat(commitmentsTotalMax.replaceAll(",", ""))
+      : null;
+
+    if (min !== null && max !== null && min > max) {
+      throw new InvalidRequestParameterException();
+    }
+
     const checklist: Array<Promise<unknown | undefined>> = [];
     if (cityCouncilDistrictId !== null)
       checklist.push(
@@ -77,6 +92,7 @@ export class CapitalProjectService {
     if (agencyBudget !== null) {
       checklist.push(this.agencyBudgetRepository.checkByCode(agencyBudget));
     }
+
     const checkedList = await Promise.all(checklist);
 
     if (checkedList.some((result) => result === undefined))
@@ -88,6 +104,8 @@ export class CapitalProjectService {
       communityDistrictId,
       managingAgency,
       agencyBudget,
+      commitmentsTotalMin: min,
+      commitmentsTotalMax: max,
       limit,
       offset,
     });

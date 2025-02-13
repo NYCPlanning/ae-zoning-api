@@ -46,6 +46,7 @@ export class CapitalProjectRepositoryMock {
         boroughId: string;
         communityDistrictId: string;
         agencyBudget: string;
+        commitmentsTotal: number;
       },
       FindManyRepo,
     ]
@@ -64,6 +65,7 @@ export class CapitalProjectRepositoryMock {
           boroughId: communityDistrictIdMocks[0].boroughId,
           communityDistrictId: communityDistrictIdMocks[0].id,
           agencyBudget: agencyBudgetMocks[0].code,
+          commitmentsTotal: 100,
         },
         generateMock(findManyRepoSchema, {
           seed: 1,
@@ -80,6 +82,7 @@ export class CapitalProjectRepositoryMock {
           boroughId: communityDistrictIdMocks[1].boroughId,
           communityDistrictId: communityDistrictIdMocks[1].id,
           agencyBudget: agencyBudgetMocks[1].code,
+          commitmentsTotal: 200,
         },
         generateMock(findManyRepoSchema, {
           seed: 2,
@@ -96,6 +99,7 @@ export class CapitalProjectRepositoryMock {
           boroughId: communityDistrictIdMocks[1].boroughId,
           communityDistrictId: communityDistrictIdMocks[1].id,
           agencyBudget: agencyBudgetMocks[1].code,
+          commitmentsTotal: 300,
         },
         generateMock(findManyRepoSchema, {
           seed: 3,
@@ -114,6 +118,8 @@ export class CapitalProjectRepositoryMock {
     communityDistrictId,
     cityCouncilDistrictId,
     agencyBudget,
+    commitmentsTotalMin,
+    commitmentsTotalMax,
     limit,
     offset,
   }: {
@@ -122,6 +128,8 @@ export class CapitalProjectRepositoryMock {
     communityDistrictId: string | null;
     boroughId: string | null;
     agencyBudget: string | null;
+    commitmentsTotalMin: number | null;
+    commitmentsTotalMax: number | null;
     limit: number;
     offset: number;
   }) {
@@ -150,6 +158,16 @@ export class CapitalProjectRepositoryMock {
         if (agencyBudget !== null && criteria.agencyBudget !== agencyBudget)
           return acc;
 
+        if (
+          commitmentsTotalMin !== null &&
+          criteria.commitmentsTotal <= commitmentsTotalMin
+        )
+          return acc;
+        if (
+          commitmentsTotalMax !== null &&
+          criteria.commitmentsTotal >= commitmentsTotalMax
+        )
+          return acc;
         return acc.concat(capitalProjects);
       }, [])
       .slice(offset, limit + offset);

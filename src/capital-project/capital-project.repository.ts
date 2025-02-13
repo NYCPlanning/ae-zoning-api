@@ -1,5 +1,5 @@
 import { Inject } from "@nestjs/common";
-import { isNotNull, sql, and, eq, sum, asc } from "drizzle-orm";
+import { isNotNull, sql, and, eq, sum, asc, gte, lte } from "drizzle-orm";
 import { DataRetrievalException } from "src/exception";
 import {
   CapitalProjectCategory,
@@ -39,6 +39,8 @@ export class CapitalProjectRepository {
     boroughId,
     managingAgency,
     agencyBudget,
+    commitmentsTotalMin,
+    commitmentsTotalMax,
     limit,
     offset,
   }: {
@@ -47,11 +49,42 @@ export class CapitalProjectRepository {
     boroughId: string | null;
     managingAgency: string | null;
     agencyBudget: string | null;
+    commitmentsTotalMin: number | null;
+    commitmentsTotalMax: number | null;
     limit: number;
     offset: number;
   }): Promise<FindManyRepo> {
     try {
+      const commitmentsTotalByCapitalProject = this.db
+        .$with("commitmentsTotalByCapitalProject")
+        .as(
+          this.db
+            .select({
+              managingCode: capitalCommitment.managingCode,
+              capitalProjectId: capitalCommitment.capitalProjectId,
+              value: sum(capitalCommitmentFund.value)
+                .mapWith(Number)
+                .as("value"),
+            })
+            .from(capitalCommitment)
+            .leftJoin(
+              capitalCommitmentFund,
+              and(
+                eq(
+                  capitalCommitment.id,
+                  capitalCommitmentFund.capitalCommitmentId,
+                ),
+                eq(capitalCommitmentFund.category, "total"),
+              ),
+            )
+            .groupBy(
+              capitalCommitment.managingCode,
+              capitalCommitment.capitalProjectId,
+            ),
+        );
+
       return await this.db
+        .with(commitmentsTotalByCapitalProject)
         .select({
           id: capitalProject.id,
           description: capitalProject.description,
@@ -81,6 +114,19 @@ export class CapitalProjectRepository {
             eq(capitalProject.id, capitalCommitment.capitalProjectId),
           ),
         )
+        .leftJoin(
+          commitmentsTotalByCapitalProject,
+          and(
+            eq(
+              commitmentsTotalByCapitalProject.capitalProjectId,
+              capitalProject.id,
+            ),
+            eq(
+              commitmentsTotalByCapitalProject.managingCode,
+              capitalProject.managingCode,
+            ),
+          ),
+        )
         .where(
           and(
             cityCouncilDistrictId !== null
@@ -97,6 +143,12 @@ export class CapitalProjectRepository {
               : undefined,
             agencyBudget !== null
               ? eq(capitalCommitment.budgetLineCode, agencyBudget)
+              : undefined,
+            commitmentsTotalMin !== null
+              ? gte(commitmentsTotalByCapitalProject.value, commitmentsTotalMin)
+              : undefined,
+            commitmentsTotalMax !== null
+              ? lte(commitmentsTotalByCapitalProject.value, commitmentsTotalMax)
               : undefined,
           ),
         )
