@@ -47,7 +47,9 @@ export class CapitalProjectController {
       cityCouncilDistrictId: queryParams.cityCouncilDistrictId,
       communityDistrictCombinedId: queryParams.communityDistrictId,
       managingAgency: queryParams.managingAgency,
-      agencyBudget: queryParams.agencyBudget,
+       Budget: queryParams.agencyBudget,
+      commitmentsTotalMin: queryParams.commitmentsTotalMin,
+      commitmentsTotalMax: queryParams.commitmentsTotalMax,
     });
   }
 

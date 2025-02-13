@@ -37,6 +37,8 @@ export class CapitalProjectService {
     communityDistrictCombinedId = null,
     managingAgency = null,
     agencyBudget = null,
+    commitmentsTotalMin = null,
+    commitmentsTotalMax = null,
   }: {
     limit?: number;
     offset?: number;
@@ -44,6 +46,8 @@ export class CapitalProjectService {
     communityDistrictCombinedId?: string | null;
     managingAgency?: string | null;
     agencyBudget?: string | null;
+    commitmentsTotalMin?: string | null;
+    commitmentsTotalMax?: string | null;
   }) {
     const checklist: Array<Promise<unknown | undefined>> = [];
     if (cityCouncilDistrictId !== null)
@@ -88,6 +92,8 @@ export class CapitalProjectService {
       communityDistrictId,
       managingAgency,
       agencyBudget,
+      commitmentsTotalMin,
+      commitmentsTotalMax,
       limit,
       offset,
     });
