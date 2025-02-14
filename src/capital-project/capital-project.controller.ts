@@ -27,6 +27,8 @@ import {
 } from "src/filter";
 import { ZodTransformPipe } from "src/pipes/zod-transform-pipe";
 import { findCapitalProjectsQueryParamsSchema } from "src/gen/zod/findCapitalProjectsSchema";
+import { unparse } from "papaparse";
+
 @UseFilters(
   BadRequestExceptionFilter,
   InternalServerErrorExceptionFilter,
@@ -49,6 +51,29 @@ export class CapitalProjectController {
       managingAgency: queryParams.managingAgency,
       agencyBudget: queryParams.agencyBudget,
     });
+  }
+
+  @Get("/download")
+  async findManyDownload(
+    @Res() res: Response,
+    @Query(new ZodTransformPipe(findCapitalProjectsQueryParamsSchema))
+    queryParams: FindCapitalProjectsQueryParams,
+  ) {
+    const data = await this.capitalProjectService.findManyDownload({
+      cityCouncilDistrictId: queryParams.cityCouncilDistrictId,
+      communityDistrictCombinedId: queryParams.communityDistrictId,
+      managingAgency: queryParams.managingAgency,
+      agencyBudget: queryParams.agencyBudget,
+    });
+
+    const csvData = `NYC Capital Projects Search:\n${queryParams.cityCouncilDistrictId ? "City Council District:," + queryParams.cityCouncilDistrictId + "\n" : ""}${queryParams.communityDistrictId ? "Community District:," + queryParams.communityDistrictId + "\n" : ""}${queryParams.managingAgency ? "Managing Agency:," + queryParams.managingAgency + "\n" : ""}${queryParams.agencyBudget ? "City Council District:," + queryParams.agencyBudget + "\n" : ""}\n\n${unparse(data)}`;
+
+    res.set("Content-Type", "application/csv");
+    res.set(
+      "Content-Disposition",
+      "attachment; filename=NYC_Capital_Planning_Map_Data_Export.csv",
+    );
+    res.send(csvData);
   }
 
   @UsePipes(

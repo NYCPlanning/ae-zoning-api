@@ -101,6 +101,66 @@ export class CapitalProjectService {
     };
   }
 
+  async findManyDownload({
+    cityCouncilDistrictId = null,
+    communityDistrictCombinedId = null,
+    managingAgency = null,
+    agencyBudget = null,
+  }: {
+    cityCouncilDistrictId?: string | null;
+    communityDistrictCombinedId?: string | null;
+    managingAgency?: string | null;
+    agencyBudget?: string | null;
+  }) {
+    const checklist: Array<Promise<unknown | undefined>> = [];
+    if (cityCouncilDistrictId !== null)
+      checklist.push(
+        this.cityCouncilDistrictRepository.checkCityCouncilDistrictById(
+          cityCouncilDistrictId,
+        ),
+      );
+
+    const boroughId =
+      communityDistrictCombinedId !== null
+        ? communityDistrictCombinedId.slice(0, 1)
+        : null;
+    const communityDistrictId =
+      communityDistrictCombinedId !== null
+        ? communityDistrictCombinedId.slice(1, 3)
+        : null;
+
+    if (boroughId !== null && communityDistrictId !== null)
+      checklist.push(
+        this.communityDistrictRepository.checkByBoroughIdCommunityDistrictId(
+          boroughId,
+          communityDistrictId,
+        ),
+      );
+
+    if (managingAgency !== null) {
+      checklist.push(this.agencyRepository.checkByInitials(managingAgency));
+    }
+
+    if (agencyBudget !== null) {
+      checklist.push(this.agencyBudgetRepository.checkByCode(agencyBudget));
+    }
+    const checkedList = await Promise.all(checklist);
+
+    if (checkedList.some((result) => result === undefined))
+      throw new InvalidRequestParameterException();
+
+    const capitalProjects =
+      await this.capitalProjectRepository.findManyDownload({
+        cityCouncilDistrictId,
+        boroughId,
+        communityDistrictId,
+        managingAgency,
+        agencyBudget,
+      });
+
+    return capitalProjects;
+  }
+
   async findByManagingCodeCapitalProjectId(
     params: FindCapitalProjectByManagingCodeCapitalProjectIdPathParams,
   ) {

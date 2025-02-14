@@ -117,6 +117,84 @@ export class CapitalProjectRepository {
     }
   }
 
+  async findManyDownload({
+    cityCouncilDistrictId,
+    communityDistrictId,
+    boroughId,
+    managingAgency,
+    agencyBudget,
+  }: {
+    cityCouncilDistrictId: string | null;
+    communityDistrictId: string | null;
+    boroughId: string | null;
+    managingAgency: string | null;
+    agencyBudget: string | null;
+  }): Promise<FindManyRepo> {
+    try {
+      return await this.db
+        .select({
+          id: capitalProject.id,
+          description: capitalProject.description,
+          managingCode: capitalProject.managingCode,
+          managingAgency: capitalProject.managingAgency,
+          maxDate: capitalProject.maxDate,
+          minDate: capitalProject.minDate,
+          category: sql<CapitalProjectCategory>`${capitalProject.category}`,
+        })
+        .from(capitalProject)
+        .leftJoin(
+          cityCouncilDistrict,
+          sql`
+            ST_Intersects(${cityCouncilDistrict.liFt}, ${capitalProject.liFtMPoly})
+            OR ST_Intersects(${cityCouncilDistrict.liFt}, ${capitalProject.liFtMPnt})`,
+        )
+        .leftJoin(
+          communityDistrict,
+          sql`
+          ST_Intersects(${communityDistrict.liFt}, ${capitalProject.liFtMPoly})
+          OR ST_Intersects(${communityDistrict.liFt}, ${capitalProject.liFtMPnt})`,
+        )
+        .leftJoin(
+          capitalCommitment,
+          and(
+            eq(capitalProject.managingCode, capitalCommitment.managingCode),
+            eq(capitalProject.id, capitalCommitment.capitalProjectId),
+          ),
+        )
+        .where(
+          and(
+            cityCouncilDistrictId !== null
+              ? eq(cityCouncilDistrict.id, cityCouncilDistrictId)
+              : undefined,
+            communityDistrictId !== null && boroughId !== null
+              ? and(
+                  eq(communityDistrict.boroughId, boroughId),
+                  eq(communityDistrict.id, communityDistrictId),
+                )
+              : undefined,
+            managingAgency !== null
+              ? eq(capitalProject.managingAgency, managingAgency)
+              : undefined,
+            agencyBudget !== null
+              ? eq(capitalCommitment.budgetLineCode, agencyBudget)
+              : undefined,
+          ),
+        )
+        .orderBy(capitalProject.managingCode, capitalProject.id)
+        .groupBy(
+          capitalProject.id,
+          capitalProject.description,
+          capitalProject.managingCode,
+          capitalProject.managingAgency,
+          capitalProject.maxDate,
+          capitalProject.minDate,
+          capitalProject.category,
+        );
+    } catch {
+      throw new DataRetrievalException();
+    }
+  }
+
   #checkByManagingCodeCapitalProjectId = this.db.query.capitalProject
     .findFirst({
       columns: {
