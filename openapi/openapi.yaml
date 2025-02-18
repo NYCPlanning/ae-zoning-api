@@ -40,7 +40,7 @@ tags:
 paths:
   /agencies:
     $ref: paths/agencies.yaml
-  /agencyBugdets:
+  /agency-bugdets:
     $ref: paths/agency-budgets.yaml
   /boroughs:
     $ref: paths/boroughs.yaml
