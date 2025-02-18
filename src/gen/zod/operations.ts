@@ -773,7 +773,7 @@ export const paths = {
   "/agencies": {
     get: operations["findAgencies"],
   },
-  "/agencyBugdets": {
+  "/agency-bugdets": {
     get: operations["findAgencyBudgets"],
   },
   "/boroughs": {
