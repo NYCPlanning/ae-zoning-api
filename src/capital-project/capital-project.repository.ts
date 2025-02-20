@@ -1,5 +1,5 @@
 import { Inject } from "@nestjs/common";
-import { isNotNull, sql, and, eq, sum, asc } from "drizzle-orm";
+import { isNotNull, sql, and, eq, sum, asc, gte, lte } from "drizzle-orm";
 import { DataRetrievalException } from "src/exception";
 import {
   CapitalProjectCategory,
@@ -39,6 +39,8 @@ export class CapitalProjectRepository {
     boroughId,
     managingAgency,
     agencyBudget,
+    commitmentsTotalMin,
+    commitmentsTotalMax,
     limit,
     offset,
   }: {
@@ -47,6 +49,8 @@ export class CapitalProjectRepository {
     boroughId: string | null;
     managingAgency: string | null;
     agencyBudget: string | null;
+    commitmentsTotalMin: string | null;
+    commitmentsTotalMax: string | null;
     limit: number;
     offset: number;
   }): Promise<FindManyRepo> {
@@ -81,6 +85,10 @@ export class CapitalProjectRepository {
             eq(capitalProject.id, capitalCommitment.capitalProjectId),
           ),
         )
+        .leftJoin(
+          capitalCommitmentFund,
+          eq(capitalCommitmentFund.capitalCommitmentId, capitalCommitment.id),
+        )
         .where(
           and(
             cityCouncilDistrictId !== null
@@ -97,6 +105,19 @@ export class CapitalProjectRepository {
               : undefined,
             agencyBudget !== null
               ? eq(capitalCommitment.budgetLineCode, agencyBudget)
+              : undefined,
+            eq(capitalCommitmentFund.category, "total"),
+            commitmentsTotalMin !== null
+              ? gte(
+                  capitalCommitmentFund.value,
+                  commitmentsTotalMin.replaceAll(",", ""),
+                )
+              : undefined,
+            commitmentsTotalMax !== null
+              ? lte(
+                  capitalCommitmentFund.value,
+                  commitmentsTotalMax.replaceAll(",", ""),
+                )
               : undefined,
           ),
         )
