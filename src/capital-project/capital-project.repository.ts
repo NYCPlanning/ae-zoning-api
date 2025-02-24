@@ -269,6 +269,11 @@ export class CapitalProjectRepository {
           managingAgency: sql`${capitalProject.managingAgency}`.as(
             `managingAgency`,
           ),
+          agencyBudgets: sql<
+            Array<string>
+          >`ARRAY_TO_JSON(ARRAY_AGG(DISTINCT ${capitalCommitment.budgetLineCode}))`.as(
+            "agencyBudgets",
+          ),
           geom: sql<string>`
             CASE
               WHEN ${capitalProject.mercatorFillMPoly} && ST_TileEnvelope(${z},${x},${y})
@@ -290,6 +295,14 @@ export class CapitalProjectRepository {
             END`.as("geom"),
         })
         .from(capitalProject)
+        .leftJoin(
+          capitalCommitment,
+          and(
+            eq(capitalProject.managingCode, capitalCommitment.managingCode),
+            eq(capitalProject.id, capitalCommitment.capitalProjectId),
+          ),
+        )
+        .groupBy(capitalProject.managingCode, capitalProject.id)
         .as("tile");
       const data = await this.db
         .select({
