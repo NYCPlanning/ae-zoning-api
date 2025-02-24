@@ -106,6 +106,11 @@ export class CityCouncilDistrictRepository {
           commitmentsTotal: sum(capitalCommitmentFund.value).as(
             "commitmentsTotal",
           ),
+          agencyBudgets: sql<
+            Array<string>
+          >`ARRAY_TO_JSON(ARRAY_AGG(DISTINCT ${capitalCommitment.budgetLineCode}))`.as(
+            "agencyBudgets",
+          ),
           geom: sql<string>`
             CASE
               WHEN ${capitalProject.mercatorFillMPoly} && ST_TileEnvelope(${z},${x},${y})
