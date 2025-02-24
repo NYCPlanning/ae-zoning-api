@@ -271,7 +271,7 @@ export class CapitalProjectRepository {
           ),
           agencyBudgets: sql<
             Array<string>
-          >`ARRAY_TO_JSON(ARRAY_AGG(DISTINCT ${capitalCommitment.budgetLineCode}))`.as(
+          >`TRANSLATE(ARRAY_AGG(DISTINCT ${capitalCommitment.budgetLineCode})::text, '{}', '')`.as(
             "agencyBudgets",
           ),
           geom: sql<string>`
