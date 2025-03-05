@@ -321,6 +321,9 @@ export class CapitalProjectRepository {
           managingAgency: sql`${capitalProject.managingAgency}`.as(
             `managingAgency`,
           ),
+          commitmentsTotal: sum(capitalCommitmentFund.value).as(
+            "commitmentsTotal",
+          ),
           geom: sql<string>`
             CASE
               WHEN ${capitalProject.mercatorFillMPoly} && ST_TileEnvelope(${z},${x},${y})
@@ -342,6 +345,25 @@ export class CapitalProjectRepository {
             END`.as("geom"),
         })
         .from(capitalProject)
+        .leftJoin(
+          capitalCommitment,
+          and(
+            eq(capitalCommitment.capitalProjectId, capitalProject.id),
+            eq(capitalCommitment.managingCode, capitalProject.managingCode),
+          ),
+        )
+        .leftJoin(
+          capitalCommitmentFund,
+          eq(capitalCommitmentFund.capitalCommitmentId, capitalCommitment.id),
+        )
+        .where(eq(capitalCommitmentFund.category, "total"))
+        .groupBy(
+          capitalProject.id,
+          capitalProject.managingCode,
+          capitalProject.managingAgency,
+          capitalProject.mercatorFillMPnt,
+          capitalProject.mercatorFillMPoly,
+        )
         .as("tile");
       const data = await this.db
         .select({
