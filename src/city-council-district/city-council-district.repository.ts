@@ -15,8 +15,13 @@ import {
   FindCityCouncilDistrictGeoJsonByCityCouncilDistrictIdPathParams,
   FindCityCouncilDistrictTilesPathParams,
 } from "src/gen";
-import { capitalProject, cityCouncilDistrict } from "src/schema";
-import { eq, sql, isNotNull } from "drizzle-orm";
+import {
+  capitalCommitment,
+  capitalCommitmentFund,
+  capitalProject,
+  cityCouncilDistrict,
+} from "src/schema";
+import { eq, sql, isNotNull, sum, and } from "drizzle-orm";
 export class CityCouncilDistrictRepository {
   constructor(
     @Inject(DB)
@@ -98,6 +103,9 @@ export class CityCouncilDistrictRepository {
           managingAgency: sql`${capitalProject.managingAgency}`.as(
             `managingAgency`,
           ),
+          commitmentsTotal: sum(capitalCommitmentFund.value).as(
+            "commitmentsTotal",
+          ),
           geom: sql<string>`
             CASE
               WHEN ${capitalProject.mercatorFillMPoly} && ST_TileEnvelope(${z},${x},${y})
@@ -125,7 +133,30 @@ export class CityCouncilDistrictRepository {
             ST_Intersects(${cityCouncilDistrict.mercatorFill}, ${capitalProject.mercatorFillMPoly})
             OR ST_Intersects(${cityCouncilDistrict.mercatorFill}, ${capitalProject.mercatorFillMPnt})`,
         )
-        .where(eq(cityCouncilDistrict.id, cityCouncilDistrictId))
+        .leftJoin(
+          capitalCommitment,
+          and(
+            eq(capitalCommitment.capitalProjectId, capitalProject.id),
+            eq(capitalCommitment.managingCode, capitalProject.managingCode),
+          ),
+        )
+        .leftJoin(
+          capitalCommitmentFund,
+          eq(capitalCommitmentFund.capitalCommitmentId, capitalCommitment.id),
+        )
+        .where(
+          and(
+            eq(cityCouncilDistrict.id, cityCouncilDistrictId),
+            eq(capitalCommitmentFund.category, "total"),
+          ),
+        )
+        .groupBy(
+          capitalProject.id,
+          capitalProject.managingCode,
+          capitalProject.managingAgency,
+          capitalProject.mercatorFillMPnt,
+          capitalProject.mercatorFillMPoly,
+        )
         .as("tile");
       const data = await this.db
         .select({
