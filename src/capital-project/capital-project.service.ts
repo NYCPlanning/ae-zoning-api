@@ -19,6 +19,8 @@ import { CityCouncilDistrictRepository } from "src/city-council-district/city-co
 import { CommunityDistrictRepository } from "src/community-district/community-district.repository";
 import { AgencyRepository } from "src/agency/agency.repository";
 import { AgencyBudgetRepository } from "src/agency-budget/agency-budget.repository";
+import { CACHE, Cache } from "src/global/providers/cache.provider";
+import { z } from "zod";
 
 export class CapitalProjectService {
   constructor(
@@ -28,6 +30,9 @@ export class CapitalProjectService {
     private readonly communityDistrictRepository: CommunityDistrictRepository,
     private readonly agencyRepository: AgencyRepository,
     private readonly agencyBudgetRepository: AgencyBudgetRepository,
+
+    @Inject(CACHE)
+    private readonly cache: Cache,
   ) {}
 
   async findMany({
@@ -98,6 +103,41 @@ export class CapitalProjectService {
     if (checkedList.some((result) => result === undefined))
       throw new InvalidRequestParameterException();
 
+    // TODO: Move cache to repository methods. Service shouldn't be aware of it
+    const findCapitalProjectsCountKey = `capitalProjectsCount:\
+${cityCouncilDistrictId},\
+${boroughId}${communityDistrictId},\
+${managingAgency},\
+${agencyBudget},\
+${commitmentsTotalMin},\
+${commitmentsTotalMax},`;
+
+    console.debug("key", findCapitalProjectsCountKey);
+    const capitalProjectsCountCache = this.cache.get(
+      findCapitalProjectsCountKey,
+    );
+    let capitalProjectsCount: number;
+    console.debug("cache value", capitalProjectsCountCache);
+    if (capitalProjectsCountCache !== null) {
+      console.info("read from cache");
+      capitalProjectsCount = z.coerce.number().parse(capitalProjectsCountCache);
+    } else {
+      console.info("read from database");
+      const counts = await this.capitalProjectRepository.findCount({
+        cityCouncilDistrictId,
+        boroughId,
+        communityDistrictId,
+        managingAgency,
+        agencyBudget,
+        commitmentsTotalMin: min,
+        commitmentsTotalMax: max,
+      });
+      capitalProjectsCount = counts[0].count;
+      this.cache.set(findCapitalProjectsCountKey, capitalProjectsCount);
+    }
+
+    console.info("count", capitalProjectsCount);
+
     const capitalProjects = await this.capitalProjectRepository.findMany({
       cityCouncilDistrictId,
       boroughId,
@@ -116,6 +156,7 @@ export class CapitalProjectService {
       offset,
       total: capitalProjects.length,
       order: "managingCode, capitalProjectId",
+      totalMatches: capitalProjectsCount,
     };
   }
 

@@ -1,5 +1,5 @@
 import { Inject } from "@nestjs/common";
-import { isNotNull, sql, and, eq, sum, asc, gte, lte } from "drizzle-orm";
+import { isNotNull, sql, and, eq, sum, asc, gte, lte, or } from "drizzle-orm";
 import { DataRetrievalException } from "src/exception";
 import {
   CapitalProjectCategory,
@@ -22,6 +22,7 @@ import {
   CheckByManagingCodeCapitalProjectIdRepo,
   FindByManagingCodeCapitalProjectIdRepo,
   FindCapitalCommitmentsByManagingCodeCapitalProjectIdRepo,
+  FindCountRepo,
   FindGeoJsonByManagingCodeCapitalProjectIdRepo,
   FindManyRepo,
   FindTilesRepo,
@@ -32,6 +33,131 @@ export class CapitalProjectRepository {
     @Inject(DB)
     private readonly db: DbType,
   ) {}
+
+  #commitmentsTotalByCapitalProject = this.db
+    .$with("commitmentsTotalByCapitalProject")
+    .as(
+      this.db
+        .select({
+          managingCode: capitalCommitment.managingCode,
+          capitalProjectId: capitalCommitment.capitalProjectId,
+          value: sum(capitalCommitmentFund.value).mapWith(Number).as("value"),
+        })
+        .from(capitalCommitment)
+        .leftJoin(
+          capitalCommitmentFund,
+          and(
+            eq(capitalCommitment.id, capitalCommitmentFund.capitalCommitmentId),
+            eq(capitalCommitmentFund.category, "total"),
+          ),
+        )
+        .groupBy(
+          capitalCommitment.managingCode,
+          capitalCommitment.capitalProjectId,
+        ),
+    );
+
+  async findCount({
+    cityCouncilDistrictId,
+    communityDistrictId,
+    boroughId,
+    managingAgency,
+    agencyBudget,
+    commitmentsTotalMin,
+    commitmentsTotalMax,
+  }: {
+    cityCouncilDistrictId: string | null;
+    communityDistrictId: string | null;
+    boroughId: string | null;
+    managingAgency: string | null;
+    agencyBudget: string | null;
+    commitmentsTotalMin: number | null;
+    commitmentsTotalMax: number | null;
+  }): Promise<FindCountRepo> {
+    try {
+      const commitmentsTotalByCapitalProject =
+        this.#commitmentsTotalByCapitalProject;
+      return await this.db
+        .with(commitmentsTotalByCapitalProject)
+        .select({
+          count:
+            sql`COUNT(DISTINCT(${capitalProject.managingCode}, ${capitalProject.id}))`.mapWith(
+              Number,
+            ),
+        })
+        .from(capitalProject)
+        .leftJoin(
+          cityCouncilDistrict,
+          and(
+            sql`${cityCouncilDistrictId !== null} IS TRUE`,
+            or(
+              sql`ST_Intersects(${cityCouncilDistrict.liFt}, ${capitalProject.liFtMPoly})`,
+              sql`ST_Intersects(${cityCouncilDistrict.liFt}, ${capitalProject.liFtMPnt})`,
+            ),
+          ),
+        )
+        .leftJoin(
+          communityDistrict,
+          and(
+            sql`${communityDistrictId !== null && boroughId !== null} IS TRUE`,
+            or(
+              sql`ST_Intersects(${communityDistrict.liFt}, ${capitalProject.liFtMPoly})`,
+              sql`ST_Intersects(${communityDistrict.liFt}, ${capitalProject.liFtMPnt})`,
+            ),
+          ),
+        )
+        .leftJoin(
+          capitalCommitment,
+          and(
+            sql`${agencyBudget !== null} IS TRUE`,
+            eq(capitalProject.managingCode, capitalCommitment.managingCode),
+            eq(capitalProject.id, capitalCommitment.capitalProjectId),
+          ),
+        )
+        .leftJoin(
+          commitmentsTotalByCapitalProject,
+          and(
+            sql`${commitmentsTotalMin !== null || commitmentsTotalMax !== null} IS TRUE`,
+            eq(
+              commitmentsTotalByCapitalProject.capitalProjectId,
+              capitalProject.id,
+            ),
+            eq(
+              commitmentsTotalByCapitalProject.managingCode,
+              capitalProject.managingCode,
+            ),
+          ),
+        )
+        .where(
+          and(
+            cityCouncilDistrictId !== null
+              ? eq(cityCouncilDistrict.id, cityCouncilDistrictId)
+              : undefined,
+            communityDistrictId !== null && boroughId !== null
+              ? and(
+                  eq(communityDistrict.boroughId, boroughId),
+                  eq(communityDistrict.id, communityDistrictId),
+                )
+              : undefined,
+            managingAgency !== null
+              ? eq(capitalProject.managingAgency, managingAgency)
+              : undefined,
+            agencyBudget !== null
+              ? eq(capitalCommitment.budgetLineCode, agencyBudget)
+              : undefined,
+            commitmentsTotalMin !== null
+              ? gte(commitmentsTotalByCapitalProject.value, commitmentsTotalMin)
+              : undefined,
+            commitmentsTotalMax !== null
+              ? lte(commitmentsTotalByCapitalProject.value, commitmentsTotalMax)
+              : undefined,
+          ),
+        );
+    } catch (e) {
+      console.error(e);
+      throw new DataRetrievalException();
+    }
+  }
 
   async findMany({
     cityCouncilDistrictId,
@@ -55,34 +181,8 @@ export class CapitalProjectRepository {
     offset: number;
   }): Promise<FindManyRepo> {
     try {
-      const commitmentsTotalByCapitalProject = this.db
-        .$with("commitmentsTotalByCapitalProject")
-        .as(
-          this.db
-            .select({
-              managingCode: capitalCommitment.managingCode,
-              capitalProjectId: capitalCommitment.capitalProjectId,
-              value: sum(capitalCommitmentFund.value)
-                .mapWith(Number)
-                .as("value"),
-            })
-            .from(capitalCommitment)
-            .leftJoin(
-              capitalCommitmentFund,
-              and(
-                eq(
-                  capitalCommitment.id,
-                  capitalCommitmentFund.capitalCommitmentId,
-                ),
-                eq(capitalCommitmentFund.category, "total"),
-              ),
-            )
-            .groupBy(
-              capitalCommitment.managingCode,
-              capitalCommitment.capitalProjectId,
-            ),
-        );
-
+      const commitmentsTotalByCapitalProject =
+        this.#commitmentsTotalByCapitalProject;
       return await this.db
         .with(commitmentsTotalByCapitalProject)
         .select({
@@ -93,23 +193,33 @@ export class CapitalProjectRepository {
           maxDate: capitalProject.maxDate,
           minDate: capitalProject.minDate,
           category: sql<CapitalProjectCategory>`${capitalProject.category}`,
+          count: sql`COUNT (*) OVER ()`,
         })
         .from(capitalProject)
         .leftJoin(
           cityCouncilDistrict,
-          sql`
-            ST_Intersects(${cityCouncilDistrict.liFt}, ${capitalProject.liFtMPoly})
-            OR ST_Intersects(${cityCouncilDistrict.liFt}, ${capitalProject.liFtMPnt})`,
+          and(
+            sql`${cityCouncilDistrictId !== null} IS TRUE`,
+            or(
+              sql`ST_Intersects(${cityCouncilDistrict.liFt}, ${capitalProject.liFtMPoly})`,
+              sql`ST_Intersects(${cityCouncilDistrict.liFt}, ${capitalProject.liFtMPnt})`,
+            ),
+          ),
         )
         .leftJoin(
           communityDistrict,
-          sql`
-          ST_Intersects(${communityDistrict.liFt}, ${capitalProject.liFtMPoly})
-          OR ST_Intersects(${communityDistrict.liFt}, ${capitalProject.liFtMPnt})`,
+          and(
+            sql`${communityDistrictId !== null && boroughId !== null} IS TRUE`,
+            or(
+              sql`ST_Intersects(${communityDistrict.liFt}, ${capitalProject.liFtMPoly})`,
+              sql`ST_Intersects(${communityDistrict.liFt}, ${capitalProject.liFtMPnt})`,
+            ),
+          ),
         )
         .leftJoin(
           capitalCommitment,
           and(
+            sql`${agencyBudget !== null} IS TRUE`,
             eq(capitalProject.managingCode, capitalCommitment.managingCode),
             eq(capitalProject.id, capitalCommitment.capitalProjectId),
           ),
@@ -117,6 +227,7 @@ export class CapitalProjectRepository {
         .leftJoin(
           commitmentsTotalByCapitalProject,
           and(
+            sql`${commitmentsTotalMin !== null || commitmentsTotalMax !== null} IS TRUE`,
             eq(
               commitmentsTotalByCapitalProject.capitalProjectId,
               capitalProject.id,
@@ -154,17 +265,18 @@ export class CapitalProjectRepository {
         )
         .limit(limit)
         .offset(offset)
-        .orderBy(capitalProject.managingCode, capitalProject.id)
         .groupBy(
+          capitalProject.managingCode,
           capitalProject.id,
           capitalProject.description,
-          capitalProject.managingCode,
           capitalProject.managingAgency,
           capitalProject.maxDate,
           capitalProject.minDate,
           capitalProject.category,
-        );
-    } catch {
+        )
+        .orderBy(capitalProject.managingCode, capitalProject.id);
+    } catch (e) {
+      console.error(e);
       throw new DataRetrievalException();
     }
   }
