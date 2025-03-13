@@ -1,5 +1,6 @@
 import { produce } from "immer";
 import {
+  CapitalProject,
   FindCapitalCommitmentsByManagingCodeCapitalProjectIdPathParams,
   FindCapitalProjectByManagingCodeCapitalProjectIdPathParams,
   FindCapitalProjectGeoJsonByManagingCodeCapitalProjectIdPathParams,
@@ -14,6 +15,7 @@ import {
 import {
   CapitalProjectBudgetedEntity,
   CapitalProjectBudgetedGeoJsonEntityRepo,
+  CapitalProjectEntityMatches,
 } from "./capital-project.repository.schema";
 import { CityCouncilDistrictRepository } from "src/city-council-district/city-council-district.repository";
 import { CommunityDistrictRepository } from "src/community-district/community-district.repository";
@@ -98,7 +100,7 @@ export class CapitalProjectService {
     if (checkedList.some((result) => result === undefined))
       throw new InvalidRequestParameterException();
 
-    const capitalProjects = await this.capitalProjectRepository.findMany({
+    const results = await this.capitalProjectRepository.findMany({
       cityCouncilDistrictId,
       boroughId,
       communityDistrictId,
@@ -110,12 +112,25 @@ export class CapitalProjectService {
       offset,
     });
 
+    let capitalProjects: Array<CapitalProject> = [];
+    let totalMatches = 0;
+    if (results.length > 0) {
+      totalMatches = results[0].totalMatches;
+      capitalProjects = results.map(
+        (result) =>
+          produce(result as Partial<CapitalProjectEntityMatches>, (draft) => {
+            delete draft.totalMatches;
+          }) as CapitalProject,
+      );
+    }
+
     return {
       capitalProjects,
       limit,
       offset,
       total: capitalProjects.length,
       order: "managingCode, capitalProjectId",
+      totalMatches,
     };
   }
 

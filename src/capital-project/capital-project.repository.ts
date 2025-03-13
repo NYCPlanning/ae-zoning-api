@@ -93,6 +93,7 @@ export class CapitalProjectRepository {
           maxDate: capitalProject.maxDate,
           minDate: capitalProject.minDate,
           category: sql<CapitalProjectCategory>`${capitalProject.category}`,
+          totalMatches: sql<number>`COUNT(*) OVER ()`,
         })
         .from(capitalProject)
         .leftJoin(
