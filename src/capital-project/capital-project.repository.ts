@@ -1,5 +1,5 @@
 import { Inject } from "@nestjs/common";
-import { isNotNull, sql, and, eq, sum, asc, gte, lte } from "drizzle-orm";
+import { isNotNull, sql, and, eq, sum, asc, gte, lte, or } from "drizzle-orm";
 import { DataRetrievalException } from "src/exception";
 import {
   CapitalProjectCategory,
@@ -97,19 +97,28 @@ export class CapitalProjectRepository {
         .from(capitalProject)
         .leftJoin(
           cityCouncilDistrict,
-          sql`
-            ST_Intersects(${cityCouncilDistrict.liFt}, ${capitalProject.liFtMPoly})
-            OR ST_Intersects(${cityCouncilDistrict.liFt}, ${capitalProject.liFtMPnt})`,
+          and(
+            sql`${cityCouncilDistrictId !== null} IS TRUE`,
+            or(
+              sql`ST_Intersects(${cityCouncilDistrict.liFt}, ${capitalProject.liFtMPoly})`,
+              sql`ST_Intersects(${cityCouncilDistrict.liFt}, ${capitalProject.liFtMPnt})`,
+            ),
+          ),
         )
         .leftJoin(
           communityDistrict,
-          sql`
-          ST_Intersects(${communityDistrict.liFt}, ${capitalProject.liFtMPoly})
-          OR ST_Intersects(${communityDistrict.liFt}, ${capitalProject.liFtMPnt})`,
+          and(
+            sql`${communityDistrictId !== null && boroughId !== null} IS TRUE`,
+            or(
+              sql`ST_Intersects(${communityDistrict.liFt}, ${capitalProject.liFtMPoly})`,
+              sql`ST_Intersects(${communityDistrict.liFt}, ${capitalProject.liFtMPnt})`,
+            ),
+          ),
         )
         .leftJoin(
           capitalCommitment,
           and(
+            sql`${agencyBudget !== null} IS TRUE`,
             eq(capitalProject.managingCode, capitalCommitment.managingCode),
             eq(capitalProject.id, capitalCommitment.capitalProjectId),
           ),
@@ -117,6 +126,7 @@ export class CapitalProjectRepository {
         .leftJoin(
           commitmentsTotalByCapitalProject,
           and(
+            sql`${commitmentsTotalMin !== null || commitmentsTotalMax !== null} IS TRUE`,
             eq(
               commitmentsTotalByCapitalProject.capitalProjectId,
               capitalProject.id,
