@@ -5,12 +5,10 @@ import {
   CheckByIdRepo,
   FindManyRepo,
   FindTilesRepo,
-  FindCapitalProjectsByCityCouncilDistrictIdRepo,
   FindGeoJsonByIdRepo,
   FindCapitalProjectTilesByCityCouncilDistrictIdRepo,
 } from "./city-council-district.repository.schema";
 import {
-  CapitalProjectCategory,
   FindCapitalProjectTilesByCityCouncilDistrictIdPathParams,
   FindCityCouncilDistrictGeoJsonByCityCouncilDistrictIdPathParams,
   FindCityCouncilDistrictTilesPathParams,
@@ -226,42 +224,6 @@ export class CityCouncilDistrictRepository {
       const [fill, label] = await Promise.all([dataFill, dataLabel]);
 
       return Buffer.concat([fill[0].mvt, label[0].mvt] as Uint8Array[]);
-    } catch {
-      throw new DataRetrievalException();
-    }
-  }
-
-  async findCapitalProjectsById({
-    limit,
-    offset,
-    cityCouncilDistrictId,
-  }: {
-    limit: number;
-    offset: number;
-    cityCouncilDistrictId: string;
-  }): Promise<FindCapitalProjectsByCityCouncilDistrictIdRepo> {
-    try {
-      return await this.db
-        .select({
-          id: capitalProject.id,
-          description: capitalProject.description,
-          managingCode: capitalProject.managingCode,
-          managingAgency: capitalProject.managingAgency,
-          maxDate: capitalProject.maxDate,
-          minDate: capitalProject.minDate,
-          category: sql<CapitalProjectCategory>`${capitalProject.category}`,
-        })
-        .from(capitalProject)
-        .leftJoin(
-          cityCouncilDistrict,
-          sql`
-            ST_Intersects(${cityCouncilDistrict.liFt}, ${capitalProject.liFtMPoly})
-            OR ST_Intersects(${cityCouncilDistrict.liFt}, ${capitalProject.liFtMPnt})`,
-        )
-        .where(eq(cityCouncilDistrict.id, cityCouncilDistrictId))
-        .limit(limit)
-        .offset(offset)
-        .orderBy(capitalProject.managingCode, capitalProject.id);
     } catch {
       throw new DataRetrievalException();
     }

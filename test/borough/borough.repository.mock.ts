@@ -2,7 +2,6 @@ import {
   findManyRepoSchema,
   checkByIdRepoSchema,
   findCommunityDistrictsByBoroughIdRepoSchema,
-  findCapitalProjectsByBoroughIdCommunityDistrictIdRepoSchema,
   communityDistrictGeoJsonEntitySchema,
   findCapitalProjectTilesByBoroughIdCommunityDistrictIdRepoSchema,
 } from "src/borough/borough.repository.schema";
@@ -47,19 +46,6 @@ export class BoroughRepositoryMock {
     return results === undefined ? [] : results[id];
   }
 
-  get findCapitalProjectsByBoroughIdCommunityDistrictIdMocks() {
-    return this.communityDistrictRepoMock.checkByBoroughIdCommunityDistrictIdMocks.map(
-      (communityDistrict) => {
-        return {
-          [`${communityDistrict.boroughId}${communityDistrict.id}`]:
-            generateMock(
-              findCapitalProjectsByBoroughIdCommunityDistrictIdRepoSchema,
-            ),
-        };
-      },
-    );
-  }
-
   findCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdMocks = Array.from(
     Array(this.numberOfMocks),
     (_, seed) =>
@@ -73,20 +59,6 @@ export class BoroughRepositoryMock {
     return this.findCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdMocks.find(
       (row) => row.id === communityDistrictId && row.boroughId === boroughId,
     );
-  }
-
-  async findCapitalProjectsByBoroughIdCommunityDistrictId(
-    boroughId: string,
-    communityDistrictId: string,
-  ) {
-    const results =
-      this.findCapitalProjectsByBoroughIdCommunityDistrictIdMocks.find(
-        (capitalProjects) =>
-          `${boroughId}${communityDistrictId}` in capitalProjects,
-      );
-    return results == undefined
-      ? []
-      : results[`${boroughId}${communityDistrictId}`];
   }
 
   findCapitalProjectTilesByBoroughIdCommunityDistrictIdMock = generateMock(

@@ -51,11 +51,6 @@ export const findCapitalProjectsByBoroughIdCommunityDistrictId200Schema =
 export const findCapitalProjectsByBoroughIdCommunityDistrictId400Schema =
   z.lazy(() => errorSchema);
 /**
- * @description Requested resource does not exist or is not available
- */
-export const findCapitalProjectsByBoroughIdCommunityDistrictId404Schema =
-  z.lazy(() => errorSchema);
-/**
  * @description Server side error
  */
 export const findCapitalProjectsByBoroughIdCommunityDistrictId500Schema =

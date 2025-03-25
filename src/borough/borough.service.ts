@@ -4,7 +4,6 @@ import { CommunityDistrictRepository } from "src/community-district/community-di
 import { ResourceNotFoundException } from "src/exception";
 import {
   FindCapitalProjectsByBoroughIdCommunityDistrictIdPathParams,
-  FindCapitalProjectsByBoroughIdCommunityDistrictIdQueryParams,
   FindCapitalProjectTilesByBoroughIdCommunityDistrictIdPathParams,
 } from "src/gen";
 import { produce } from "immer";
@@ -63,40 +62,6 @@ export class BoroughService {
       id: `${communityDistrictGeoJson.boroughId}${communityDistrictGeoJson.id}`,
       properties,
       geometry,
-    };
-  }
-
-  async findCapitalProjectsByBoroughIdCommunityDistrictId({
-    boroughId,
-    communityDistrictId,
-    limit = 20,
-    offset = 0,
-  }: FindCapitalProjectsByBoroughIdCommunityDistrictIdPathParams &
-    FindCapitalProjectsByBoroughIdCommunityDistrictIdQueryParams) {
-    const communityDistrictCheck =
-      await this.communityDistrictRepository.checkByBoroughIdCommunityDistrictId(
-        boroughId,
-        communityDistrictId,
-      );
-    if (communityDistrictCheck === undefined)
-      throw new ResourceNotFoundException();
-
-    const capitalProjects =
-      await this.boroughRepository.findCapitalProjectsByBoroughIdCommunityDistrictId(
-        {
-          boroughId,
-          communityDistrictId,
-          limit,
-          offset,
-        },
-      );
-
-    return {
-      limit,
-      offset,
-      total: capitalProjects.length,
-      order: "managingCode, capitalProjectId",
-      capitalProjects,
     };
   }
 

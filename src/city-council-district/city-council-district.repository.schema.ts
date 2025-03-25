@@ -1,6 +1,5 @@
 import { mvtEntitySchema } from "src/schema/mvt";
 import {
-  capitalProjectEntitySchema,
   cityCouncilDistrictEntitySchema,
   MultiPolygonSchema,
 } from "src/schema";
@@ -39,11 +38,3 @@ export const checkByIdRepoSchema = cityCouncilDistrictEntitySchema.pick({
 });
 
 export type CheckByIdRepo = z.infer<typeof checkByIdRepoSchema>;
-
-export const findCapitalProjectsByCityCouncilDistrictIdRepoSchema = z.array(
-  capitalProjectEntitySchema,
-);
-
-export type FindCapitalProjectsByCityCouncilDistrictIdRepo = z.infer<
-  typeof findCapitalProjectsByCityCouncilDistrictIdRepoSchema
->;

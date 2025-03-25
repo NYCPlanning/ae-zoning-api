@@ -35,10 +35,6 @@ export type FindCapitalProjectsByBoroughIdCommunityDistrictId200 =
  */
 export type FindCapitalProjectsByBoroughIdCommunityDistrictId400 = Error;
 /**
- * @description Requested resource does not exist or is not available
- */
-export type FindCapitalProjectsByBoroughIdCommunityDistrictId404 = Error;
-/**
  * @description Server side error
  */
 export type FindCapitalProjectsByBoroughIdCommunityDistrictId500 = Error;
@@ -53,6 +49,5 @@ export type FindCapitalProjectsByBoroughIdCommunityDistrictIdQuery = {
   QueryParams: FindCapitalProjectsByBoroughIdCommunityDistrictIdQueryParams;
   Errors:
     | FindCapitalProjectsByBoroughIdCommunityDistrictId400
-    | FindCapitalProjectsByBoroughIdCommunityDistrictId404
     | FindCapitalProjectsByBoroughIdCommunityDistrictId500;
 };

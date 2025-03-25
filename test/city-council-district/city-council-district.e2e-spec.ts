@@ -14,19 +14,44 @@ import {
   findCityCouncilDistrictGeoJsonByCityCouncilDistrictIdQueryResponseSchema,
   findCityCouncilDistrictsQueryResponseSchema,
 } from "src/gen";
+import { CapitalProjectRepositoryMock } from "test/capital-project/capital-project.repository.mock";
+import { AgencyBudgetRepositoryMock } from "test/agency-budget/agency-budget.repository.mock";
+import { AgencyRepositoryMock } from "test/agency/agency.repository.mock";
+import { CommunityDistrictRepositoryMock } from "test/community-district/community-district.repository.mock";
+import { AgencyBudgetRepository } from "src/agency-budget/agency-budget.repository";
+import { AgencyRepository } from "src/agency/agency.repository";
+import { CapitalProjectRepository } from "src/capital-project/capital-project.repository";
+import { CommunityDistrictRepository } from "src/community-district/community-district.repository";
 
 describe("City Council District e2e", () => {
   let app: INestApplication;
 
+  const agencyRepositoryMock = new AgencyRepositoryMock();
+  const agencyBudgetRepositoryMock = new AgencyBudgetRepositoryMock();
   const cityCouncilDistrictRepositoryMock =
     new CityCouncilDistrictRepositoryMock();
+  const communityDistrictRepositoryMock = new CommunityDistrictRepositoryMock();
+  const capitalProjectRepositoryMock = new CapitalProjectRepositoryMock(
+    agencyRepositoryMock,
+    cityCouncilDistrictRepositoryMock,
+    communityDistrictRepositoryMock,
+    agencyBudgetRepositoryMock,
+  );
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [CityCouncilDistrictModule],
     })
+      .overrideProvider(CapitalProjectRepository)
+      .useValue(capitalProjectRepositoryMock)
       .overrideProvider(CityCouncilDistrictRepository)
       .useValue(cityCouncilDistrictRepositoryMock)
+      .overrideProvider(CommunityDistrictRepository)
+      .useValue(communityDistrictRepositoryMock)
+      .overrideProvider(AgencyRepository)
+      .useValue(agencyRepositoryMock)
+      .overrideProvider(AgencyBudgetRepository)
+      .useValue(agencyBudgetRepositoryMock)
       .compile();
     app = moduleRef.createNestApplication();
     await app.init();
@@ -322,29 +347,15 @@ describe("City Council District e2e", () => {
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
 
-    it("should 404 and when finding by an missing id", async () => {
+    it("should 400 and when finding by an missing id", async () => {
       const missingId = "10";
       const response = await request(app.getHttpServer())
         .get(`/city-council-districts/${missingId}/capital-projects`)
-        .expect(404);
-      expect(response.body.message).toBe(HttpName.NOT_FOUND);
-    });
-
-    it("should 500 when the database errors", async () => {
-      const dataRetrievalException = new DataRetrievalException();
-      jest
-        .spyOn(cityCouncilDistrictRepositoryMock, "findCapitalProjectsById")
-        .mockImplementationOnce(() => {
-          throw dataRetrievalException;
-        });
-
-      const mock =
-        cityCouncilDistrictRepositoryMock.checkCityCouncilDistrictByIdMocks[0];
-      const response = await request(app.getHttpServer())
-        .get(`/city-council-districts/${mock.id}/capital-projects`)
-        .expect(500);
-      expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);
-      expect(response.body.message).toBe(dataRetrievalException.message);
+        .expect(400);
+      expect(response.body.message).toBe(
+        new InvalidRequestParameterException().message,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
   });
 });

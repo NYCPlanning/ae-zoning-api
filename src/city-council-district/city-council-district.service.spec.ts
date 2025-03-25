@@ -3,7 +3,6 @@ import { Test } from "@nestjs/testing";
 import { CityCouncilDistrictRepository } from "./city-council-district.repository";
 import {
   findCityCouncilDistrictTilesQueryResponseSchema,
-  findCapitalProjectsByCityCouncilIdQueryResponseSchema,
   findCityCouncilDistrictsQueryResponseSchema,
   findCityCouncilDistrictGeoJsonByCityCouncilDistrictIdQueryResponseSchema,
   findCapitalProjectTilesByCityCouncilDistrictIdQueryResponseSchema,
@@ -95,52 +94,6 @@ describe("City Council District service unit", () => {
           mvt,
         ),
       ).not.toThrow();
-    });
-  });
-
-  describe("findCapitalProjectsByCityCouncilId", () => {
-    it("service should return a list of capital projects by city council district id, using the default limit and offset", async () => {
-      const { id } =
-        cityCouncilDistrictRepositoryMock.checkCityCouncilDistrictByIdMocks[0];
-
-      const resource = await cityCouncilDistrictService.findCapitalProjectsById(
-        {
-          cityCouncilDistrictId: id,
-        },
-      );
-
-      expect(() =>
-        findCapitalProjectsByCityCouncilIdQueryResponseSchema.parse(resource),
-      ).not.toThrow();
-      const parsedResource =
-        findCapitalProjectsByCityCouncilIdQueryResponseSchema.parse(resource);
-      expect(parsedResource.limit).toBe(20);
-      expect(parsedResource.offset).toBe(0);
-      expect(parsedResource.total).toBe(parsedResource.capitalProjects.length);
-      expect(parsedResource.order).toBe("managingCode, capitalProjectId");
-    });
-
-    it("service should return a list of capital projects by city council district id, using the user specified limit and offset", async () => {
-      const { id } =
-        cityCouncilDistrictRepositoryMock.checkCityCouncilDistrictByIdMocks[0];
-
-      const resource = await cityCouncilDistrictService.findCapitalProjectsById(
-        {
-          cityCouncilDistrictId: id,
-          limit: 10,
-          offset: 3,
-        },
-      );
-
-      expect(() =>
-        findCapitalProjectsByCityCouncilIdQueryResponseSchema.parse(resource),
-      ).not.toThrow();
-      const parsedResource =
-        findCapitalProjectsByCityCouncilIdQueryResponseSchema.parse(resource);
-      expect(parsedResource.limit).toBe(10);
-      expect(parsedResource.offset).toBe(3);
-      expect(parsedResource.total).toBe(parsedResource.capitalProjects.length);
-      expect(parsedResource.order).toBe("managingCode, capitalProjectId");
     });
   });
 });

@@ -112,7 +112,7 @@ export class CapitalProjectRepositoryMock {
     ];
   }
 
-  async findMany({
+  async findAll({
     managingAgency,
     boroughId,
     communityDistrictId,
@@ -120,8 +120,6 @@ export class CapitalProjectRepositoryMock {
     agencyBudget,
     commitmentsTotalMin,
     commitmentsTotalMax,
-    limit,
-    offset,
   }: {
     managingAgency: string | null;
     cityCouncilDistrictId: string | null;
@@ -130,11 +128,9 @@ export class CapitalProjectRepositoryMock {
     agencyBudget: string | null;
     commitmentsTotalMin: number | null;
     commitmentsTotalMax: number | null;
-    limit: number;
-    offset: number;
   }) {
-    return this.findManyMocks
-      .reduce((acc: FindManyRepo, [criteria, capitalProjects]) => {
+    return this.findManyMocks.reduce(
+      (acc: FindManyRepo, [criteria, capitalProjects]) => {
         if (
           managingAgency !== null &&
           criteria.managingAgency !== managingAgency
@@ -169,8 +165,71 @@ export class CapitalProjectRepositoryMock {
         )
           return acc;
         return acc.concat(capitalProjects);
-      }, [])
-      .slice(offset, limit + offset);
+      },
+      [],
+    );
+  }
+
+  async findMany({
+    managingAgency,
+    boroughId,
+    communityDistrictId,
+    cityCouncilDistrictId,
+    agencyBudget,
+    commitmentsTotalMin,
+    commitmentsTotalMax,
+    limit,
+    offset,
+  }: {
+    managingAgency: string | null;
+    cityCouncilDistrictId: string | null;
+    communityDistrictId: string | null;
+    boroughId: string | null;
+    agencyBudget: string | null;
+    commitmentsTotalMin: number | null;
+    commitmentsTotalMax: number | null;
+    limit: number;
+    offset: number;
+  }) {
+    const results = await this.findAll({
+      managingAgency,
+      boroughId,
+      communityDistrictId,
+      cityCouncilDistrictId,
+      agencyBudget,
+      commitmentsTotalMin,
+      commitmentsTotalMax,
+    });
+    return results.slice(offset, limit + offset);
+  }
+
+  async findCount({
+    managingAgency,
+    boroughId,
+    communityDistrictId,
+    cityCouncilDistrictId,
+    agencyBudget,
+    commitmentsTotalMin,
+    commitmentsTotalMax,
+  }: {
+    managingAgency: string | null;
+    cityCouncilDistrictId: string | null;
+    communityDistrictId: string | null;
+    boroughId: string | null;
+    agencyBudget: string | null;
+    commitmentsTotalMin: number | null;
+    commitmentsTotalMax: number | null;
+  }) {
+    const results = await this.findAll({
+      managingAgency,
+      boroughId,
+      communityDistrictId,
+      cityCouncilDistrictId,
+      agencyBudget,
+      commitmentsTotalMin,
+      commitmentsTotalMax,
+    });
+    return results.length;
   }
 
   checkByManagingCodeCapitalProjectIdMocks = Array.from(Array(5), (_, seed) =>

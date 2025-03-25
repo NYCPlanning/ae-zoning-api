@@ -5,7 +5,6 @@ import {
   CheckByIdRepo,
   FindManyRepo,
   FindCommunityDistrictsByBoroughIdRepo,
-  FindCapitalProjectsByBoroughIdCommunityDistrictIdRepo,
   FindCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdRepo,
   FindCapitalProjectTilesByBoroughIdCommunityDistrictIdRepo,
 } from "./borough.repository.schema";
@@ -17,7 +16,6 @@ import {
 } from "src/schema";
 import { eq, sql, and, isNotNull, asc, sum } from "drizzle-orm";
 import {
-  CapitalProjectCategory,
   FindCapitalProjectTilesByBoroughIdCommunityDistrictIdPathParams,
   FindCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdPathParams,
 } from "src/gen";
@@ -96,49 +94,6 @@ export class BoroughRepository {
             eq(communityDistrict.id, communityDistrictId),
           ),
       });
-    } catch {
-      throw new DataRetrievalException();
-    }
-  }
-
-  async findCapitalProjectsByBoroughIdCommunityDistrictId({
-    boroughId,
-    communityDistrictId,
-    limit,
-    offset,
-  }: {
-    boroughId: string;
-    communityDistrictId: string;
-    limit: number;
-    offset: number;
-  }): Promise<FindCapitalProjectsByBoroughIdCommunityDistrictIdRepo> {
-    try {
-      return await this.db
-        .select({
-          id: capitalProject.id,
-          description: capitalProject.description,
-          managingCode: capitalProject.managingCode,
-          managingAgency: capitalProject.managingAgency,
-          maxDate: capitalProject.maxDate,
-          minDate: capitalProject.minDate,
-          category: sql<CapitalProjectCategory>`${capitalProject.category}`,
-        })
-        .from(capitalProject)
-        .leftJoin(
-          communityDistrict,
-          sql`
-          ST_Intersects(${communityDistrict.liFt}, ${capitalProject.liFtMPoly})
-          OR ST_Intersects(${communityDistrict.liFt}, ${capitalProject.liFtMPnt})`,
-        )
-        .where(
-          and(
-            eq(communityDistrict.boroughId, boroughId),
-            eq(communityDistrict.id, communityDistrictId),
-          ),
-        )
-        .limit(limit)
-        .offset(offset)
-        .orderBy(capitalProject.managingCode, capitalProject.id);
     } catch {
       throw new DataRetrievalException();
     }
