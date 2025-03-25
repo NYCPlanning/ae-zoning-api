@@ -329,22 +329,5 @@ describe("City Council District e2e", () => {
         .expect(404);
       expect(response.body.message).toBe(HttpName.NOT_FOUND);
     });
-
-    it("should 500 when the database errors", async () => {
-      const dataRetrievalException = new DataRetrievalException();
-      jest
-        .spyOn(cityCouncilDistrictRepositoryMock, "findCapitalProjectsById")
-        .mockImplementationOnce(() => {
-          throw dataRetrievalException;
-        });
-
-      const mock =
-        cityCouncilDistrictRepositoryMock.checkCityCouncilDistrictByIdMocks[0];
-      const response = await request(app.getHttpServer())
-        .get(`/city-council-districts/${mock.id}/capital-projects`)
-        .expect(500);
-      expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);
-      expect(response.body.message).toBe(dataRetrievalException.message);
-    });
   });
 });

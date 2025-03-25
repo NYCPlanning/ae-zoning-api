@@ -29,6 +29,7 @@ import {
   findCapitalProjectsByCityCouncilIdPathParamsSchema,
   findCapitalProjectsByCityCouncilIdQueryParamsSchema,
 } from "src/gen";
+import { CapitalProjectService } from "src/capital-project/capital-project.service";
 
 @UseFilters(
   InternalServerErrorExceptionFilter,
@@ -39,6 +40,7 @@ import {
 export class CityCouncilDistrictController {
   constructor(
     private readonly cityCouncilDistrictService: CityCouncilDistrictService,
+    private readonly capitalProjectService: CapitalProjectService,
   ) {}
 
   @Get()
@@ -101,7 +103,7 @@ export class CityCouncilDistrictController {
     @Param() pathParams: FindCapitalProjectsByCityCouncilIdPathParams,
     @Query() queryParams: FindCapitalProjectsByCityCouncilIdQueryParams,
   ) {
-    return await this.cityCouncilDistrictService.findCapitalProjectsById({
+    return await this.capitalProjectService.findMany({
       ...pathParams,
       ...queryParams,
     });

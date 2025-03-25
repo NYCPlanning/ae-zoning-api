@@ -6,5 +6,12 @@ allOf:
         type: array
         items:
           $ref: ./CapitalProject.yaml
+      totalProjects:
+        type: integer
+        description: >-
+          The total number of results matching the query parameters.
+        minimum: 0
+        example: 212
     required:
       - capitalProjects
+      - totalProjects

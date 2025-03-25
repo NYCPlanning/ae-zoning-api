@@ -28,14 +28,15 @@ describe("Capital Projects", () => {
   let app: INestApplication;
 
   const agencyRepositoryMock = new AgencyRepositoryMock();
-  const cityCouncilDistrictRepository = new CityCouncilDistrictRepositoryMock();
-  const communityDistrictRepository = new CommunityDistrictRepositoryMock();
+  const cityCouncilDistrictRepositoryMock =
+    new CityCouncilDistrictRepositoryMock();
+  const communityDistrictRepositoryMock = new CommunityDistrictRepositoryMock();
   const agencyBudgetRepositoryMock = new AgencyBudgetRepositoryMock();
 
   const capitalProjectRepositoryMock = new CapitalProjectRepositoryMock(
     agencyRepositoryMock,
-    cityCouncilDistrictRepository,
-    communityDistrictRepository,
+    cityCouncilDistrictRepositoryMock,
+    communityDistrictRepositoryMock,
     agencyBudgetRepositoryMock,
   );
 
@@ -46,9 +47,9 @@ describe("Capital Projects", () => {
       .overrideProvider(CapitalProjectRepository)
       .useValue(capitalProjectRepositoryMock)
       .overrideProvider(CityCouncilDistrictRepository)
-      .useValue(cityCouncilDistrictRepository)
+      .useValue(cityCouncilDistrictRepositoryMock)
       .overrideProvider(CommunityDistrictRepository)
-      .useValue(communityDistrictRepository)
+      .useValue(communityDistrictRepositoryMock)
       .overrideProvider(AgencyRepository)
       .useValue(agencyRepositoryMock)
       .overrideProvider(AgencyBudgetRepository)

@@ -75,20 +75,6 @@ export class BoroughRepositoryMock {
     );
   }
 
-  async findCapitalProjectsByBoroughIdCommunityDistrictId(
-    boroughId: string,
-    communityDistrictId: string,
-  ) {
-    const results =
-      this.findCapitalProjectsByBoroughIdCommunityDistrictIdMocks.find(
-        (capitalProjects) =>
-          `${boroughId}${communityDistrictId}` in capitalProjects,
-      );
-    return results == undefined
-      ? []
-      : results[`${boroughId}${communityDistrictId}`];
-  }
-
   findCapitalProjectTilesByBoroughIdCommunityDistrictIdMock = generateMock(
     findCapitalProjectTilesByBoroughIdCommunityDistrictIdRepoSchema,
   );
