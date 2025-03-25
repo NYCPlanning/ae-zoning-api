@@ -98,7 +98,7 @@ export class CapitalProjectService {
     if (checkedList.some((result) => result === undefined))
       throw new InvalidRequestParameterException();
 
-    const capitalProjects = await this.capitalProjectRepository.findMany({
+    const capitalProjectsPromise = this.capitalProjectRepository.findMany({
       cityCouncilDistrictId,
       boroughId,
       communityDistrictId,
@@ -110,11 +110,27 @@ export class CapitalProjectService {
       offset,
     });
 
+    const totalProjectsPromise = this.capitalProjectRepository.findCount({
+      cityCouncilDistrictId,
+      boroughId,
+      communityDistrictId,
+      managingAgency,
+      agencyBudget,
+      commitmentsTotalMin: min,
+      commitmentsTotalMax: max,
+    });
+
+    const [capitalProjects, totalProjects] = await Promise.all([
+      capitalProjectsPromise,
+      totalProjectsPromise,
+    ]);
+
     return {
       capitalProjects,
       limit,
       offset,
       total: capitalProjects.length,
+      totalProjects,
       order: "managingCode, capitalProjectId",
     };
   }

@@ -2,7 +2,6 @@ import {
   findManyRepoSchema,
   findTilesRepoSchema,
   checkByIdRepoSchema,
-  findCapitalProjectsByCityCouncilDistrictIdRepoSchema,
   findGeoJsonByIdRepoSchema,
   findCapitalProjectTilesByCityCouncilDistrictIdRepoSchema,
 } from "src/city-council-district/city-council-district.repository.schema";
@@ -57,22 +56,6 @@ export class CityCouncilDistrictRepositoryMock {
     return this.checkCityCouncilDistrictByIdMocks.find((row) => row.id === id);
   }
 
-  findCapitalProjectsByIdMocks = this.checkCityCouncilDistrictByIdMocks.map(
-    (checkCityCouncilDistrict) => {
-      return {
-        [checkCityCouncilDistrict.id]: generateMock(
-          findCapitalProjectsByCityCouncilDistrictIdRepoSchema,
-          {
-            stringMap: {
-              minDate: () => "2018-01-01",
-              maxDate: () => "2045-12-31",
-            },
-          },
-        ),
-      };
-    },
-  );
-
   findCapitalProjectTilesByCityCouncilDistrictIdMock = generateMock(
     findCapitalProjectTilesByCityCouncilDistrictIdRepoSchema,
   );
@@ -90,24 +73,5 @@ export class CityCouncilDistrictRepositoryMock {
    */
   async findCapitalProjectTilesByCityCouncilDistrictId() {
     return this.findCapitalProjectTilesByCityCouncilDistrictIdMock;
-  }
-
-  async findCapitalProjectsById({
-    limit,
-    offset,
-    cityCouncilDistrictId,
-  }: {
-    limit: number;
-    offset: number;
-    cityCouncilDistrictId: string;
-  }) {
-    const results = this.findCapitalProjectsByIdMocks.find((ccdIdToCps) => {
-      return cityCouncilDistrictId in ccdIdToCps;
-    });
-
-    const capitalProjects =
-      results === undefined ? [] : results[cityCouncilDistrictId];
-
-    return capitalProjects.slice(offset, limit + offset);
   }
 }
