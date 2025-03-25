@@ -22,6 +22,7 @@ import {
   CheckByManagingCodeCapitalProjectIdRepo,
   FindByManagingCodeCapitalProjectIdRepo,
   FindCapitalCommitmentsByManagingCodeCapitalProjectIdRepo,
+  FindCountRepo,
   FindGeoJsonByManagingCodeCapitalProjectIdRepo,
   FindManyRepo,
   FindTilesRepo,
@@ -32,6 +33,34 @@ export class CapitalProjectRepository {
     @Inject(DB)
     private readonly db: DbType,
   ) {}
+
+  #commitmentsTotalByCapitalProject = this.db
+    .$with("commitmentsTotalByCapitalProject")
+    .as(
+      this.db
+        .select({
+          managingCode: capitalCommitment.managingCode,
+          capitalProjectId: capitalCommitment.capitalProjectId,
+          value: sum(capitalCommitmentFund.value)
+            .mapWith(Number)
+            .as("value"),
+        })
+        .from(capitalCommitment)
+        .leftJoin(
+          capitalCommitmentFund,
+          and(
+            eq(
+              capitalCommitment.id,
+              capitalCommitmentFund.capitalCommitmentId,
+            ),
+            eq(capitalCommitmentFund.category, "total"),
+          ),
+        )
+        .groupBy(
+          capitalCommitment.managingCode,
+          capitalCommitment.capitalProjectId,
+        ),
+    );
 
   async findMany({
     cityCouncilDistrictId,
@@ -55,34 +84,7 @@ export class CapitalProjectRepository {
     offset: number;
   }): Promise<FindManyRepo> {
     try {
-      const commitmentsTotalByCapitalProject = this.db
-        .$with("commitmentsTotalByCapitalProject")
-        .as(
-          this.db
-            .select({
-              managingCode: capitalCommitment.managingCode,
-              capitalProjectId: capitalCommitment.capitalProjectId,
-              value: sum(capitalCommitmentFund.value)
-                .mapWith(Number)
-                .as("value"),
-            })
-            .from(capitalCommitment)
-            .leftJoin(
-              capitalCommitmentFund,
-              and(
-                eq(
-                  capitalCommitment.id,
-                  capitalCommitmentFund.capitalCommitmentId,
-                ),
-                eq(capitalCommitmentFund.category, "total"),
-              ),
-            )
-            .groupBy(
-              capitalCommitment.managingCode,
-              capitalCommitment.capitalProjectId,
-            ),
-        );
-
+      const commitmentsTotalByCapitalProject = this.#commitmentsTotalByCapitalProject;
       return await this.db
         .with(commitmentsTotalByCapitalProject)
         .select({
@@ -174,6 +176,102 @@ export class CapitalProjectRepository {
           capitalProject.minDate,
           capitalProject.category,
         );
+    } catch {
+      throw new DataRetrievalException();
+    }
+  }
+
+  async findCount({
+    cityCouncilDistrictId,
+    communityDistrictId,
+    boroughId,
+    managingAgency,
+    agencyBudget,
+    commitmentsTotalMin,
+    commitmentsTotalMax,
+  }: {
+    cityCouncilDistrictId: string | null;
+    communityDistrictId: string | null;
+    boroughId: string | null;
+    managingAgency: string | null;
+    agencyBudget: string | null;
+    commitmentsTotalMin: number | null;
+    commitmentsTotalMax: number | null;
+  }): Promise<FindCountRepo> {
+    try {
+      const commitmentsTotalByCapitalProject = this.#commitmentsTotalByCapitalProject;
+      const results = await this.db
+        .with(commitmentsTotalByCapitalProject)
+        .select({total: sql`COUNT(DISTINCT(${capitalProject.id}, ${capitalProject.managingCode}))`.mapWith(Number)})
+        .from(capitalProject)
+        .leftJoin(
+          cityCouncilDistrict,
+          and(
+            sql`${cityCouncilDistrictId !== null} IS TRUE`,
+            or(
+              sql`ST_Intersects(${cityCouncilDistrict.liFt}, ${capitalProject.liFtMPoly})`,
+              sql`ST_Intersects(${cityCouncilDistrict.liFt}, ${capitalProject.liFtMPnt})`,
+            ),
+          ),
+        )
+        .leftJoin(
+          communityDistrict,
+          and(
+            sql`${communityDistrictId !== null && boroughId !== null} IS TRUE`,
+            or(
+              sql`ST_Intersects(${communityDistrict.liFt}, ${capitalProject.liFtMPoly})`,
+              sql`ST_Intersects(${communityDistrict.liFt}, ${capitalProject.liFtMPnt})`,
+            ),
+          ),
+        )
+        .leftJoin(
+          capitalCommitment,
+          and(
+            sql`${agencyBudget !== null} IS TRUE`,
+            eq(capitalProject.managingCode, capitalCommitment.managingCode),
+            eq(capitalProject.id, capitalCommitment.capitalProjectId),
+          ),
+        )
+        .leftJoin(
+          commitmentsTotalByCapitalProject,
+          and(
+            sql`${commitmentsTotalMin !== null || commitmentsTotalMax !== null} IS TRUE`,
+            eq(
+              commitmentsTotalByCapitalProject.capitalProjectId,
+              capitalProject.id,
+            ),
+            eq(
+              commitmentsTotalByCapitalProject.managingCode,
+              capitalProject.managingCode,
+            ),
+          ),
+        )
+        .where(
+          and(
+            cityCouncilDistrictId !== null
+              ? eq(cityCouncilDistrict.id, cityCouncilDistrictId)
+              : undefined,
+            communityDistrictId !== null && boroughId !== null
+              ? and(
+                  eq(communityDistrict.boroughId, boroughId),
+                  eq(communityDistrict.id, communityDistrictId),
+                )
+              : undefined,
+            managingAgency !== null
+              ? eq(capitalProject.managingAgency, managingAgency)
+              : undefined,
+            agencyBudget !== null
+              ? eq(capitalCommitment.budgetLineCode, agencyBudget)
+              : undefined,
+            commitmentsTotalMin !== null
+              ? gte(commitmentsTotalByCapitalProject.value, commitmentsTotalMin)
+              : undefined,
+            commitmentsTotalMax !== null
+              ? lte(commitmentsTotalByCapitalProject.value, commitmentsTotalMax)
+              : undefined,
+          ),
+        );
+        return results[0].total;
     } catch {
       throw new DataRetrievalException();
     }

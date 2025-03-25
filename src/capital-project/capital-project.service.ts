@@ -110,11 +110,22 @@ export class CapitalProjectService {
       offset,
     });
 
+    const totalProjects = await this.capitalProjectRepository.findCount({
+      cityCouncilDistrictId,
+      boroughId,
+      communityDistrictId,
+      managingAgency,
+      agencyBudget,
+      commitmentsTotalMin: min,
+      commitmentsTotalMax: max,
+    });
+
     return {
       capitalProjects,
       limit,
       offset,
       total: capitalProjects.length,
+      totalProjects,
       order: "managingCode, capitalProjectId",
     };
   }
