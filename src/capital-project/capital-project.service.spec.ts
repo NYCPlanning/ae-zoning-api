@@ -83,6 +83,7 @@ describe("CapitalProjectService", () => {
       expect(parsedBody.offset).toBe(0);
       expect(parsedBody.capitalProjects.length).toBe(8);
       expect(parsedBody.total).toBe(parsedBody.capitalProjects.length);
+      expect(parsedBody.totalProjects).toBe(parsedBody.capitalProjects.length);
       expect(parsedBody.order).toBe("managingCode, capitalProjectId");
     });
 
@@ -102,6 +103,9 @@ describe("CapitalProjectService", () => {
       expect(parsedResource.limit).toBe(20);
       expect(parsedResource.offset).toBe(0);
       expect(parsedResource.total).toBe(parsedResource.capitalProjects.length);
+      expect(parsedResource.totalProjects).toBe(
+        parsedResource.capitalProjects.length,
+      );
       expect(parsedResource.order).toBe("managingCode, capitalProjectId");
     });
 
@@ -134,6 +138,8 @@ describe("CapitalProjectService", () => {
       expect(parsedBody.limit).toBe(10);
       expect(parsedBody.offset).toBe(3);
       expect(parsedBody.total).toBe(parsedBody.capitalProjects.length);
+      expect(parsedBody.capitalProjects.length).toBe(0);
+      expect(parsedBody.totalProjects).toBe(1);
       expect(parsedBody.order).toBe("managingCode, capitalProjectId");
     });
 
@@ -153,6 +159,7 @@ describe("CapitalProjectService", () => {
       );
       expect(parsedBody.capitalProjects.length).toBe(7);
       expect(parsedBody.total).toBe(parsedBody.capitalProjects.length);
+      expect(parsedBody.totalProjects).toBe(parsedBody.capitalProjects.length);
       expect(parsedBody.order).toBe("managingCode, capitalProjectId");
     });
 
@@ -182,6 +189,9 @@ describe("CapitalProjectService", () => {
       expect(parsedResource.offset).toBe(0);
       expect(parsedResource.capitalProjects.length).toBe(1);
       expect(parsedResource.total).toBe(parsedResource.capitalProjects.length);
+      expect(parsedResource.totalProjects).toBe(
+        parsedResource.capitalProjects.length,
+      );
       expect(parsedResource.order).toBe("managingCode, capitalProjectId");
     });
 
@@ -210,6 +220,9 @@ describe("CapitalProjectService", () => {
       expect(parsedResource.offset).toBe(0);
       expect(parsedResource.capitalProjects.length).toBe(8);
       expect(parsedResource.total).toBe(parsedResource.capitalProjects.length);
+      expect(parsedResource.totalProjects).toBe(
+        parsedResource.capitalProjects.length,
+      );
       expect(parsedResource.order).toBe("managingCode, capitalProjectId");
     });
 
@@ -228,6 +241,9 @@ describe("CapitalProjectService", () => {
       expect(parsedResource.offset).toBe(0);
       expect(parsedResource.capitalProjects.length).toBe(8);
       expect(parsedResource.total).toBe(parsedResource.capitalProjects.length);
+      expect(parsedResource.totalProjects).toBe(
+        parsedResource.capitalProjects.length,
+      );
       expect(parsedResource.order).toBe("managingCode, capitalProjectId");
     });
 

@@ -29,10 +29,6 @@ export type FindCapitalProjectsByCityCouncilId200 = CapitalProjectPage;
  */
 export type FindCapitalProjectsByCityCouncilId400 = Error;
 /**
- * @description Requested resource does not exist or is not available
- */
-export type FindCapitalProjectsByCityCouncilId404 = Error;
-/**
  * @description Server side error
  */
 export type FindCapitalProjectsByCityCouncilId500 = Error;
@@ -47,6 +43,5 @@ export type FindCapitalProjectsByCityCouncilIdQuery = {
   QueryParams: FindCapitalProjectsByCityCouncilIdQueryParams;
   Errors:
     | FindCapitalProjectsByCityCouncilId400
-    | FindCapitalProjectsByCityCouncilId404
     | FindCapitalProjectsByCityCouncilId500;
 };

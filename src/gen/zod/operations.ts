@@ -30,7 +30,6 @@ import {
 import {
   findCapitalProjectsByBoroughIdCommunityDistrictIdQueryResponseSchema,
   findCapitalProjectsByBoroughIdCommunityDistrictId400Schema,
-  findCapitalProjectsByBoroughIdCommunityDistrictId404Schema,
   findCapitalProjectsByBoroughIdCommunityDistrictId500Schema,
   findCapitalProjectsByBoroughIdCommunityDistrictIdPathParamsSchema,
   findCapitalProjectsByBoroughIdCommunityDistrictIdQueryParamsSchema,
@@ -100,7 +99,6 @@ import {
 import {
   findCapitalProjectsByCityCouncilIdQueryResponseSchema,
   findCapitalProjectsByCityCouncilId400Schema,
-  findCapitalProjectsByCityCouncilId404Schema,
   findCapitalProjectsByCityCouncilId500Schema,
   findCapitalProjectsByCityCouncilIdPathParamsSchema,
   findCapitalProjectsByCityCouncilIdQueryParamsSchema,
@@ -294,14 +292,12 @@ export const operations = {
     responses: {
       200: findCapitalProjectsByBoroughIdCommunityDistrictIdQueryResponseSchema,
       400: findCapitalProjectsByBoroughIdCommunityDistrictId400Schema,
-      404: findCapitalProjectsByBoroughIdCommunityDistrictId404Schema,
       500: findCapitalProjectsByBoroughIdCommunityDistrictId500Schema,
       default:
         findCapitalProjectsByBoroughIdCommunityDistrictIdQueryResponseSchema,
     },
     errors: {
       400: findCapitalProjectsByBoroughIdCommunityDistrictId400Schema,
-      404: findCapitalProjectsByBoroughIdCommunityDistrictId404Schema,
       500: findCapitalProjectsByBoroughIdCommunityDistrictId500Schema,
     },
   },
@@ -509,13 +505,11 @@ export const operations = {
     responses: {
       200: findCapitalProjectsByCityCouncilIdQueryResponseSchema,
       400: findCapitalProjectsByCityCouncilId400Schema,
-      404: findCapitalProjectsByCityCouncilId404Schema,
       500: findCapitalProjectsByCityCouncilId500Schema,
       default: findCapitalProjectsByCityCouncilIdQueryResponseSchema,
     },
     errors: {
       400: findCapitalProjectsByCityCouncilId400Schema,
-      404: findCapitalProjectsByCityCouncilId404Schema,
       500: findCapitalProjectsByCityCouncilId500Schema,
     },
   },
