@@ -96,6 +96,7 @@ export class CityCouncilDistrictService {
       limit,
       offset,
       total: capitalProjects.length,
+      totalProjects: 0,
       order: "managingCode, capitalProjectId",
       capitalProjects,
     };

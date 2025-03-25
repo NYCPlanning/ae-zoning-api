@@ -9,6 +9,7 @@ import {
   UsePipes,
 } from "@nestjs/common";
 import { BoroughService } from "./borough.service";
+import { CapitalProjectService } from "src/capital-project/capital-project.service";
 import { Response } from "express";
 import {
   FindCapitalProjectTilesByBoroughIdCommunityDistrictIdPathParams,
@@ -37,7 +38,7 @@ import { ZodTransformPipe } from "src/pipes/zod-transform-pipe";
 )
 @Controller("boroughs")
 export class BoroughController {
-  constructor(private readonly boroughService: BoroughService) {}
+  constructor(private readonly boroughService: BoroughService, private readonly capitalProjectService: CapitalProjectService) {}
 
   @Get()
   async findMany() {
@@ -86,8 +87,8 @@ export class BoroughController {
     )
     queryParams: FindCapitalProjectsByBoroughIdCommunityDistrictIdQueryParams,
   ) {
-    return this.boroughService.findCapitalProjectsByBoroughIdCommunityDistrictId(
-      { ...pathParams, ...queryParams },
+    return this.capitalProjectService.findMany(
+      { ...queryParams, communityDistrictCombinedId: `${pathParams.boroughId}${pathParams.communityDistrictId}` },
     );
   }
 
