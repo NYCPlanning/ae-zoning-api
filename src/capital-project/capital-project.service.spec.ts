@@ -100,6 +100,7 @@ describe("CapitalProjectService", () => {
       ).not.toThrow();
       const parsedResource =
         findCapitalProjectsQueryResponseSchema.parse(resource);
+      console.warn(parsedResource.totalProjects);
       expect(parsedResource.limit).toBe(20);
       expect(parsedResource.offset).toBe(0);
       expect(parsedResource.total).toBe(parsedResource.capitalProjects.length);
