@@ -18,6 +18,8 @@ import { CapitalProjectModule } from "./capital-project/capital-project.module";
 import { CommunityDistrictModule } from "./community-district/community-district.module";
 import { CapitalCommitmentTypeModule } from "./capital-commitment-type/capital-commitment-type.module";
 import { AgencyBudgetModule } from "./agency-budget/agency-budget.module";
+import { CacheModule } from '@nestjs/cache-manager';
+
 
 @Module({
   imports: [
@@ -40,6 +42,10 @@ import { AgencyBudgetModule } from "./agency-budget/agency-budget.module";
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, "..", "openapi"),
       exclude: ["/api/(.*)"],
+    }),
+    CacheModule.register({
+      isGlobal: true,
+      ttl: 2.16e7
     }),
     GlobalModule,
     AgencyModule,

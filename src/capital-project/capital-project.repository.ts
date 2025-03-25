@@ -27,11 +27,15 @@ import {
   FindManyRepo,
   FindTilesRepo,
 } from "./capital-project.repository.schema";
+// import { CacheModule } from '@nestjs/cache-manager';
+import { Cache } from "cache-manager";
+import { CACHE_MANAGER } from "@nestjs/cache-manager";
 
 export class CapitalProjectRepository {
   constructor(
     @Inject(DB)
     private readonly db: DbType,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   #commitmentsTotalByCapitalProject = this.db
@@ -181,15 +185,7 @@ export class CapitalProjectRepository {
     }
   }
 
-  async findCount({
-    cityCouncilDistrictId,
-    communityDistrictId,
-    boroughId,
-    managingAgency,
-    agencyBudget,
-    commitmentsTotalMin,
-    commitmentsTotalMax,
-  }: {
+  async findCount(params: {
     cityCouncilDistrictId: string | null;
     communityDistrictId: string | null;
     boroughId: string | null;
@@ -198,6 +194,21 @@ export class CapitalProjectRepository {
     commitmentsTotalMin: number | null;
     commitmentsTotalMax: number | null;
   }): Promise<FindCountRepo> {
+    const key = JSON.stringify({...params, domain: "capitalProject", function: "findCount"});
+    
+
+    const value: number|null = await this.cacheManager.get(key);
+    if(value !== null) { return value; }
+
+    const {
+      cityCouncilDistrictId,
+      communityDistrictId,
+      boroughId,
+      managingAgency,
+      agencyBudget,
+      commitmentsTotalMin,
+      commitmentsTotalMax,
+    } = params;
     try {
       const commitmentsTotalByCapitalProject = this.#commitmentsTotalByCapitalProject;
       const results = await this.db
@@ -271,7 +282,9 @@ export class CapitalProjectRepository {
               : undefined,
           ),
         );
-        return results[0].total;
+        const { total } = results[0];
+        this.cacheManager.set(key, total);
+        return total;
     } catch {
       throw new DataRetrievalException();
     }
