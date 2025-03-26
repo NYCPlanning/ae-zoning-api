@@ -14,19 +14,44 @@ import {
   findCityCouncilDistrictGeoJsonByCityCouncilDistrictIdQueryResponseSchema,
   findCityCouncilDistrictsQueryResponseSchema,
 } from "src/gen";
+import { CapitalProjectRepositoryMock } from "test/capital-project/capital-project.repository.mock";
+import { AgencyBudgetRepositoryMock } from "test/agency-budget/agency-budget.repository.mock";
+import { AgencyRepositoryMock } from "test/agency/agency.repository.mock";
+import { CommunityDistrictRepositoryMock } from "test/community-district/community-district.repository.mock";
+import { AgencyBudgetRepository } from "src/agency-budget/agency-budget.repository";
+import { AgencyRepository } from "src/agency/agency.repository";
+import { CapitalProjectRepository } from "src/capital-project/capital-project.repository";
+import { CommunityDistrictRepository } from "src/community-district/community-district.repository";
 
 describe("City Council District e2e", () => {
   let app: INestApplication;
 
+  const agencyRepositoryMock = new AgencyRepositoryMock();
+  const agencyBudgetRepositoryMock = new AgencyBudgetRepositoryMock();
   const cityCouncilDistrictRepositoryMock =
     new CityCouncilDistrictRepositoryMock();
+  const communityDistrictRepositoryMock = new CommunityDistrictRepositoryMock();
+  const capitalProjectRepositoryMock = new CapitalProjectRepositoryMock(
+    agencyRepositoryMock,
+    cityCouncilDistrictRepositoryMock,
+    communityDistrictRepositoryMock,
+    agencyBudgetRepositoryMock,
+  );
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [CityCouncilDistrictModule],
     })
+      .overrideProvider(CapitalProjectRepository)
+      .useValue(capitalProjectRepositoryMock)
       .overrideProvider(CityCouncilDistrictRepository)
       .useValue(cityCouncilDistrictRepositoryMock)
+      .overrideProvider(CommunityDistrictRepository)
+      .useValue(communityDistrictRepositoryMock)
+      .overrideProvider(AgencyRepository)
+      .useValue(agencyRepositoryMock)
+      .overrideProvider(AgencyBudgetRepository)
+      .useValue(agencyBudgetRepositoryMock)
       .compile();
     app = moduleRef.createNestApplication();
     await app.init();

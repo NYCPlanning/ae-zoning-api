@@ -6,7 +6,6 @@ import { AgencyRepository } from "src/agency/agency.repository";
 import { AgencyBudgetRepository } from "src/agency-budget/agency-budget.repository";
 import { CapitalProjectRepository } from "src/capital-project/capital-project.repository";
 import { CapitalProjectService } from "src/capital-project/capital-project.service";
-import { BoroughRepository } from "src/borough/borough.repository";
 import { CommunityDistrictRepository } from "src/community-district/community-district.repository";
 
 @Module({
@@ -14,7 +13,6 @@ import { CommunityDistrictRepository } from "src/community-district/community-di
   providers: [
     AgencyRepository,
     AgencyBudgetRepository,
-    BoroughRepository,
     CapitalProjectRepository,
     CapitalProjectService,
     CityCouncilDistrictService,

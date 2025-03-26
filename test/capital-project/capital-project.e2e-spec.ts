@@ -28,11 +28,10 @@ describe("Capital Projects", () => {
   let app: INestApplication;
 
   const agencyRepositoryMock = new AgencyRepositoryMock();
+  const agencyBudgetRepositoryMock = new AgencyBudgetRepositoryMock();
   const cityCouncilDistrictRepositoryMock =
     new CityCouncilDistrictRepositoryMock();
   const communityDistrictRepositoryMock = new CommunityDistrictRepositoryMock();
-  const agencyBudgetRepositoryMock = new AgencyBudgetRepositoryMock();
-
   const capitalProjectRepositoryMock = new CapitalProjectRepositoryMock(
     agencyRepositoryMock,
     cityCouncilDistrictRepositoryMock,
