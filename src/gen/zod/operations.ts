@@ -99,7 +99,6 @@ import {
 import {
   findCapitalProjectsByCityCouncilIdQueryResponseSchema,
   findCapitalProjectsByCityCouncilId400Schema,
-  findCapitalProjectsByCityCouncilId404Schema,
   findCapitalProjectsByCityCouncilId500Schema,
   findCapitalProjectsByCityCouncilIdPathParamsSchema,
   findCapitalProjectsByCityCouncilIdQueryParamsSchema,
@@ -506,13 +505,11 @@ export const operations = {
     responses: {
       200: findCapitalProjectsByCityCouncilIdQueryResponseSchema,
       400: findCapitalProjectsByCityCouncilId400Schema,
-      404: findCapitalProjectsByCityCouncilId404Schema,
       500: findCapitalProjectsByCityCouncilId500Schema,
       default: findCapitalProjectsByCityCouncilIdQueryResponseSchema,
     },
     errors: {
       400: findCapitalProjectsByCityCouncilId400Schema,
-      404: findCapitalProjectsByCityCouncilId404Schema,
       500: findCapitalProjectsByCityCouncilId500Schema,
     },
   },

@@ -43,12 +43,6 @@ export const findCapitalProjectsByCityCouncilId400Schema = z.lazy(
   () => errorSchema,
 );
 /**
- * @description Requested resource does not exist or is not available
- */
-export const findCapitalProjectsByCityCouncilId404Schema = z.lazy(
-  () => errorSchema,
-);
-/**
  * @description Server side error
  */
 export const findCapitalProjectsByCityCouncilId500Schema = z.lazy(

@@ -347,12 +347,15 @@ describe("City Council District e2e", () => {
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
 
-    it("should 404 and when finding by an missing id", async () => {
+    it("should 400 and when finding by an missing id", async () => {
       const missingId = "10";
       const response = await request(app.getHttpServer())
         .get(`/city-council-districts/${missingId}/capital-projects`)
-        .expect(404);
-      expect(response.body.message).toBe(HttpName.NOT_FOUND);
+        .expect(400);
+      expect(response.body.message).toBe(
+        new InvalidRequestParameterException().message,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
   });
 });
