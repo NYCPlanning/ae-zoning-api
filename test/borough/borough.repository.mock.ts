@@ -2,7 +2,6 @@ import {
   findManyRepoSchema,
   checkByIdRepoSchema,
   findCommunityDistrictsByBoroughIdRepoSchema,
-  findCapitalProjectsByBoroughIdCommunityDistrictIdRepoSchema,
   communityDistrictGeoJsonEntitySchema,
   findCapitalProjectTilesByBoroughIdCommunityDistrictIdRepoSchema,
 } from "src/borough/borough.repository.schema";
@@ -45,19 +44,6 @@ export class BoroughRepositoryMock {
     );
 
     return results === undefined ? [] : results[id];
-  }
-
-  get findCapitalProjectsByBoroughIdCommunityDistrictIdMocks() {
-    return this.communityDistrictRepoMock.checkByBoroughIdCommunityDistrictIdMocks.map(
-      (communityDistrict) => {
-        return {
-          [`${communityDistrict.boroughId}${communityDistrict.id}`]:
-            generateMock(
-              findCapitalProjectsByBoroughIdCommunityDistrictIdRepoSchema,
-            ),
-        };
-      },
-    );
   }
 
   findCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdMocks = Array.from(
