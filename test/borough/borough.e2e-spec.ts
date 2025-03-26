@@ -17,21 +17,47 @@ import {
   InvalidRequestParameterException,
 } from "src/exception";
 import { HttpName } from "src/filter";
+import { AgencyRepositoryMock } from "test/agency/agency.repository.mock";
+import { AgencyBudgetRepositoryMock } from "test/agency-budget/agency-budget.repository.mock";
+import { CityCouncilDistrictRepositoryMock } from "test/city-council-district/city-council-district.repository.mock";
+import { CapitalProjectRepositoryMock } from "test/capital-project/capital-project.repository.mock";
+import { CapitalProjectRepository } from "src/capital-project/capital-project.repository";
+import { CityCouncilDistrictRepository } from "src/city-council-district/city-council-district.repository";
+import { AgencyRepository } from "src/agency/agency.repository";
+import { AgencyBudgetRepository } from "src/agency-budget/agency-budget.repository";
 
 describe("Borough e2e", () => {
   let app: INestApplication;
 
+  const agencyRepositoryMock = new AgencyRepositoryMock();
+  const agencyBudgetRepositoryMock = new AgencyBudgetRepositoryMock();
+  const cityCouncilDistrictRepositoryMock =
+    new CityCouncilDistrictRepositoryMock();
   const communityDistrictRepositoryMock = new CommunityDistrictRepositoryMock();
   const boroughRepositoryMock = new BoroughRepositoryMock(
     communityDistrictRepositoryMock,
+  );
+  const capitalProjectRepositoryMock = new CapitalProjectRepositoryMock(
+    agencyRepositoryMock,
+    cityCouncilDistrictRepositoryMock,
+    communityDistrictRepositoryMock,
+    agencyBudgetRepositoryMock,
   );
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [BoroughModule],
     })
+      .overrideProvider(AgencyRepository)
+      .useValue(agencyRepositoryMock)
+      .overrideProvider(AgencyBudgetRepository)
+      .useValue(agencyBudgetRepositoryMock)
       .overrideProvider(BoroughRepository)
       .useValue(boroughRepositoryMock)
+      .overrideProvider(CapitalProjectRepository)
+      .useValue(capitalProjectRepositoryMock)
+      .overrideProvider(CityCouncilDistrictRepository)
+      .useValue(cityCouncilDistrictRepositoryMock)
       .overrideProvider(CommunityDistrictRepository)
       .useValue(communityDistrictRepositoryMock)
       .compile();
