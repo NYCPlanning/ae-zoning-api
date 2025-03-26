@@ -27,7 +27,6 @@ import {
   FindManyRepo,
   FindTilesRepo,
 } from "./capital-project.repository.schema";
-// import { CacheModule } from '@nestjs/cache-manager';
 import { Cache } from "cache-manager";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
 
