@@ -30,7 +30,6 @@ import {
 import {
   findCapitalProjectsByBoroughIdCommunityDistrictIdQueryResponseSchema,
   findCapitalProjectsByBoroughIdCommunityDistrictId400Schema,
-  findCapitalProjectsByBoroughIdCommunityDistrictId404Schema,
   findCapitalProjectsByBoroughIdCommunityDistrictId500Schema,
   findCapitalProjectsByBoroughIdCommunityDistrictIdPathParamsSchema,
   findCapitalProjectsByBoroughIdCommunityDistrictIdQueryParamsSchema,
@@ -294,14 +293,12 @@ export const operations = {
     responses: {
       200: findCapitalProjectsByBoroughIdCommunityDistrictIdQueryResponseSchema,
       400: findCapitalProjectsByBoroughIdCommunityDistrictId400Schema,
-      404: findCapitalProjectsByBoroughIdCommunityDistrictId404Schema,
       500: findCapitalProjectsByBoroughIdCommunityDistrictId500Schema,
       default:
         findCapitalProjectsByBoroughIdCommunityDistrictIdQueryResponseSchema,
     },
     errors: {
       400: findCapitalProjectsByBoroughIdCommunityDistrictId400Schema,
-      404: findCapitalProjectsByBoroughIdCommunityDistrictId404Schema,
       500: findCapitalProjectsByBoroughIdCommunityDistrictId500Schema,
     },
   },

@@ -258,24 +258,30 @@ describe("Borough e2e", () => {
       expect(parsedBody.offset).toBe(3);
     });
 
-    it("should 404 and when finding by a missing borough id", async () => {
+    it("should 400 and when finding by a missing borough id", async () => {
       const missingId = "9";
       const response = await request(app.getHttpServer())
         .get(
           `/boroughs/${missingId}/community-districts/${communityDistrict.id}/capital-projects`,
         )
-        .expect(404);
-      expect(response.body.message).toBe(HttpName.NOT_FOUND);
+        .expect(400);
+      expect(response.body.message).toBe(
+        new InvalidRequestParameterException().message,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
 
-    it("should 404 and when finding by a missing community district id", async () => {
+    it("should 400 and when finding by a missing community district id", async () => {
       const missingId = "99";
       const response = await request(app.getHttpServer())
         .get(
           `/boroughs/${communityDistrict.boroughId}/community-districts/${missingId}/capital-projects`,
         )
-        .expect(404);
-      expect(response.body.message).toBe(HttpName.NOT_FOUND);
+        .expect(400);
+      expect(response.body.message).toBe(
+        new InvalidRequestParameterException().message,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
 
     it("should 400 and when finding by an invalid borough id", async () => {
