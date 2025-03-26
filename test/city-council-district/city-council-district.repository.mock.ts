@@ -91,23 +91,4 @@ export class CityCouncilDistrictRepositoryMock {
   async findCapitalProjectTilesByCityCouncilDistrictId() {
     return this.findCapitalProjectTilesByCityCouncilDistrictIdMock;
   }
-
-  async findCapitalProjectsById({
-    limit,
-    offset,
-    cityCouncilDistrictId,
-  }: {
-    limit: number;
-    offset: number;
-    cityCouncilDistrictId: string;
-  }) {
-    const results = this.findCapitalProjectsByIdMocks.find((ccdIdToCps) => {
-      return cityCouncilDistrictId in ccdIdToCps;
-    });
-
-    const capitalProjects =
-      results === undefined ? [] : results[cityCouncilDistrictId];
-
-    return capitalProjects.slice(offset, limit + offset);
-  }
 }

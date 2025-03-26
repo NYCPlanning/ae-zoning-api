@@ -120,7 +120,10 @@ export class CapitalProjectService {
       commitmentsTotalMax: max,
     });
 
-    const [capitalProjects, totalProjects] = await Promise.all([capitalProjectsPromise, totalProjectsPromise]);
+    const [capitalProjects, totalProjects] = await Promise.all([
+      capitalProjectsPromise,
+      totalProjectsPromise,
+    ]);
 
     return {
       capitalProjects,

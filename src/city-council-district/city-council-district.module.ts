@@ -8,6 +8,6 @@ import { CapitalProjectModule } from "src/capital-project/capital-project.module
   exports: [CityCouncilDistrictService],
   providers: [CityCouncilDistrictService, CityCouncilDistrictRepository],
   controllers: [CityCouncilDistrictController],
-  imports: [CapitalProjectModule]
+  imports: [CapitalProjectModule],
 })
 export class CityCouncilDistrictModule {}

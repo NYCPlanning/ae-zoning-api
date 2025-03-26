@@ -18,8 +18,7 @@ import { CapitalProjectModule } from "./capital-project/capital-project.module";
 import { CommunityDistrictModule } from "./community-district/community-district.module";
 import { CapitalCommitmentTypeModule } from "./capital-commitment-type/capital-commitment-type.module";
 import { AgencyBudgetModule } from "./agency-budget/agency-budget.module";
-import { CacheModule } from '@nestjs/cache-manager';
-
+import { CacheModule } from "@nestjs/cache-manager";
 
 @Module({
   imports: [
@@ -45,7 +44,7 @@ import { CacheModule } from '@nestjs/cache-manager';
     }),
     CacheModule.register({
       isGlobal: true,
-      ttl: 2.16e7
+      ttl: 2.16e7,
     }),
     GlobalModule,
     AgencyModule,

@@ -45,18 +45,13 @@ export class CapitalProjectRepository {
         .select({
           managingCode: capitalCommitment.managingCode,
           capitalProjectId: capitalCommitment.capitalProjectId,
-          value: sum(capitalCommitmentFund.value)
-            .mapWith(Number)
-            .as("value"),
+          value: sum(capitalCommitmentFund.value).mapWith(Number).as("value"),
         })
         .from(capitalCommitment)
         .leftJoin(
           capitalCommitmentFund,
           and(
-            eq(
-              capitalCommitment.id,
-              capitalCommitmentFund.capitalCommitmentId,
-            ),
+            eq(capitalCommitment.id, capitalCommitmentFund.capitalCommitmentId),
             eq(capitalCommitmentFund.category, "total"),
           ),
         )
@@ -88,7 +83,8 @@ export class CapitalProjectRepository {
     offset: number;
   }): Promise<FindManyRepo> {
     try {
-      const commitmentsTotalByCapitalProject = this.#commitmentsTotalByCapitalProject;
+      const commitmentsTotalByCapitalProject =
+        this.#commitmentsTotalByCapitalProject;
       return await this.db
         .with(commitmentsTotalByCapitalProject)
         .select({
@@ -194,11 +190,16 @@ export class CapitalProjectRepository {
     commitmentsTotalMin: number | null;
     commitmentsTotalMax: number | null;
   }): Promise<FindCountRepo> {
-    const key = JSON.stringify({...params, domain: "capitalProject", function: "findCount"});
-    
+    const key = JSON.stringify({
+      ...params,
+      domain: "capitalProject",
+      function: "findCount",
+    });
 
-    const value: number|null = await this.cacheManager.get(key);
-    if(value !== null) { return value; }
+    const value: number | null = await this.cacheManager.get(key);
+    if (value !== null) {
+      return value;
+    }
 
     const {
       cityCouncilDistrictId,
@@ -210,10 +211,16 @@ export class CapitalProjectRepository {
       commitmentsTotalMax,
     } = params;
     try {
-      const commitmentsTotalByCapitalProject = this.#commitmentsTotalByCapitalProject;
+      const commitmentsTotalByCapitalProject =
+        this.#commitmentsTotalByCapitalProject;
       const results = await this.db
         .with(commitmentsTotalByCapitalProject)
-        .select({total: sql`COUNT(DISTINCT(${capitalProject.id}, ${capitalProject.managingCode}))`.mapWith(Number)})
+        .select({
+          total:
+            sql`COUNT(DISTINCT(${capitalProject.id}, ${capitalProject.managingCode}))`.mapWith(
+              Number,
+            ),
+        })
         .from(capitalProject)
         .leftJoin(
           cityCouncilDistrict,
@@ -282,9 +289,9 @@ export class CapitalProjectRepository {
               : undefined,
           ),
         );
-        const { total } = results[0];
-        this.cacheManager.set(key, total);
-        return total;
+      const { total } = results[0];
+      this.cacheManager.set(key, total);
+      return total;
     } catch {
       throw new DataRetrievalException();
     }

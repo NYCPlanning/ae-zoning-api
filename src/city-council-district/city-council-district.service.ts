@@ -2,9 +2,6 @@ import { Inject, Injectable } from "@nestjs/common";
 import { CityCouncilDistrictRepository } from "./city-council-district.repository";
 import { ResourceNotFoundException } from "src/exception";
 import {
-  FindCapitalProjectsByCityCouncilIdPathParams,
-  FindCapitalProjectsByCityCouncilIdQueryParams,
-  FindCapitalProjectsByCityCouncilIdQueryResponse,
   FindCapitalProjectTilesByCityCouncilDistrictIdPathParams,
   FindCityCouncilDistrictGeoJsonByCityCouncilDistrictIdPathParams,
   FindCityCouncilDistrictTilesPathParams,
@@ -69,36 +66,5 @@ export class CityCouncilDistrictService {
     return this.cityCouncilDistrictRepository.findCapitalProjectTilesByCityCouncilDistrictId(
       params,
     );
-  }
-
-  async findCapitalProjectsById({
-    limit = 20,
-    offset = 0,
-    cityCouncilDistrictId,
-  }: FindCapitalProjectsByCityCouncilIdPathParams &
-    FindCapitalProjectsByCityCouncilIdQueryParams): Promise<FindCapitalProjectsByCityCouncilIdQueryResponse> {
-    const cityCouncilDistrictCheck =
-      await this.cityCouncilDistrictRepository.checkCityCouncilDistrictById(
-        cityCouncilDistrictId,
-      );
-
-    if (cityCouncilDistrictCheck === undefined)
-      throw new ResourceNotFoundException();
-
-    const capitalProjects =
-      await this.cityCouncilDistrictRepository.findCapitalProjectsById({
-        limit,
-        offset,
-        cityCouncilDistrictId,
-      });
-
-    return {
-      limit,
-      offset,
-      total: capitalProjects.length,
-      totalProjects: 0,
-      order: "managingCode, capitalProjectId",
-      capitalProjects,
-    };
   }
 }

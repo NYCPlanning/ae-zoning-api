@@ -9,6 +9,6 @@ import { CapitalProjectModule } from "src/capital-project/capital-project.module
   exports: [BoroughService],
   providers: [BoroughService, BoroughRepository, CommunityDistrictRepository],
   controllers: [BoroughController],
-  imports: [CapitalProjectModule]
+  imports: [CapitalProjectModule],
 })
 export class BoroughModule {}
