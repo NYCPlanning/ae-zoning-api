@@ -5,7 +5,8 @@ get:
     - Agencies
   responses:
     '200':
-      description: An object containing all agencies.
+      description: >
+        An object containing all agencies sorted alphabetically by the agency initials.
       content:
         application/json:
           schema:
@@ -13,10 +14,18 @@ get:
             properties:
               agencies:
                 type: array
+                description: >
+                  An list of agencies sorted alphabetically by the agency initials.
                 items:
                   $ref: ../components/schemas/Agency.yaml
+              order:
+                type: string
+                description: >-
+                  The criteria used to sort the results using the agency initials in ascending order.
+                example: initials
             required:
               - agencies
+              - order
     '400':
       $ref: ../components/responses/BadRequest.yaml
     '500':
