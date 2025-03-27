@@ -12,6 +12,7 @@ export class AgencyService {
     const agencies = await this.agencyRepository.findMany();
     return {
       agencies,
+      order: "initials",
     };
   }
 }

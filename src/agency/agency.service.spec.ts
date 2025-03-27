@@ -23,5 +23,7 @@ describe("Agency service unit", () => {
   it("service should return a findAgenciesQueryResponseSchema compliant object", async () => {
     const agencies = await agencyService.findMany();
     expect(() => findAgenciesQueryResponseSchema.parse(agencies)).not.toThrow();
+
+    expect(agencies.order).toBe("initials");
   });
 });
