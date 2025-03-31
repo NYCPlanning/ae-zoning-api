@@ -28,7 +28,7 @@ export class BoroughService {
 
   async findCommunityDistrictsByBoroughId(id: string) {
     const boroughCheck = await this.boroughRepository.checkBoroughById(id);
-    if (boroughCheck === undefined) throw new ResourceNotFoundException();
+    if (boroughCheck === false) throw new ResourceNotFoundException();
 
     const communityDistricts =
       await this.boroughRepository.findCommunityDistrictsByBoroughId(id);

@@ -1,22 +1,13 @@
 import { generateMock } from "@anatine/zod-mock";
-import {
-  findTilesRepoSchema,
-  checkByBoroughIdCommunityDistrictIdRepoSchema,
-} from "src/community-district/community-district.repository.schema";
+import { findTilesRepoSchema } from "src/community-district/community-district.repository.schema";
+import { communityDistrictEntitySchema } from "src/schema/community-district";
+import { z } from "zod";
 
 export class CommunityDistrictRepositoryMock {
-  numberOfMocks = 2;
-
-  checkByBoroughIdCommunityDistrictIdMocks = Array.from(
-    Array(this.numberOfMocks),
-    (_, seed) =>
-      generateMock(checkByBoroughIdCommunityDistrictIdRepoSchema, {
-        seed: seed + 1,
-      }),
-  );
+  communityDistrictMocks = generateMock(z.array(communityDistrictEntitySchema));
 
   async checkByBoroughIdCommunityDistrictId(boroughId: string, id: string) {
-    return this.checkByBoroughIdCommunityDistrictIdMocks.find(
+    return this.communityDistrictMocks.some(
       (row) => row.boroughId === boroughId && row.id === id,
     );
   }

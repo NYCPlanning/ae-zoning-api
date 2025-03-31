@@ -15,6 +15,8 @@ import {
   FindByIdRepo,
   FindZoningDistrictClassesByIdRepo,
 } from "./zoning-district.repository.schema";
+import { Cache } from "cache-manager";
+import { CACHE_MANAGER } from "@nestjs/cache-manager";
 
 export class ZoningDistrictRepository {
   constructor(
@@ -22,6 +24,7 @@ export class ZoningDistrictRepository {
     private readonly db: DbType,
     @Inject(StorageConfig.KEY)
     private storageConfig: ConfigType<typeof StorageConfig>,
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
   ) {}
 
   #checkById = this.db.query.zoningDistrict
@@ -34,11 +37,21 @@ export class ZoningDistrictRepository {
     })
     .prepare("checkZoningDistrictById");
 
-  async checkById(id: string): Promise<CheckByIdRepo | undefined> {
+  async checkById(id: string): Promise<CheckByIdRepo> {
+    const key = JSON.stringify({
+      id,
+      domain: "zoningDistrict",
+      function: "checkZoningDistrictById",
+    });
+
     try {
-      return await this.#checkById.execute({
+      const result = await this.#checkById.execute({
         id,
       });
+
+      const value = result !== undefined;
+      this.cacheManager.set(key, value);
+      return value;
     } catch {
       throw new DataRetrievalException();
     }

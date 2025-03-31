@@ -102,7 +102,7 @@ describe("Capital Projects", () => {
     it("should 200 and return capital projects with page metadata when specifying a valid agency budget code", async () => {
       const agencyBudget =
         capitalProjectRepositoryMock.agencyBudgetRepositoryMock
-          .checkByCodeMocks[0];
+          .findManyMocks[0];
       const response = await request(app.getHttpServer()).get(
         `/capital-projects?agencyBudget=${agencyBudget.code}`,
       );
@@ -171,7 +171,7 @@ describe("Capital Projects", () => {
     it("should 200 and return capital projects from a specified city council district", async () => {
       const { id } =
         capitalProjectRepositoryMock.cityCouncilDistrictRepoMock
-          .checkCityCouncilDistrictByIdMocks[0];
+          .findManyMocks[0];
       const response = await request(app.getHttpServer()).get(
         `/capital-projects?cityCouncilDistrictId=${id}`,
       );
@@ -202,7 +202,7 @@ describe("Capital Projects", () => {
     it("should 200 and return capital projects from a specified community district", async () => {
       const { boroughId, id: communityDistrictId } =
         capitalProjectRepositoryMock.communityDistrictRepoMock
-          .checkByBoroughIdCommunityDistrictIdMocks[1];
+          .communityDistrictMocks[1];
       const response = await request(app.getHttpServer()).get(
         `/capital-projects?communityDistrictId=${boroughId}${communityDistrictId}`,
       );
@@ -232,7 +232,7 @@ describe("Capital Projects", () => {
 
     it("should 200 and return capital projects from a specified managing agency", async () => {
       const managingAgency =
-        capitalProjectRepositoryMock.agencyRepoMock.checkByInitialsMocks[0];
+        capitalProjectRepositoryMock.agencyRepoMock.findManyMocks[0];
       const response = await request(app.getHttpServer()).get(
         `/capital-projects?managingAgency=${managingAgency.initials}`,
       );
@@ -551,8 +551,7 @@ describe("Capital Projects", () => {
   describe("findCapitalCommitmentsByManagingCodeCapitalProjectId", () => {
     it("should 200 and return an array of capital commitments", async () => {
       const capitalProjectMock =
-        capitalProjectRepositoryMock
-          .checkByManagingCodeCapitalProjectIdMocks[0];
+        capitalProjectRepositoryMock.findByManagingCodeCapitalProjectIdMock[0];
 
       const { managingCode, id: capitalProjectId } = capitalProjectMock;
       const response = await request(app.getHttpServer())
@@ -619,8 +618,7 @@ describe("Capital Projects", () => {
         });
 
       const capitalProjectMock =
-        capitalProjectRepositoryMock
-          .checkByManagingCodeCapitalProjectIdMocks[0];
+        capitalProjectRepositoryMock.findByManagingCodeCapitalProjectIdMock[0];
 
       const { managingCode, id: capitalProjectId } = capitalProjectMock;
       const response = await request(app.getHttpServer())
