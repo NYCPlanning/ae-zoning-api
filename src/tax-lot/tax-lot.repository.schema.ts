@@ -9,9 +9,7 @@ import {
 import { taxLotEntitySchema } from "src/schema/tax-lot";
 import { geomSchema } from "src/types";
 
-export const checkByBblRepoSchema = taxLotEntitySchema.pick({
-  bbl: true,
-});
+export const checkByBblRepoSchema = z.boolean();
 
 export type CheckByBblRepo = z.infer<typeof checkByBblRepoSchema>;
 

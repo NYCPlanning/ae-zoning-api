@@ -18,11 +18,7 @@ export const findCountRepoSchema = z.number();
 
 export type FindCountRepo = z.infer<typeof findCountRepoSchema>;
 
-export const checkByManagingCodeCapitalProjectIdRepoSchema =
-  capitalProjectEntitySchema.pick({
-    id: true,
-    managingCode: true,
-  });
+export const checkByManagingCodeCapitalProjectIdRepoSchema = z.boolean();
 
 export type CheckByManagingCodeCapitalProjectIdRepo = z.infer<
   typeof checkByManagingCodeCapitalProjectIdRepoSchema

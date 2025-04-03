@@ -92,8 +92,8 @@ describe("Borough e2e", () => {
   });
 
   describe("findCommunityDistrictsByBoroughId", () => {
-    it("should 200 and return community districts for a given borough id", async () => {
-      const mock = boroughRepositoryMock.checkBoroughByIdMocks[0];
+    it.only("should 200 and return community districts for a given borough id", async () => {
+      const mock = boroughRepositoryMock.findManyMocks[0];
 
       const response = await request(app.getHttpServer())
         .get(`/boroughs/${mock.id}/community-districts`)
@@ -130,7 +130,7 @@ describe("Borough e2e", () => {
           throw dataRetrievalException;
         });
 
-      const mock = boroughRepositoryMock.checkBoroughByIdMocks[0];
+      const mock = boroughRepositoryMock.findManyMocks[0];
       const response = await request(app.getHttpServer())
         .get(`/boroughs/${mock.id}/community-districts`)
         .expect(500);
@@ -211,8 +211,7 @@ describe("Borough e2e", () => {
 
   describe("findCapitalProjectsByBoroughIdCommunityDistrictId", () => {
     const communityDistrict =
-      communityDistrictRepositoryMock
-        .checkByBoroughIdCommunityDistrictIdMocks[0];
+      communityDistrictRepositoryMock.communityDistrictMocks[0];
     it("should 200 and return capital projects for a given borough id community district id", async () => {
       const response = await request(app.getHttpServer())
         .get(
@@ -367,8 +366,7 @@ describe("Borough e2e", () => {
 
   describe("findCapitalProjectTilesByBoroughIdCommunityDistrictId", () => {
     const communityDistrict =
-      communityDistrictRepositoryMock
-        .checkByBoroughIdCommunityDistrictIdMocks[0];
+      communityDistrictRepositoryMock.communityDistrictMocks[0];
 
     it("should 200 and return capital project tiles for a given borough id and community district id", async () => {
       const z = 1;

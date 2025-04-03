@@ -1,7 +1,6 @@
 import {
   findManyRepoSchema,
   findTilesRepoSchema,
-  checkByIdRepoSchema,
   findGeoJsonByIdRepoSchema,
   findCapitalProjectTilesByCityCouncilDistrictIdRepoSchema,
 } from "src/city-council-district/city-council-district.repository.schema";
@@ -47,13 +46,8 @@ export class CityCouncilDistrictRepositoryMock {
     );
   }
 
-  checkCityCouncilDistrictByIdMocks = Array.from(
-    Array(this.numberOfMocks),
-    (_, seed) => generateMock(checkByIdRepoSchema, { seed: seed + 1 }),
-  );
-
   async checkCityCouncilDistrictById(id: string) {
-    return this.checkCityCouncilDistrictByIdMocks.find((row) => row.id === id);
+    return this.findManyMocks.find((row) => row.id === id);
   }
 
   findCapitalProjectTilesByCityCouncilDistrictIdMock = generateMock(

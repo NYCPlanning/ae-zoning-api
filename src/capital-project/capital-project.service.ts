@@ -60,7 +60,7 @@ export class CapitalProjectService {
       throw new InvalidRequestParameterException();
     }
 
-    const checklist: Array<Promise<unknown | undefined>> = [];
+    const checklist: Array<Promise<boolean>> = [];
     if (cityCouncilDistrictId !== null)
       checklist.push(
         this.cityCouncilDistrictRepository.checkCityCouncilDistrictById(
@@ -95,7 +95,7 @@ export class CapitalProjectService {
 
     const checkedList = await Promise.all(checklist);
 
-    if (checkedList.some((result) => result === undefined))
+    if (checkedList.some((result) => result === false))
       throw new InvalidRequestParameterException();
 
     const capitalProjectsPromise = this.capitalProjectRepository.findMany({

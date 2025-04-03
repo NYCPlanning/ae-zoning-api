@@ -75,7 +75,7 @@ describe("Zoning district e2e", () => {
 
   describe("findZoningDistrictClassesByZoningDistrictId", () => {
     it("should 200 and return a zoning district class for a given id", async () => {
-      const mock = zoningDistrictRepositoryMock.checkByIdMocks[0];
+      const mock = zoningDistrictRepositoryMock.findByIdMocks[0];
       const response = await request(app.getHttpServer())
         .get(`/zoning-districts/${mock.id}/classes`)
         .expect(200);
@@ -110,7 +110,7 @@ describe("Zoning district e2e", () => {
           throw dataRetrievalException;
         });
 
-      const mock = zoningDistrictRepositoryMock.checkByIdMocks[0];
+      const mock = zoningDistrictRepositoryMock.findByIdMocks[0];
       const response = await request(app.getHttpServer())
         .get(`/zoning-districts/${mock.id}/classes`)
         .expect(500);

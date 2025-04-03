@@ -4,7 +4,6 @@ import {
   findByBblRepoSchema,
   findByBblSpatialRepoSchema,
   findZoningDistrictsByBblRepoSchema,
-  checkByBblRepoSchema,
   findZoningDistrictClassesByBblRepoSchema,
   findManyRepoSchema,
   FindGeomFromGeoJsonRepo,
@@ -35,15 +34,11 @@ export type GeomMock = {
 export class TaxLotRepositoryMock {
   numberOfMocks = 1;
 
-  checkByBblMocks = Array.from(Array(this.numberOfMocks), (_, seed) =>
-    generateMock(checkByBblRepoSchema, { seed: seed + 1 }),
-  );
+  findManyMocks = generateMock(findManyRepoSchema.length(10));
 
   async checkByBbl(bbl: string) {
-    return this.checkByBblMocks.find((row) => row.bbl === bbl);
+    return this.findManyMocks.some((row) => row.bbl === bbl);
   }
-
-  findManyMocks = generateMock(findManyRepoSchema.length(10));
 
   async findMany({ limit, offset }: { limit: number; offset: number }) {
     return this.findManyMocks.slice(offset, limit + offset);
@@ -165,13 +160,11 @@ export class TaxLotRepositoryMock {
     return this.findByBblSpatialMocks.find((row) => row.bbl === bbl);
   }
 
-  findZoningDistrictByTaxLotBblMocks = this.checkByBblMocks.map(
-    (checkTaxLot) => {
-      return {
-        [checkTaxLot.bbl]: generateMock(findZoningDistrictsByBblRepoSchema),
-      };
-    },
-  );
+  findZoningDistrictByTaxLotBblMocks = this.findManyMocks.map((checkTaxLot) => {
+    return {
+      [checkTaxLot.bbl]: generateMock(findZoningDistrictsByBblRepoSchema),
+    };
+  });
 
   async findZoningDistrictsByBbl(bbl: string) {
     const results = this.findZoningDistrictByTaxLotBblMocks.find(
@@ -180,7 +173,7 @@ export class TaxLotRepositoryMock {
     return results === undefined ? [] : results[bbl];
   }
 
-  findZoningDistrictClassByTaxLotBblMocks = this.checkByBblMocks.map(
+  findZoningDistrictClassByTaxLotBblMocks = this.findManyMocks.map(
     (checkTaxLot) => {
       return {
         [checkTaxLot.bbl]: generateMock(

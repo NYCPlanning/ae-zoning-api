@@ -313,11 +313,25 @@ export class CapitalProjectRepository {
   async checkByManagingCodeCapitalProjectId(
     managingCode: string,
     capitalProjectId: string,
-  ): Promise<CheckByManagingCodeCapitalProjectIdRepo | undefined> {
-    return await this.#checkByManagingCodeCapitalProjectId.execute({
+  ): Promise<CheckByManagingCodeCapitalProjectIdRepo> {
+    const key = JSON.stringify({
+      managingCode,
+      capitalProjectId,
+      domain: "capitalProject",
+      function: "checkByManagingCodeCapitalProjectId",
+    });
+    const cachedValue: boolean | null = await this.cacheManager.get(key);
+
+    if (cachedValue !== null) return cachedValue;
+
+    const result = await this.#checkByManagingCodeCapitalProjectId.execute({
       managingCode,
       capitalProjectId,
     });
+
+    const value = result !== undefined;
+    this.cacheManager.set(key, value);
+    return value;
   }
 
   async findByManagingCodeCapitalProjectId(

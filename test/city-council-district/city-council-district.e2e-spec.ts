@@ -270,8 +270,7 @@ describe("City Council District e2e", () => {
   });
 
   describe("findCapitalProjectsByCityCouncilDistrictId", () => {
-    const mock =
-      cityCouncilDistrictRepositoryMock.checkCityCouncilDistrictByIdMocks[0];
+    const mock = cityCouncilDistrictRepositoryMock.findManyMocks[0];
 
     it("should 200 amd return all capital projects for a city council district", async () => {
       const response = await request(app.getHttpServer())

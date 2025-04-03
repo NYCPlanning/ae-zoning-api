@@ -6,11 +6,14 @@ import {
   FindManyRepo,
 } from "./agency-budget.repository.schema";
 import { agencyBudget } from "src/schema";
+import { Cache } from "cache-manager";
+import { CACHE_MANAGER } from "@nestjs/cache-manager";
 
 export class AgencyBudgetRepository {
   constructor(
     @Inject(DB)
     private readonly db: DbType,
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
   ) {}
 
   #checkByCode = this.db.query.agencyBudget
@@ -21,9 +24,21 @@ export class AgencyBudgetRepository {
     })
     .prepare("checkByCode");
 
-  async checkByCode(code: string): Promise<CheckByCodeRepo | undefined> {
+  async checkByCode(code: string): Promise<CheckByCodeRepo> {
+    const key = JSON.stringify({
+      code,
+      domain: "agencyBudget",
+      function: "checkByCode",
+    });
+
+    const cachedValue: boolean | null = await this.cacheManager.get(key);
+
+    if (cachedValue !== null) return cachedValue;
     try {
-      return await this.#checkByCode.execute({ code });
+      const result = await this.#checkByCode.execute({ code });
+      const value = result !== undefined;
+      this.cacheManager.set(key, value);
+      return value;
     } catch {
       throw new DataRetrievalException();
     }

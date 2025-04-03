@@ -5,8 +5,6 @@ export const findManyRepoSchema = z.array(agencyEntitySchema);
 
 export type FindManyRepo = z.infer<typeof findManyRepoSchema>;
 
-export const checkByInitialsRepoSchema = agencyEntitySchema.pick({
-  initials: true,
-});
+export const checkByInitialsRepoSchema = z.boolean();
 
 export type CheckByInitialsRepo = z.infer<typeof checkByInitialsRepoSchema>;

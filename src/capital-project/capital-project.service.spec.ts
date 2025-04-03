@@ -88,8 +88,7 @@ describe("CapitalProjectService", () => {
     });
 
     it("should return a list of capital projects by city council district id, using the default limit and offset", async () => {
-      const { id } =
-        cityCouncilDistrictRepositoryMock.checkCityCouncilDistrictByIdMocks[0];
+      const { id } = cityCouncilDistrictRepositoryMock.findManyMocks[0];
 
       const resource = await capitalProjectService.findMany({
         cityCouncilDistrictId: id,
@@ -122,7 +121,7 @@ describe("CapitalProjectService", () => {
     it("should return a list of capital projects by community district id, using the user specified limit and offset", async () => {
       const { boroughId, id: communityDistrictId } =
         boroughRepositoryMock.communityDistrictRepoMock
-          .checkByBoroughIdCommunityDistrictIdMocks[0];
+          .communityDistrictMocks[0];
       const capitalProjects = await capitalProjectService.findMany({
         communityDistrictCombinedId: `${boroughId}${communityDistrictId}`,
         limit: 10,
@@ -145,7 +144,7 @@ describe("CapitalProjectService", () => {
 
     it("should filter by an agency budget code", async () => {
       const agencyBudget =
-        capitalProjectRepository.agencyBudgetRepositoryMock.checkByCodeMocks[1]
+        capitalProjectRepository.agencyBudgetRepositoryMock.findManyMocks[1]
           .code;
       const capitalProjectsResponse = await capitalProjectService.findMany({
         agencyBudget: agencyBudget,
@@ -175,7 +174,7 @@ describe("CapitalProjectService", () => {
 
     it("service should return a list of capital projects by managing agency, using the default limit and offset", async () => {
       const { initials } =
-        capitalProjectRepository.agencyRepoMock.checkByInitialsMocks[0];
+        capitalProjectRepository.agencyRepoMock.findManyMocks[0];
       const resource = await capitalProjectService.findMany({
         managingAgency: initials,
       });
@@ -349,7 +348,7 @@ describe("CapitalProjectService", () => {
   describe("findCapitalCommitmentsByManagingCodeCapitalProjectId", () => {
     it("should return capital commitments for a capital project", async () => {
       const { id: capitalProjectId, managingCode } =
-        capitalProjectRepository.checkByManagingCodeCapitalProjectIdMocks[0];
+        capitalProjectRepository.findByManagingCodeCapitalProjectIdMock[0];
       const result =
         await capitalProjectService.findCapitalCommitmentsByManagingCodeCapitalProjectId(
           { capitalProjectId, managingCode },

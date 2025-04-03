@@ -8,11 +8,14 @@ import {
 import { borough, communityDistrict } from "src/schema";
 import { sql, isNotNull, eq, and } from "drizzle-orm";
 import { DataRetrievalException } from "src/exception";
+import { Cache } from "cache-manager";
+import { CACHE_MANAGER } from "@nestjs/cache-manager";
 
 export class CommunityDistrictRepository {
   constructor(
     @Inject(DB)
     private readonly db: DbType,
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
   ) {}
 
   #checkByBoroughIdCommunityDistrictId = this.db.query.communityDistrict
@@ -32,12 +35,23 @@ export class CommunityDistrictRepository {
   async checkByBoroughIdCommunityDistrictId(
     boroughId: string,
     id: string,
-  ): Promise<CheckByBoroughIdCommunityDistrictIdRepo | undefined> {
+  ): Promise<CheckByBoroughIdCommunityDistrictIdRepo> {
+    const key = JSON.stringify({
+      boroughId,
+      id,
+      domain: "communityDistrict",
+      function: "checkByBoroughIdCommunityDistrictId",
+    });
+    const cachedValue: boolean | null = await this.cacheManager.get(key);
+    if (cachedValue !== null) return cachedValue;
     try {
-      return await this.#checkByBoroughIdCommunityDistrictId.execute({
+      const result = await this.#checkByBoroughIdCommunityDistrictId.execute({
         boroughId,
         id,
       });
+      const value = result !== undefined;
+      this.cacheManager.set(key, value);
+      return value;
     } catch {
       throw new DataRetrievalException();
     }
