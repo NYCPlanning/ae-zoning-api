@@ -14,7 +14,7 @@ import {
   capitalProject,
   communityDistrict,
 } from "src/schema";
-import { eq, sql, and, isNotNull, asc, sum } from "drizzle-orm";
+import { eq, sql, and, isNotNull, asc } from "drizzle-orm";
 import {
   FindCapitalProjectTilesByBoroughIdCommunityDistrictIdPathParams,
   FindCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdPathParams,
@@ -116,9 +116,10 @@ export class BoroughRepository {
           managingAgency: sql`${capitalProject.managingAgency}`.as(
             `managingAgency`,
           ),
-          commitmentsTotal: sum(capitalCommitmentFund.value).as(
-            "commitmentsTotal",
-          ),
+          commitmentsTotal:
+            sql`SUM(${capitalCommitmentFund.value})::double precision`
+              .mapWith(Number)
+              .as("commitmentsTotal"),
           agencyBudgets: sql<
             Array<string>
           >`ARRAY_TO_JSON(ARRAY_AGG(DISTINCT ${capitalCommitment.budgetLineCode}))`.as(

@@ -19,7 +19,7 @@ import {
   capitalProject,
   cityCouncilDistrict,
 } from "src/schema";
-import { eq, sql, isNotNull, sum, and } from "drizzle-orm";
+import { eq, sql, isNotNull, and } from "drizzle-orm";
 export class CityCouncilDistrictRepository {
   constructor(
     @Inject(DB)
@@ -101,9 +101,10 @@ export class CityCouncilDistrictRepository {
           managingAgency: sql`${capitalProject.managingAgency}`.as(
             `managingAgency`,
           ),
-          commitmentsTotal: sum(capitalCommitmentFund.value).as(
-            "commitmentsTotal",
-          ),
+          commitmentsTotal:
+            sql`SUM(${capitalCommitmentFund.value})::double precision`
+              .mapWith(Number)
+              .as("commitmentsTotal"),
           agencyBudgets: sql<
             Array<string>
           >`ARRAY_TO_JSON(ARRAY_AGG(DISTINCT ${capitalCommitment.budgetLineCode}))`.as(
