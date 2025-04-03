@@ -448,9 +448,11 @@ export class CapitalProjectRepository {
           managingAgency: sql`${capitalProject.managingAgency}`.as(
             `managingAgency`,
           ),
-          commitmentsTotal: sum(capitalCommitmentFund.value).as(
-            "commitmentsTotal",
-          ),
+          commitmentsTotal:
+            // numeric type is econded as string, double precision type is encoded in mvt as number
+            sql`SUM(${capitalCommitmentFund.value})::double precision`
+              .mapWith(Number)
+              .as("commitmentsTotal"),
           agencyBudgets: sql<
             Array<string>
           >`ARRAY_TO_JSON(ARRAY_AGG(DISTINCT ${capitalCommitment.budgetLineCode}))`.as(
