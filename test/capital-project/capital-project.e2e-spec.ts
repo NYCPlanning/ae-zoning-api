@@ -551,8 +551,7 @@ describe("Capital Projects", () => {
   describe("findCapitalCommitmentsByManagingCodeCapitalProjectId", () => {
     it("should 200 and return an array of capital commitments", async () => {
       const capitalProjectMock =
-        capitalProjectRepositoryMock
-          .checkByManagingCodeCapitalProjectIdMocks[0];
+        capitalProjectRepositoryMock.capitalProjectsCriteria[0][1][0];
 
       const { managingCode, id: capitalProjectId } = capitalProjectMock;
       const response = await request(app.getHttpServer())
@@ -619,8 +618,7 @@ describe("Capital Projects", () => {
         });
 
       const capitalProjectMock =
-        capitalProjectRepositoryMock
-          .checkByManagingCodeCapitalProjectIdMocks[0];
+        capitalProjectRepositoryMock.capitalProjectsCriteria[0][1][0];
 
       const { managingCode, id: capitalProjectId } = capitalProjectMock;
       const response = await request(app.getHttpServer())

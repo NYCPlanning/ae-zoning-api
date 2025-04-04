@@ -1,10 +1,11 @@
 import { generateMock } from "@anatine/zod-mock";
 import {
-  checkByManagingCodeCapitalProjectIdRepoSchema,
+  CheckByManagingCodeCapitalProjectIdRepo,
   FindByManagingCodeCapitalProjectIdRepo,
   findByManagingCodeCapitalProjectIdRepoSchema,
   FindCapitalCommitmentsByManagingCodeCapitalProjectIdRepo,
   findCapitalCommitmentsByManagingCodeCapitalProjectIdRepoSchema,
+  FindCountRepo,
   FindGeoJsonByManagingCodeCapitalProjectIdRepo,
   findGeoJsonByManagingCodeCapitalProjectIdRepoSchema,
   FindManyRepo,
@@ -38,7 +39,7 @@ export class CapitalProjectRepositoryMock {
     this.agencyBudgetRepositoryMock = agencyBudgetRepositoryMock;
   }
 
-  get findManyMocks(): Array<
+  get capitalProjectsCriteria(): Array<
     [
       {
         managingAgency: string;
@@ -112,7 +113,7 @@ export class CapitalProjectRepositoryMock {
     ];
   }
 
-  async findAll({
+  private async filterCapitalProjects({
     managingAgency,
     boroughId,
     communityDistrictId,
@@ -129,7 +130,7 @@ export class CapitalProjectRepositoryMock {
     commitmentsTotalMin: number | null;
     commitmentsTotalMax: number | null;
   }) {
-    return this.findManyMocks.reduce(
+    return this.capitalProjectsCriteria.reduce(
       (acc: FindManyRepo, [criteria, capitalProjects]) => {
         if (
           managingAgency !== null &&
@@ -190,8 +191,8 @@ export class CapitalProjectRepositoryMock {
     commitmentsTotalMax: number | null;
     limit: number;
     offset: number;
-  }) {
-    const results = await this.findAll({
+  }): Promise<FindManyRepo> {
+    const results = await this.filterCapitalProjects({
       managingAgency,
       boroughId,
       communityDistrictId,
@@ -219,8 +220,8 @@ export class CapitalProjectRepositoryMock {
     agencyBudget: string | null;
     commitmentsTotalMin: number | null;
     commitmentsTotalMax: number | null;
-  }) {
-    const results = await this.findAll({
+  }): Promise<FindCountRepo> {
+    const results = await this.filterCapitalProjects({
       managingAgency,
       boroughId,
       communityDistrictId,
@@ -232,47 +233,45 @@ export class CapitalProjectRepositoryMock {
     return results.length;
   }
 
-  checkByManagingCodeCapitalProjectIdMocks = Array.from(Array(5), (_, seed) =>
-    generateMock(checkByManagingCodeCapitalProjectIdRepoSchema, {
-      seed: seed + 1,
-    }),
-  );
-
   async checkByManagingCodeCapitalProjectId(
     managingCode: string,
     capitalProjectId: string,
-  ) {
-    return this.checkByManagingCodeCapitalProjectIdMocks.find((row) => {
-      return row.id === capitalProjectId && row.managingCode === managingCode;
-    });
+  ): Promise<CheckByManagingCodeCapitalProjectIdRepo> {
+    return this.capitalProjectsCriteria.some((lookup) =>
+      lookup[1].some(
+        (row) =>
+          row.id === capitalProjectId && row.managingCode === managingCode,
+      ),
+    );
   }
 
-  findByManagingCodeCapitalProjectIdMock = generateMock(
-    findByManagingCodeCapitalProjectIdRepoSchema,
-    {
-      seed: 1,
-      stringMap: {
-        minDate: () => "2018-01-01",
-        maxDate: () => "2045-12-31",
-      },
-    },
-  );
-
   findCapitalCommitmentsByManagingCodeCapitalProjectIdMocks =
-    this.checkByManagingCodeCapitalProjectIdMocks.map(
-      (checkCapitalCommitment) => {
-        return {
-          [`${checkCapitalCommitment.managingCode}${checkCapitalCommitment.id}`]:
-            generateMock(
-              findCapitalCommitmentsByManagingCodeCapitalProjectIdRepoSchema,
-              {
-                stringMap: {
-                  plannedDate: () => "2045-01-01",
+    this.capitalProjectsCriteria.reduce(
+      (
+        acc: Array<
+          Record<
+            string,
+            FindCapitalCommitmentsByManagingCodeCapitalProjectIdRepo
+          >
+        >,
+        [_, capitalProjects],
+      ) => {
+        const capitalCommitments = capitalProjects.map((capitalProject) => {
+          return {
+            [`${capitalProject.managingCode}${capitalProject.id}`]:
+              generateMock(
+                findCapitalCommitmentsByManagingCodeCapitalProjectIdRepoSchema,
+                {
+                  stringMap: {
+                    plannedDate: () => "2045-01-01",
+                  },
                 },
-              },
-            ),
-        };
+              ),
+          };
+        });
+        return acc.concat(capitalCommitments);
       },
+      [],
     );
 
   async findCapitalCommitmentsByManagingCodeCapitalProjectId({
@@ -288,6 +287,17 @@ export class CapitalProjectRepositoryMock {
 
     return results === undefined ? [] : results[compositeKey];
   }
+
+  findByManagingCodeCapitalProjectIdMock = generateMock(
+    findByManagingCodeCapitalProjectIdRepoSchema,
+    {
+      seed: 1,
+      stringMap: {
+        minDate: () => "2018-01-01",
+        maxDate: () => "2045-12-31",
+      },
+    },
+  );
 
   async findByManagingCodeCapitalProjectId({
     managingCode,

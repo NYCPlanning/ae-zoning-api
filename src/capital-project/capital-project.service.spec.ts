@@ -348,7 +348,7 @@ describe("CapitalProjectService", () => {
   describe("findCapitalCommitmentsByManagingCodeCapitalProjectId", () => {
     it("should return capital commitments for a capital project", async () => {
       const { id: capitalProjectId, managingCode } =
-        capitalProjectRepository.checkByManagingCodeCapitalProjectIdMocks[0];
+        capitalProjectRepository.capitalProjectsCriteria[0][1][0];
       const result =
         await capitalProjectService.findCapitalCommitmentsByManagingCodeCapitalProjectId(
           { capitalProjectId, managingCode },

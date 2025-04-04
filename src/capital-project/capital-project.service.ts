@@ -60,7 +60,7 @@ export class CapitalProjectService {
       throw new InvalidRequestParameterException();
     }
 
-    const checklist: Array<Promise<unknown | undefined>> = [];
+    const checklist: Array<Promise<boolean | unknown | undefined>> = [];
     if (cityCouncilDistrictId !== null)
       checklist.push(
         this.cityCouncilDistrictRepository.checkCityCouncilDistrictById(
