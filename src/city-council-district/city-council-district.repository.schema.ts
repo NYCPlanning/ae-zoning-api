@@ -33,8 +33,6 @@ export type FindCapitalProjectTilesByCityCouncilDistrictIdRepo = z.infer<
   typeof findCapitalProjectTilesByCityCouncilDistrictIdRepoSchema
 >;
 
-export const checkByIdRepoSchema = cityCouncilDistrictEntitySchema.pick({
-  id: true,
-});
+export const checkByIdRepoSchema = z.boolean();
 
 export type CheckByIdRepo = z.infer<typeof checkByIdRepoSchema>;

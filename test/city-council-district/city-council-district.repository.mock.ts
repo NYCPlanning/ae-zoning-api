@@ -1,20 +1,21 @@
 import {
-  findManyRepoSchema,
   findTilesRepoSchema,
-  checkByIdRepoSchema,
   findGeoJsonByIdRepoSchema,
   findCapitalProjectTilesByCityCouncilDistrictIdRepoSchema,
+  FindManyRepo,
+  CheckByIdRepo,
 } from "src/city-council-district/city-council-district.repository.schema";
 import { generateMock } from "@anatine/zod-mock";
 import { FindCityCouncilDistrictGeoJsonByCityCouncilDistrictIdPathParams } from "src/gen";
+import { cityCouncilDistrictEntitySchema } from "src/schema";
 
 export class CityCouncilDistrictRepositoryMock {
-  numberOfMocks = 2;
+  districts = Array.from(Array(2), (_, index) =>
+    generateMock(cityCouncilDistrictEntitySchema, { seed: index + 1 }),
+  );
 
-  findManyMocks = generateMock(findManyRepoSchema);
-
-  async findMany() {
-    return this.findManyMocks;
+  async findMany(): Promise<FindManyRepo> {
+    return this.districts;
   }
 
   findTilesMock = generateMock(findTilesRepoSchema);
@@ -35,7 +36,7 @@ export class CityCouncilDistrictRepositoryMock {
     return this.findTilesMock;
   }
 
-  findGeoJsonByIdMocks = Array.from(Array(this.numberOfMocks), (_, seed) =>
+  findGeoJsonByIdMocks = Array.from(Array(2), (_, seed) =>
     generateMock(findGeoJsonByIdRepoSchema, { seed: seed + 1 }),
   );
 
@@ -47,13 +48,8 @@ export class CityCouncilDistrictRepositoryMock {
     );
   }
 
-  checkCityCouncilDistrictByIdMocks = Array.from(
-    Array(this.numberOfMocks),
-    (_, seed) => generateMock(checkByIdRepoSchema, { seed: seed + 1 }),
-  );
-
-  async checkCityCouncilDistrictById(id: string) {
-    return this.checkCityCouncilDistrictByIdMocks.find((row) => row.id === id);
+  async checkById(id: string): Promise<CheckByIdRepo> {
+    return this.districts.some((row) => row.id === id);
   }
 
   findCapitalProjectTilesByCityCouncilDistrictIdMock = generateMock(

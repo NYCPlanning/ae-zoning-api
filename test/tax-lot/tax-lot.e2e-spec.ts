@@ -190,7 +190,7 @@ describe("TaxLots", () => {
 
   describe("getTaxLotByBbl", () => {
     it("should 200 and return documented schema when finding by valid bbl", async () => {
-      const mock = taxLotRepository.findByBblMocks[0];
+      const mock = taxLotRepository.lots[0];
 
       const response = await request(app.getHttpServer())
         .get(`/tax-lots/${mock.bbl}`)
@@ -235,7 +235,7 @@ describe("TaxLots", () => {
       jest.spyOn(taxLotRepository, "findByBbl").mockImplementationOnce(() => {
         throw dataRetrievalException;
       });
-      const mock = taxLotRepository.findByBblMocks[0];
+      const mock = taxLotRepository.lots[0];
       const response = await request(app.getHttpServer())
         .get(`/tax-lots/${mock.bbl}`)
         .expect(500);
@@ -303,7 +303,7 @@ describe("TaxLots", () => {
 
   describe("findZoningDistrictByTaxLotBbl", () => {
     it("should 200 and return documented schema when finding by valid bbl", async () => {
-      const mock = taxLotRepository.checkByBblMocks[0];
+      const mock = taxLotRepository.lots[0];
       const response = await request(app.getHttpServer())
         .get(`/tax-lots/${mock.bbl}/zoning-districts`)
         .expect(200);
@@ -348,7 +348,7 @@ describe("TaxLots", () => {
         .mockImplementationOnce(() => {
           throw dataRetrievalException;
         });
-      const mock = taxLotRepository.checkByBblMocks[0];
+      const mock = taxLotRepository.lots[0];
       const response = await request(app.getHttpServer())
         .get(`/tax-lots/${mock.bbl}/zoning-districts`)
         .expect(500);
@@ -359,7 +359,7 @@ describe("TaxLots", () => {
 
   describe("findZoningDistrictClassByTaxLotBbl", () => {
     it("should 200 and return documented schema when finding by valid bbl", async () => {
-      const mock = taxLotRepository.checkByBblMocks[0];
+      const mock = taxLotRepository.lots[0];
       const response = await request(app.getHttpServer())
         .get(`/tax-lots/${mock.bbl}/zoning-districts/classes`)
         .expect(200);
@@ -407,7 +407,7 @@ describe("TaxLots", () => {
         .mockImplementationOnce(() => {
           throw dataRetrievalException;
         });
-      const mock = taxLotRepository.checkByBblMocks[0];
+      const mock = taxLotRepository.lots[0];
       const response = await request(app.getHttpServer())
         .get(`/tax-lots/${mock.bbl}/zoning-districts/classes`)
         .expect(500);

@@ -26,6 +26,8 @@ import {
 import { Geometry } from "geojson";
 import { Geom } from "src/types";
 import { ZoningDistrictClassCategory } from "src/gen";
+import { Cache } from "cache-manager";
+import { CACHE_MANAGER } from "@nestjs/cache-manager";
 
 export class TaxLotRepository {
   constructor(
@@ -33,9 +35,10 @@ export class TaxLotRepository {
     private readonly db: DbType,
     @Inject(StorageConfig.KEY)
     private storageConfig: ConfigType<typeof StorageConfig>,
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
   ) {}
 
-  #checkTaxLotByBbl = this.db.query.taxLot
+  #checkByBbl = this.db.query.taxLot
     .findFirst({
       columns: {
         bbl: true,
@@ -44,9 +47,20 @@ export class TaxLotRepository {
     })
     .prepare("checkByBbl");
 
-  async checkByBbl(bbl: string): Promise<CheckByBblRepo | undefined> {
+  async checkByBbl(bbl: string): Promise<CheckByBblRepo> {
+    const key = JSON.stringify({
+      bbl,
+      domain: "taxlot",
+      function: "checkByBbl",
+    });
+    const cachedValue: boolean | null = await this.cacheManager.get(key);
+    if (cachedValue !== null) return cachedValue;
+
     try {
-      return await this.#checkTaxLotByBbl.execute({ bbl });
+      const result = await this.#checkByBbl.execute({ bbl });
+      const value = result !== undefined;
+      this.cacheManager.set(key, value);
+      return value;
     } catch {
       throw new DataRetrievalException();
     }

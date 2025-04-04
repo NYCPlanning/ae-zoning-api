@@ -1,29 +1,20 @@
 import {
   CheckByInitialsRepo,
-  checkByInitialsRepoSchema,
-  findManyRepoSchema,
+  FindManyRepo,
 } from "src/agency/agency.repository.schema";
 import { generateMock } from "@anatine/zod-mock";
+import { agencyEntitySchema } from "src/schema";
 
 export class AgencyRepositoryMock {
-  numberOfMocks = 2;
-  checkByInitialsMocks = Array.from(Array(this.numberOfMocks), (_, seed) =>
-    generateMock(checkByInitialsRepoSchema, {
-      seed: seed + 1,
-    }),
+  agencies = Array.from(Array(2), (_, index) =>
+    generateMock(agencyEntitySchema, { seed: index + 1 }),
   );
 
-  async checkByInitials(
-    managingAgency: string,
-  ): Promise<CheckByInitialsRepo | undefined> {
-    return this.checkByInitialsMocks.find(
-      (row) => row.initials === managingAgency,
-    );
+  async checkByInitials(managingAgency: string): Promise<CheckByInitialsRepo> {
+    return this.agencies.some((row) => row.initials === managingAgency);
   }
 
-  findManyMocks = generateMock(findManyRepoSchema);
-
-  async findMany() {
-    return this.findManyMocks;
+  async findMany(): Promise<FindManyRepo> {
+    return this.agencies;
   }
 }

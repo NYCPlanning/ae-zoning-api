@@ -208,7 +208,7 @@ export class TaxLotService {
 
   async findZoningDistrictsByBbl(bbl: string) {
     const taxLotCheck = await this.taxLotRepository.checkByBbl(bbl);
-    if (taxLotCheck === undefined) throw new ResourceNotFoundException();
+    if (taxLotCheck === false) throw new ResourceNotFoundException();
     const zoningDistricts =
       await this.taxLotRepository.findZoningDistrictsByBbl(bbl);
     return {
@@ -218,7 +218,7 @@ export class TaxLotService {
 
   async findZoningDistrictClassesByBbl(bbl: string) {
     const taxLotCheck = await this.taxLotRepository.checkByBbl(bbl);
-    if (taxLotCheck === undefined) throw new ResourceNotFoundException();
+    if (taxLotCheck === false) throw new ResourceNotFoundException();
 
     const zoningDistrictClasses =
       await this.taxLotRepository.findZoningDistrictClassesByBbl(bbl);

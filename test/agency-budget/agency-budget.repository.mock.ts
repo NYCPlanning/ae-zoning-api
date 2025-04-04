@@ -1,23 +1,20 @@
 import { generateMock } from "@anatine/zod-mock";
 import {
-  checkByCodeRepoSchema,
-  findManyRepoSchema,
+  CheckByCodeRepo,
+  FindManyRepo,
 } from "src/agency-budget/agency-budget.repository.schema";
+import { agencyBudgetEntitySchema } from "src/schema";
 
 export class AgencyBudgetRepositoryMock {
-  numberOfMocks = 2;
-
-  checkByCodeMocks = Array.from(Array(this.numberOfMocks), (_, seed) =>
-    generateMock(checkByCodeRepoSchema, { seed: seed + 1 }),
+  agencyBudgets = Array.from(Array(2), (_, index) =>
+    generateMock(agencyBudgetEntitySchema, { seed: index + 1 }),
   );
 
-  async checkByCode(code: string) {
-    return this.checkByCodeMocks.find((row) => row.code === code);
+  async checkByCode(code: string): Promise<CheckByCodeRepo> {
+    return this.agencyBudgets.some((row) => row.code === code);
   }
 
-  findManyMocks = generateMock(findManyRepoSchema);
-
-  async findMany() {
-    return this.findManyMocks;
+  async findMany(): Promise<FindManyRepo> {
+    return this.agencyBudgets;
   }
 }
