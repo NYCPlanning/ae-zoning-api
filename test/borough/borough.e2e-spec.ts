@@ -93,7 +93,7 @@ describe("Borough e2e", () => {
 
   describe("findCommunityDistrictsByBoroughId", () => {
     it("should 200 and return community districts for a given borough id", async () => {
-      const mock = boroughRepositoryMock.checkBoroughByIdMocks[0];
+      const mock = boroughRepositoryMock.boroughs[0];
 
       const response = await request(app.getHttpServer())
         .get(`/boroughs/${mock.id}/community-districts`)
@@ -125,12 +125,12 @@ describe("Borough e2e", () => {
     it("should 500 when the database errors", async () => {
       const dataRetrievalException = new DataRetrievalException();
       jest
-        .spyOn(boroughRepositoryMock, "checkBoroughById")
+        .spyOn(boroughRepositoryMock, "checkById")
         .mockImplementationOnce(() => {
           throw dataRetrievalException;
         });
 
-      const mock = boroughRepositoryMock.checkBoroughByIdMocks[0];
+      const mock = boroughRepositoryMock.boroughs[0];
       const response = await request(app.getHttpServer())
         .get(`/boroughs/${mock.id}/community-districts`)
         .expect(500);

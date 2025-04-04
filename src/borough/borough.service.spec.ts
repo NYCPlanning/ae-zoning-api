@@ -48,7 +48,7 @@ describe("Borough service unit", () => {
 
   describe("findCommunityDistrictsByBoroughId", () => {
     it("service should return a community districts compliant object", async () => {
-      const { id } = boroughRepositoryMock.checkBoroughByIdMocks[0];
+      const { id } = boroughRepositoryMock.boroughs[0];
       const communityDistricts =
         await boroughService.findCommunityDistrictsByBoroughId(id);
 
