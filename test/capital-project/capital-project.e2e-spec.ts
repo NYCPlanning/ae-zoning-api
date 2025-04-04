@@ -102,7 +102,7 @@ describe("Capital Projects", () => {
     it("should 200 and return capital projects with page metadata when specifying a valid agency budget code", async () => {
       const agencyBudget =
         capitalProjectRepositoryMock.agencyBudgetRepositoryMock
-          .checkByCodeMocks[0];
+          .agencyBudgets[0];
       const response = await request(app.getHttpServer()).get(
         `/capital-projects?agencyBudget=${agencyBudget.code}`,
       );

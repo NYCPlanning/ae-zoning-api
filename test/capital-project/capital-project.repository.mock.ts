@@ -56,7 +56,7 @@ export class CapitalProjectRepositoryMock {
       this.cityCouncilDistrictRepoMock.checkCityCouncilDistrictByIdMocks;
     const communityDistrictIdMocks =
       this.communityDistrictRepoMock.checkByBoroughIdCommunityDistrictIdMocks;
-    const agencyBudgetMocks = this.agencyBudgetRepositoryMock.checkByCodeMocks;
+    const agencyBudgetMocks = this.agencyBudgetRepositoryMock.agencyBudgets;
     return [
       [
         {

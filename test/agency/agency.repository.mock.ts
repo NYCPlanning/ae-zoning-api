@@ -3,11 +3,12 @@ import {
   FindManyRepo,
 } from "src/agency/agency.repository.schema";
 import { generateMock } from "@anatine/zod-mock";
-import { z } from "zod";
 import { agencyEntitySchema } from "src/schema";
 
 export class AgencyRepositoryMock {
-  agencies = generateMock(z.array(agencyEntitySchema));
+  agencies = Array.from(Array(2), (_, index) =>
+    generateMock(agencyEntitySchema, { seed: index + 1 }),
+  );
 
   async checkByInitials(
     managingAgency: string,

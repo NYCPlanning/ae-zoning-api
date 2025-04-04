@@ -145,7 +145,7 @@ describe("CapitalProjectService", () => {
 
     it("should filter by an agency budget code", async () => {
       const agencyBudget =
-        capitalProjectRepository.agencyBudgetRepositoryMock.checkByCodeMocks[1]
+        capitalProjectRepository.agencyBudgetRepositoryMock.agencyBudgets[1]
           .code;
       const capitalProjectsResponse = await capitalProjectService.findMany({
         agencyBudget: agencyBudget,
