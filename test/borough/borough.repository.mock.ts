@@ -1,42 +1,37 @@
 import {
-  findManyRepoSchema,
-  checkByIdRepoSchema,
   findCommunityDistrictsByBoroughIdRepoSchema,
   communityDistrictGeoJsonEntitySchema,
   findCapitalProjectTilesByBoroughIdCommunityDistrictIdRepoSchema,
+  CheckByIdRepo,
 } from "src/borough/borough.repository.schema";
 import { generateMock } from "@anatine/zod-mock";
 import { CommunityDistrictRepositoryMock } from "test/community-district/community-district.repository.mock";
 import { FindCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdPathParams } from "src/gen";
+import { boroughEntitySchema } from "src/schema";
 
 export class BoroughRepositoryMock {
   communityDistrictRepoMock: CommunityDistrictRepositoryMock;
   constructor(communityDistrictRepoMock: CommunityDistrictRepositoryMock) {
     this.communityDistrictRepoMock = communityDistrictRepoMock;
   }
-  numberOfMocks = 1;
 
-  checkBoroughByIdMocks = Array.from(Array(this.numberOfMocks), (_, seed) =>
-    generateMock(checkByIdRepoSchema, { seed: seed + 1 }),
+  boroughs = Array.from(Array(1), (_, index) =>
+    generateMock(boroughEntitySchema, { seed: index + 1 }),
   );
 
-  async checkBoroughById(id: string) {
-    return this.checkBoroughByIdMocks.find((row) => row.id === id);
+  async checkById(id: string): Promise<CheckByIdRepo> {
+    return this.boroughs.some((row) => row.id === id);
   }
-
-  findManyMocks = generateMock(findManyRepoSchema);
 
   async findMany() {
-    return this.findManyMocks;
+    return this.boroughs;
   }
 
-  findCommunityDistrictsByBoroughIdMocks = this.checkBoroughByIdMocks.map(
-    (borough) => {
-      return {
-        [borough.id]: generateMock(findCommunityDistrictsByBoroughIdRepoSchema),
-      };
-    },
-  );
+  findCommunityDistrictsByBoroughIdMocks = this.boroughs.map((borough) => {
+    return {
+      [borough.id]: generateMock(findCommunityDistrictsByBoroughIdRepoSchema),
+    };
+  });
 
   async findCommunityDistrictsByBoroughId(id: string) {
     const results = this.findCommunityDistrictsByBoroughIdMocks.find(
@@ -47,9 +42,9 @@ export class BoroughRepositoryMock {
   }
 
   findCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdMocks = Array.from(
-    Array(this.numberOfMocks),
-    (_, seed) =>
-      generateMock(communityDistrictGeoJsonEntitySchema, { seed: seed + 1 }),
+    Array(1),
+    (_, index) =>
+      generateMock(communityDistrictGeoJsonEntitySchema, { seed: index + 1 }),
   );
 
   async findCommunityDistrictGeoJsonByBoroughIdCommunityDistrictId({

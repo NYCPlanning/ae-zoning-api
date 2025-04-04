@@ -10,9 +10,7 @@ export const findManyRepoSchema = z.array(boroughEntitySchema);
 
 export type FindManyRepo = z.infer<typeof findManyRepoSchema>;
 
-export const checkByIdRepoSchema = boroughEntitySchema.pick({
-  id: true,
-});
+export const checkByIdRepoSchema = z.boolean();
 
 export type CheckByIdRepo = z.infer<typeof checkByIdRepoSchema>;
 

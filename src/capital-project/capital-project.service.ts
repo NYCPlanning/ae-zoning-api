@@ -63,9 +63,7 @@ export class CapitalProjectService {
     const checklist: Array<Promise<unknown | undefined>> = [];
     if (cityCouncilDistrictId !== null)
       checklist.push(
-        this.cityCouncilDistrictRepository.checkCityCouncilDistrictById(
-          cityCouncilDistrictId,
-        ),
+        this.cityCouncilDistrictRepository.checkById(cityCouncilDistrictId),
       );
 
     const boroughId =
@@ -95,7 +93,7 @@ export class CapitalProjectService {
 
     const checkedList = await Promise.all(checklist);
 
-    if (checkedList.some((result) => result === undefined))
+    if (checkedList.some((result) => result === false))
       throw new InvalidRequestParameterException();
 
     const capitalProjectsPromise = this.capitalProjectRepository.findMany({
@@ -191,8 +189,7 @@ export class CapitalProjectService {
         params.managingCode,
         params.capitalProjectId,
       );
-    if (capitalProjectCheck === undefined)
-      throw new ResourceNotFoundException();
+    if (capitalProjectCheck === false) throw new ResourceNotFoundException();
 
     const capitalCommitments =
       await this.capitalProjectRepository.findCapitalCommitmentsByManagingCodeCapitalProjectId(

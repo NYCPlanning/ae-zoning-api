@@ -76,7 +76,7 @@ describe("Capital Projects", () => {
       );
       expect(parsedBody.limit).toBe(20);
       expect(parsedBody.offset).toBe(0);
-      expect(parsedBody.total).toBe(8);
+      expect(parsedBody.total).toBe(9);
       expect(parsedBody.order).toBe("managingCode, capitalProjectId");
     });
 
@@ -95,14 +95,14 @@ describe("Capital Projects", () => {
       );
       expect(parsedBody.limit).toBe(limit);
       expect(parsedBody.offset).toBe(offset);
-      expect(parsedBody.total).toBe(4);
+      expect(parsedBody.total).toBe(5);
       expect(parsedBody.order).toBe("managingCode, capitalProjectId");
     });
 
     it("should 200 and return capital projects with page metadata when specifying a valid agency budget code", async () => {
       const agencyBudget =
         capitalProjectRepositoryMock.agencyBudgetRepositoryMock
-          .checkByCodeMocks[0];
+          .agencyBudgets[0];
       const response = await request(app.getHttpServer()).get(
         `/capital-projects?agencyBudget=${agencyBudget.code}`,
       );
@@ -113,7 +113,7 @@ describe("Capital Projects", () => {
       const parsedBody = findCapitalProjectsQueryResponseSchema.parse(
         response.body,
       );
-      expect(parsedBody.total).toBe(1);
+      expect(parsedBody.total).toBe(2);
     });
 
     it("should 400 when finding by an agency budget code that does not exist", async () => {
@@ -170,8 +170,7 @@ describe("Capital Projects", () => {
 
     it("should 200 and return capital projects from a specified city council district", async () => {
       const { id } =
-        capitalProjectRepositoryMock.cityCouncilDistrictRepoMock
-          .checkCityCouncilDistrictByIdMocks[0];
+        capitalProjectRepositoryMock.cityCouncilDistrictRepoMock.districts[0];
       const response = await request(app.getHttpServer()).get(
         `/capital-projects?cityCouncilDistrictId=${id}`,
       );
@@ -184,7 +183,7 @@ describe("Capital Projects", () => {
       );
       expect(parsedBody.limit).toBe(20);
       expect(parsedBody.offset).toBe(0);
-      expect(parsedBody.total).toBe(6);
+      expect(parsedBody.total).toBe(5);
       expect(parsedBody.order).toBe("managingCode, capitalProjectId");
     });
 
@@ -201,8 +200,7 @@ describe("Capital Projects", () => {
 
     it("should 200 and return capital projects from a specified community district", async () => {
       const { boroughId, id: communityDistrictId } =
-        capitalProjectRepositoryMock.communityDistrictRepoMock
-          .checkByBoroughIdCommunityDistrictIdMocks[1];
+        capitalProjectRepositoryMock.communityDistrictRepoMock.districts[1];
       const response = await request(app.getHttpServer()).get(
         `/capital-projects?communityDistrictId=${boroughId}${communityDistrictId}`,
       );
@@ -232,7 +230,7 @@ describe("Capital Projects", () => {
 
     it("should 200 and return capital projects from a specified managing agency", async () => {
       const managingAgency =
-        capitalProjectRepositoryMock.agencyRepoMock.checkByInitialsMocks[0];
+        capitalProjectRepositoryMock.agencyRepoMock.agencies[0];
       const response = await request(app.getHttpServer()).get(
         `/capital-projects?managingAgency=${managingAgency.initials}`,
       );
@@ -245,7 +243,7 @@ describe("Capital Projects", () => {
       );
       expect(parsedBody.limit).toBe(20);
       expect(parsedBody.offset).toBe(0);
-      expect(parsedBody.capitalProjects.length).toBe(1);
+      expect(parsedBody.capitalProjects.length).toBe(2);
       expect(parsedBody.total).toBe(parsedBody.capitalProjects.length);
       expect(parsedBody.order).toBe("managingCode, capitalProjectId");
     });
@@ -275,7 +273,7 @@ describe("Capital Projects", () => {
       );
       expect(parsedBody.limit).toBe(20);
       expect(parsedBody.offset).toBe(0);
-      expect(parsedBody.capitalProjects.length).toBe(8);
+      expect(parsedBody.capitalProjects.length).toBe(9);
       expect(parsedBody.total).toBe(parsedBody.capitalProjects.length);
       expect(parsedBody.order).toBe("managingCode, capitalProjectId");
     });
@@ -305,7 +303,7 @@ describe("Capital Projects", () => {
       );
       expect(parsedBody.limit).toBe(20);
       expect(parsedBody.offset).toBe(0);
-      expect(parsedBody.capitalProjects.length).toBe(8);
+      expect(parsedBody.capitalProjects.length).toBe(9);
       expect(parsedBody.total).toBe(parsedBody.capitalProjects.length);
       expect(parsedBody.order).toBe("managingCode, capitalProjectId");
     });
@@ -551,8 +549,7 @@ describe("Capital Projects", () => {
   describe("findCapitalCommitmentsByManagingCodeCapitalProjectId", () => {
     it("should 200 and return an array of capital commitments", async () => {
       const capitalProjectMock =
-        capitalProjectRepositoryMock
-          .checkByManagingCodeCapitalProjectIdMocks[0];
+        capitalProjectRepositoryMock.capitalProjectGroups[0][0];
 
       const { managingCode, id: capitalProjectId } = capitalProjectMock;
       const response = await request(app.getHttpServer())
@@ -619,8 +616,7 @@ describe("Capital Projects", () => {
         });
 
       const capitalProjectMock =
-        capitalProjectRepositoryMock
-          .checkByManagingCodeCapitalProjectIdMocks[0];
+        capitalProjectRepositoryMock.capitalProjectGroups[0][0];
 
       const { managingCode, id: capitalProjectId } = capitalProjectMock;
       const response = await request(app.getHttpServer())

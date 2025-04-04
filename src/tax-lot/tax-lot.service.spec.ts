@@ -232,7 +232,7 @@ describe("TaxLotController", () => {
 
   describe("findByBbl", () => {
     it("should return a tax lot when requesting a valid bbl", async () => {
-      const { bbl } = taxLotRepository.findByBblMocks[0];
+      const { bbl } = taxLotRepository.lots[0];
       const taxLot = await taxLotService.findByBbl(bbl);
       expect(() =>
         findTaxLotByBblQueryResponseSchema.parse(taxLot),
@@ -266,7 +266,7 @@ describe("TaxLotController", () => {
 
   describe("findZoningDistrictsByBbl", () => {
     it("should return an array of zoning district(s) when requesting a valid bbl", async () => {
-      const { bbl } = taxLotRepository.checkByBblMocks[0];
+      const { bbl } = taxLotRepository.lots[0];
       const zoningDistricts = await taxLotService.findZoningDistrictsByBbl(bbl);
       expect(() =>
         findZoningDistrictsByTaxLotBblQueryResponseSchema.parse(
@@ -285,7 +285,7 @@ describe("TaxLotController", () => {
 
   describe("findZoningDistrictClassesByBbl", () => {
     it("should return zoning district classes when requesting a valid bbl", async () => {
-      const { bbl } = taxLotRepository.checkByBblMocks[0];
+      const { bbl } = taxLotRepository.lots[0];
       const zoningDistrictClasses =
         await taxLotService.findZoningDistrictClassesByBbl(bbl);
       expect(() =>

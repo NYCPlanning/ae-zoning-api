@@ -19,27 +19,42 @@ import {
   FindCapitalProjectTilesByBoroughIdCommunityDistrictIdPathParams,
   FindCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdPathParams,
 } from "src/gen";
+import { Cache } from "cache-manager";
+import { CACHE_MANAGER } from "@nestjs/cache-manager";
 
 export class BoroughRepository {
   constructor(
     @Inject(DB)
     private readonly db: DbType,
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
   ) {}
 
-  #checkBoroughById = this.db.query.borough
+  #checkById = this.db.query.borough
     .findFirst({
       columns: {
         id: true,
       },
       where: (borough, { eq, sql }) => eq(borough.id, sql.placeholder("id")),
     })
-    .prepare("checkBoroughById");
+    .prepare("checkById");
 
-  async checkBoroughById(id: string): Promise<CheckByIdRepo | undefined> {
+  async checkById(id: string): Promise<CheckByIdRepo> {
+    const key = JSON.stringify({
+      id,
+      domain: "borough",
+      function: "checkById",
+    });
+
+    const cachedValue: boolean | null = await this.cacheManager.get(key);
+    if (cachedValue !== null) return cachedValue;
+
     try {
-      return await this.#checkBoroughById.execute({
+      const result = await this.#checkById.execute({
         id,
       });
+      const value = result !== undefined;
+      this.cacheManager.set(key, value);
+      return value;
     } catch {
       throw new DataRetrievalException();
     }

@@ -1,14 +1,15 @@
 import { generateMock } from "@anatine/zod-mock";
 import {
-  checkByManagingCodeCapitalProjectIdRepoSchema,
+  CheckByManagingCodeCapitalProjectIdRepo,
   FindByManagingCodeCapitalProjectIdRepo,
   findByManagingCodeCapitalProjectIdRepoSchema,
   FindCapitalCommitmentsByManagingCodeCapitalProjectIdRepo,
   findCapitalCommitmentsByManagingCodeCapitalProjectIdRepoSchema,
+  FindCountRepo,
   FindGeoJsonByManagingCodeCapitalProjectIdRepo,
   findGeoJsonByManagingCodeCapitalProjectIdRepoSchema,
   FindManyRepo,
-  findManyRepoSchema,
+  FindTilesRepo,
   findTilesRepoSchema,
 } from "src/capital-project/capital-project.repository.schema";
 import { AgencyBudgetRepositoryMock } from "test/agency-budget/agency-budget.repository.mock";
@@ -20,6 +21,7 @@ import {
 import { AgencyRepositoryMock } from "test/agency/agency.repository.mock";
 import { CityCouncilDistrictRepositoryMock } from "test/city-council-district/city-council-district.repository.mock";
 import { CommunityDistrictRepositoryMock } from "test/community-district/community-district.repository.mock";
+import { capitalProjectEntitySchema } from "src/schema";
 
 export class CapitalProjectRepositoryMock {
   agencyRepoMock: AgencyRepositoryMock;
@@ -38,7 +40,19 @@ export class CapitalProjectRepositoryMock {
     this.agencyBudgetRepositoryMock = agencyBudgetRepositoryMock;
   }
 
-  get findManyMocks(): Array<
+  capitalProjectGroups = Array.from(Array(3), (_, i) =>
+    Array.from(Array(i + 2), (_, j) =>
+      generateMock(capitalProjectEntitySchema, {
+        seed: j + 1,
+        stringMap: {
+          minDate: () => "2018-01-01",
+          maxDate: () => "2045-12-31",
+        },
+      }),
+    ),
+  );
+
+  get capitalProjectsCriteria(): Array<
     [
       {
         managingAgency: string;
@@ -51,12 +65,11 @@ export class CapitalProjectRepositoryMock {
       FindManyRepo,
     ]
   > {
-    const agencyMocks = this.agencyRepoMock.checkByInitialsMocks;
+    const agencyMocks = this.agencyRepoMock.agencies;
     const cityCouncilDistrictIdMocks =
-      this.cityCouncilDistrictRepoMock.checkCityCouncilDistrictByIdMocks;
-    const communityDistrictIdMocks =
-      this.communityDistrictRepoMock.checkByBoroughIdCommunityDistrictIdMocks;
-    const agencyBudgetMocks = this.agencyBudgetRepositoryMock.checkByCodeMocks;
+      this.cityCouncilDistrictRepoMock.districts;
+    const communityDistrictIdMocks = this.communityDistrictRepoMock.districts;
+    const agencyBudgetMocks = this.agencyBudgetRepositoryMock.agencyBudgets;
     return [
       [
         {
@@ -67,13 +80,7 @@ export class CapitalProjectRepositoryMock {
           agencyBudget: agencyBudgetMocks[0].code,
           commitmentsTotal: 100,
         },
-        generateMock(findManyRepoSchema, {
-          seed: 1,
-          stringMap: {
-            minDate: () => "2018-01-01",
-            maxDate: () => "2045-12-31",
-          },
-        }),
+        this.capitalProjectGroups[0],
       ],
       [
         {
@@ -84,13 +91,7 @@ export class CapitalProjectRepositoryMock {
           agencyBudget: agencyBudgetMocks[1].code,
           commitmentsTotal: 200,
         },
-        generateMock(findManyRepoSchema, {
-          seed: 2,
-          stringMap: {
-            minDate: () => "2018-01-01",
-            maxDate: () => "2045-12-31",
-          },
-        }),
+        this.capitalProjectGroups[1],
       ],
       [
         {
@@ -101,18 +102,12 @@ export class CapitalProjectRepositoryMock {
           agencyBudget: agencyBudgetMocks[1].code,
           commitmentsTotal: 300,
         },
-        generateMock(findManyRepoSchema, {
-          seed: 3,
-          stringMap: {
-            minDate: () => "2018-01-01",
-            maxDate: () => "2045-12-31",
-          },
-        }),
+        this.capitalProjectGroups[2],
       ],
     ];
   }
 
-  async findAll({
+  async filterCapitalProjects({
     managingAgency,
     boroughId,
     communityDistrictId,
@@ -129,7 +124,7 @@ export class CapitalProjectRepositoryMock {
     commitmentsTotalMin: number | null;
     commitmentsTotalMax: number | null;
   }) {
-    return this.findManyMocks.reduce(
+    return this.capitalProjectsCriteria.reduce(
       (acc: FindManyRepo, [criteria, capitalProjects]) => {
         if (
           managingAgency !== null &&
@@ -190,8 +185,8 @@ export class CapitalProjectRepositoryMock {
     commitmentsTotalMax: number | null;
     limit: number;
     offset: number;
-  }) {
-    const results = await this.findAll({
+  }): Promise<FindManyRepo> {
+    const results = await this.filterCapitalProjects({
       managingAgency,
       boroughId,
       communityDistrictId,
@@ -219,8 +214,8 @@ export class CapitalProjectRepositoryMock {
     agencyBudget: string | null;
     commitmentsTotalMin: number | null;
     commitmentsTotalMax: number | null;
-  }) {
-    const results = await this.findAll({
+  }): Promise<FindCountRepo> {
+    const results = await this.filterCapitalProjects({
       managingAgency,
       boroughId,
       communityDistrictId,
@@ -232,19 +227,18 @@ export class CapitalProjectRepositoryMock {
     return results.length;
   }
 
-  checkByManagingCodeCapitalProjectIdMocks = Array.from(Array(5), (_, seed) =>
-    generateMock(checkByManagingCodeCapitalProjectIdRepoSchema, {
-      seed: seed + 1,
-    }),
-  );
-
   async checkByManagingCodeCapitalProjectId(
     managingCode: string,
     capitalProjectId: string,
-  ) {
-    return this.checkByManagingCodeCapitalProjectIdMocks.find((row) => {
-      return row.id === capitalProjectId && row.managingCode === managingCode;
-    });
+  ): Promise<CheckByManagingCodeCapitalProjectIdRepo> {
+    return this.capitalProjectGroups.some((capitalProjects) =>
+      capitalProjects.some((capitalProject) => {
+        return (
+          capitalProject.id === capitalProjectId &&
+          capitalProject.managingCode === managingCode
+        );
+      }),
+    );
   }
 
   findByManagingCodeCapitalProjectIdMock = generateMock(
@@ -259,20 +253,32 @@ export class CapitalProjectRepositoryMock {
   );
 
   findCapitalCommitmentsByManagingCodeCapitalProjectIdMocks =
-    this.checkByManagingCodeCapitalProjectIdMocks.map(
-      (checkCapitalCommitment) => {
-        return {
-          [`${checkCapitalCommitment.managingCode}${checkCapitalCommitment.id}`]:
-            generateMock(
-              findCapitalCommitmentsByManagingCodeCapitalProjectIdRepoSchema,
-              {
-                stringMap: {
-                  plannedDate: () => "2045-01-01",
+    this.capitalProjectGroups.reduce(
+      (
+        acc: Array<
+          Record<
+            string,
+            FindCapitalCommitmentsByManagingCodeCapitalProjectIdRepo
+          >
+        >,
+        capitalProjects,
+      ) => {
+        const capitalCommitments = capitalProjects.map((capitalProject) => {
+          return {
+            [`${capitalProject.managingCode}${capitalProject.id}`]:
+              generateMock(
+                findCapitalCommitmentsByManagingCodeCapitalProjectIdRepoSchema,
+                {
+                  stringMap: {
+                    plannedDate: () => "2045-01-01",
+                  },
                 },
-              },
-            ),
-        };
+              ),
+          };
+        });
+        return acc.concat(capitalCommitments);
       },
+      [],
     );
 
   async findCapitalCommitmentsByManagingCodeCapitalProjectId({
@@ -337,7 +343,7 @@ export class CapitalProjectRepositoryMock {
    *
    * This applies to all mvt-related mocks
    */
-  async findTiles() {
+  async findTiles(): Promise<FindTilesRepo> {
     return this.findTilesMock;
   }
 }

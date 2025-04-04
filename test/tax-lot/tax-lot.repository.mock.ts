@@ -1,18 +1,23 @@
 import { generateMock } from "@anatine/zod-mock";
 import { Geometry } from "geojson";
+import { taxLotEntitySchema } from "src/schema";
 import {
   findByBblRepoSchema,
   findByBblSpatialRepoSchema,
   findZoningDistrictsByBblRepoSchema,
-  checkByBblRepoSchema,
   findZoningDistrictClassesByBblRepoSchema,
-  findManyRepoSchema,
   FindGeomFromGeoJsonRepo,
   FindManyBySpatialFilterRepo,
   findManyBySpatialFilterRepoSchema,
   FindGeomBufferRepo,
   CheckGeomIsValidRepo,
   FindMaximumInscribedCircleCenterRepo,
+  CheckByBblRepo,
+  FindManyRepo,
+  FindByBblRepo,
+  FindByBblSpatialRepo,
+  FindZoningDistrictsByBblRepo,
+  FindZoningDistrictClassesByBblRepo,
 } from "src/tax-lot/tax-lot.repository.schema";
 import { Geom } from "src/types";
 
@@ -33,20 +38,22 @@ export type GeomMock = {
   srid: number;
 };
 export class TaxLotRepositoryMock {
-  numberOfMocks = 1;
-
-  checkByBblMocks = Array.from(Array(this.numberOfMocks), (_, seed) =>
-    generateMock(checkByBblRepoSchema, { seed: seed + 1 }),
+  lots = Array.from(Array(10), (_, index) =>
+    generateMock(taxLotEntitySchema, { seed: index + 1 }),
   );
 
-  async checkByBbl(bbl: string) {
-    return this.checkByBblMocks.find((row) => row.bbl === bbl);
+  async checkByBbl(bbl: string): Promise<CheckByBblRepo> {
+    return this.lots.some((row) => row.bbl === bbl);
   }
 
-  findManyMocks = generateMock(findManyRepoSchema.length(10));
-
-  async findMany({ limit, offset }: { limit: number; offset: number }) {
-    return this.findManyMocks.slice(offset, limit + offset);
+  async findMany({
+    limit,
+    offset,
+  }: {
+    limit: number;
+    offset: number;
+  }): Promise<FindManyRepo> {
+    return this.lots.slice(offset, limit + offset);
   }
 
   async findGeomFromGeoJson(
@@ -149,48 +156,48 @@ export class TaxLotRepositoryMock {
     return taxLots.slice(offset, limit + offset);
   }
 
-  findByBblMocks = Array.from(Array(this.numberOfMocks), (_, seed) =>
+  findByBblMocks = Array.from(Array(1), (_, seed) =>
     generateMock(findByBblRepoSchema, { seed: seed + 1 }),
   );
 
-  async findByBbl(bbl: string) {
+  async findByBbl(bbl: string): Promise<FindByBblRepo | undefined> {
     return this.findByBblMocks.find((row) => row.bbl === bbl);
   }
 
-  findByBblSpatialMocks = Array.from(Array(this.numberOfMocks), (_, seed) =>
+  findByBblSpatialMocks = Array.from(Array(10), (_, seed) =>
     generateMock(findByBblSpatialRepoSchema, { seed: seed + 1 }),
   );
 
-  async findByBblSpatial(bbl: string) {
+  async findByBblSpatial(
+    bbl: string,
+  ): Promise<FindByBblSpatialRepo | undefined> {
     return this.findByBblSpatialMocks.find((row) => row.bbl === bbl);
   }
 
-  findZoningDistrictByTaxLotBblMocks = this.checkByBblMocks.map(
-    (checkTaxLot) => {
-      return {
-        [checkTaxLot.bbl]: generateMock(findZoningDistrictsByBblRepoSchema),
-      };
-    },
-  );
+  findZoningDistrictByTaxLotBblMocks = this.lots.map((lot) => {
+    return {
+      [lot.bbl]: generateMock(findZoningDistrictsByBblRepoSchema),
+    };
+  });
 
-  async findZoningDistrictsByBbl(bbl: string) {
+  async findZoningDistrictsByBbl(
+    bbl: string,
+  ): Promise<FindZoningDistrictsByBblRepo> {
     const results = this.findZoningDistrictByTaxLotBblMocks.find(
       (taxLotZoningDistrictsPair) => bbl in taxLotZoningDistrictsPair,
     );
     return results === undefined ? [] : results[bbl];
   }
 
-  findZoningDistrictClassByTaxLotBblMocks = this.checkByBblMocks.map(
-    (checkTaxLot) => {
-      return {
-        [checkTaxLot.bbl]: generateMock(
-          findZoningDistrictClassesByBblRepoSchema,
-        ),
-      };
-    },
-  );
+  findZoningDistrictClassByTaxLotBblMocks = this.lots.map((lot) => {
+    return {
+      [lot.bbl]: generateMock(findZoningDistrictClassesByBblRepoSchema),
+    };
+  });
 
-  async findZoningDistrictClassesByBbl(bbl: string) {
+  async findZoningDistrictClassesByBbl(
+    bbl: string,
+  ): Promise<FindZoningDistrictClassesByBblRepo> {
     const results = this.findZoningDistrictClassByTaxLotBblMocks.find(
       (taxLotZoningDistrictClasses) => bbl in taxLotZoningDistrictClasses,
     );
