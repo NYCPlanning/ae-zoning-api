@@ -51,7 +51,7 @@ export class CapitalProjectRepositoryMock {
       FindManyRepo,
     ]
   > {
-    const agencyMocks = this.agencyRepoMock.checkByInitialsMocks;
+    const agencyMocks = this.agencyRepoMock.agencies;
     const cityCouncilDistrictIdMocks =
       this.cityCouncilDistrictRepoMock.checkCityCouncilDistrictByIdMocks;
     const communityDistrictIdMocks =

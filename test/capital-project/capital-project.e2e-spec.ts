@@ -232,7 +232,7 @@ describe("Capital Projects", () => {
 
     it("should 200 and return capital projects from a specified managing agency", async () => {
       const managingAgency =
-        capitalProjectRepositoryMock.agencyRepoMock.checkByInitialsMocks[0];
+        capitalProjectRepositoryMock.agencyRepoMock.agencies[0];
       const response = await request(app.getHttpServer()).get(
         `/capital-projects?managingAgency=${managingAgency.initials}`,
       );

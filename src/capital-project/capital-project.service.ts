@@ -95,7 +95,7 @@ export class CapitalProjectService {
 
     const checkedList = await Promise.all(checklist);
 
-    if (checkedList.some((result) => result === undefined))
+    if (checkedList.some((result) => result === undefined || result === false))
       throw new InvalidRequestParameterException();
 
     const capitalProjectsPromise = this.capitalProjectRepository.findMany({

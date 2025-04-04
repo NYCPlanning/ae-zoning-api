@@ -174,8 +174,7 @@ describe("CapitalProjectService", () => {
     });
 
     it("service should return a list of capital projects by managing agency, using the default limit and offset", async () => {
-      const { initials } =
-        capitalProjectRepository.agencyRepoMock.checkByInitialsMocks[0];
+      const { initials } = capitalProjectRepository.agencyRepoMock.agencies[0];
       const resource = await capitalProjectService.findMany({
         managingAgency: initials,
       });
