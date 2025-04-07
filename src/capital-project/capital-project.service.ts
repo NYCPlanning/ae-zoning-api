@@ -63,9 +63,7 @@ export class CapitalProjectService {
     const checklist: Array<Promise<unknown | undefined>> = [];
     if (cityCouncilDistrictId !== null)
       checklist.push(
-        this.cityCouncilDistrictRepository.checkCityCouncilDistrictById(
-          cityCouncilDistrictId,
-        ),
+        this.cityCouncilDistrictRepository.checkById(cityCouncilDistrictId),
       );
 
     const boroughId =

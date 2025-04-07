@@ -88,8 +88,7 @@ describe("CapitalProjectService", () => {
     });
 
     it("should return a list of capital projects by city council district id, using the default limit and offset", async () => {
-      const { id } =
-        cityCouncilDistrictRepositoryMock.checkCityCouncilDistrictByIdMocks[0];
+      const { id } = cityCouncilDistrictRepositoryMock.districts[0];
 
       const resource = await capitalProjectService.findMany({
         cityCouncilDistrictId: id,
