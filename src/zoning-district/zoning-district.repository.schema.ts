@@ -4,9 +4,7 @@ import {
 } from "src/schema";
 import { z } from "zod";
 
-export const checkByIdRepoSchema = zoningDistrictEntitySchema.pick({
-  id: true,
-});
+export const checkByIdRepoSchema = z.boolean();
 
 export type CheckByIdRepo = z.infer<typeof checkByIdRepoSchema>;
 

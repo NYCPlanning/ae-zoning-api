@@ -28,7 +28,7 @@ describe("Zoning district service unit", () => {
 
   describe("findById", () => {
     it("service should return a zoning district compliant object", async () => {
-      const mock = zoningDistrictRepositoryMock.findByIdMocks[0];
+      const mock = zoningDistrictRepositoryMock.districts[0];
       const zoningDistrict = await zoningDistrictService.findById(mock.id);
       expect(() =>
         findZoningDistrictByZoningDistrictIdQueryResponseSchema.parse(
@@ -46,7 +46,7 @@ describe("Zoning district service unit", () => {
 
   describe("findZoningDistrictClassesById", () => {
     it("service should return a zoning district classes compliant object", async () => {
-      const { id } = zoningDistrictRepositoryMock.checkByIdMocks[0];
+      const { id } = zoningDistrictRepositoryMock.districts[0];
       const zoningDistrictClasses =
         await zoningDistrictService.findZoningDistrictClassesById(id);
       expect(() =>
