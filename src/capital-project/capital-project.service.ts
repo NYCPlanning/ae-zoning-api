@@ -93,7 +93,7 @@ export class CapitalProjectService {
 
     const checkedList = await Promise.all(checklist);
 
-    if (checkedList.some((result) => result === undefined || result === false))
+    if (checkedList.some((result) => result === false))
       throw new InvalidRequestParameterException();
 
     const capitalProjectsPromise = this.capitalProjectRepository.findMany({
@@ -189,8 +189,7 @@ export class CapitalProjectService {
         params.managingCode,
         params.capitalProjectId,
       );
-    if (capitalProjectCheck === undefined)
-      throw new ResourceNotFoundException();
+    if (capitalProjectCheck === false) throw new ResourceNotFoundException();
 
     const capitalCommitments =
       await this.capitalProjectRepository.findCapitalCommitmentsByManagingCodeCapitalProjectId(

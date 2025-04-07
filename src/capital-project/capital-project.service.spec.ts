@@ -81,7 +81,7 @@ describe("CapitalProjectService", () => {
       );
       expect(parsedBody.limit).toBe(20);
       expect(parsedBody.offset).toBe(0);
-      expect(parsedBody.capitalProjects.length).toBe(8);
+      expect(parsedBody.capitalProjects.length).toBe(9);
       expect(parsedBody.total).toBe(parsedBody.capitalProjects.length);
       expect(parsedBody.totalProjects).toBe(parsedBody.capitalProjects.length);
       expect(parsedBody.order).toBe("managingCode, capitalProjectId");
@@ -137,7 +137,7 @@ describe("CapitalProjectService", () => {
       expect(parsedBody.offset).toBe(3);
       expect(parsedBody.total).toBe(parsedBody.capitalProjects.length);
       expect(parsedBody.capitalProjects.length).toBe(0);
-      expect(parsedBody.totalProjects).toBe(1);
+      expect(parsedBody.totalProjects).toBe(2);
       expect(parsedBody.order).toBe("managingCode, capitalProjectId");
     });
 
@@ -184,7 +184,7 @@ describe("CapitalProjectService", () => {
         findCapitalProjectsQueryResponseSchema.parse(resource);
       expect(parsedResource.limit).toBe(20);
       expect(parsedResource.offset).toBe(0);
-      expect(parsedResource.capitalProjects.length).toBe(1);
+      expect(parsedResource.capitalProjects.length).toBe(2);
       expect(parsedResource.total).toBe(parsedResource.capitalProjects.length);
       expect(parsedResource.totalProjects).toBe(
         parsedResource.capitalProjects.length,
@@ -215,7 +215,7 @@ describe("CapitalProjectService", () => {
         findCapitalProjectsQueryResponseSchema.parse(resource);
       expect(parsedResource.limit).toBe(20);
       expect(parsedResource.offset).toBe(0);
-      expect(parsedResource.capitalProjects.length).toBe(8);
+      expect(parsedResource.capitalProjects.length).toBe(9);
       expect(parsedResource.total).toBe(parsedResource.capitalProjects.length);
       expect(parsedResource.totalProjects).toBe(
         parsedResource.capitalProjects.length,
@@ -236,7 +236,7 @@ describe("CapitalProjectService", () => {
         findCapitalProjectsQueryResponseSchema.parse(resource);
       expect(parsedResource.limit).toBe(20);
       expect(parsedResource.offset).toBe(0);
-      expect(parsedResource.capitalProjects.length).toBe(8);
+      expect(parsedResource.capitalProjects.length).toBe(9);
       expect(parsedResource.total).toBe(parsedResource.capitalProjects.length);
       expect(parsedResource.totalProjects).toBe(
         parsedResource.capitalProjects.length,
@@ -346,7 +346,7 @@ describe("CapitalProjectService", () => {
   describe("findCapitalCommitmentsByManagingCodeCapitalProjectId", () => {
     it("should return capital commitments for a capital project", async () => {
       const { id: capitalProjectId, managingCode } =
-        capitalProjectRepository.checkByManagingCodeCapitalProjectIdMocks[0];
+        capitalProjectRepository.capitalProjectGroups[0][0];
       const result =
         await capitalProjectService.findCapitalCommitmentsByManagingCodeCapitalProjectId(
           { capitalProjectId, managingCode },
