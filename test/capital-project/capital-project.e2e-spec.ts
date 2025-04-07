@@ -200,8 +200,7 @@ describe("Capital Projects", () => {
 
     it("should 200 and return capital projects from a specified community district", async () => {
       const { boroughId, id: communityDistrictId } =
-        capitalProjectRepositoryMock.communityDistrictRepoMock
-          .checkByBoroughIdCommunityDistrictIdMocks[1];
+        capitalProjectRepositoryMock.communityDistrictRepoMock.districts[1];
       const response = await request(app.getHttpServer()).get(
         `/capital-projects?communityDistrictId=${boroughId}${communityDistrictId}`,
       );

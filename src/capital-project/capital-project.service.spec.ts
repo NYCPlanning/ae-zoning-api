@@ -120,8 +120,7 @@ describe("CapitalProjectService", () => {
 
     it("should return a list of capital projects by community district id, using the user specified limit and offset", async () => {
       const { boroughId, id: communityDistrictId } =
-        boroughRepositoryMock.communityDistrictRepoMock
-          .checkByBoroughIdCommunityDistrictIdMocks[0];
+        boroughRepositoryMock.communityDistrictRepoMock.districts[0];
       const capitalProjects = await capitalProjectService.findMany({
         communityDistrictCombinedId: `${boroughId}${communityDistrictId}`,
         limit: 10,
