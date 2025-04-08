@@ -29,6 +29,7 @@ import {
 } from "./capital-project.repository.schema";
 import { Cache } from "cache-manager";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
+import { capitalProjectTile } from "src/schema/views";
 
 export class CapitalProjectRepository {
   constructor(
@@ -442,22 +443,10 @@ export class CapitalProjectRepository {
       const tile = this.db
         .select({
           managingCodeCapitalProjectId:
-            sql<string>`${capitalProject.managingCode} || ${capitalProject.id}`.as(
-              `managingCodeCapitalProjectId`,
-            ),
-          managingAgency: sql`${capitalProject.managingAgency}`.as(
-            `managingAgency`,
-          ),
-          commitmentsTotal:
-            // numeric type is econded as string, double precision type is encoded in mvt as number
-            sql`SUM(${capitalCommitmentFund.value})::double precision`
-              .mapWith(Number)
-              .as("commitmentsTotal"),
-          agencyBudgets: sql<
-            Array<string>
-          >`ARRAY_TO_JSON(ARRAY_AGG(DISTINCT ${capitalCommitment.budgetLineCode}))`.as(
-            "agencyBudgets",
-          ),
+            capitalProjectTile.managingCodeCapitalProjectId,
+          managingAgency: capitalProjectTile.managingAgency,
+          commitmentsTotal: capitalProjectTile.commitmentsTotal,
+          agencyBudgets: capitalProjectTile.agencyBudgets,
           geom: sql<string>`
             CASE
               WHEN ${capitalProject.mercatorFillMPoly} && ST_TileEnvelope(${z},${x},${y})
@@ -478,26 +467,7 @@ export class CapitalProjectRepository {
                 )
             END`.as("geom"),
         })
-        .from(capitalProject)
-        .leftJoin(
-          capitalCommitment,
-          and(
-            eq(capitalCommitment.capitalProjectId, capitalProject.id),
-            eq(capitalCommitment.managingCode, capitalProject.managingCode),
-          ),
-        )
-        .leftJoin(
-          capitalCommitmentFund,
-          eq(capitalCommitmentFund.capitalCommitmentId, capitalCommitment.id),
-        )
-        .where(eq(capitalCommitmentFund.category, "total"))
-        .groupBy(
-          capitalProject.id,
-          capitalProject.managingCode,
-          capitalProject.managingAgency,
-          capitalProject.mercatorFillMPnt,
-          capitalProject.mercatorFillMPoly,
-        )
+        .from(capitalProjectTile)
         .as("tile");
       const data = await this.db
         .select({
