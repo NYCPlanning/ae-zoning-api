@@ -32,11 +32,18 @@ import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import { capitalProjectTile } from "src/schema/views";
 
 export class CapitalProjectRepository {
+  formatMemoryUsage(data: number) {
+    return `${Math.round((data / 1024 / 1024) * 100) / 100} MB`;
+  }
+  initialMemory;
   constructor(
     @Inject(DB)
     private readonly db: DbType,
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
-  ) {}
+  ) {
+    this.initialMemory = process.memoryUsage();
+    console.debug("initial memory", this.initialMemory);
+  }
 
   #commitmentsTotalByCapitalProject = this.db
     .$with("commitmentsTotalByCapitalProject")
@@ -439,6 +446,15 @@ export class CapitalProjectRepository {
     params: FindCapitalProjectTilesPathParams,
   ): Promise<FindTilesRepo> {
     const { z, x, y } = params;
+    const key = JSON.stringify({
+      z,
+      x,
+      y,
+      domain: "capitalProject",
+      function: "findTiles",
+    });
+    const cachedValue: Buffer | null = await this.cacheManager.get(key);
+    if (cachedValue !== null) return cachedValue;
     try {
       const tile = this.db
         .select({
@@ -475,7 +491,26 @@ export class CapitalProjectRepository {
         })
         .from(tile)
         .where(isNotNull(tile.geom));
-      return data[0].mvt;
+      const { mvt } = data[0];
+      this.cacheManager.set(key, mvt);
+      const memory = process.memoryUsage();
+      console.debug(
+        "rss",
+        this.formatMemoryUsage(memory.rss - this.initialMemory.rss),
+      );
+      console.debug(
+        "heapTotal",
+        this.formatMemoryUsage(memory.heapTotal - this.initialMemory.heapTotal),
+      );
+      console.debug(
+        "heapUsed",
+        this.formatMemoryUsage(memory.heapUsed - this.initialMemory.heapUsed),
+      );
+      console.debug(
+        "external",
+        this.formatMemoryUsage(memory.external - this.initialMemory.external),
+      );
+      return mvt;
     } catch {
       throw new DataRetrievalException();
     }
