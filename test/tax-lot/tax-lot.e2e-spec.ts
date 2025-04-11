@@ -16,6 +16,7 @@ import {
   InvalidRequestParameterException,
 } from "src/exception";
 import { HttpName } from "src/filter";
+import { NestExpressApplication } from "@nestjs/platform-express";
 
 describe("TaxLots", () => {
   let app: INestApplication;
@@ -29,7 +30,8 @@ describe("TaxLots", () => {
       .overrideProvider(TaxLotRepository)
       .useValue(taxLotRepository)
       .compile();
-    app = moduleRef.createNestApplication();
+    app = moduleRef.createNestApplication<NestExpressApplication>();
+    app.getHttpAdapter().getInstance().set("query parser", "extended");
     await app.init();
   });
 
@@ -64,6 +66,19 @@ describe("TaxLots", () => {
     it("should 200 and return tax lots with page metadata when passing a spatial filter", async () => {
       const response = await request(app.getHttpServer())
         .get("/tax-lots?geometry=LineString&lons=0,1&lats=0,1")
+        .expect(200);
+      expect(() =>
+        findTaxLotsQueryResponseSchema.parse(response.body),
+      ).not.toThrow();
+      const parsedBody = findTaxLotsQueryResponseSchema.parse(response.body);
+      expect(parsedBody.total).toBe(2);
+    });
+
+    it("should 200 and return tax lots with page metadata when passing a spatial filter with a serialized array with brackets", async () => {
+      const response = await request(app.getHttpServer())
+        .get(
+          "/tax-lots?geometry=LineString&lons[]=-74.010776&lons[]=-74.010776&lats[]=40.708649&lats[]=40.707800",
+        )
         .expect(200);
       expect(() =>
         findTaxLotsQueryResponseSchema.parse(response.body),
