@@ -1,7 +1,7 @@
 # compiled output
 /dist
 /node_modules
-/openapi/index.html
+/static/index.html
 
 # temporary directory
 /temp

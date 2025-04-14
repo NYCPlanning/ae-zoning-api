@@ -39,7 +39,7 @@ import { CacheModule } from "@nestjs/cache-manager";
       },
     }),
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, "..", "openapi"),
+      rootPath: join(__dirname, "..", "static"),
       exclude: ["/api/(.*)"],
     }),
     CacheModule.register({

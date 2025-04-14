@@ -1,4 +1,14 @@
 {
   "extends": "./tsconfig.json",
-  "exclude": ["db-volume", "node_modules", "test", "dist", "**/*spec.ts", "db", "drizzle.config.ts", "kubb.config.ts"]
+  "exclude": [
+    "db-volume",
+    "node_modules",
+    "test",
+    "dist",
+    "**/*spec.ts",
+    "db",
+    "drizzle.config.ts",
+    "kubb.config.ts",
+    "openapi"
+  ]
 }

@@ -16,7 +16,7 @@
     "pg:configure": "ts-node ./db/query.ts configure",
     "drizzle:migrate": "drizzle-kit migrate",
     "drizzle:generate": "drizzle-kit generate",
-    "redoc:build": "redocly build-docs openapi/openapi.yaml --output openapi/index.html",
+    "redoc:build": "redocly build-docs openapi/openapi.yaml --output static/index.html",
     "redoc:dev": "redocly preview-docs openapi/openapi.yaml",
     "redoc:lint": "redocly lint openapi/openapi.yaml",
     "typecheck": "tsc --noEmit",
