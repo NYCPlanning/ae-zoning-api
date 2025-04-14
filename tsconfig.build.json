@@ -9,6 +9,7 @@
     "db",
     "drizzle.config.ts",
     "kubb.config.ts",
-    "openapi"
+    "openapi",
+    "basemap"
   ]
 }

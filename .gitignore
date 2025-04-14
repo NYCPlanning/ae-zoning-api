@@ -1,7 +1,8 @@
 # compiled output
 /dist
 /node_modules
-/static/index.html
+/static/*
+!/static/.gitkeep
 
 # temporary directory
 /temp
