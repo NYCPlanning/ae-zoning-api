@@ -29,7 +29,7 @@ export const style = {
       url: `${dataHost}/data.json`,
     },
   },
-  sprite: "https://tiles.planninglabs.nyc/styles/positron/sprite",
+  sprite: `${dataHost}/sprite`,
   glyphs: "https://tiles.planninglabs.nyc/fonts/{fontstack}/{range}.pbf",
   layers: [
     {
