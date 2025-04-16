@@ -2,11 +2,10 @@ import {
   Controller,
   Get,
   Param,
-  Res,
+  Redirect,
   UseFilters,
   UsePipes,
 } from "@nestjs/common";
-import { Response } from "express";
 import { CommunityDistrictService } from "./community-district.service";
 import {
   BadRequestExceptionFilter,
@@ -27,12 +26,11 @@ export class CommunityDistrictController {
 
   @UsePipes(new ZodTransformPipe(findCommunityDistrictTilesPathParamsSchema))
   @Get("/:z/:x/:y.pbf")
-  async findTiles(
-    @Param() params: FindCommunityDistrictTilesPathParams,
-    @Res() res: Response,
-  ) {
-    const tile = await this.communityDistrictService.findTiles(params);
-    res.set("Content-Type", "application/x-protobuf");
-    res.send(tile);
+  @Redirect()
+  async findTiles(@Param() params: FindCommunityDistrictTilesPathParams) {
+    const { z, x, y } = params;
+    return {
+      url: `https://pmtiles.planninglabs.nyc/community-districts/${z}/${x}/${y}.mvt`,
+    };
   }
 }
