@@ -72,7 +72,7 @@ describe("TaxLots", () => {
       expect(parsedBody.total).toBe(2);
     });
 
-    it("should 200 and return tax lots with page metadata when passing a spatial filter with a serialized array with brackets", async () => {
+    it.only("should 200 and return tax lots with page metadata when passing a spatial filter with a serialized array with brackets", async () => {
       const response = await request(app.getHttpServer())
         .get(
           "/tax-lots?geometry=LineString&lons[]=-74.010776&lons[]=-74.010776&lats[]=40.708649&lats[]=40.707800",

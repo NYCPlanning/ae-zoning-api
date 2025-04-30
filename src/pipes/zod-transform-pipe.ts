@@ -12,6 +12,8 @@ export class ZodTransformPipe<T extends ZodRawShape> implements PipeTransform {
         ? this.schema.unwrap().shape
         : this.schema.shape;
 
+    console.debug(params);
+
     const decodedParams: Record<
       string,
       string | number | Array<string> | Array<number>
