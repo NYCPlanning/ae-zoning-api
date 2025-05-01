@@ -47,7 +47,7 @@
   "devDependencies": {
     "@anatine/zod-mock": "^3.14.0",
     "@faker-js/faker": "^8.3.1",
-    "@kubb/cli": "^2.23.3",
+    "@kubb/cli": "^3.10.5",
     "@kubb/core": "^2.23.3",
     "@kubb/swagger": "^2.28.4",
     "@kubb/swagger-client": "^2.28.4",
@@ -66,7 +66,7 @@
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "dotenv": "^16.5.0",
-    "drizzle-kit": "^0.28.0",
+    "drizzle-kit": "^0.31.0",
     "esbuild": "^0.25.0",
     "eslint": "^8.42.0",
     "eslint-config-prettier": "^9.0.0",
