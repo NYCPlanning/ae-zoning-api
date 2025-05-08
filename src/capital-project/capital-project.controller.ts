@@ -3,11 +3,10 @@ import {
   Get,
   Param,
   Query,
-  Res,
+  Redirect,
   UseFilters,
   UsePipes,
 } from "@nestjs/common";
-import { Response } from "express";
 import {
   FindCapitalCommitmentsByManagingCodeCapitalProjectIdPathParams,
   FindCapitalProjectByManagingCodeCapitalProjectIdPathParams,
@@ -84,13 +83,12 @@ export class CapitalProjectController {
 
   @UsePipes(new ZodTransformPipe(findCapitalProjectTilesPathParamsSchema))
   @Get("/:z/:x/:y.pbf")
-  async findTiles(
-    @Param() params: FindCapitalProjectTilesPathParams,
-    @Res() res: Response,
-  ) {
-    const tile = await this.capitalProjectService.findTiles(params);
-    res.set("Content-Type", "application/x-protobuf");
-    res.send(tile);
+  @Redirect()
+  async findTiles(@Param() params: FindCapitalProjectTilesPathParams) {
+    const { z, x, y } = params;
+    return {
+      url: `https://pmtiles.planninglabs.nyc/capital-planning/${z}/${x}/${y}.mvt`,
+    };
   }
 
   @UsePipes(
