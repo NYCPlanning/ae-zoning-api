@@ -29,12 +29,15 @@ import {
 } from "./capital-project.repository.schema";
 import { Cache } from "cache-manager";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
+import { TILE_CACHE } from "src/global/providers/tile-cache.provider";
+import { CacheableMemory } from "cacheable";
 
 export class CapitalProjectRepository {
   constructor(
     @Inject(DB)
     private readonly db: DbType,
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
+    @Inject(TILE_CACHE) private readonly tileCache: CacheableMemory,
   ) {}
 
   #commitmentsTotalByCapitalProject = this.db
@@ -452,6 +455,16 @@ export class CapitalProjectRepository {
     params: FindCapitalProjectTilesPathParams,
   ): Promise<FindTilesRepo> {
     const { z, x, y } = params;
+    const cacheKey = JSON.stringify({
+      domain: "capitalProject",
+      function: "findTiles",
+      z,
+      x,
+      y,
+    });
+    const cachedTiles: Buffer<ArrayBufferLike> | undefined =
+      this.tileCache.get(cacheKey);
+    if (cachedTiles !== undefined) return cachedTiles;
     try {
       const tile = this.db
         .select({
@@ -519,7 +532,9 @@ export class CapitalProjectRepository {
         })
         .from(tile)
         .where(isNotNull(tile.geom));
-      return data[0].mvt;
+      const { mvt } = data[0];
+      this.tileCache.set(cacheKey, mvt);
+      return mvt;
     } catch {
       throw new DataRetrievalException();
     }
