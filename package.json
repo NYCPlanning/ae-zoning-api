@@ -36,6 +36,7 @@
     "@nestjs/platform-express": "^11.1.0",
     "@nestjs/serve-static": "^5.0.3",
     "cache-manager": "^6.4.2",
+    "cacheable": "^1.9.0",
     "drizzle-orm": "^0.36.1",
     "immer": "^10.1.1",
     "joi": "^17.13.3",
@@ -95,6 +96,9 @@
       "ts"
     ],
     "rootDir": "src",
+    "setupFiles": [
+      "dotenv/config"
+    ],
     "modulePaths": [
       "<rootDir>/../"
     ],

@@ -1,5 +1,5 @@
 import { registerAs } from "@nestjs/config";
-
+import { z } from "zod";
 // Drizzle configuration for application
 export const DbConfig = registerAs("db", () => ({
   host: process.env.DATABASE_HOST,
@@ -9,6 +9,19 @@ export const DbConfig = registerAs("db", () => ({
   name: process.env.DATABASE_NAME,
   env: process.env.DATABASE_ENV,
 }));
+
+export const TileCacheConfig = registerAs("tileCache", () => {
+  const lruSize = z.coerce
+    .number({
+      required_error: "TILE_CACHE_LRU_SIZE environment variable is required",
+      invalid_type_error: "TILE_CACHE_LRU_SIZE must be an integer",
+    })
+    .int()
+    .parse(process.env.TILE_CACHE_LRU_SIZE);
+  return {
+    lruSize: lruSize,
+  };
+});
 
 export const FeatureFlagConfig = registerAs("featureFlag", () => ({}));
 
