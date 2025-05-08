@@ -27,17 +27,13 @@ import {
   FindManyRepo,
   FindTilesRepo,
 } from "./capital-project.repository.schema";
-import { Cache } from "cache-manager";
-import { CACHE_MANAGER } from "@nestjs/cache-manager";
-import { TILE_CACHE } from "src/global/providers/tile-cache.provider";
-import { CacheableMemory } from "cacheable";
+import { CACHE, CacheService } from "src/global/providers/cache.provider";
 
 export class CapitalProjectRepository {
   constructor(
     @Inject(DB)
     private readonly db: DbType,
-    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
-    @Inject(TILE_CACHE) private readonly tileCache: CacheableMemory,
+    @Inject(CACHE) private readonly cache: CacheService,
   ) {}
 
   #commitmentsTotalByCapitalProject = this.db
@@ -198,7 +194,7 @@ export class CapitalProjectRepository {
       function: "findCount",
     });
 
-    const value: number | null = await this.cacheManager.get(key);
+    const value: number | null = await this.cache.api.get(key);
     if (value !== null) {
       return value;
     }
@@ -292,7 +288,7 @@ export class CapitalProjectRepository {
           ),
         );
       const { total } = results[0];
-      this.cacheManager.set(key, total);
+      this.cache.api.set(key, total);
       return total;
     } catch {
       throw new DataRetrievalException();
@@ -323,7 +319,7 @@ export class CapitalProjectRepository {
       domain: "capitalProject",
       function: "checkByManagingCodeCapitalProjectId",
     });
-    const cachedValue: boolean | null = await this.cacheManager.get(key);
+    const cachedValue: boolean | null = await this.cache.api.get(key);
 
     if (cachedValue !== null) return cachedValue;
 
@@ -333,7 +329,7 @@ export class CapitalProjectRepository {
     });
 
     const value = result !== undefined;
-    this.cacheManager.set(key, value);
+    this.cache.api.set(key, value);
     return value;
   }
 
@@ -462,9 +458,9 @@ export class CapitalProjectRepository {
       x,
       y,
     });
-    const cachedTiles: Buffer<ArrayBufferLike> | undefined =
-      this.tileCache.get(cacheKey);
-    if (cachedTiles !== undefined) return cachedTiles;
+    const cachedTiles =
+      await this.cache.tile.get<Buffer<ArrayBufferLike>>(cacheKey);
+    if (cachedTiles !== null) return cachedTiles;
     try {
       const tile = this.db
         .select({
@@ -533,7 +529,7 @@ export class CapitalProjectRepository {
         .from(tile)
         .where(isNotNull(tile.geom));
       const { mvt } = data[0];
-      this.tileCache.set(cacheKey, mvt);
+      this.cache.tile.set(cacheKey, mvt);
       return mvt;
     } catch {
       throw new DataRetrievalException();
