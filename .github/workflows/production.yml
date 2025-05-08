@@ -3,53 +3,54 @@ name: 🌠 Deploy to production
 on: workflow_dispatch
 
 jobs:
-    migrate:
-        name: 🧑‍🚀 Apply database migrations
-        environment:
-            name: production-zoning-api
-        runs-on: ubuntu-latest
+  migrate:
+    name: 🧑‍🚀 Apply database migrations
+    environment:
+      name: production-zoning-api
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_USER: ${{secrets.DATABASE_USER}}
+      DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
+      DATABASE_NAME: ${{secrets.DATABASE_NAME }}
+      DATABASE_PORT: ${{secrets.DATABASE_PORT}}
+      DATABASE_HOST: ${{secrets.DATABASE_HOST}}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+      - name: Configure database
+        run: npm run pg:configure
+      - name: Apply migrations
+        run: npm run drizzle:migrate
+  deploy:
+    name: 🚀 Deploy to production
+    needs: migrate
+    environment:
+      name: production-zoning-api
+      url: https://zoning-api.nycplanningdigital.com
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Install Heroku CLI"
+        run: curl https://cli-assets.heroku.com/install.sh | sh
+      - name: Deploy to Heroku
+        uses: akhileshns/heroku-deploy@v3.13.15
+        with:
+          heroku_email: ${{secrets.HEROKU_EMAIL}}
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: ${{secrets.HEROKU_APP_NAME}}
+          team: ${{secrets.HEROKU_TEAM}}
         env:
-            DATABASE_USER: ${{secrets.DATABASE_USER}}
-            DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
-            DATABASE_NAME: ${{secrets.DATABASE_NAME }}
-            DATABASE_PORT: ${{secrets.DATABASE_PORT}}
-            DATABASE_HOST: ${{secrets.DATABASE_HOST}}
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v4
-            - name: Setup node
-              uses: actions/setup-node@v4
-              with:
-                node-version: 20.x
-            - name: Install dependencies
-              run: npm ci --ignore-scripts
-            - name: Configure database
-              run: npm run pg:configure
-            - name: Apply migrations
-              run: npm run drizzle:migrate
-    deploy:
-        name: 🚀 Deploy to production
-        needs: migrate
-        environment:
-            name: production-zoning-api
-            url: https://zoning-api.nycplanningdigital.com
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v4
-            - name: 'Install Heroku CLI'
-              run: curl https://cli-assets.heroku.com/install.sh | sh
-            - name: Deploy to Heroku
-              uses: akhileshns/heroku-deploy@v3.13.15
-              with:
-                heroku_email: ${{secrets.HEROKU_EMAIL}}
-                heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-                heroku_app_name: ${{secrets.HEROKU_APP_NAME}}
-                team: ${{secrets.HEROKU_TEAM}}
-              env:
-                HD_DATABASE_USER: ${{secrets.DATABASE_USER}}
-                HD_DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
-                HD_DATABASE_NAME: ${{secrets.DATABASE_NAME}}
-                HD_DATABASE_PORT: ${{secrets.DATABASE_PORT}}
-                HD_DATABASE_HOST: ${{secrets.DATABASE_HOST}}
-                HD_STORAGE_URL: ${{secrets.STORAGE_URL}}
-                HD_NODE_ENV: ${{secrets.NODE_ENV}}
+          HD_DATABASE_USER: ${{secrets.DATABASE_USER}}
+          HD_DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
+          HD_DATABASE_NAME: ${{secrets.DATABASE_NAME}}
+          HD_DATABASE_PORT: ${{secrets.DATABASE_PORT}}
+          HD_DATABASE_HOST: ${{secrets.DATABASE_HOST}}
+          HD_STORAGE_URL: ${{secrets.STORAGE_URL}}
+          HD_NODE_ENV: ${{secrets.NODE_ENV}}
+          HD_TILE_CACHE_LRU_SIZE: ${{vars.TILE_CACHE_LRU_SIZE}}
