@@ -33,6 +33,11 @@ export type FindCapitalProjectsQueryParams = {
    */
   commitmentsTotalMax?: string;
   /**
+   * @description Used to filter whether a capital project has associated geographic coordinates.
+   * @type boolean | undefined
+   */
+  isMapped?: boolean;
+  /**
    * @description The maximum number of results to be returned in each response. The default value is 20. It must be between 1 and 100, inclusive.
    * @type integer | undefined
    */

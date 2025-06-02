@@ -1,0 +1,9 @@
+name: isMapped
+required: false
+in: query
+schema:
+  type: boolean
+  example: true
+description: >-
+  Used to filter whether a capital project has associated
+  geographic coordinates.
