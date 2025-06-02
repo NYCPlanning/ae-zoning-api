@@ -48,8 +48,8 @@
   "devDependencies": {
     "@anatine/zod-mock": "^3.14.0",
     "@faker-js/faker": "^8.3.1",
-    "@kubb/cli": "^3.10.5",
-    "@kubb/core": "^2.23.3",
+    "@kubb/cli": "^2.28.4",
+    "@kubb/core": "^2.28.4",
     "@kubb/swagger": "^2.28.4",
     "@kubb/swagger-client": "^2.28.4",
     "@kubb/swagger-ts": "^2.28.4",
