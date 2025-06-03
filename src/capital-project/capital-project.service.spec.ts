@@ -265,6 +265,79 @@ describe("CapitalProjectService", () => {
         }),
       ).rejects.toThrow(InvalidRequestParameterException);
     });
+
+    it("should return both mapped and unmapped capital projects when no isMapped value is provided", async () => {
+      const capitalProjectsResponse = await capitalProjectService.findMany({});
+      expect(() =>
+        findCapitalProjectsQueryResponseSchema.parse(capitalProjectsResponse),
+      ).not.toThrow();
+
+      const parsedBody = findCapitalProjectsQueryResponseSchema.parse(
+        capitalProjectsResponse,
+      );
+      expect(parsedBody.limit).toBe(20);
+      expect(parsedBody.offset).toBe(0);
+      expect(parsedBody.capitalProjects.length).toBe(9);
+      expect(parsedBody.total).toBe(parsedBody.capitalProjects.length);
+      expect(parsedBody.totalProjects).toBe(parsedBody.capitalProjects.length);
+      expect(parsedBody.order).toBe("managingCode, capitalProjectId");
+    });
+
+    it("should return only capital projects with non-null geometries when isMapped is true", async () => {
+      const capitalProjectsResponse = await capitalProjectService.findMany({
+        isMapped: true,
+      });
+      expect(() =>
+        findCapitalProjectsQueryResponseSchema.parse(capitalProjectsResponse),
+      ).not.toThrow();
+
+      const parsedBody = findCapitalProjectsQueryResponseSchema.parse(
+        capitalProjectsResponse,
+      );
+      expect(parsedBody.limit).toBe(20);
+      expect(parsedBody.offset).toBe(0);
+      expect(parsedBody.capitalProjects.length).toBe(4);
+      expect(parsedBody.total).toBe(parsedBody.capitalProjects.length);
+      expect(parsedBody.totalProjects).toBe(parsedBody.capitalProjects.length);
+      expect(parsedBody.order).toBe("managingCode, capitalProjectId");
+    });
+
+    it("should return only capital projects with null geometries when isMapped is false", async () => {
+      const capitalProjectsResponse = await capitalProjectService.findMany({
+        isMapped: false,
+      });
+      expect(() =>
+        findCapitalProjectsQueryResponseSchema.parse(capitalProjectsResponse),
+      ).not.toThrow();
+
+      const parsedBody = findCapitalProjectsQueryResponseSchema.parse(
+        capitalProjectsResponse,
+      );
+      expect(parsedBody.limit).toBe(20);
+      expect(parsedBody.offset).toBe(0);
+      expect(parsedBody.capitalProjects.length).toBe(5);
+      expect(parsedBody.total).toBe(parsedBody.capitalProjects.length);
+      expect(parsedBody.totalProjects).toBe(parsedBody.capitalProjects.length);
+      expect(parsedBody.order).toBe("managingCode, capitalProjectId");
+    });
+
+    it("should return a InvalidRequestParameterException error when both a city council district id and isMapped are provided", async () => {
+      expect(
+        capitalProjectService.findMany({
+          cityCouncilDistrictId: "50",
+          isMapped: true,
+        }),
+      ).rejects.toThrow(InvalidRequestParameterException);
+    });
+
+    it("should return a InvalidRequestParameterException error when both a community district id and isMapped are provided", async () => {
+      expect(
+        capitalProjectService.findMany({
+          communityDistrictCombinedId: "101",
+          isMapped: true,
+        }),
+      ).rejects.toThrow(InvalidRequestParameterException);
+    });
   });
 
   describe("findByManagingCodeCapitalProjectId", () => {

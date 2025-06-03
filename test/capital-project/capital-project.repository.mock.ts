@@ -61,6 +61,8 @@ export class CapitalProjectRepositoryMock {
         communityDistrictId: string;
         agencyBudget: string;
         commitmentsTotal: number;
+        liFtMPoly: string | null;
+        liFtMPnt: string | null;
       },
       FindManyRepo,
     ]
@@ -79,6 +81,8 @@ export class CapitalProjectRepositoryMock {
           communityDistrictId: communityDistrictIdMocks[0].id,
           agencyBudget: agencyBudgetMocks[0].code,
           commitmentsTotal: 100,
+          liFtMPnt: "EXISTS",
+          liFtMPoly: null,
         },
         this.capitalProjectGroups[0],
       ],
@@ -90,6 +94,8 @@ export class CapitalProjectRepositoryMock {
           communityDistrictId: communityDistrictIdMocks[1].id,
           agencyBudget: agencyBudgetMocks[1].code,
           commitmentsTotal: 200,
+          liFtMPnt: null,
+          liFtMPoly: "EXISTS",
         },
         this.capitalProjectGroups[1],
       ],
@@ -101,6 +107,8 @@ export class CapitalProjectRepositoryMock {
           communityDistrictId: communityDistrictIdMocks[1].id,
           agencyBudget: agencyBudgetMocks[1].code,
           commitmentsTotal: 300,
+          liFtMPnt: null,
+          liFtMPoly: null,
         },
         this.capitalProjectGroups[2],
       ],
@@ -115,6 +123,7 @@ export class CapitalProjectRepositoryMock {
     agencyBudget,
     commitmentsTotalMin,
     commitmentsTotalMax,
+    isMapped,
   }: {
     managingAgency: string | null;
     cityCouncilDistrictId: string | null;
@@ -123,6 +132,7 @@ export class CapitalProjectRepositoryMock {
     agencyBudget: string | null;
     commitmentsTotalMin: number | null;
     commitmentsTotalMax: number | null;
+    isMapped: boolean | null;
   }) {
     return this.capitalProjectsCriteria.reduce(
       (acc: FindManyRepo, [criteria, capitalProjects]) => {
@@ -159,6 +169,14 @@ export class CapitalProjectRepositoryMock {
           criteria.commitmentsTotal >= commitmentsTotalMax
         )
           return acc;
+        if (
+          (isMapped === true &&
+            (criteria.liFtMPoly !== null || criteria.liFtMPnt !== null)) ||
+          (isMapped === false &&
+            criteria.liFtMPoly === null &&
+            criteria.liFtMPnt === null)
+        )
+          return acc;
         return acc.concat(capitalProjects);
       },
       [],
@@ -173,6 +191,7 @@ export class CapitalProjectRepositoryMock {
     agencyBudget,
     commitmentsTotalMin,
     commitmentsTotalMax,
+    isMapped,
     limit,
     offset,
   }: {
@@ -183,6 +202,7 @@ export class CapitalProjectRepositoryMock {
     agencyBudget: string | null;
     commitmentsTotalMin: number | null;
     commitmentsTotalMax: number | null;
+    isMapped: boolean | null;
     limit: number;
     offset: number;
   }): Promise<FindManyRepo> {
@@ -194,6 +214,7 @@ export class CapitalProjectRepositoryMock {
       agencyBudget,
       commitmentsTotalMin,
       commitmentsTotalMax,
+      isMapped,
     });
     return results.slice(offset, limit + offset);
   }
@@ -206,6 +227,7 @@ export class CapitalProjectRepositoryMock {
     agencyBudget,
     commitmentsTotalMin,
     commitmentsTotalMax,
+    isMapped,
   }: {
     managingAgency: string | null;
     cityCouncilDistrictId: string | null;
@@ -214,6 +236,7 @@ export class CapitalProjectRepositoryMock {
     agencyBudget: string | null;
     commitmentsTotalMin: number | null;
     commitmentsTotalMax: number | null;
+    isMapped: boolean | null;
   }): Promise<FindCountRepo> {
     const results = await this.filterCapitalProjects({
       managingAgency,
@@ -223,6 +246,7 @@ export class CapitalProjectRepositoryMock {
       agencyBudget,
       commitmentsTotalMin,
       commitmentsTotalMax,
+      isMapped,
     });
     return results.length;
   }

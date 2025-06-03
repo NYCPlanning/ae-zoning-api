@@ -48,6 +48,7 @@ export class CapitalProjectController {
       communityDistrictCombinedId: queryParams.communityDistrictId,
       managingAgency: queryParams.managingAgency,
       agencyBudget: queryParams.agencyBudget,
+      isMapped: queryParams.isMapped,
       commitmentsTotalMin: queryParams.commitmentsTotalMin,
       commitmentsTotalMax: queryParams.commitmentsTotalMax,
     });

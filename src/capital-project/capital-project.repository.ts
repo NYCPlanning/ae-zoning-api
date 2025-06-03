@@ -1,5 +1,16 @@
 import { Inject } from "@nestjs/common";
-import { isNotNull, sql, and, eq, sum, asc, gte, lte, or } from "drizzle-orm";
+import {
+  isNotNull,
+  isNull,
+  sql,
+  and,
+  eq,
+  sum,
+  asc,
+  gte,
+  lte,
+  or,
+} from "drizzle-orm";
 import { DataRetrievalException } from "src/exception";
 import {
   CapitalProjectCategory,
@@ -73,6 +84,7 @@ export class CapitalProjectRepository {
     agencyBudget,
     commitmentsTotalMin,
     commitmentsTotalMax,
+    isMapped,
     limit,
     offset,
   }: {
@@ -83,6 +95,7 @@ export class CapitalProjectRepository {
     agencyBudget: string | null;
     commitmentsTotalMin: number | null;
     commitmentsTotalMax: number | null;
+    isMapped: boolean | null;
     limit: number;
     offset: number;
   }): Promise<FindManyRepo> {
@@ -166,6 +179,18 @@ export class CapitalProjectRepository {
             commitmentsTotalMax !== null
               ? lte(commitmentsTotalByCapitalProject.value, commitmentsTotalMax)
               : undefined,
+            isMapped === true
+              ? or(
+                  isNotNull(capitalProject.liFtMPoly),
+                  isNotNull(capitalProject.liFtMPnt),
+                )
+              : undefined,
+            isMapped === false
+              ? and(
+                  isNull(capitalProject.liFtMPoly),
+                  isNull(capitalProject.liFtMPnt),
+                )
+              : undefined,
           ),
         )
         .limit(limit)
@@ -193,6 +218,7 @@ export class CapitalProjectRepository {
     agencyBudget: string | null;
     commitmentsTotalMin: number | null;
     commitmentsTotalMax: number | null;
+    isMapped: boolean | null;
   }): Promise<FindCountRepo> {
     const key = JSON.stringify({
       ...params,
@@ -213,6 +239,7 @@ export class CapitalProjectRepository {
       agencyBudget,
       commitmentsTotalMin,
       commitmentsTotalMax,
+      isMapped,
     } = params;
     try {
       const commitmentsTotalByCapitalProject =
@@ -290,6 +317,18 @@ export class CapitalProjectRepository {
               : undefined,
             commitmentsTotalMax !== null
               ? lte(commitmentsTotalByCapitalProject.value, commitmentsTotalMax)
+              : undefined,
+            isMapped === true
+              ? or(
+                  isNotNull(capitalProject.liFtMPoly),
+                  isNotNull(capitalProject.liFtMPnt),
+                )
+              : undefined,
+            isMapped === false
+              ? and(
+                  isNull(capitalProject.liFtMPoly),
+                  isNull(capitalProject.liFtMPnt),
+                )
               : undefined,
           ),
         );
