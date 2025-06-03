@@ -8,6 +8,7 @@ describe("zod transform pipe", () => {
     textual: z.coerce.string(),
     numericArray: z.array(z.coerce.number()),
     textualArray: z.array(z.coerce.string()),
+    boolean: z.boolean(), // boolean coercion relies on undesired JS "Boolean" function
   });
 
   const strictSchema = z.object({
@@ -15,6 +16,7 @@ describe("zod transform pipe", () => {
     textual: z.string(),
     numericArray: z.array(z.number()),
     textualArray: z.array(z.string()),
+    boolean: z.boolean(),
   });
 
   it("should parse properly formatted parameters defined in the schema", () => {
@@ -23,6 +25,7 @@ describe("zod transform pipe", () => {
       textual: "text",
       numericArray: "1",
       textualArray: "foo",
+      boolean: "true",
     };
     expect(() => strictSchema.parse(params)).toThrow();
 
@@ -39,6 +42,7 @@ describe("zod transform pipe", () => {
       textual: "text",
       numericArray: ["1", "2"],
       textualArray: ["foo", "bar"],
+      boolean: "true",
     };
     expect(() => strictSchema.parse(params)).toThrow();
 
@@ -55,6 +59,7 @@ describe("zod transform pipe", () => {
       textual: "text",
       numericArray: "1",
       textualArray: "foo",
+      boolean: "true",
     };
 
     expect(() => strictSchema.parse(params)).toThrow();
@@ -70,6 +75,23 @@ describe("zod transform pipe", () => {
       textual: "text",
       numericArray: "1",
       textualArray: "foo",
+      boolean: "true",
+    };
+
+    expect(() => strictSchema.parse(params)).toThrow();
+
+    expect(() => new ZodTransformPipe(testSchema).transform(params)).toThrow(
+      InvalidRequestParameterException,
+    );
+  });
+
+  it("should error when the boolean is not a valid", () => {
+    const params = {
+      numeric: "42",
+      textual: "text",
+      numericArray: "1",
+      textualArray: "foo",
+      boolean: "f",
     };
 
     expect(() => strictSchema.parse(params)).toThrow();
