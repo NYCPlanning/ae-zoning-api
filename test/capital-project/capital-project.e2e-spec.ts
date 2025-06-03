@@ -346,6 +346,90 @@ describe("Capital Projects", () => {
       expect(response.body.message).toBe(dataRetrievalException.message);
       expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);
     });
+
+    it("should 200 and return both mapped and unmapped capital projects when no isMapped value is provided", async () => {
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects`,
+      );
+
+      expect(() =>
+        findCapitalProjectsQueryResponseSchema.parse(response.body),
+      ).not.toThrow();
+      const parsedBody = findCapitalProjectsQueryResponseSchema.parse(
+        response.body,
+      );
+      expect(parsedBody.limit).toBe(20);
+      expect(parsedBody.offset).toBe(0);
+      expect(parsedBody.capitalProjects.length).toBe(9);
+      expect(parsedBody.total).toBe(parsedBody.capitalProjects.length);
+      expect(parsedBody.order).toBe("managingCode, capitalProjectId");
+    });
+
+    it("should 200 and return only capital projects with non-null geometries when isMapped is true", async () => {
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects?isMapped=true`,
+      );
+
+      expect(() =>
+        findCapitalProjectsQueryResponseSchema.parse(response.body),
+      ).not.toThrow();
+      const parsedBody = findCapitalProjectsQueryResponseSchema.parse(
+        response.body,
+      );
+      expect(parsedBody.limit).toBe(20);
+      expect(parsedBody.offset).toBe(0);
+      expect(parsedBody.capitalProjects.length).toBe(4);
+      expect(parsedBody.total).toBe(parsedBody.capitalProjects.length);
+      expect(parsedBody.order).toBe("managingCode, capitalProjectId");
+    });
+
+    it("should 200 and return only capital projects with null geometries when isMapped is false", async () => {
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects?isMapped=false`,
+      );
+
+      expect(() =>
+        findCapitalProjectsQueryResponseSchema.parse(response.body),
+      ).not.toThrow();
+      const parsedBody = findCapitalProjectsQueryResponseSchema.parse(
+        response.body,
+      );
+      expect(parsedBody.limit).toBe(20);
+      expect(parsedBody.offset).toBe(0);
+      expect(parsedBody.capitalProjects.length).toBe(5);
+      expect(parsedBody.total).toBe(parsedBody.capitalProjects.length);
+      expect(parsedBody.order).toBe("managingCode, capitalProjectId");
+    });
+
+    it("should 400 when isMapped is a non-boolean value", async () => {
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects?isMapped=123`,
+      );
+      expect(response.body.message).toBe(
+        new InvalidRequestParameterException().message,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 when when both a city council district id and isMapped are provided", async () => {
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects?cityCouncilDistrictId=50&isMapped=true`,
+      );
+      expect(response.body.message).toBe(
+        new InvalidRequestParameterException().message,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 when when both a community district id and isMapped are provided", async () => {
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects?communityDistrictId=101&isMapped=true`,
+      );
+      expect(response.body.message).toBe(
+        new InvalidRequestParameterException().message,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
   });
 
   describe("findByManagingCodeCapitalProjectId", () => {

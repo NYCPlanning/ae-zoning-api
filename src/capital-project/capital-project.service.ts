@@ -39,6 +39,7 @@ export class CapitalProjectService {
     agencyBudget = null,
     commitmentsTotalMin = null,
     commitmentsTotalMax = null,
+    isMapped = null,
   }: {
     limit?: number;
     offset?: number;
@@ -48,6 +49,7 @@ export class CapitalProjectService {
     agencyBudget?: string | null;
     commitmentsTotalMin?: string | null;
     commitmentsTotalMax?: string | null;
+    isMapped?: boolean | null;
   }) {
     const min = commitmentsTotalMin
       ? parseFloat(commitmentsTotalMin.replaceAll(",", ""))
@@ -55,6 +57,14 @@ export class CapitalProjectService {
     const max = commitmentsTotalMax
       ? parseFloat(commitmentsTotalMax.replaceAll(",", ""))
       : null;
+
+    if (
+      (cityCouncilDistrictId !== null ||
+        communityDistrictCombinedId !== null) &&
+      isMapped !== null
+    ) {
+      throw new InvalidRequestParameterException();
+    }
 
     if (min !== null && max !== null && min > max) {
       throw new InvalidRequestParameterException();
@@ -104,6 +114,7 @@ export class CapitalProjectService {
       agencyBudget,
       commitmentsTotalMin: min,
       commitmentsTotalMax: max,
+      isMapped,
       limit,
       offset,
     });
@@ -116,6 +127,7 @@ export class CapitalProjectService {
       agencyBudget,
       commitmentsTotalMin: min,
       commitmentsTotalMax: max,
+      isMapped,
     });
 
     const [capitalProjects, totalProjects] = await Promise.all([
