@@ -30,9 +30,7 @@ export class CapitalProjectService {
     private readonly agencyBudgetRepository: AgencyBudgetRepository,
   ) {}
 
-  async findMany({
-    limit = 20,
-    offset = 0,
+  async findManyParameterCheck({
     cityCouncilDistrictId = null,
     communityDistrictCombinedId = null,
     managingAgency = null,
@@ -41,23 +39,14 @@ export class CapitalProjectService {
     commitmentsTotalMax = null,
     isMapped = null,
   }: {
-    limit?: number;
-    offset?: number;
     cityCouncilDistrictId?: string | null;
     communityDistrictCombinedId?: string | null;
     managingAgency?: string | null;
     agencyBudget?: string | null;
-    commitmentsTotalMin?: string | null;
-    commitmentsTotalMax?: string | null;
+    commitmentsTotalMin?: number | null;
+    commitmentsTotalMax?: number | null;
     isMapped?: boolean | null;
   }) {
-    const min = commitmentsTotalMin
-      ? parseFloat(commitmentsTotalMin.replaceAll(",", ""))
-      : null;
-    const max = commitmentsTotalMax
-      ? parseFloat(commitmentsTotalMax.replaceAll(",", ""))
-      : null;
-
     if (
       (cityCouncilDistrictId !== null ||
         communityDistrictCombinedId !== null) &&
@@ -66,7 +55,11 @@ export class CapitalProjectService {
       throw new InvalidRequestParameterException();
     }
 
-    if (min !== null && max !== null && min > max) {
+    if (
+      commitmentsTotalMin !== null &&
+      commitmentsTotalMax !== null &&
+      commitmentsTotalMin > commitmentsTotalMax
+    ) {
       throw new InvalidRequestParameterException();
     }
 
@@ -106,10 +99,94 @@ export class CapitalProjectService {
     if (checkedList.some((result) => result === false))
       throw new InvalidRequestParameterException();
 
-    const capitalProjectsPromise = this.capitalProjectRepository.findMany({
+    return;
+  }
+
+  async findManyHelper({
+    limit,
+    offset = 0,
+    cityCouncilDistrictId = null,
+    communityDistrictCombinedId = null,
+    managingAgency = null,
+    agencyBudget = null,
+    commitmentsTotalMin = null,
+    commitmentsTotalMax = null,
+    isMapped = null,
+  }: {
+    limit?: number | null;
+    offset?: number;
+    cityCouncilDistrictId?: string | null;
+    communityDistrictCombinedId?: string | null;
+    managingAgency?: string | null;
+    agencyBudget?: string | null;
+    commitmentsTotalMin?: number | null;
+    commitmentsTotalMax?: number | null;
+    isMapped?: boolean | null;
+  }) {
+    await this.findManyParameterCheck({
+      cityCouncilDistrictId,
+      communityDistrictCombinedId,
+      managingAgency,
+      agencyBudget,
+      commitmentsTotalMin,
+      commitmentsTotalMax,
+      isMapped,
+    });
+
+    const boroughId =
+      communityDistrictCombinedId !== null
+        ? communityDistrictCombinedId.slice(0, 1)
+        : null;
+    const communityDistrictId =
+      communityDistrictCombinedId !== null
+        ? communityDistrictCombinedId.slice(1, 3)
+        : null;
+
+    return await this.capitalProjectRepository.findMany({
+      limit: limit ? limit : 1000000000,
+      offset,
       cityCouncilDistrictId,
       boroughId,
       communityDistrictId,
+      managingAgency,
+      agencyBudget,
+      commitmentsTotalMin,
+      commitmentsTotalMax,
+      isMapped,
+    });
+  }
+
+  async findMany({
+    limit = 20,
+    offset = 0,
+    cityCouncilDistrictId = null,
+    communityDistrictCombinedId = null,
+    managingAgency = null,
+    agencyBudget = null,
+    commitmentsTotalMin = null,
+    commitmentsTotalMax = null,
+    isMapped = null,
+  }: {
+    limit?: number;
+    offset?: number;
+    cityCouncilDistrictId?: string | null;
+    communityDistrictCombinedId?: string | null;
+    managingAgency?: string | null;
+    agencyBudget?: string | null;
+    commitmentsTotalMin?: string | null;
+    commitmentsTotalMax?: string | null;
+    isMapped?: boolean | null;
+  }) {
+    const min = commitmentsTotalMin
+      ? parseFloat(commitmentsTotalMin.replaceAll(",", ""))
+      : null;
+    const max = commitmentsTotalMax
+      ? parseFloat(commitmentsTotalMax.replaceAll(",", ""))
+      : null;
+
+    const capitalProjectsPromise = this.findManyHelper({
+      cityCouncilDistrictId,
+      communityDistrictCombinedId,
       managingAgency,
       agencyBudget,
       commitmentsTotalMin: min,
@@ -118,6 +195,15 @@ export class CapitalProjectService {
       limit,
       offset,
     });
+
+    const boroughId =
+      communityDistrictCombinedId !== null
+        ? communityDistrictCombinedId.slice(0, 1)
+        : null;
+    const communityDistrictId =
+      communityDistrictCombinedId !== null
+        ? communityDistrictCombinedId.slice(1, 3)
+        : null;
 
     const totalProjectsPromise = this.capitalProjectRepository.findCount({
       cityCouncilDistrictId,
@@ -143,6 +229,38 @@ export class CapitalProjectService {
       totalProjects,
       order: "managingCode, capitalProjectId",
     };
+  }
+
+  async findManyDownload({
+    cityCouncilDistrictId = null,
+    communityDistrictCombinedId = null,
+    managingAgency = null,
+    agencyBudget = null,
+    commitmentsTotalMin = null,
+    commitmentsTotalMax = null,
+    isMapped = null,
+  }: {
+    cityCouncilDistrictId?: string | null;
+    communityDistrictCombinedId?: string | null;
+    managingAgency?: string | null;
+    agencyBudget?: string | null;
+    commitmentsTotalMin?: string | null;
+    commitmentsTotalMax?: string | null;
+    isMapped?: boolean | null;
+  }) {
+    return await this.findManyHelper({
+      cityCouncilDistrictId,
+      communityDistrictCombinedId,
+      managingAgency,
+      agencyBudget,
+      commitmentsTotalMin: commitmentsTotalMin
+        ? parseFloat(commitmentsTotalMin.replaceAll(",", ""))
+        : null,
+      commitmentsTotalMax: commitmentsTotalMax
+        ? parseFloat(commitmentsTotalMax.replaceAll(",", ""))
+        : null,
+      isMapped,
+    });
   }
 
   async findByManagingCodeCapitalProjectId(

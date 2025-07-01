@@ -27,6 +27,8 @@ import {
 } from "src/filter";
 import { ZodTransformPipe } from "src/pipes/zod-transform-pipe";
 import { findCapitalProjectsQueryParamsSchema } from "src/gen/zod/findCapitalProjectsSchema";
+import { unparse } from "papaparse";
+
 @UseFilters(
   BadRequestExceptionFilter,
   InternalServerErrorExceptionFilter,
@@ -52,6 +54,42 @@ export class CapitalProjectController {
       commitmentsTotalMin: queryParams.commitmentsTotalMin,
       commitmentsTotalMax: queryParams.commitmentsTotalMax,
     });
+  }
+
+  @Get("/download")
+  async findManyDownload(
+    @Res() res: Response,
+    @Query(new ZodTransformPipe(findCapitalProjectsQueryParamsSchema))
+    queryParams: FindCapitalProjectsQueryParams,
+  ) {
+    const data = await this.capitalProjectService.findManyDownload({
+      cityCouncilDistrictId: queryParams.cityCouncilDistrictId,
+      communityDistrictCombinedId: queryParams.communityDistrictId,
+      managingAgency: queryParams.managingAgency,
+      agencyBudget: queryParams.agencyBudget,
+      isMapped: queryParams.isMapped,
+      commitmentsTotalMin: queryParams.commitmentsTotalMin,
+      commitmentsTotalMax: queryParams.commitmentsTotalMax,
+    });
+
+    const csvFileSummary =
+      `NYC Capital Projects Search:\n` +
+      `${queryParams.cityCouncilDistrictId ? "City Council District:," + queryParams.cityCouncilDistrictId + "\n" : ""}` +
+      `${queryParams.communityDistrictId ? "Community District:," + queryParams.communityDistrictId + "\n" : ""}` +
+      `${queryParams.managingAgency ? "Managing Agency:," + queryParams.managingAgency + "\n" : ""}` +
+      `${queryParams.agencyBudget ? "Agency Budget:," + queryParams.agencyBudget + "\n" : ""}` +
+      `${queryParams.isMapped ? "Mapped Projects:," + queryParams.isMapped + "\n" : ""}` +
+      `${queryParams.commitmentsTotalMin ? "Project Amount Minimum:," + queryParams.commitmentsTotalMin + "\n" : ""}` +
+      `${queryParams.commitmentsTotalMax ? "Project Amount Maximum:," + queryParams.commitmentsTotalMax + "\n" : ""}`;
+
+    const csvData = `${csvFileSummary}\n\n${unparse(data)}`;
+
+    res.set("Content-Type", "application/csv");
+    res.set(
+      "Content-Disposition",
+      "attachment; filename=NYC_Capital_Planning_Map_Data_Export.csv",
+    );
+    res.send(csvData);
   }
 
   @UsePipes(
