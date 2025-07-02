@@ -1,5 +1,6 @@
 import * as ExcelJS from "exceljs";
 import { FindCapitalProjectsQueryParams } from "src/gen";
+import type { CapitalProject } from "src/gen";
 
 export function numberToColumn(num: number) {
   //This makes num=1 return A, otherwise num=0 returns A
@@ -13,36 +14,111 @@ export function numberToColumn(num: number) {
   return letters;
 }
 
-export async function createWorkBookFromTemplate({
-  templateFilename = "template.xlsx",
+export interface TableHeader {
+  variable: string;
+  label: string;
+}
+
+export interface SheetParams {
+  tableName: string;
+  tableHeaders: TableHeader[];
+  queryParams: FindCapitalProjectsQueryParams;
+  data: CapitalProject[];
+}
+
+export interface AddSheetToExcelDocumentParams extends SheetParams {
+  reportName: string;
+  workbook: ExcelJS.Workbook;
+  generationDate: string;
+  sheetNumber: number;
+}
+
+export interface GenerateExcelDocumentParams {
+  /**
+   * @description The path to the file to use as a template
+   * @type string
+   */
+  templateFilename: string;
+  /**
+   * @description The path to the file to save the output to. If undefined, file will not be saved to disk
+   * @type string | undefined
+   */
+  outputFilename?: string;
+  /**
+   * @description The name of the generated report
+   * @type string
+   */
+  reportName: string;
+  /**
+   * @description The set of sheets to include in the document
+   * @type array
+   */
+  sheets: SheetParams[];
+}
+
+export async function generateExcelDocument({
+  templateFilename = "src/downloads/template.xlsx",
   outputFilename,
   reportName,
-  data,
-  tableHeaders,
-  queryParams,
-}: {
-  templateFilename: string;
-  outputFilename: string | null; // null skips saving the file
-  reportName: string;
-  data: any;
-  tableHeaders: any;
-  queryParams: FindCapitalProjectsQueryParams;
-}) {
-  const workbook = new ExcelJS.Workbook();
+  sheets,
+}: GenerateExcelDocumentParams) {
+  let workbook = new ExcelJS.Workbook();
   await workbook.xlsx.readFile(templateFilename);
 
-  const ws =
-    workbook.getWorksheet("Template Sheet") ||
-    workbook.addWorksheet("Template Sheet");
+  if (!workbook.worksheets[sheets.length - 1]) {
+    throw new Error(
+      "The Excel template does not have enough sheets for this request.",
+    );
+  }
 
-  ws.name = reportName;
-
-  ws.getCell("A6").value = reportName;
-  ws.getCell("B8").value = new Date().toLocaleString("en-US", {
+  const generationDate = new Date().toLocaleString("en-US", {
     timeZone: "America/New_York",
   });
 
-  let activeRow = 11;
+  for (let sheetNumber = 0; sheetNumber < sheets.length; sheetNumber++) {
+    workbook = await addSheetToExcelDocument({
+      workbook,
+      reportName,
+      generationDate,
+      sheetNumber,
+      ...sheets[sheetNumber],
+    });
+  }
+
+  // Delete any extra unused sheets from the template
+  if (workbook.worksheets.length > sheets.length) {
+    for (let i = workbook.worksheets.length - 1; i >= sheets.length; i--) {
+      workbook.removeWorksheet(workbook.worksheets[i].id);
+    }
+  }
+
+  // Save the file to disk
+  if (outputFilename) {
+    await workbook.xlsx.writeFile(outputFilename);
+  }
+
+  return workbook.xlsx.writeBuffer();
+}
+
+export async function addSheetToExcelDocument({
+  workbook,
+  sheetNumber,
+  generationDate,
+  reportName,
+  tableName,
+  tableHeaders,
+  queryParams,
+  data,
+}: AddSheetToExcelDocumentParams) {
+  const ws =
+    workbook.worksheets[sheetNumber] || workbook.addWorksheet(tableName);
+
+  ws.name = tableName;
+  ws.getCell("A6").value = reportName;
+  ws.getCell("B8").value = generationDate;
+  ws.getCell("B11").value = tableName;
+
+  let activeRow = 14;
 
   if (queryParams.cityCouncilDistrictId) {
     ws.getCell(`B${activeRow}`).value = "City Council District:";
@@ -94,7 +170,7 @@ export async function createWorkBookFromTemplate({
 
   try {
     ws.addTable({
-      name: "MyTable",
+      name: `Table${sheetNumber + 1}`,
       ref: `E2`,
       headerRow: true,
       totalsRow: false,
@@ -109,9 +185,5 @@ export async function createWorkBookFromTemplate({
     console.error(e);
   }
 
-  if (outputFilename) {
-    await workbook.xlsx.writeFile(outputFilename);
-  }
-
-  return workbook.xlsx.writeBuffer();
+  return workbook;
 }

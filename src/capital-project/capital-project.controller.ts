@@ -27,7 +27,7 @@ import {
 } from "src/filter";
 import { ZodTransformPipe } from "src/pipes/zod-transform-pipe";
 import { findCapitalProjectsQueryParamsSchema } from "src/gen/zod/findCapitalProjectsSchema";
-import { createWorkBookFromTemplate } from "src/downloads";
+import { generateExcelDocument } from "src/downloads";
 
 @UseFilters(
   BadRequestExceptionFilter,
@@ -82,13 +82,18 @@ export class CapitalProjectController {
       { variable: "category", label: "Category" },
     ];
 
-    const xlsxData = await createWorkBookFromTemplate({
+    const xlsxData = await generateExcelDocument({
       templateFilename: "src/downloads/template.xlsx",
       outputFilename: "src/downloads/output.xlsx",
-      reportName: "Capital Projects",
-      data,
-      tableHeaders,
-      queryParams,
+      reportName: "Capital Projects Map Report",
+      sheets: [
+        {
+          tableName: "Capital Projects",
+          tableHeaders,
+          queryParams,
+          data,
+        },
+      ],
     });
 
     res.set(
