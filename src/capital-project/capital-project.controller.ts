@@ -27,7 +27,7 @@ import {
 } from "src/filter";
 import { ZodTransformPipe } from "src/pipes/zod-transform-pipe";
 import { findCapitalProjectsQueryParamsSchema } from "src/gen/zod/findCapitalProjectsSchema";
-import { unparse } from "papaparse";
+import { createWorkBookFromTemplate } from "src/downloads";
 
 @UseFilters(
   BadRequestExceptionFilter,
@@ -72,24 +72,34 @@ export class CapitalProjectController {
       commitmentsTotalMax: queryParams.commitmentsTotalMax,
     });
 
-    const csvFileSummary =
-      `NYC Capital Projects Search:\n` +
-      `${queryParams.cityCouncilDistrictId ? "City Council District:," + queryParams.cityCouncilDistrictId + "\n" : ""}` +
-      `${queryParams.communityDistrictId ? "Community District:," + queryParams.communityDistrictId + "\n" : ""}` +
-      `${queryParams.managingAgency ? "Managing Agency:," + queryParams.managingAgency + "\n" : ""}` +
-      `${queryParams.agencyBudget ? "Agency Budget:," + queryParams.agencyBudget + "\n" : ""}` +
-      `${queryParams.isMapped ? "Mapped Projects:," + queryParams.isMapped + "\n" : ""}` +
-      `${queryParams.commitmentsTotalMin ? "Project Amount Minimum:," + queryParams.commitmentsTotalMin + "\n" : ""}` +
-      `${queryParams.commitmentsTotalMax ? "Project Amount Maximum:," + queryParams.commitmentsTotalMax + "\n" : ""}`;
+    const tableHeaders = [
+      { variable: "id", label: "Capital Project ID" },
+      { variable: "description", label: "Description" },
+      { variable: "managingCode", label: "Managing Code" },
+      { variable: "managingAgency", label: "Managing Agency" },
+      { variable: "maxDate", label: "Max Date" },
+      { variable: "minDate", label: "Min Date" },
+      { variable: "category", label: "Category" },
+    ];
 
-    const csvData = `${csvFileSummary}\n\n${unparse(data)}`;
+    const xlsxData = await createWorkBookFromTemplate({
+      templateFilename: "src/downloads/template.xlsx",
+      outputFilename: "src/downloads/output.xlsx",
+      reportName: "Capital Projects",
+      data,
+      tableHeaders,
+      queryParams,
+    });
 
-    res.set("Content-Type", "application/csv");
+    res.set(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    );
     res.set(
       "Content-Disposition",
-      "attachment; filename=NYC_Capital_Planning_Map_Data_Export.csv",
+      "attachment; filename=NYC_Capital_Planning_Map_Data_Export.xlsx",
     );
-    res.send(csvData);
+    res.send(xlsxData);
   }
 
   @UsePipes(
