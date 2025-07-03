@@ -84,7 +84,6 @@ export class CapitalProjectController {
 
     const xlsxData = await generateExcelDocument({
       templateFilename: "src/downloads/template.xlsx",
-      outputFilename: "src/downloads/output.xlsx",
       reportName: "Capital Projects Map Report",
       sheets: [
         {
