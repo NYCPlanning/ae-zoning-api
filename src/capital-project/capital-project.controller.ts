@@ -28,6 +28,14 @@ import {
 import { ZodTransformPipe } from "src/pipes/zod-transform-pipe";
 import { findCapitalProjectsQueryParamsSchema } from "src/gen/zod/findCapitalProjectsSchema";
 import { generateExcelDocument } from "src/downloads";
+import { unparse } from "papaparse";
+import { writeToBuffer } from "@fast-csv/format";
+import { AsyncParser } from "@json2csv/node";
+
+const opts = {};
+const transformOpts = {};
+const asyncOpts = {};
+const parser = new AsyncParser(opts, asyncOpts, transformOpts);
 
 @UseFilters(
   BadRequestExceptionFilter,
@@ -82,7 +90,8 @@ export class CapitalProjectController {
       { variable: "category", label: "Category" },
     ];
 
-    const xlsxData = await generateExcelDocument({
+    const startExcel = performance.now();
+    await generateExcelDocument({
       templateFilename: "src/downloads/template.xlsx",
       reportName: "Capital Projects Map Report",
       sheets: [
@@ -94,16 +103,36 @@ export class CapitalProjectController {
         },
       ],
     });
+    console.debug("excel time", performance.now() - startExcel);
 
-    res.set(
-      "Content-Type",
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    );
+    const csvFileSummary =
+      `NYC Capital Projects Search:\n` +
+      `${queryParams.cityCouncilDistrictId ? "City Council District:," + queryParams.cityCouncilDistrictId + "\n" : ""}` +
+      `${queryParams.communityDistrictId ? "Community District:," + queryParams.communityDistrictId + "\n" : ""}` +
+      `${queryParams.managingAgency ? "Managing Agency:," + queryParams.managingAgency + "\n" : ""}` +
+      `${queryParams.agencyBudget ? "Agency Budget:," + queryParams.agencyBudget + "\n" : ""}` +
+      `${queryParams.isMapped ? "Mapped Projects:," + queryParams.isMapped + "\n" : ""}` +
+      `${queryParams.commitmentsTotalMin ? "Project Amount Minimum:," + queryParams.commitmentsTotalMin + "\n" : ""}` +
+      `${queryParams.commitmentsTotalMax ? "Project Amount Maximum:," + queryParams.commitmentsTotalMax + "\n" : ""}`;
+
+    const startFastCsv = performance.now();
+    const csvData = `${csvFileSummary}\n\n${await writeToBuffer(data)}`;
+    console.debug("fast csv time", performance.now() - startFastCsv);
+
+    const startPapaparse = performance.now();
+    `${csvFileSummary}\n\n${unparse(data)}`;
+    console.debug("papa parse time", performance.now() - startPapaparse);
+
+    const startJson2Csv = performance.now();
+    `${csvFileSummary}\n\n${await parser.parse(data).promise()}`;
+    console.debug("json2csv time", performance.now() - startJson2Csv);
+
+    res.set("Content-Type", "application/csv");
     res.set(
       "Content-Disposition",
-      "attachment; filename=NYC_Capital_Planning_Map_Data_Export.xlsx",
+      "attachment; filename=NYC_Capital_Planning_Map_Data_Export.csv",
     );
-    res.send(xlsxData);
+    res.send(csvData);
   }
 
   @UsePipes(
