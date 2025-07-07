@@ -40,6 +40,7 @@
     "drizzle-orm": "^0.36.1",
     "immer": "^10.1.1",
     "joi": "^17.13.3",
+    "minio": "^8.0.5",
     "papaparse": "^5.5.3",
     "pg": "^8.15.6",
     "reflect-metadata": "^0.1.13",

@@ -3,7 +3,6 @@ import {
   Get,
   Injectable,
   Param,
-  Query,
   Redirect,
   StreamableFile,
   UseFilters,
@@ -20,7 +19,6 @@ import {
   findZoningDistrictClassesByTaxLotBblPathParamsSchema,
   FindZoningDistrictClassesByTaxLotBblPathParams,
   findTaxLotsQueryParamsSchema,
-  FindTaxLotsQueryParams,
 } from "../gen";
 import {
   BadRequestExceptionFilter,
@@ -29,6 +27,15 @@ import {
 } from "src/filter";
 import { ZodTransformPipe } from "src/pipes/zod-transform-pipe";
 import { unparse } from "papaparse";
+import * as Minio from "minio";
+
+const minioClient = new Minio.Client({
+  endPoint: "127.0.0.1",
+  port: 4566,
+  useSSL: false,
+  accessKey: "test",
+  secretKey: "test",
+});
 
 @Injectable()
 @UseFilters(
@@ -42,15 +49,22 @@ export class TaxLotController {
 
   @Get()
   @UsePipes(new ZodTransformPipe(findTaxLotsQueryParamsSchema))
-  async findMany(
-    @Query()
-    params: FindTaxLotsQueryParams,
-  ) {
-    const { taxLots } = await this.taxLotService.findMany(params);
+  async findMany() {
+    // const { taxLots } = await this.taxLotService.findMany(params);
+    const taxLots = [{}];
     const start = performance.now();
     const csvFormat = unparse(taxLots);
     const csv = Buffer.from(csvFormat);
     console.debug("time", performance.now() - start);
+    const bucketName = "test-bucket";
+    const exists = await minioClient.bucketExists(bucketName);
+    if (exists) {
+      console.log("bucket exists", bucketName);
+    } else {
+      await minioClient.makeBucket(bucketName, "us-east-1");
+    }
+    const buckets = await minioClient.listBuckets();
+    console.debug("buckets", buckets);
     return new StreamableFile(csv, {
       type: "text/csv",
       disposition: "attachment; filename=tax-lots.csv",

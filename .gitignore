@@ -44,3 +44,6 @@ lerna-debug.log*
 
 # database volume
 db-volume
+
+# storage volume
+volume
