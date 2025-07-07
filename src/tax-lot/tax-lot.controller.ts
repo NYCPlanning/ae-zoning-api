@@ -49,8 +49,8 @@ export class TaxLotController {
     const { taxLots } = await this.taxLotService.findMany(params);
     const start = performance.now();
     const csvFormat = unparse(taxLots);
-    console.debug("time", performance.now() - start);
     const csv = Buffer.from(csvFormat);
+    console.debug("time", performance.now() - start);
     return new StreamableFile(csv, {
       type: "text/csv",
       disposition: "attachment; filename=tax-lots.csv",
