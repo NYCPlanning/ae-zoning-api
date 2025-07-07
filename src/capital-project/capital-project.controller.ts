@@ -82,7 +82,10 @@ export class CapitalProjectController {
       `${queryParams.commitmentsTotalMin ? "Project Amount Minimum:," + queryParams.commitmentsTotalMin + "\n" : ""}` +
       `${queryParams.commitmentsTotalMax ? "Project Amount Maximum:," + queryParams.commitmentsTotalMax + "\n" : ""}`;
 
+    const start = performance.now();
     const csvData = `${csvFileSummary}\n\n${unparse(data)}`;
+    const end = performance.now();
+    console.debug("time", end - start);
 
     res.set("Content-Type", "application/csv");
     res.set(
