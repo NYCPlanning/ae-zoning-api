@@ -5,6 +5,7 @@ import {
   Param,
   Query,
   Redirect,
+  StreamableFile,
   UseFilters,
   UsePipes,
 } from "@nestjs/common";
@@ -27,6 +28,7 @@ import {
   NotFoundExceptionFilter,
 } from "src/filter";
 import { ZodTransformPipe } from "src/pipes/zod-transform-pipe";
+import { unparse } from "papaparse";
 
 @Injectable()
 @UseFilters(
@@ -44,7 +46,15 @@ export class TaxLotController {
     @Query()
     params: FindTaxLotsQueryParams,
   ) {
-    return await this.taxLotService.findMany(params);
+    const { taxLots } = await this.taxLotService.findMany(params);
+    const start = performance.now();
+    const csvFormat = unparse(taxLots);
+    console.debug("time", performance.now() - start);
+    const csv = Buffer.from(csvFormat);
+    return new StreamableFile(csv, {
+      type: "text/csv",
+      disposition: "attachment; filename=tax-lots.csv",
+    });
   }
 
   @Get("/:bbl")

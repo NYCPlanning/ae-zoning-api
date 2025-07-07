@@ -51,10 +51,14 @@ export class TaxLotService {
       lats === undefined &&
       buffer === undefined
     ) {
-      const taxLots = await this.taxLotRepository.findMany({
-        limit,
-        offset,
-      });
+      const taxLots = await this.taxLotRepository
+        .findMany
+        //   {
+        //   limit,
+        //   offset,
+        // }
+        ();
+
       return {
         taxLots,
         limit,
