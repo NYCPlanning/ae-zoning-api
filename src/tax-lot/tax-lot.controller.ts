@@ -1,12 +1,13 @@
 import {
+  Body,
   Controller,
   Get,
   Inject,
   Injectable,
   Param,
+  Put,
   Query,
   Redirect,
-  StreamableFile,
   UseFilters,
   UsePipes,
 } from "@nestjs/common";
@@ -55,34 +56,27 @@ export class TaxLotController {
     return await this.taxLotService.findMany(params);
   }
 
+  @Put("/csv")
+  async replaceCsv(
+    @Body()
+    body: {
+      geometry?: "Point" | "LineString" | "Polygon";
+      lats?: Array<number>;
+      lons?: Array<number>;
+      buffer?: number;
+    },
+  ) {
+    const taxLots = await this.taxLotService.findCsv(body);
+    const fileName = this.fileStorage.getFileName("tax-lots", body, ".csv");
+    return await this.fileStorage.replaceFile(fileName, taxLots);
+  }
+
   @Get("/csv")
   @UsePipes(new ZodTransformPipe(findTaxLotsQueryParamsSchema))
   async findManyCsv(@Query() params: FindTaxLotsQueryParams) {
-    const taxLots = await this.taxLotService.findCsv(params);
+    const fileName = this.fileStorage.getFileName("tax-lots", params, ".csv");
 
-    const bucketName = "test-bucket";
-    const exists = await this.fileStorage.bucketExists(bucketName);
-    if (exists) {
-      console.log("bucket exists", bucketName);
-      this.fileStorage.putObject(
-        bucketName,
-        "tax-lots.csv",
-        taxLots,
-        taxLots.byteLength,
-      );
-      const data: Array<unknown> = [];
-      const objectStream = this.fileStorage.listObjects(bucketName);
-      objectStream.on("data", (obj) => data.push(obj));
-      objectStream.on("end", () => console.debug("objects", data));
-    } else {
-      await this.fileStorage.makeBucket(bucketName, "us-east-1");
-    }
-    const buckets = await this.fileStorage.listBuckets();
-    console.debug("buckets", buckets);
-    return new StreamableFile(taxLots, {
-      type: "text/csv",
-      disposition: "attachment; filename=tax-lots.csv",
-    });
+    return await this.fileStorage.getFileUrl(fileName);
   }
 
   @Get("/:bbl")
