@@ -66,14 +66,13 @@ export class TaxLotRepository {
     }
   }
 
-  async findMany() // {
-  // limit,
-  // offset,
-  // }: {
-  //   limit: number;
-  //   offset: number;
-  // }
-  : Promise<FindManyRepo> {
+  async findMany({
+    limit,
+    offset,
+  }: {
+    limit: number;
+    offset: number;
+  }): Promise<FindManyRepo> {
     try {
       return await this.db.query.taxLot.findMany({
         columns: {
@@ -84,9 +83,9 @@ export class TaxLotRepository {
           address: true,
           landUseId: true,
         },
-        // limit,
-        // offset,
-        // orderBy: taxLot.bbl,
+        limit,
+        offset,
+        orderBy: taxLot.bbl,
       });
     } catch {
       throw new DataRetrievalException();

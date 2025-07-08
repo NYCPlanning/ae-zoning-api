@@ -12,6 +12,7 @@ import { ZoningDistrictModule } from "./zoning-district/zoning-district.module";
 import {
   DbConfig,
   FeatureFlagConfig,
+  FileStorageConfig,
   StorageConfig,
   TileCacheConfig,
 } from "./config";
@@ -29,7 +30,13 @@ import { CacheModule } from "@nestjs/cache-manager";
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [DbConfig, FeatureFlagConfig, TileCacheConfig, StorageConfig],
+      load: [
+        DbConfig,
+        FileStorageConfig,
+        FeatureFlagConfig,
+        TileCacheConfig,
+        StorageConfig,
+      ],
       validationSchema: Joi.object({
         NODE_ENV: Joi.string().valid("development", "production", "test"),
         DATABASE_HOST: Joi.string(),

@@ -1,5 +1,6 @@
 import { registerAs } from "@nestjs/config";
 import { z } from "zod";
+
 // Drizzle configuration for application
 export const DbConfig = registerAs("db", () => ({
   host: process.env.DATABASE_HOST,
@@ -9,6 +10,28 @@ export const DbConfig = registerAs("db", () => ({
   name: process.env.DATABASE_NAME,
   env: process.env.DATABASE_ENV,
 }));
+
+const fileStorageConfigSchema = z.object({
+  endPoint: z.string(),
+  port: z.coerce.number().int(),
+  useSSL: z.boolean(),
+  accessKey: z.string(),
+  secretKey: z.string(),
+});
+
+type FileStorageConfig = z.infer<typeof fileStorageConfigSchema>;
+
+export const FileStorageConfig = registerAs(
+  "fileStorage",
+  (): FileStorageConfig =>
+    fileStorageConfigSchema.parse({
+      endPoint: process.env.FILE_STORAGE_ENDPOINT,
+      port: process.env.FILE_STORAGE_PORT,
+      useSSL: process.env.FILE_STORAGE_SSL === "ON",
+      accessKey: process.env.FILE_STORAGE_ACCESS_KEY,
+      secretKey: process.env.FILE_STORAGE_SECRET_KEY,
+    }),
+);
 
 export const TileCacheConfig = registerAs("tileCache", () => {
   const { TILE_CACHE_LRU_SIZE } = process.env;
