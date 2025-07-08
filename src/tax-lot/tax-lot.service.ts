@@ -6,6 +6,7 @@ import { z } from "zod";
 import { FindTaxLotsQueryParams } from "src/gen";
 import { InvalidSpatialFilterRequestParametersException } from "src/exception/invalid-spatial-filter";
 import { Geom } from "src/types";
+import { unparse } from "papaparse";
 
 export const spatialFilterSchema = z.object({
   geometry: z.enum(["Point", "LineString", "Polygon"]),
@@ -22,6 +23,119 @@ export class TaxLotService {
     @Inject(TaxLotRepository)
     private readonly taxLotRepository: TaxLotRepository,
   ) {}
+
+  async findGeomFilter({
+    geometry,
+    lons,
+    lats,
+    buffer,
+  }: {
+    geometry?: "Point" | "LineString" | "Polygon";
+    lons?: Array<number>;
+    lats?: Array<number>;
+    buffer?: number;
+  }) {
+    if (geometry === undefined || lons === undefined || lats === undefined)
+      throw new InvalidSpatialFilterRequestParametersException(
+        "missing required spatial parameter",
+      );
+
+    if (lons.length !== lats.length)
+      throw new InvalidSpatialFilterRequestParametersException(
+        "latitude and longitude lengths differ",
+      );
+
+    // Define parameters in a common scope when they will be applied to all feature types
+    let shape: Geometry;
+    let geom: Geom = "";
+    let orderGeom: Geom = "";
+
+    if (geometry === "Point") {
+      if (lons.length !== 1)
+        throw new InvalidSpatialFilterRequestParametersException(
+          "more than one coordinate provided for Point",
+        );
+
+      // Point-specific geojson
+      shape = {
+        type: geometry,
+        coordinates: [lons[0], lats[0]],
+      };
+
+      geom = await this.taxLotRepository.findGeomFromGeoJson(shape, 2263);
+
+      orderGeom = geom;
+    }
+
+    if (geometry === "LineString") {
+      if (lons.length < 2)
+        throw new InvalidSpatialFilterRequestParametersException(
+          "fewer than two coordinates provided for LineString",
+        );
+
+      // LineString specific geojson
+      shape = {
+        type: geometry,
+        coordinates: lons.map((lon, index) => [lon, lats[index]]),
+      };
+
+      geom = await this.taxLotRepository.findGeomFromGeoJson(shape, 2263);
+
+      orderGeom = geom;
+
+      // LineString geom validity check
+      const valid = await this.taxLotRepository.checkGeomIsValid(geom);
+      if (!valid)
+        throw new InvalidSpatialFilterRequestParametersException(
+          "geometry is invalid",
+        );
+    }
+
+    if (geometry === "Polygon") {
+      if (lons.length < 4)
+        throw new InvalidSpatialFilterRequestParametersException(
+          "fewer than four coordinates provided for Polygon",
+        );
+
+      // Polygon specific geojson
+      shape = {
+        type: geometry,
+        coordinates: [lons.map((lon, index) => [lon, lats[index]])],
+      };
+
+      geom = await this.taxLotRepository.findGeomFromGeoJson(shape, 2263);
+
+      // Polygon geom validity check
+      const valid = await this.taxLotRepository.checkGeomIsValid(geom);
+      if (!valid)
+        throw new InvalidSpatialFilterRequestParametersException(
+          "geometry is invalid",
+        );
+
+      // Find the center of the maximum inscribed circle for distance ordering
+      const center =
+        await this.taxLotRepository.findMaximumInscribedCircleCenter(geom);
+
+      orderGeom = center;
+    }
+
+    let intersectGeom: string;
+    // If a buffer was provided, then it will be used as the spatial filter
+    if (buffer !== undefined) {
+      const geomBuffer = await this.taxLotRepository.findGeomBuffer(
+        geom,
+        buffer,
+      );
+      intersectGeom = geomBuffer;
+    } else {
+      intersectGeom = geom;
+    }
+
+    return {
+      intersectGeom,
+      orderGeom,
+    };
+  }
 
   /**
    *
@@ -44,7 +158,8 @@ export class TaxLotService {
     lats,
     buffer,
   }: FindTaxLotsQueryParams) {
-    // When there are no spatial parameters provided, it is a valid search for a non-filtered list of tax lots
+    // When there are no spatial parameters provided,
+    // it is a valid search for a non-filtered list of tax lots
     if (
       geometry === undefined &&
       lons === undefined &&
@@ -65,119 +180,66 @@ export class TaxLotService {
       };
     }
 
-    // When all of the required spatial parameters are provided, it is a valid search for a filtered list
-    if (geometry !== undefined && lons !== undefined && lats !== undefined) {
-      if (lons.length !== lats.length)
-        throw new InvalidSpatialFilterRequestParametersException(
-          "latitude and longitude lengths differ",
-        );
+    const { intersectGeom, orderGeom } = await this.findGeomFilter({
+      geometry,
+      lons,
+      lats,
+      buffer,
+    });
 
-      // Define parameters in a common scope when they will be applied to all feature types
-      let shape: Geometry;
-      let geom: Geom = "";
-      let orderGeom: Geom = "";
+    const taxLots = await this.taxLotRepository.findManyBySpatialFilter({
+      limit,
+      offset,
+      intersectGeom,
+      orderGeom,
+    });
 
-      if (geometry === "Point") {
-        if (lons.length !== 1)
-          throw new InvalidSpatialFilterRequestParametersException(
-            "more than one coordinate provided for Point",
-          );
+    return {
+      taxLots,
+      limit,
+      offset,
+      order: "distance",
+      total: taxLots.length,
+    };
+  }
 
-        // Point-specific geojson
-        shape = {
-          type: geometry,
-          coordinates: [lons[0], lats[0]],
-        };
+  async findCsv({
+    geometry,
+    lons,
+    lats,
+    buffer,
+  }: {
+    geometry?: "Point" | "LineString" | "Polygon";
+    lons?: Array<number>;
+    lats?: Array<number>;
+    buffer?: number;
+  }) {
+    // When there are no spatial parameters provided,
+    // it is a valid search for a non-filtered list of tax lots
+    if (
+      geometry === undefined &&
+      lons === undefined &&
+      lats === undefined &&
+      buffer === undefined
+    ) {
+      const taxLots = await this.taxLotRepository.findMany({});
 
-        geom = await this.taxLotRepository.findGeomFromGeoJson(shape, 2263);
-
-        orderGeom = geom;
-      }
-
-      if (geometry === "LineString") {
-        if (lons.length < 2)
-          throw new InvalidSpatialFilterRequestParametersException(
-            "fewer than two coordinates provided for LineString",
-          );
-
-        // LineString specific geojson
-        shape = {
-          type: geometry,
-          coordinates: lons.map((lon, index) => [lon, lats[index]]),
-        };
-
-        geom = await this.taxLotRepository.findGeomFromGeoJson(shape, 2263);
-
-        orderGeom = geom;
-
-        // LineString geom validity check
-        const valid = await this.taxLotRepository.checkGeomIsValid(geom);
-        if (!valid)
-          throw new InvalidSpatialFilterRequestParametersException(
-            "geometry is invalid",
-          );
-      }
-
-      if (geometry === "Polygon") {
-        if (lons.length < 4)
-          throw new InvalidSpatialFilterRequestParametersException(
-            "fewer than four coordinates provided for Polygon",
-          );
-
-        // Polygon specific geojson
-        shape = {
-          type: geometry,
-          coordinates: [lons.map((lon, index) => [lon, lats[index]])],
-        };
-
-        geom = await this.taxLotRepository.findGeomFromGeoJson(shape, 2263);
-
-        // Polygon geom validity check
-        const valid = await this.taxLotRepository.checkGeomIsValid(geom);
-        if (!valid)
-          throw new InvalidSpatialFilterRequestParametersException(
-            "geometry is invalid",
-          );
-
-        // Find the center of the maximum inscribed circle for distance ordering
-        const center =
-          await this.taxLotRepository.findMaximumInscribedCircleCenter(geom);
-
-        orderGeom = center;
-      }
-
-      let intersectGeom: string;
-      // If a buffer was provided, then it will be used as the spatial filter
-      if (buffer !== undefined) {
-        const geomBuffer = await this.taxLotRepository.findGeomBuffer(
-          geom,
-          buffer,
-        );
-        intersectGeom = geomBuffer;
-      } else {
-        intersectGeom = geom;
-      }
-
-      const taxLots = await this.taxLotRepository.findManyBySpatialFilter({
-        limit,
-        offset,
-        intersectGeom,
-        orderGeom,
-      });
-
-      return {
-        taxLots,
-        limit,
-        offset,
-        order: "distance",
-        total: taxLots.length,
-      };
+      return Buffer.from(unparse(taxLots));
     }
 
-    // If the above conditions were not met, this implies that an incomplete set of spatial parameters were supplied.
-    throw new InvalidSpatialFilterRequestParametersException(
-      "missing required parameters",
-    );
+    const { intersectGeom, orderGeom } = await this.findGeomFilter({
+      geometry,
+      lons,
+      lats,
+      buffer,
+    });
+
+    const taxLots = await this.taxLotRepository.findManyBySpatialFilter({
+      intersectGeom,
+      orderGeom,
+    });
+
+    return Buffer.from(unparse(taxLots));
   }
 
   async findByBbl(bbl: string) {

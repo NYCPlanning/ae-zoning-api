@@ -29,7 +29,6 @@ import {
   NotFoundExceptionFilter,
 } from "src/filter";
 import { ZodTransformPipe } from "src/pipes/zod-transform-pipe";
-import { unparse } from "papaparse";
 import {
   FILE_STORAGE,
   FileStorageService,
@@ -59,9 +58,7 @@ export class TaxLotController {
   @Get("/csv")
   @UsePipes(new ZodTransformPipe(findTaxLotsQueryParamsSchema))
   async findManyCsv(@Query() params: FindTaxLotsQueryParams) {
-    const { taxLots } = await this.taxLotService.findMany(params);
-    const csvFormat = unparse(taxLots);
-    const csv = Buffer.from(csvFormat);
+    const taxLots = await this.taxLotService.findCsv(params);
 
     const bucketName = "test-bucket";
     const exists = await this.fileStorage.bucketExists(bucketName);
@@ -70,8 +67,8 @@ export class TaxLotController {
       this.fileStorage.putObject(
         bucketName,
         "tax-lots.csv",
-        csv,
-        csv.byteLength,
+        taxLots,
+        taxLots.byteLength,
       );
       const data: Array<unknown> = [];
       const objectStream = this.fileStorage.listObjects(bucketName);
@@ -82,7 +79,7 @@ export class TaxLotController {
     }
     const buckets = await this.fileStorage.listBuckets();
     console.debug("buckets", buckets);
-    return new StreamableFile(csv, {
+    return new StreamableFile(taxLots, {
       type: "text/csv",
       disposition: "attachment; filename=tax-lots.csv",
     });

@@ -70,8 +70,8 @@ export class TaxLotRepository {
     limit,
     offset,
   }: {
-    limit: number;
-    offset: number;
+    limit?: number;
+    offset?: number;
   }): Promise<FindManyRepo> {
     try {
       return await this.db.query.taxLot.findMany({
@@ -82,6 +82,7 @@ export class TaxLotRepository {
           lot: true,
           address: true,
           landUseId: true,
+          liFt: true,
         },
         limit,
         offset,
@@ -153,6 +154,7 @@ export class TaxLotRepository {
         lot: true,
         address: true,
         landUseId: true,
+        liFt: true,
       },
       where: (taxLot, { sql }) =>
         sql`ST_Intersects(${taxLot.liFt},${sql.placeholder("intersectGeom")})`,
@@ -169,8 +171,8 @@ export class TaxLotRepository {
     intersectGeom,
     orderGeom,
   }: {
-    limit: number;
-    offset: number;
+    limit?: number;
+    offset?: number;
     intersectGeom: Geom;
     orderGeom: Geom;
   }): Promise<FindManyBySpatialFilterRepo> {
