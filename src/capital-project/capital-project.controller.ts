@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Param,
+  Put,
   Query,
   Res,
   UseFilters,
@@ -28,6 +29,19 @@ import {
 import { ZodTransformPipe } from "src/pipes/zod-transform-pipe";
 import { findCapitalProjectsQueryParamsSchema } from "src/gen/zod/findCapitalProjectsSchema";
 import { unparse } from "papaparse";
+import { z } from "zod";
+
+export const findCsvUrlQueryParams = z.object({
+  communityDistrictId: z.string().optional(),
+  cityCouncilDistrictId: z.string().optional(),
+  managingAgency: z.string().optional(),
+  agencyBudget: z.string().optional(),
+  commitmentsTotalMin: z.string().optional(),
+  commitmentsTotalMax: z.string().optional(),
+  isMapped: z.boolean().optional(),
+});
+
+export type FindCsvUrlQueryParams = z.infer<typeof findCsvUrlQueryParams>;
 
 @UseFilters(
   BadRequestExceptionFilter,
@@ -54,6 +68,22 @@ export class CapitalProjectController {
       commitmentsTotalMin: queryParams.commitmentsTotalMin,
       commitmentsTotalMax: queryParams.commitmentsTotalMax,
     });
+  }
+
+  @Get("/csv")
+  async findCsvUrl(
+    @Query(new ZodTransformPipe(findCsvUrlQueryParams))
+    params: FindCsvUrlQueryParams,
+  ) {
+    return await this.capitalProjectService.findCsvUrl(params);
+  }
+
+  @Put("/csv")
+  async replaceCsv(
+    @Query(new ZodTransformPipe(findCsvUrlQueryParams))
+    params: FindCsvUrlQueryParams,
+  ) {
+    return await this.capitalProjectService.replaceCsv(params);
   }
 
   @Get("/download")

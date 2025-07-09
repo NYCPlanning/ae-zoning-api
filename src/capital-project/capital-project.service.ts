@@ -19,6 +19,11 @@ import { CityCouncilDistrictRepository } from "src/city-council-district/city-co
 import { CommunityDistrictRepository } from "src/community-district/community-district.repository";
 import { AgencyRepository } from "src/agency/agency.repository";
 import { AgencyBudgetRepository } from "src/agency-budget/agency-budget.repository";
+import {
+  FILE_STORAGE,
+  FileStorageService,
+} from "src/global/providers/file-storage.provider";
+import { FindCsvUrlQueryParams } from "./capital-project.controller";
 
 export class CapitalProjectService {
   constructor(
@@ -28,6 +33,9 @@ export class CapitalProjectService {
     private readonly communityDistrictRepository: CommunityDistrictRepository,
     private readonly agencyRepository: AgencyRepository,
     private readonly agencyBudgetRepository: AgencyBudgetRepository,
+
+    @Inject(FILE_STORAGE)
+    private readonly fileStorage: FileStorageService,
   ) {}
 
   async findManyParameterCheck({
@@ -228,6 +236,58 @@ export class CapitalProjectService {
       total: capitalProjects.length,
       totalProjects,
       order: "managingCode, capitalProjectId",
+    };
+  }
+
+  async findCsvUrl(params: FindCsvUrlQueryParams) {
+    const fileName = this.fileStorage.getFileName(
+      "capital-projects",
+      params,
+      ".csv",
+    );
+
+    return await this.fileStorage.getFileUrl(fileName);
+  }
+
+  async replaceCsv(params: FindCsvUrlQueryParams) {
+    const {
+      communityDistrictId: communityDistrictCombinedId,
+      cityCouncilDistrictId,
+      managingAgency,
+      agencyBudget,
+      commitmentsTotalMax,
+      commitmentsTotalMin,
+      isMapped,
+    } = params;
+    const min = commitmentsTotalMin
+      ? parseFloat(commitmentsTotalMin.replaceAll(",", ""))
+      : null;
+    const max = commitmentsTotalMax
+      ? parseFloat(commitmentsTotalMax.replaceAll(",", ""))
+      : null;
+    this.findManyParameterCheck({
+      communityDistrictCombinedId,
+      cityCouncilDistrictId,
+      managingAgency,
+      agencyBudget,
+      commitmentsTotalMax: max,
+      commitmentsTotalMin: min,
+      isMapped,
+    });
+    const boroughId =
+      communityDistrictCombinedId !== undefined
+        ? communityDistrictCombinedId.slice(0, 1)
+        : null;
+    const communityDistrictId =
+      communityDistrictCombinedId !== undefined
+        ? communityDistrictCombinedId.slice(1, 3)
+        : null;
+
+    return {
+      boroughId,
+      communityDistrictId,
+      url: null,
+      size: null,
     };
   }
 

@@ -11,7 +11,10 @@ export type FileStorageService = {
   ) => string;
   getFileUrl: (
     fileName: string,
-  ) => Promise<{ url: string; size: number } | { url: null; size: null }>;
+  ) => Promise<
+    | { url: string; size: number; lastModified: Date }
+    | { url: null; size: null; lastModified: null }
+  >;
   replaceFile: (
     fileName: string,
     file: Buffer,
@@ -56,12 +59,14 @@ export const FileStorageProvider: FactoryProvider<FileStorageService> = {
         return {
           url: `${endPoint}:${port}/${bucketName}/${fileName}`,
           size: stat.size,
+          lastModified: stat.lastModified,
         };
       } catch (e) {
         if (e.code === "NotFound") {
           return {
             url: null,
             size: null,
+            lastModified: null,
           };
         } else {
           throw new Error(e);
