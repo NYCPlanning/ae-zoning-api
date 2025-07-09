@@ -21,6 +21,7 @@ import {
 } from "src/gen";
 import { DB, DbType } from "src/global/providers/db.provider";
 import {
+  agency,
   agencyBudget,
   budgetLine,
   capitalCommitment,
@@ -621,5 +622,141 @@ export class CapitalProjectRepository {
     } catch {
       throw new DataRetrievalException();
     }
+  }
+
+  async replaceCsv({
+    boroughId = null,
+    communityDistrictId = null,
+    cityCouncilDistrictId = null,
+    managingAgency = null,
+    agencyBudget = null,
+    commitmentsTotalMax = null,
+    commitmentsTotalMin = null,
+    isMapped = null,
+  }: {
+    boroughId?: string | null;
+    communityDistrictId?: string | null;
+    cityCouncilDistrictId?: string | null;
+    managingAgency?: string | null;
+    agencyBudget?: string | null;
+    commitmentsTotalMax?: number | null;
+    commitmentsTotalMin?: number | null;
+    isMapped?: boolean | null;
+  }) {
+    const commitmentsTotalByCapitalProject =
+      this.#commitmentsTotalByCapitalProject;
+    return await this.db
+      .with(commitmentsTotalByCapitalProject)
+      .select({
+        managing_code: capitalProject.managingCode,
+        project_id: capitalProject.id,
+        description: capitalProject.description,
+        managing_agency: capitalProject.managingAgency,
+        managing_agency_name: agency.name,
+        min_date: capitalProject.minDate,
+        max_date: capitalProject.maxDate,
+        planned_commitments_total: commitmentsTotalByCapitalProject.value,
+        borough_id: communityDistrict.boroughId,
+        community_district_id: communityDistrict.id,
+        city_council_district_id: cityCouncilDistrict.id,
+        type_category: sql<CapitalProjectCategory>`${capitalProject.category}`,
+        li_ft_multipoint: capitalProject.liFtMPnt,
+        li_ft_multipolygon: capitalProject.liFtMPoly,
+      })
+      .from(capitalProject)
+      .leftJoin(agency, eq(agency.initials, capitalProject.managingAgency))
+      .leftJoin(
+        cityCouncilDistrict,
+        and(
+          sql`${cityCouncilDistrictId !== null} IS TRUE`,
+          or(
+            sql`ST_Intersects(${cityCouncilDistrict.liFt}, ${capitalProject.liFtMPoly})`,
+            sql`ST_Intersects(${cityCouncilDistrict.liFt}, ${capitalProject.liFtMPnt})`,
+          ),
+        ),
+      )
+      .leftJoin(
+        communityDistrict,
+        and(
+          sql`${communityDistrictId !== null && boroughId !== null} IS TRUE`,
+          or(
+            sql`ST_Intersects(${communityDistrict.liFt}, ${capitalProject.liFtMPoly})`,
+            sql`ST_Intersects(${communityDistrict.liFt}, ${capitalProject.liFtMPnt})`,
+          ),
+        ),
+      )
+      .leftJoin(
+        capitalCommitment,
+        and(
+          sql`${agencyBudget !== null} IS TRUE`,
+          eq(capitalProject.managingCode, capitalCommitment.managingCode),
+          eq(capitalProject.id, capitalCommitment.capitalProjectId),
+        ),
+      )
+      .leftJoin(
+        commitmentsTotalByCapitalProject,
+        and(
+          eq(
+            commitmentsTotalByCapitalProject.capitalProjectId,
+            capitalProject.id,
+          ),
+          eq(
+            commitmentsTotalByCapitalProject.managingCode,
+            capitalProject.managingCode,
+          ),
+        ),
+      )
+      .where(
+        and(
+          cityCouncilDistrictId !== null
+            ? eq(cityCouncilDistrict.id, cityCouncilDistrictId)
+            : undefined,
+          communityDistrictId !== null && boroughId !== null
+            ? and(
+                eq(communityDistrict.boroughId, boroughId),
+                eq(communityDistrict.id, communityDistrictId),
+              )
+            : undefined,
+          managingAgency !== null
+            ? eq(capitalProject.managingAgency, managingAgency)
+            : undefined,
+          agencyBudget !== null
+            ? eq(capitalCommitment.budgetLineCode, agencyBudget)
+            : undefined,
+          commitmentsTotalMin !== null
+            ? gte(commitmentsTotalByCapitalProject.value, commitmentsTotalMin)
+            : undefined,
+          commitmentsTotalMax !== null
+            ? lte(commitmentsTotalByCapitalProject.value, commitmentsTotalMax)
+            : undefined,
+          isMapped === true
+            ? or(
+                isNotNull(capitalProject.liFtMPoly),
+                isNotNull(capitalProject.liFtMPnt),
+              )
+            : undefined,
+          isMapped === false
+            ? and(
+                isNull(capitalProject.liFtMPoly),
+                isNull(capitalProject.liFtMPnt),
+              )
+            : undefined,
+        ),
+      )
+      .orderBy(capitalProject.managingCode, capitalProject.id)
+      .groupBy(
+        capitalProject.id,
+        capitalProject.description,
+        capitalProject.managingCode,
+        capitalProject.managingAgency,
+        capitalProject.maxDate,
+        capitalProject.minDate,
+        capitalProject.category,
+        agency.initials,
+        commitmentsTotalByCapitalProject.value,
+        communityDistrict.boroughId,
+        communityDistrict.id,
+        cityCouncilDistrict.id,
+      );
   }
 }

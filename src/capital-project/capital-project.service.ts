@@ -24,6 +24,7 @@ import {
   FileStorageService,
 } from "src/global/providers/file-storage.provider";
 import { FindCsvUrlQueryParams } from "./capital-project.controller";
+import { unparse } from "papaparse";
 
 export class CapitalProjectService {
   constructor(
@@ -282,13 +283,23 @@ export class CapitalProjectService {
       communityDistrictCombinedId !== undefined
         ? communityDistrictCombinedId.slice(1, 3)
         : null;
-
-    return {
+    const capitalProjects = await this.capitalProjectRepository.replaceCsv({
       boroughId,
       communityDistrictId,
-      url: null,
-      size: null,
-    };
+      cityCouncilDistrictId,
+      managingAgency,
+      agencyBudget,
+      commitmentsTotalMax: max,
+      commitmentsTotalMin: min,
+      isMapped,
+    });
+    const fileName = this.fileStorage.getFileName(
+      "capital-projects",
+      params,
+      ".csv",
+    );
+    const csv = Buffer.from(unparse(capitalProjects));
+    return await this.fileStorage.replaceFile(fileName, csv);
   }
 
   async findManyDownload({

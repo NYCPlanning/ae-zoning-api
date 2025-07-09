@@ -75,7 +75,10 @@ export class CapitalProjectController {
     @Query(new ZodTransformPipe(findCsvUrlQueryParams))
     params: FindCsvUrlQueryParams,
   ) {
-    return await this.capitalProjectService.findCsvUrl(params);
+    const start = performance.now();
+    const url = await this.capitalProjectService.findCsvUrl(params);
+    console.debug("find url", performance.now() - start);
+    return url;
   }
 
   @Put("/csv")
@@ -83,7 +86,10 @@ export class CapitalProjectController {
     @Query(new ZodTransformPipe(findCsvUrlQueryParams))
     params: FindCsvUrlQueryParams,
   ) {
-    return await this.capitalProjectService.replaceCsv(params);
+    const start = performance.now();
+    const url = await this.capitalProjectService.replaceCsv(params);
+    console.debug("find url", performance.now() - start);
+    return url;
   }
 
   @Get("/download")
