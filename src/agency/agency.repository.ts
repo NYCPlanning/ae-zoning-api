@@ -38,7 +38,7 @@ export class AgencyRepository {
       this.cacheManager.set(key, value);
       return value;
     } catch {
-      throw new DataRetrievalException();
+      throw new DataRetrievalException("cannot find agency by initials");
     }
   }
 
@@ -48,7 +48,7 @@ export class AgencyRepository {
         orderBy: (agency, { asc }) => [asc(agency.initials)],
       });
     } catch {
-      throw new DataRetrievalException();
+      throw new DataRetrievalException("cannot find agencies");
     }
   }
 }
