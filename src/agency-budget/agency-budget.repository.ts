@@ -40,7 +40,7 @@ export class AgencyBudgetRepository {
       this.cacheManager.set(key, value);
       return value;
     } catch {
-      throw new DataRetrievalException();
+      throw new DataRetrievalException("cannot find agency budget by code");
     }
   }
 
@@ -50,7 +50,7 @@ export class AgencyBudgetRepository {
         orderBy: agencyBudget.code,
       });
     } catch {
-      throw new DataRetrievalException();
+      throw new DataRetrievalException("cannot find agency budgets");
     }
   }
 }
