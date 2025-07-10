@@ -5,6 +5,7 @@ import {
   Put,
   Query,
   Res,
+  StreamableFile,
   UseFilters,
   UsePipes,
 } from "@nestjs/common";
@@ -75,9 +76,9 @@ export class CapitalProjectController {
     @Query(new ZodTransformPipe(findCsvUrlQueryParams))
     params: FindCsvUrlQueryParams,
   ) {
-    const start = performance.now();
+    // const start = performance.now();
     const url = await this.capitalProjectService.findCsvUrl(params);
-    console.debug("find url", performance.now() - start);
+    // console.debug("find url", performance.now() - start);
     return url;
   }
 
@@ -86,10 +87,25 @@ export class CapitalProjectController {
     @Query(new ZodTransformPipe(findCsvUrlQueryParams))
     params: FindCsvUrlQueryParams,
   ) {
-    const start = performance.now();
+    // const start = performance.now();
     const url = await this.capitalProjectService.replaceCsv(params);
-    console.debug("find url", performance.now() - start);
+    // console.debug("replace file", performance.now() - start);
     return url;
+  }
+
+  @Put("/csv-stream")
+  async replaceCsvStream(
+    @Query(new ZodTransformPipe(findCsvUrlQueryParams))
+    params: FindCsvUrlQueryParams,
+  ) {
+    // const start = performance.now();
+    const { csv, fileName } =
+      await this.capitalProjectService.replaceCsvStream(params);
+    // console.debug("replace file", performance.now() - start);
+    return new StreamableFile(csv, {
+      type: "text/csv",
+      disposition: `attachment; filename=${fileName}`,
+    });
   }
 
   @Get("/download")

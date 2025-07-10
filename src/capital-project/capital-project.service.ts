@@ -241,6 +241,30 @@ export class CapitalProjectService {
   }
 
   async findCsvUrl(params: FindCsvUrlQueryParams) {
+    const {
+      communityDistrictId: communityDistrictCombinedId,
+      cityCouncilDistrictId,
+      managingAgency,
+      agencyBudget,
+      commitmentsTotalMax,
+      commitmentsTotalMin,
+      isMapped,
+    } = params;
+    const min = commitmentsTotalMin
+      ? parseFloat(commitmentsTotalMin.replaceAll(",", ""))
+      : null;
+    const max = commitmentsTotalMax
+      ? parseFloat(commitmentsTotalMax.replaceAll(",", ""))
+      : null;
+    this.findManyParameterCheck({
+      communityDistrictCombinedId,
+      cityCouncilDistrictId,
+      managingAgency,
+      agencyBudget,
+      commitmentsTotalMax: max,
+      commitmentsTotalMin: min,
+      isMapped,
+    });
     const fileName = this.fileStorage.getFileName(
       "capital-projects",
       params,
@@ -250,6 +274,57 @@ export class CapitalProjectService {
     return await this.fileStorage.getFileUrl(fileName);
   }
 
+  async replaceCsvStream(params: FindCsvUrlQueryParams) {
+    const {
+      communityDistrictId: communityDistrictCombinedId,
+      cityCouncilDistrictId,
+      managingAgency,
+      agencyBudget,
+      commitmentsTotalMax,
+      commitmentsTotalMin,
+      isMapped,
+    } = params;
+    const min = commitmentsTotalMin
+      ? parseFloat(commitmentsTotalMin.replaceAll(",", ""))
+      : null;
+    const max = commitmentsTotalMax
+      ? parseFloat(commitmentsTotalMax.replaceAll(",", ""))
+      : null;
+    this.findManyParameterCheck({
+      communityDistrictCombinedId,
+      cityCouncilDistrictId,
+      managingAgency,
+      agencyBudget,
+      commitmentsTotalMax: max,
+      commitmentsTotalMin: min,
+      isMapped,
+    });
+    const boroughId =
+      communityDistrictCombinedId !== undefined
+        ? communityDistrictCombinedId.slice(0, 1)
+        : null;
+    const communityDistrictId =
+      communityDistrictCombinedId !== undefined
+        ? communityDistrictCombinedId.slice(1, 3)
+        : null;
+    const capitalProjects = await this.capitalProjectRepository.replaceCsv({
+      boroughId,
+      communityDistrictId,
+      cityCouncilDistrictId,
+      managingAgency,
+      agencyBudget,
+      commitmentsTotalMax: max,
+      commitmentsTotalMin: min,
+      isMapped,
+    });
+    const fileName = this.fileStorage.getFileName(
+      "capital-projects",
+      params,
+      ".csv",
+    );
+    const csv = Buffer.from(unparse(capitalProjects));
+    return { csv, fileName };
+  }
   async replaceCsv(params: FindCsvUrlQueryParams) {
     const {
       communityDistrictId: communityDistrictCombinedId,
