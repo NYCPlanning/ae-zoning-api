@@ -191,7 +191,9 @@ describe("TaxLots", () => {
     });
 
     it("should 500 when there is a database error", async () => {
-      const dataRetrievalException = new DataRetrievalException();
+      const dataRetrievalException = new DataRetrievalException(
+        "cannot find data",
+      );
       jest.spyOn(taxLotRepository, "findMany").mockImplementationOnce(() => {
         throw dataRetrievalException;
       });
@@ -246,7 +248,9 @@ describe("TaxLots", () => {
     });
 
     it("should 500 when the database errors", async () => {
-      const dataRetrievalException = new DataRetrievalException();
+      const dataRetrievalException = new DataRetrievalException(
+        "cannot find data",
+      );
       jest.spyOn(taxLotRepository, "findByBbl").mockImplementationOnce(() => {
         throw dataRetrievalException;
       });
@@ -301,7 +305,9 @@ describe("TaxLots", () => {
     });
 
     it("should 500 when the database errors", async () => {
-      const dataRetrievalException = new DataRetrievalException();
+      const dataRetrievalException = new DataRetrievalException(
+        "cannot find data",
+      );
       jest
         .spyOn(taxLotRepository, "findByBblSpatial")
         .mockImplementationOnce(() => {
@@ -357,7 +363,9 @@ describe("TaxLots", () => {
     });
 
     it("should 500 when the database errors", async () => {
-      const dataRetrievalException = new DataRetrievalException();
+      const dataRetrievalException = new DataRetrievalException(
+        "cannot find data",
+      );
       jest
         .spyOn(taxLotRepository, "findZoningDistrictsByBbl")
         .mockImplementationOnce(() => {
@@ -367,6 +375,7 @@ describe("TaxLots", () => {
       const response = await request(app.getHttpServer())
         .get(`/tax-lots/${mock.bbl}/zoning-districts`)
         .expect(500);
+
       expect(response.body.message).toBe(dataRetrievalException.message);
       expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);
     });
@@ -416,7 +425,9 @@ describe("TaxLots", () => {
     });
 
     it("should 500 when the database errors", async () => {
-      const dataRetrievalException = new DataRetrievalException();
+      const dataRetrievalException = new DataRetrievalException(
+        "cannot find data",
+      );
       jest
         .spyOn(taxLotRepository, "findZoningDistrictClassesByBbl")
         .mockImplementationOnce(() => {

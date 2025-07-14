@@ -58,7 +58,9 @@ describe("Community Districts", () => {
     });
 
     it("should 500 when there is a data retrieval error", async () => {
-      const dataRetrievalException = new DataRetrievalException();
+      const dataRetrievalException = new DataRetrievalException(
+        "cannot find data",
+      );
       jest
         .spyOn(communityDistrictRepository, "findTiles")
         .mockImplementationOnce(() => {

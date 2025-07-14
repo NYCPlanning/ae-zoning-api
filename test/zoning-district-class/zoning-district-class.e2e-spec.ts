@@ -45,7 +45,9 @@ describe("Zoning District Classes e2e", () => {
     });
 
     it("should 500 and throw data retrieval error", async () => {
-      const dataRetrievalException = new DataRetrievalException();
+      const dataRetrievalException = new DataRetrievalException(
+        "cannot find data",
+      );
       jest
         .spyOn(zoningDistrictClassRepositoryMock, "findMany")
         .mockImplementationOnce(() => {
@@ -116,7 +118,9 @@ describe("Zoning District Classes e2e", () => {
     });
 
     it("should 500 and throw data retrieval error", async () => {
-      const dataRetrievalException = new DataRetrievalException();
+      const dataRetrievalException = new DataRetrievalException(
+        "cannot find data",
+      );
       jest
         .spyOn(zoningDistrictClassRepositoryMock, "findById")
         .mockImplementationOnce(() => {
@@ -147,7 +151,9 @@ describe("Zoning District Classes e2e", () => {
     });
 
     it("should 500 and throw data retrieval error", async () => {
-      const dataRetrievalException = new DataRetrievalException();
+      const dataRetrievalException = new DataRetrievalException(
+        "cannot find data",
+      );
       jest
         .spyOn(zoningDistrictClassRepositoryMock, "findCategoryColors")
         .mockImplementationOnce(() => {

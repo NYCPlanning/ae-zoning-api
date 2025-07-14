@@ -28,7 +28,7 @@ export class ZoningDistrictClassRepository {
         })
         .from(zoningDistrictClass);
     } catch {
-      throw new DataRetrievalException();
+      throw new DataRetrievalException("cannot find zoning district classes");
     }
   }
 
@@ -48,7 +48,9 @@ export class ZoningDistrictClassRepository {
 
       return result.length > 0 ? result[0] : undefined;
     } catch {
-      throw new DataRetrievalException();
+      throw new DataRetrievalException(
+        "cannot find zoning district class given an id",
+      );
     }
   }
 
@@ -61,7 +63,9 @@ export class ZoningDistrictClassRepository {
         })
         .from(zoningDistrictClass);
     } catch {
-      throw new DataRetrievalException();
+      throw new DataRetrievalException(
+        "cannot find zoning district class colors",
+      );
     }
   }
 }

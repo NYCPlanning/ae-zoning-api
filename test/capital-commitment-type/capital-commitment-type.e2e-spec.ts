@@ -36,7 +36,9 @@ describe("Capital commitment types e2e", () => {
     });
 
     it("should 500 and return a list of all capital commitment types", async () => {
-      const dataRetrievalException = new DataRetrievalException();
+      const dataRetrievalException = new DataRetrievalException(
+        "cannot find data",
+      );
       jest
         .spyOn(capitalCommitmentTypeRepositoryMock, "findMany")
         .mockImplementationOnce(() => {

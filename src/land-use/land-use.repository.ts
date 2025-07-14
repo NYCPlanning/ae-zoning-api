@@ -13,7 +13,7 @@ export class LandUseRepository {
     try {
       return await this.db.query.landUse.findMany();
     } catch {
-      throw new DataRetrievalException();
+      throw new DataRetrievalException("cannot find land uses");
     }
   }
 }

@@ -62,7 +62,7 @@ export class TaxLotRepository {
       this.cacheManager.set(key, value);
       return value;
     } catch {
-      throw new DataRetrievalException();
+      throw new DataRetrievalException("cannot find tax lot given a bbl");
     }
   }
 
@@ -88,7 +88,7 @@ export class TaxLotRepository {
         orderBy: taxLot.bbl,
       });
     } catch {
-      throw new DataRetrievalException();
+      throw new DataRetrievalException("cannot find tax lots");
     }
   }
 
@@ -102,7 +102,7 @@ export class TaxLotRepository {
       );
       return result.rows[0].geom as Geom;
     } catch {
-      throw new DataRetrievalException();
+      throw new DataRetrievalException("cannot find geom given geojson");
     }
   }
 
@@ -116,7 +116,7 @@ export class TaxLotRepository {
       );
       return result.rows[0].buffer as Geom;
     } catch {
-      throw new DataRetrievalException();
+      throw new DataRetrievalException("cannot find geom buffer");
     }
   }
 
@@ -127,7 +127,7 @@ export class TaxLotRepository {
       );
       return result.rows[0].valid as boolean;
     } catch {
-      throw new DataRetrievalException();
+      throw new DataRetrievalException("cannot find geom");
     }
   }
 
@@ -140,7 +140,9 @@ export class TaxLotRepository {
       );
       return result.rows[0].center as Geom;
     } catch {
-      throw new DataRetrievalException();
+      throw new DataRetrievalException(
+        "cannot find maximum inscribed circle center",
+      );
     }
   }
 
@@ -182,7 +184,9 @@ export class TaxLotRepository {
         orderGeom,
       });
     } catch {
-      throw new DataRetrievalException();
+      throw new DataRetrievalException(
+        "cannot find tax lots given spatial filter",
+      );
     }
   }
 
@@ -202,7 +206,7 @@ export class TaxLotRepository {
         },
       });
     } catch {
-      throw new DataRetrievalException();
+      throw new DataRetrievalException("cannot find tax lot given a bbl");
     }
   }
 
@@ -229,7 +233,7 @@ export class TaxLotRepository {
         },
       });
     } catch {
-      throw new DataRetrievalException();
+      throw new DataRetrievalException("cannot find spatial tax lot given bbl");
     }
   }
 
@@ -249,7 +253,9 @@ export class TaxLotRepository {
         )
         .where(eq(taxLot.bbl, bbl));
     } catch {
-      throw new DataRetrievalException();
+      throw new DataRetrievalException(
+        "cannot find zoning districts given a bbl",
+      );
     }
   }
 
@@ -286,7 +292,9 @@ export class TaxLotRepository {
         )
         .where(eq(taxLot.bbl, bbl));
     } catch {
-      throw new DataRetrievalException();
+      throw new DataRetrievalException(
+        "cannot find zoning district classes given a bbl",
+      );
     }
   }
 
