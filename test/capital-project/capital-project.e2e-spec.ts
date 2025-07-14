@@ -332,7 +332,9 @@ describe("Capital Projects", () => {
     });
 
     it("should 500 when there is a data retrieval error", async () => {
-      const dataRetrievalException = new DataRetrievalException();
+      const dataRetrievalException = new DataRetrievalException(
+        "cannot find data",
+      );
       jest
         .spyOn(capitalProjectRepositoryMock, "findMany")
         .mockImplementationOnce(() => {
@@ -398,7 +400,9 @@ describe("Capital Projects", () => {
     });
 
     it("should 500 when the database errors", async () => {
-      const dataRetrievalException = new DataRetrievalException();
+      const dataRetrievalException = new DataRetrievalException(
+        "cannot find data",
+      );
       jest
         .spyOn(
           capitalProjectRepositoryMock,
@@ -477,7 +481,9 @@ describe("Capital Projects", () => {
     });
 
     it("should 500 when the database errors", async () => {
-      const dataRetrievalException = new DataRetrievalException();
+      const dataRetrievalException = new DataRetrievalException(
+        "cannot find data",
+      );
       jest
         .spyOn(
           capitalProjectRepositoryMock,
@@ -527,7 +533,9 @@ describe("Capital Projects", () => {
     });
 
     it("should 500 when there is a data retrieval error", async () => {
-      const dataRetrievalException = new DataRetrievalException();
+      const dataRetrievalException = new DataRetrievalException(
+        "cannot find data",
+      );
       jest
         .spyOn(capitalProjectRepositoryMock, "findTiles")
         .mockImplementationOnce(() => {
@@ -605,7 +613,9 @@ describe("Capital Projects", () => {
     });
 
     it("should 500 when the database errors", async () => {
-      const dataRetrievalException = new DataRetrievalException();
+      const dataRetrievalException = new DataRetrievalException(
+        "cannot find data",
+      );
       jest
         .spyOn(
           capitalProjectRepositoryMock,

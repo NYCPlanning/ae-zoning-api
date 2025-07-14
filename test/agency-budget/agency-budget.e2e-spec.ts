@@ -39,7 +39,9 @@ describe("Agency Budget e2e", () => {
     });
 
     it("should 500 when the database errors", async () => {
-      const dataRetrievalException = new DataRetrievalException();
+      const dataRetrievalException = new DataRetrievalException(
+        "cannot find data",
+      );
       jest
         .spyOn(agencyBudgetRepositoryMock, "findMany")
         .mockImplementationOnce(() => {

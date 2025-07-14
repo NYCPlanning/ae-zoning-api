@@ -35,7 +35,9 @@ describe("Land Use e2e", () => {
     });
 
     it("should 500 and return a list of all land uses", async () => {
-      const dataRetrievalException = new DataRetrievalException();
+      const dataRetrievalException = new DataRetrievalException(
+        "cannot find data",
+      );
       jest
         .spyOn(landUseRepositoryMock, "findMany")
         .mockImplementationOnce(() => {

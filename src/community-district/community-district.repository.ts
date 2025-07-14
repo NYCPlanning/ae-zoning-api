@@ -53,7 +53,9 @@ export class CommunityDistrictRepository {
       this.cacheManager.set(key, value);
       return value;
     } catch {
-      throw new DataRetrievalException();
+      throw new DataRetrievalException(
+        "cannot find community district given borough id and community district id",
+      );
     }
   }
 
@@ -117,7 +119,7 @@ export class CommunityDistrictRepository {
 
       return Buffer.concat([fill[0].mvt, label[0].mvt]);
     } catch {
-      throw new DataRetrievalException();
+      throw new DataRetrievalException("cannot find community district tiles");
     }
   }
 }

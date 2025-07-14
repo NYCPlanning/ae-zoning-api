@@ -13,7 +13,7 @@ export class CapitalCommitmentTypeRepository {
     try {
       return await this.db.query.capitalCommitmentType.findMany();
     } catch {
-      throw new DataRetrievalException();
+      throw new DataRetrievalException("cannot find capital commitment types");
     }
   }
 }

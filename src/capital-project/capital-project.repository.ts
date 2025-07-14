@@ -176,7 +176,7 @@ export class CapitalProjectRepository {
           capitalProject.category,
         );
     } catch {
-      throw new DataRetrievalException();
+      throw new DataRetrievalException("cannot find capital projects");
     }
   }
 
@@ -292,7 +292,7 @@ export class CapitalProjectRepository {
       this.cacheManager.set(key, total);
       return total;
     } catch {
-      throw new DataRetrievalException();
+      throw new DataRetrievalException("cannot find capital projects count");
     }
   }
 
@@ -382,7 +382,9 @@ export class CapitalProjectRepository {
         .groupBy(capitalProject.managingCode, capitalProject.id)
         .limit(1);
     } catch {
-      throw new DataRetrievalException();
+      throw new DataRetrievalException(
+        "cannot check capital project given managing code and capital project id",
+      );
     }
   }
 
@@ -444,7 +446,9 @@ export class CapitalProjectRepository {
         .groupBy(capitalProject.managingCode, capitalProject.id)
         .limit(1);
     } catch {
-      throw new DataRetrievalException();
+      throw new DataRetrievalException(
+        "cannot find geojson given managing code and capital project",
+      );
     }
   }
 
@@ -521,7 +525,7 @@ export class CapitalProjectRepository {
         .where(isNotNull(tile.geom));
       return data[0].mvt;
     } catch {
-      throw new DataRetrievalException();
+      throw new DataRetrievalException("cannot find capital project tiles");
     }
   }
 
@@ -563,7 +567,9 @@ export class CapitalProjectRepository {
           ),
         );
     } catch {
-      throw new DataRetrievalException();
+      throw new DataRetrievalException(
+        "cannot find capital commitments given managing code and capital project",
+      );
     }
   }
 }

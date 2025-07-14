@@ -56,7 +56,7 @@ export class ZoningDistrictRepository {
       this.cacheManager.set(key, value);
       return value;
     } catch {
-      throw new DataRetrievalException();
+      throw new DataRetrievalException("cannot find zoning district");
     }
   }
 
@@ -67,7 +67,9 @@ export class ZoningDistrictRepository {
         where: eq(zoningDistrict.id, id),
       });
     } catch {
-      throw new DataRetrievalException();
+      throw new DataRetrievalException(
+        "cannot find zoning district given an id",
+      );
     }
   }
 
@@ -100,7 +102,9 @@ export class ZoningDistrictRepository {
         )
         .where(eq(zoningDistrict.id, id));
     } catch {
-      throw new DataRetrievalException();
+      throw new DataRetrievalException(
+        "cannot find zoning district classes given an id",
+      );
     }
   }
 

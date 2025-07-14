@@ -57,7 +57,9 @@ describe("Zoning district e2e", () => {
     });
 
     it("should 500 when the database errors", async () => {
-      const dataRetrievalException = new DataRetrievalException();
+      const dataRetrievalException = new DataRetrievalException(
+        "cannot find data",
+      );
       jest
         .spyOn(zoningDistrictRepositoryMock, "findById")
         .mockImplementationOnce(() => {
@@ -103,7 +105,9 @@ describe("Zoning district e2e", () => {
     });
 
     it("should 500 when the database errors", async () => {
-      const dataRetrievalException = new DataRetrievalException();
+      const dataRetrievalException = new DataRetrievalException(
+        "cannot find data",
+      );
       jest
         .spyOn(zoningDistrictRepositoryMock, "checkById")
         .mockImplementationOnce(() => {

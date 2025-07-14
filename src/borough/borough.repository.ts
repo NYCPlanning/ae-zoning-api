@@ -56,7 +56,7 @@ export class BoroughRepository {
       this.cacheManager.set(key, value);
       return value;
     } catch {
-      throw new DataRetrievalException();
+      throw new DataRetrievalException("cannot find borough");
     }
   }
 
@@ -64,7 +64,7 @@ export class BoroughRepository {
     try {
       return await this.db.query.borough.findMany();
     } catch {
-      throw new DataRetrievalException();
+      throw new DataRetrievalException("cannot find boroughs");
     }
   }
 
@@ -81,7 +81,9 @@ export class BoroughRepository {
         orderBy: asc(communityDistrict.id),
       });
     } catch {
-      throw new DataRetrievalException();
+      throw new DataRetrievalException(
+        "cannot find community districts given borough",
+      );
     }
   }
 
@@ -110,7 +112,9 @@ export class BoroughRepository {
           ),
       });
     } catch {
-      throw new DataRetrievalException();
+      throw new DataRetrievalException(
+        "cannot find community district geojson",
+      );
     }
   }
 
@@ -201,7 +205,9 @@ export class BoroughRepository {
         .where(isNotNull(tile.geom));
       return data[0].mvt;
     } catch {
-      throw new DataRetrievalException();
+      throw new DataRetrievalException(
+        "cannot find capital project tiles given borough and community district",
+      );
     }
   }
 }

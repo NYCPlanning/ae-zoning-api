@@ -72,7 +72,9 @@ describe("City Council District e2e", () => {
     });
 
     it("should 500 when the database errors", async () => {
-      const dataRetrievalException = new DataRetrievalException();
+      const dataRetrievalException = new DataRetrievalException(
+        "cannot find data",
+      );
       jest
         .spyOn(cityCouncilDistrictRepositoryMock, "findMany")
         .mockImplementation(() => {
@@ -115,7 +117,9 @@ describe("City Council District e2e", () => {
     });
 
     it("should 500 when there is a data retrieval error", async () => {
-      const dataRetrievalException = new DataRetrievalException();
+      const dataRetrievalException = new DataRetrievalException(
+        "cannot find data",
+      );
       jest
         .spyOn(cityCouncilDistrictRepositoryMock, "findTiles")
         .mockImplementationOnce(() => {
@@ -178,7 +182,9 @@ describe("City Council District e2e", () => {
     });
 
     it("should 500 when the database errors", async () => {
-      const dataRetrievalException = new DataRetrievalException();
+      const dataRetrievalException = new DataRetrievalException(
+        "cannot find data",
+      );
       jest
         .spyOn(cityCouncilDistrictRepositoryMock, "findGeoJsonById")
         .mockImplementationOnce(() => {
@@ -246,7 +252,9 @@ describe("City Council District e2e", () => {
 
     it("should 500 when the database errors", async () => {
       const cityCouncilDistrictId = "1";
-      const dataRetrievalException = new DataRetrievalException();
+      const dataRetrievalException = new DataRetrievalException(
+        "cannot find data",
+      );
       jest
         .spyOn(
           cityCouncilDistrictRepositoryMock,

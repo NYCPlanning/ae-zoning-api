@@ -56,7 +56,9 @@ export class CityCouncilDistrictRepository {
       this.cacheManager.set(key, value);
       return value;
     } catch {
-      throw new DataRetrievalException();
+      throw new DataRetrievalException(
+        "cannot find city council district by id",
+      );
     }
   }
 
@@ -69,7 +71,7 @@ export class CityCouncilDistrictRepository {
         orderBy: sql`${cityCouncilDistrict.id}::integer ASC`,
       });
     } catch {
-      throw new DataRetrievalException();
+      throw new DataRetrievalException("cannot find city council districts");
     }
   }
 
@@ -93,7 +95,9 @@ export class CityCouncilDistrictRepository {
           eq(cityCouncilDistrict.id, cityCouncilDistrictId),
       });
     } catch {
-      throw new DataRetrievalException();
+      throw new DataRetrievalException(
+        "cannot find city council district geojson",
+      );
     }
   }
 
@@ -182,7 +186,9 @@ export class CityCouncilDistrictRepository {
         .where(isNotNull(tile.geom));
       return data[0].mvt;
     } catch {
-      throw new DataRetrievalException();
+      throw new DataRetrievalException(
+        "cannot find capital project tiles given city council district",
+      );
     }
   }
 
@@ -238,7 +244,9 @@ export class CityCouncilDistrictRepository {
 
       return Buffer.concat([fill[0].mvt, label[0].mvt] as Uint8Array[]);
     } catch {
-      throw new DataRetrievalException();
+      throw new DataRetrievalException(
+        "cannot find city council district tiles",
+      );
     }
   }
 }

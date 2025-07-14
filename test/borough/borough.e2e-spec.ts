@@ -76,7 +76,9 @@ describe("Borough e2e", () => {
     });
 
     it("should 500 and return all boroughs", async () => {
-      const dataRetrievalException = new DataRetrievalException();
+      const dataRetrievalException = new DataRetrievalException(
+        "cannot find data",
+      );
       jest
         .spyOn(boroughRepositoryMock, "findMany")
         .mockImplementationOnce(() => {
@@ -123,7 +125,9 @@ describe("Borough e2e", () => {
     });
 
     it("should 500 when the database errors", async () => {
-      const dataRetrievalException = new DataRetrievalException();
+      const dataRetrievalException = new DataRetrievalException(
+        "cannot find data",
+      );
       jest
         .spyOn(boroughRepositoryMock, "checkById")
         .mockImplementationOnce(() => {
@@ -187,7 +191,9 @@ describe("Borough e2e", () => {
     });
 
     it("should 500 when the database errors", async () => {
-      const dataRetrievalException = new DataRetrievalException();
+      const dataRetrievalException = new DataRetrievalException(
+        "cannot find data",
+      );
       jest
         .spyOn(
           boroughRepositoryMock,
@@ -343,7 +349,9 @@ describe("Borough e2e", () => {
     });
 
     it("should 500 when the database errors", async () => {
-      const dataRetrievalException = new DataRetrievalException();
+      const dataRetrievalException = new DataRetrievalException(
+        "cannot find data",
+      );
       jest
         .spyOn(
           boroughRepositoryMock.communityDistrictRepoMock,
@@ -434,7 +442,9 @@ describe("Borough e2e", () => {
     });
 
     it("should 500 when the database errors", async () => {
-      const dataRetrievalException = new DataRetrievalException();
+      const dataRetrievalException = new DataRetrievalException(
+        "cannot find data",
+      );
       jest
         .spyOn(
           boroughRepositoryMock,
