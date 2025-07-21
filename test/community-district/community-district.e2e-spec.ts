@@ -51,7 +51,7 @@ describe("Community Districts", () => {
         .expect(400);
 
       expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
+        new InvalidRequestParameterException("invalid parameters").message,
       );
 
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
