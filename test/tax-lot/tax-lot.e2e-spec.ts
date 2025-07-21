@@ -92,7 +92,7 @@ describe("TaxLots", () => {
         "/tax-lots?limit=[4]",
       );
       expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
+        new InvalidRequestParameterException("invalid parameters").message,
       );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
@@ -102,7 +102,7 @@ describe("TaxLots", () => {
         "/tax-lots?limit=b4d",
       );
       expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
+        new InvalidRequestParameterException("invalid parameters").message,
       );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
@@ -112,7 +112,7 @@ describe("TaxLots", () => {
         "/tax-lots?limit=101",
       );
       expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
+        new InvalidRequestParameterException("invalid parameters").message,
       );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
@@ -122,7 +122,7 @@ describe("TaxLots", () => {
         "/tax-lots?limit=0",
       );
       expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
+        new InvalidRequestParameterException("invalid parameters").message,
       );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
@@ -132,7 +132,7 @@ describe("TaxLots", () => {
         "/tax-lots?offset=b4d",
       );
       expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
+        new InvalidRequestParameterException("invalid parameters").message,
       );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
@@ -142,7 +142,7 @@ describe("TaxLots", () => {
         .get("/tax-lots?geometry=linestring&lons=0,1&lats=0,1")
         .expect(400);
       expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
+        new InvalidRequestParameterException("invalid parameters").message,
       );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
@@ -152,7 +152,7 @@ describe("TaxLots", () => {
         .get("/tax-lots?geometry=LineString&lons=0,1,2,3,4,5&lats=0,1,2,3,4,5")
         .expect(400);
       expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
+        new InvalidRequestParameterException("invalid parameters").message,
       );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
@@ -162,7 +162,7 @@ describe("TaxLots", () => {
         .get("/tax-lots?geometry=LineString&lons=DROPTables&lats=DROPDatabase")
         .expect(400);
       expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
+        new InvalidRequestParameterException("invalid parameters").message,
       );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
@@ -174,7 +174,7 @@ describe("TaxLots", () => {
         )
         .expect(400);
       expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
+        new InvalidRequestParameterException("invalid parameters").message,
       );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
@@ -223,7 +223,7 @@ describe("TaxLots", () => {
         .get(`/tax-lots/${shortBbl}`)
         .expect(400);
       expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
+        new InvalidRequestParameterException("invalid parameters").message,
       );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
@@ -234,7 +234,7 @@ describe("TaxLots", () => {
         .get(`/tax-lots/${letterBbl}`)
         .expect(400);
       expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
+        new InvalidRequestParameterException("invalid parameters").message,
       );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
@@ -280,7 +280,7 @@ describe("TaxLots", () => {
         .get(`/tax-lots/${shortBbl}/geojson`)
         .expect(400);
       expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
+        new InvalidRequestParameterException("invalid parameters").message,
       );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
@@ -291,7 +291,7 @@ describe("TaxLots", () => {
         .get(`/tax-lots/${letterBbl}/geojson`)
         .expect(400);
       expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
+        new InvalidRequestParameterException("invalid parameters").message,
       );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
@@ -339,7 +339,7 @@ describe("TaxLots", () => {
         .get(`/tax-lots/${shortBbl}/zoning-districts`)
         .expect(400);
       expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
+        new InvalidRequestParameterException("invalid parameters").message,
       );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
@@ -350,7 +350,7 @@ describe("TaxLots", () => {
         .get(`/tax-lots/${letterBbl}/zoning-districts`)
         .expect(400);
       expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
+        new InvalidRequestParameterException("invalid parameters").message,
       );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
@@ -400,7 +400,7 @@ describe("TaxLots", () => {
         .get(`/tax-lots/${shortBbl}/zoning-districts/classes`)
         .expect(400);
       expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
+        new InvalidRequestParameterException("invalid parameters").message,
       );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
@@ -411,7 +411,7 @@ describe("TaxLots", () => {
         .get(`/tax-lots/${letterBbl}/zoning-districts/classes`)
         .expect(400);
       expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
+        new InvalidRequestParameterException("invalid parameters").message,
       );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });

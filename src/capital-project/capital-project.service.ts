@@ -63,11 +63,15 @@ export class CapitalProjectService {
         communityDistrictCombinedId !== null) &&
       isMapped !== null
     ) {
-      throw new InvalidRequestParameterException();
+      throw new InvalidRequestParameterException(
+        "cannot have isMapped filter in conjunction with other geographic filter",
+      );
     }
 
     if (min !== null && max !== null && min > max) {
-      throw new InvalidRequestParameterException();
+      throw new InvalidRequestParameterException(
+        "min amount should be less than max amount",
+      );
     }
 
     const checklist: Array<Promise<unknown | undefined>> = [];
@@ -104,7 +108,9 @@ export class CapitalProjectService {
     const checkedList = await Promise.all(checklist);
 
     if (checkedList.some((result) => result === false))
-      throw new InvalidRequestParameterException();
+      throw new InvalidRequestParameterException(
+        "could not check one or more of the parameters",
+      );
 
     const capitalProjectsPromise = this.capitalProjectRepository.findMany({
       cityCouncilDistrictId,

@@ -95,7 +95,7 @@ describe("Zoning District Classes e2e", () => {
 
     it("should 400 and throw 'Bad Request' error with an invalid id", async () => {
       const invalidRequestParameterException =
-        new InvalidRequestParameterException();
+        new InvalidRequestParameterException("invalid paramters");
 
       const invalidId = "CC";
       const response = await request(app.getHttpServer())

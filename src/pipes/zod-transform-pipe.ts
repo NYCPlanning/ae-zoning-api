@@ -35,7 +35,7 @@ export class ZodTransformPipe<T extends ZodRawShape> implements PipeTransform {
           decodedParams[param] = false;
           return;
         }
-        throw new InvalidRequestParameterException();
+        throw new InvalidRequestParameterException("invalid value for boolean schema property");
       }
 
       decodedParams[param] = value;
@@ -46,7 +46,7 @@ export class ZodTransformPipe<T extends ZodRawShape> implements PipeTransform {
       if (parsedParams === undefined) throw new Error();
       return parsedParams;
     } catch (error) {
-      throw new InvalidRequestParameterException();
+      throw new InvalidRequestParameterException("no params");
     }
   }
 }
