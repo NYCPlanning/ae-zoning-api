@@ -12,10 +12,7 @@ import {
   findCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdQueryResponseSchema,
   findCommunityDistrictsByBoroughIdQueryResponseSchema,
 } from "src/gen";
-import {
-  DataRetrievalException,
-  InvalidRequestParameterException,
-} from "src/exception";
+import { DataRetrievalException } from "src/exception";
 import { HttpName } from "src/filter";
 import { AgencyRepositoryMock } from "test/agency/agency.repository.mock";
 import { AgencyBudgetRepositoryMock } from "test/agency-budget/agency-budget.repository.mock";
@@ -143,7 +140,7 @@ describe("Borough e2e", () => {
     });
   });
 
-  describe("findCityCouncilDistrictGeoJsonByCityCouncilDistrictId", () => {
+  describe("findCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdMocks", () => {
     it("should 200 and return documented schema when finding by valid id", async () => {
       const mock =
         boroughRepositoryMock
@@ -165,9 +162,7 @@ describe("Borough e2e", () => {
       const response = await request(app.getHttpServer())
         .get(`/boroughs/1/community-districts/${longId}/geojson`)
         .expect(400);
-      expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
-      );
+      expect(response.body.message).toMatch(/communityDistrictId: Invalid/);
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
 
@@ -176,9 +171,7 @@ describe("Borough e2e", () => {
       const response = await request(app.getHttpServer())
         .get(`/boroughs/1/community-districts/${letterId}/geojson`)
         .expect(400);
-      expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
-      );
+      expect(response.body.message).toMatch(/communityDistrictId: Invalid/);
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
 
@@ -269,9 +262,7 @@ describe("Borough e2e", () => {
           `/boroughs/${missingId}/community-districts/${communityDistrict.id}/capital-projects`,
         )
         .expect(400);
-      expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
-      );
+      expect(response.body.message).toMatch(/could not check/);
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
 
@@ -282,9 +273,8 @@ describe("Borough e2e", () => {
           `/boroughs/${communityDistrict.boroughId}/community-districts/${missingId}/capital-projects`,
         )
         .expect(400);
-      expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
-      );
+      expect(response.body.message).toMatch(/could not check/);
+
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
 
@@ -398,9 +388,7 @@ describe("Borough e2e", () => {
         )
         .expect(400);
 
-      expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
-      );
+      expect(response.body.message).toMatch(/boroughId: Invalid/);
 
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
@@ -417,9 +405,7 @@ describe("Borough e2e", () => {
         )
         .expect(400);
 
-      expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
-      );
+      expect(response.body.message).toMatch(/communityDistrictId: Invalid/);
 
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
@@ -434,10 +420,9 @@ describe("Borough e2e", () => {
         )
         .expect(400);
 
-      expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
-      );
-
+      expect(response.body.message).toMatch(/z: Expected number/);
+      expect(response.body.message).toMatch(/x: Expected number/);
+      expect(response.body.message).toMatch(/y: Expected number/);
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
 

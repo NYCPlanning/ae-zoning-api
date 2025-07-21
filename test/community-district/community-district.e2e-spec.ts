@@ -5,10 +5,7 @@ import { CommunityDistrictRepository } from "src/community-district/community-di
 import { CommunityDistrictRepositoryMock } from "./community-district.repository.mock";
 import * as request from "supertest";
 import { HttpName } from "src/filter";
-import {
-  DataRetrievalException,
-  InvalidRequestParameterException,
-} from "src/exception";
+import { DataRetrievalException } from "src/exception";
 
 describe("Community Districts", () => {
   let app: INestApplication;
@@ -50,9 +47,9 @@ describe("Community Districts", () => {
         .get(`/community-districts/${z}/${x}/${y}.pbf`)
         .expect(400);
 
-      expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
-      );
+      expect(response.body.message).toMatch(/z: Expected number/);
+      expect(response.body.message).toMatch(/x: Expected number/);
+      expect(response.body.message).toMatch(/y: Expected number/);
 
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
