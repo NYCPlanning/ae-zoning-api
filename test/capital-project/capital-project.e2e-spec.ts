@@ -123,7 +123,7 @@ describe("Capital Projects", () => {
       );
 
       expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
+        new InvalidRequestParameterException("invalid parameters").message,
       );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
@@ -133,7 +133,7 @@ describe("Capital Projects", () => {
         "/capital-projects?limit=b4d",
       );
       expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
+        new InvalidRequestParameterException("invalid parameters").message,
       );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
@@ -143,7 +143,7 @@ describe("Capital Projects", () => {
         "/capital-projects?limit=101",
       );
       expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
+        new InvalidRequestParameterException("invalid parameters").message,
       );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
@@ -153,7 +153,7 @@ describe("Capital Projects", () => {
         "/capital-projects?limit=0",
       );
       expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
+        new InvalidRequestParameterException("invalid parameters").message,
       );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
@@ -163,7 +163,7 @@ describe("Capital Projects", () => {
         "/capital-projects?offset=b4d",
       );
       expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
+        new InvalidRequestParameterException("invalid parameters").message,
       );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
@@ -193,7 +193,7 @@ describe("Capital Projects", () => {
         `/capital-projects?cityCouncilDistrictId=${id}`,
       );
       expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
+        new InvalidRequestParameterException("invalid parameters").message,
       );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
@@ -223,7 +223,7 @@ describe("Capital Projects", () => {
         `/capital-projects?communityDistrictId=${id}`,
       );
       expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
+        new InvalidRequestParameterException("invalid parameters").message,
       );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
@@ -254,7 +254,7 @@ describe("Capital Projects", () => {
         `/capital-projects?managingAgency=${managingAgency}`,
       );
       expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
+        new InvalidRequestParameterException("invalid parameters").message,
       );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
@@ -284,7 +284,7 @@ describe("Capital Projects", () => {
         `/capital-projects?commitmentsTotalMin=${commitmentsTotalMin}`,
       );
       expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
+        new InvalidRequestParameterException("invalid parameters").message,
       );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
@@ -314,7 +314,7 @@ describe("Capital Projects", () => {
         `/capital-projects?commitmentsTotalMax=${commitmentsTotalMax}`,
       );
       expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
+        new InvalidRequestParameterException("invalid parameters").message,
       );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
@@ -326,7 +326,7 @@ describe("Capital Projects", () => {
         `/capital-projects?commitmentsTotalMin=${commitmentsTotalMin}&commitmentsTotalMax=${commitmentsTotalMax}`,
       );
       expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
+        new InvalidRequestParameterException("invalid parameters").message,
       );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
@@ -408,7 +408,7 @@ describe("Capital Projects", () => {
         `/capital-projects?isMapped=123`,
       );
       expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
+        new InvalidRequestParameterException("invalid parameters").message,
       );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
@@ -418,7 +418,7 @@ describe("Capital Projects", () => {
         `/capital-projects?cityCouncilDistrictId=50&isMapped=true`,
       );
       expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
+        new InvalidRequestParameterException("invalid parameters").message,
       );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
@@ -428,7 +428,7 @@ describe("Capital Projects", () => {
         `/capital-projects?communityDistrictId=101&isMapped=true`,
       );
       expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
+        new InvalidRequestParameterException("invalid parameters").message,
       );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
@@ -535,7 +535,7 @@ describe("Capital Projects", () => {
         .expect(400);
 
       expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
+        new InvalidRequestParameterException("invalid parameters").message,
       );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
@@ -610,7 +610,7 @@ describe("Capital Projects", () => {
         .expect(400);
 
       expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
+        new InvalidRequestParameterException("invalid parameters").message,
       );
 
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);

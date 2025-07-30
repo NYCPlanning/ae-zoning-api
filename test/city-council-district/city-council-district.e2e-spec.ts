@@ -110,7 +110,7 @@ describe("City Council District e2e", () => {
         .expect(400);
 
       expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
+        new InvalidRequestParameterException("invalid parameters").message,
       );
 
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
@@ -157,7 +157,7 @@ describe("City Council District e2e", () => {
         .get(`/city-council-districts/${longId}/geojson`)
         .expect(400);
       expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
+        new InvalidRequestParameterException("invalid parameters").message,
       );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
@@ -168,7 +168,7 @@ describe("City Council District e2e", () => {
         .get(`/city-council-districts/${letterId}/geojson`)
         .expect(400);
       expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
+        new InvalidRequestParameterException("invalid parameters").message,
       );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
@@ -226,7 +226,7 @@ describe("City Council District e2e", () => {
         .expect(400);
 
       expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
+        new InvalidRequestParameterException("invalid parameters").message,
       );
 
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
@@ -244,7 +244,7 @@ describe("City Council District e2e", () => {
         .expect(400);
 
       expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
+        new InvalidRequestParameterException("invalid parameters").message,
       );
 
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
@@ -360,7 +360,7 @@ describe("City Council District e2e", () => {
         .get(`/city-council-districts/${missingId}/capital-projects`)
         .expect(400);
       expect(response.body.message).toBe(
-        new InvalidRequestParameterException().message,
+        new InvalidRequestParameterException("invalid parameters").message,
       );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
