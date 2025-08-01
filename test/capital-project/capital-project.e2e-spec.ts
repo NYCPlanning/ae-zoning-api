@@ -12,10 +12,7 @@ import { AgencyRepositoryMock } from "test/agency/agency.repository.mock";
 import { AgencyBudgetRepositoryMock } from "test/agency-budget/agency-budget.repository.mock";
 import * as request from "supertest";
 import { HttpName } from "src/filter";
-import {
-  DataRetrievalException,
-  InvalidRequestParameterException,
-} from "src/exception";
+import { DataRetrievalException } from "src/exception";
 import {
   findCapitalCommitmentsByManagingCodeCapitalProjectIdQueryResponseSchema,
   findCapitalProjectByManagingCodeCapitalProjectIdQueryResponseSchema,
@@ -122,9 +119,7 @@ describe("Capital Projects", () => {
         `/capital-projects?agencyBudget=${agencyBudgetCode}`,
       );
 
-      expect(response.body.message).toBe(
-        new InvalidRequestParameterException("invalid parameters").message,
-      );
+      expect(response.body.message).toMatch(/could not check/);
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
 
@@ -132,9 +127,7 @@ describe("Capital Projects", () => {
       const response = await request(app.getHttpServer()).get(
         "/capital-projects?limit=b4d",
       );
-      expect(response.body.message).toBe(
-        new InvalidRequestParameterException("invalid parameters").message,
-      );
+      expect(response.body.message).toMatch(/limit: Expected number/);
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
 
@@ -142,9 +135,7 @@ describe("Capital Projects", () => {
       const response = await request(app.getHttpServer()).get(
         "/capital-projects?limit=101",
       );
-      expect(response.body.message).toBe(
-        new InvalidRequestParameterException("invalid parameters").message,
-      );
+      expect(response.body.message).toMatch(/limit: Number must be less/);
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
 
@@ -152,9 +143,7 @@ describe("Capital Projects", () => {
       const response = await request(app.getHttpServer()).get(
         "/capital-projects?limit=0",
       );
-      expect(response.body.message).toBe(
-        new InvalidRequestParameterException("invalid parameters").message,
-      );
+      expect(response.body.message).toMatch(/limit: Number must be greater/);
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
 
@@ -162,9 +151,7 @@ describe("Capital Projects", () => {
       const response = await request(app.getHttpServer()).get(
         "/capital-projects?offset=b4d",
       );
-      expect(response.body.message).toBe(
-        new InvalidRequestParameterException("invalid parameters").message,
-      );
+      expect(response.body.message).toMatch(/offset: Expected number/);
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
 
@@ -192,9 +179,7 @@ describe("Capital Projects", () => {
       const response = await request(app.getHttpServer()).get(
         `/capital-projects?cityCouncilDistrictId=${id}`,
       );
-      expect(response.body.message).toBe(
-        new InvalidRequestParameterException("invalid parameters").message,
-      );
+      expect(response.body.message).toMatch(/cityCouncilDistrictId: Invalid/);
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
 
@@ -222,9 +207,7 @@ describe("Capital Projects", () => {
       const response = await request(app.getHttpServer()).get(
         `/capital-projects?communityDistrictId=${id}`,
       );
-      expect(response.body.message).toBe(
-        new InvalidRequestParameterException("invalid parameters").message,
-      );
+      expect(response.body.message).toMatch(/communityDistrictId: Invalid/);
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
 
@@ -253,9 +236,7 @@ describe("Capital Projects", () => {
       const response = await request(app.getHttpServer()).get(
         `/capital-projects?managingAgency=${managingAgency}`,
       );
-      expect(response.body.message).toBe(
-        new InvalidRequestParameterException("invalid parameters").message,
-      );
+      expect(response.body.message).toMatch(/could not check/);
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
 
@@ -283,9 +264,7 @@ describe("Capital Projects", () => {
       const response = await request(app.getHttpServer()).get(
         `/capital-projects?commitmentsTotalMin=${commitmentsTotalMin}`,
       );
-      expect(response.body.message).toBe(
-        new InvalidRequestParameterException("invalid parameters").message,
-      );
+      expect(response.body.message).toMatch(/commitmentsTotalMin: Invalid/);
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
 
@@ -313,9 +292,7 @@ describe("Capital Projects", () => {
       const response = await request(app.getHttpServer()).get(
         `/capital-projects?commitmentsTotalMax=${commitmentsTotalMax}`,
       );
-      expect(response.body.message).toBe(
-        new InvalidRequestParameterException("invalid parameters").message,
-      );
+      expect(response.body.message).toMatch(/commitmentsTotalMax: Invalid/);
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
 
@@ -325,9 +302,7 @@ describe("Capital Projects", () => {
       const response = await request(app.getHttpServer()).get(
         `/capital-projects?commitmentsTotalMin=${commitmentsTotalMin}&commitmentsTotalMax=${commitmentsTotalMax}`,
       );
-      expect(response.body.message).toBe(
-        new InvalidRequestParameterException("invalid parameters").message,
-      );
+      expect(response.body.message).toMatch(/min amount should be/);
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
 
@@ -407,9 +382,7 @@ describe("Capital Projects", () => {
       const response = await request(app.getHttpServer()).get(
         `/capital-projects?isMapped=123`,
       );
-      expect(response.body.message).toBe(
-        new InvalidRequestParameterException("invalid parameters").message,
-      );
+      expect(response.body.message).toMatch(/invalid value for boolean/);
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
 
@@ -417,8 +390,8 @@ describe("Capital Projects", () => {
       const response = await request(app.getHttpServer()).get(
         `/capital-projects?cityCouncilDistrictId=50&isMapped=true`,
       );
-      expect(response.body.message).toBe(
-        new InvalidRequestParameterException("invalid parameters").message,
+      expect(response.body.message).toMatch(
+        /cannot have isMapped filter in conjunction/,
       );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
@@ -427,8 +400,8 @@ describe("Capital Projects", () => {
       const response = await request(app.getHttpServer()).get(
         `/capital-projects?communityDistrictId=101&isMapped=true`,
       );
-      expect(response.body.message).toBe(
-        new InvalidRequestParameterException("invalid parameters").message,
+      expect(response.body.message).toMatch(
+        /cannot have isMapped filter in conjunction/,
       );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
@@ -534,9 +507,6 @@ describe("Capital Projects", () => {
         )
         .expect(400);
 
-      expect(response.body.message).toBe(
-        new InvalidRequestParameterException("invalid parameters").message,
-      );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
 
@@ -609,9 +579,9 @@ describe("Capital Projects", () => {
         .get(`/capital-projects/${z}/${x}/${y}.pbf`)
         .expect(400);
 
-      expect(response.body.message).toBe(
-        new InvalidRequestParameterException("invalid parameters").message,
-      );
+      expect(response.body.message).toMatch(/z: Expected number/);
+      expect(response.body.message).toMatch(/x: Expected number/);
+      expect(response.body.message).toMatch(/y: Expected number/);
 
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
