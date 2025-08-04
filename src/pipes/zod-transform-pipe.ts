@@ -43,23 +43,26 @@ export class ZodTransformPipe<T extends ZodRawShape> implements PipeTransform {
       decodedParams[param] = value;
     });
 
-    try {
-      const parsedParams = this.schema.parse(decodedParams);
-      // It is possible for Zod to return `undefined` when optional parameters are provided `undefined` values
-      // Though, this should not be possible within this transform pipe because all values are passed through urls, which are strings
-      // However, the type definition doesn't know that the values come from a url.
-      // We account for undefined and satisify the type defintion by throwing an error, even though we should never encounter `undefined`
-      if (parsedParams === undefined)
-        throw new Error("parameters are undefined");
-      return parsedParams;
-    } catch (e) {
-      if (e.message === "parameters are undefined")
-        throw new InvalidRequestParameterException(e.message);
+    const safeParsedParams = this.schema.safeParse(decodedParams);
+    // It is possible for Zod to return `undefined` when optional parameters are provided `undefined` values
+    // Though, this should not be possible within this transform pipe because all values are passed through urls, which are strings
+    // However, the type definition doesn't know that the values come from a url.
+    // We account for undefined and satisify the type defintion by throwing an error, even though we should never encounter `undefined`
+    if (safeParsedParams === undefined)
+      throw new InvalidRequestParameterException("parameters are undefined");
 
+    if (safeParsedParams.success) {
+      const { data } = safeParsedParams;
+      if (data === undefined)
+        throw new InvalidRequestParameterException("parameters are undefined");
+      return data;
+    }
+
+    if (!safeParsedParams.success) {
+      const {
+        error: { errors },
+      } = safeParsedParams;
       const errorMessages: Array<string> = [];
-      const { errors } = e as {
-        errors: Array<{ path: Array<string | number>; message: string }>;
-      };
       errors.forEach((error) => {
         const parameter = error.path[0]; // first position of array holds the parameter name
         const { message } = error;
@@ -67,5 +70,7 @@ export class ZodTransformPipe<T extends ZodRawShape> implements PipeTransform {
       });
       throw new InvalidRequestParameterException(errorMessages.join("; "));
     }
+
+    throw new InvalidRequestParameterException("Unable to parse parameters");
   }
 }
