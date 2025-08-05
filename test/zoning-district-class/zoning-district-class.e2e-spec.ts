@@ -4,10 +4,7 @@ import { Test } from "@nestjs/testing";
 import { ZoningDistrictClassModule } from "src/zoning-district-class/zoning-district-class.module";
 import { ZoningDistrictClassRepositoryMock } from "./zoning-district-class.repository.mock";
 import { ZoningDistrictClassRepository } from "src/zoning-district-class/zoning-district-class.repository";
-import {
-  DataRetrievalException,
-  InvalidRequestParameterException,
-} from "src/exception";
+import { DataRetrievalException } from "src/exception";
 import { HttpName } from "src/filter";
 import {
   findZoningDistrictClassByZoningDistrictClassIdQueryResponseSchema,
@@ -94,17 +91,12 @@ describe("Zoning District Classes e2e", () => {
     });
 
     it("should 400 and throw 'Bad Request' error with an invalid id", async () => {
-      const invalidRequestParameterException =
-        new InvalidRequestParameterException("invalid paramters");
-
       const invalidId = "CC";
       const response = await request(app.getHttpServer())
         .get(`/zoning-district-classes/${invalidId}`)
         .expect(400);
 
-      expect(response.body.message).toBe(
-        invalidRequestParameterException.message,
-      );
+      expect(response.body.message).toMatch(/id: Invalid/);
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
 

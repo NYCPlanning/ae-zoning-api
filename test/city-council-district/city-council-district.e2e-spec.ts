@@ -1,10 +1,7 @@
 import * as request from "supertest";
 import { INestApplication } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
-import {
-  DataRetrievalException,
-  InvalidRequestParameterException,
-} from "src/exception";
+import { DataRetrievalException } from "src/exception";
 import { HttpName } from "src/filter";
 import { CityCouncilDistrictRepository } from "src/city-council-district/city-council-district.repository";
 import { CityCouncilDistrictRepositoryMock } from "./city-council-district.repository.mock";
@@ -109,9 +106,9 @@ describe("City Council District e2e", () => {
         .get(`/city-council-districts/${z}/${x}/${y}.pbf`)
         .expect(400);
 
-      expect(response.body.message).toBe(
-        new InvalidRequestParameterException("invalid parameters").message,
-      );
+      expect(response.body.message).toMatch(/z: Expected number/);
+      expect(response.body.message).toMatch(/x: Expected number/);
+      expect(response.body.message).toMatch(/y: Expected number/);
 
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
@@ -156,9 +153,7 @@ describe("City Council District e2e", () => {
       const response = await request(app.getHttpServer())
         .get(`/city-council-districts/${longId}/geojson`)
         .expect(400);
-      expect(response.body.message).toBe(
-        new InvalidRequestParameterException("invalid parameters").message,
-      );
+      expect(response.body.message).toMatch(/cityCouncilDistrictId: Invalid/);
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
 
@@ -167,9 +162,7 @@ describe("City Council District e2e", () => {
       const response = await request(app.getHttpServer())
         .get(`/city-council-districts/${letterId}/geojson`)
         .expect(400);
-      expect(response.body.message).toBe(
-        new InvalidRequestParameterException("invalid parameters").message,
-      );
+      expect(response.body.message).toMatch(/cityCouncilDistrictId: Invalid/);
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
 
@@ -225,10 +218,7 @@ describe("City Council District e2e", () => {
         )
         .expect(400);
 
-      expect(response.body.message).toBe(
-        new InvalidRequestParameterException("invalid parameters").message,
-      );
-
+      expect(response.body.message).toMatch(/cityCouncilDistrictId: Invalid/);
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
 
@@ -243,9 +233,9 @@ describe("City Council District e2e", () => {
         )
         .expect(400);
 
-      expect(response.body.message).toBe(
-        new InvalidRequestParameterException("invalid parameters").message,
-      );
+      expect(response.body.message).toMatch(/z: Expected number/);
+      expect(response.body.message).toMatch(/x: Expected number/);
+      expect(response.body.message).toMatch(/y: Expected number/);
 
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
@@ -323,6 +313,7 @@ describe("City Council District e2e", () => {
       const response = await request(app.getHttpServer())
         .get(`/city-council-districts/${invalidId}/capital-projects`)
         .expect(400);
+      expect(response.body.message).toMatch(/cityCouncilDistrictId: Invalid/);
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
 
@@ -330,6 +321,7 @@ describe("City Council District e2e", () => {
       const response = await request(app.getHttpServer())
         .get(`/city-council-districts/${mock.id}/capital-projects?limit=b4d`)
         .expect(400);
+      expect(response.body.message).toMatch(/limit: Expected number/);
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
 
@@ -337,13 +329,15 @@ describe("City Council District e2e", () => {
       const response = await request(app.getHttpServer())
         .get(`/city-council-districts/${mock.id}/capital-projects?limit=101`)
         .expect(400);
-
+      expect(response.body.message).toMatch(/limit: Number must be less/);
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
+
     it("should 400 and when finding by an 'too-low' limit", async () => {
       const response = await request(app.getHttpServer())
         .get(`/city-council-districts/${mock.id}/capital-projects?limit=0`)
         .expect(400);
+      expect(response.body.message).toMatch(/limit: Number must be greater/);
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
 
@@ -351,6 +345,7 @@ describe("City Council District e2e", () => {
       const response = await request(app.getHttpServer())
         .get(`/city-council-districts/${mock.id}/capital-projects?offset=b4d`)
         .expect(400);
+      expect(response.body.message).toMatch(/offset: Expected number/);
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
 
@@ -359,9 +354,7 @@ describe("City Council District e2e", () => {
       const response = await request(app.getHttpServer())
         .get(`/city-council-districts/${missingId}/capital-projects`)
         .expect(400);
-      expect(response.body.message).toBe(
-        new InvalidRequestParameterException("invalid parameters").message,
-      );
+      expect(response.body.message).toMatch(/could not check/);
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
   });
