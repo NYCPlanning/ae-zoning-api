@@ -1,6 +1,13 @@
 import { PipeTransform } from "@nestjs/common";
 import { InvalidRequestParameterException } from "src/exception";
-import { ZodRawShape, ZodObject, ZodOptional, ZodArray, ZodBoolean } from "zod";
+import {
+  ZodRawShape,
+  ZodObject,
+  ZodOptional,
+  ZodArray,
+  ZodBoolean,
+  ZodError,
+} from "zod";
 export class ZodTransformPipe<T extends ZodRawShape> implements PipeTransform {
   constructor(private schema: ZodObject<T> | ZodOptional<ZodObject<T>>) {}
 
@@ -18,8 +25,11 @@ export class ZodTransformPipe<T extends ZodRawShape> implements PipeTransform {
     > = {};
 
     Object.entries(params).forEach(([param, value]) => {
-      const schema = schemaProperties[param];
-      const property = schema instanceof ZodOptional ? schema.unwrap() : schema;
+      const parameterSchema = schemaProperties[param];
+      const property =
+        parameterSchema instanceof ZodOptional
+          ? parameterSchema.unwrap()
+          : parameterSchema;
 
       if (property instanceof ZodArray) {
         decodedParams[param] = Array.isArray(value) ? value : value.split(",");
@@ -35,7 +45,9 @@ export class ZodTransformPipe<T extends ZodRawShape> implements PipeTransform {
           decodedParams[param] = false;
           return;
         }
-        throw new InvalidRequestParameterException("invalid value for boolean schema property");
+        throw new InvalidRequestParameterException(
+          "invalid value for boolean schema property",
+        );
       }
 
       decodedParams[param] = value;
@@ -43,10 +55,25 @@ export class ZodTransformPipe<T extends ZodRawShape> implements PipeTransform {
 
     try {
       const parsedParams = this.schema.parse(decodedParams);
+      // It is possible for Zod to return `undefined` when optional parameters are provided `undefined` values
+      // Though, this should not be possible within this transform pipe because all values are passed through urls, which are strings
+      // However, the type definition doesn't know that the values come from a url.
+      // We account for undefined and satisify the type defintion by throwing an error, even though we should never encounter `undefined`
       if (parsedParams === undefined) throw new Error();
       return parsedParams;
-    } catch (error) {
-      throw new InvalidRequestParameterException("no params");
+    } catch (e) {
+      if (e instanceof ZodError) {
+        const errorMessages: Array<string> = [];
+        const { errors } = e;
+        errors.forEach((error) => {
+          const parameter = error.path[0]; // first position of array holds the parameter name
+          const { message } = error;
+          errorMessages.push(`${parameter}: ${message}`);
+        });
+        throw new InvalidRequestParameterException(errorMessages.join("; "));
+      }
+
+      throw new InvalidRequestParameterException("unable to parse parameters");
     }
   }
 }
