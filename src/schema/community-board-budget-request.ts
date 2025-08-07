@@ -62,3 +62,8 @@ export const cbbrAgencyNeedRequest = pgTable("cbbr_agency_need_request", {
     .notNull()
     .references(() => cbbrRequest.id),
 });
+
+export const cbbrOptionsCascade = pgTable("cbbr_optiosn_cascade", {
+  policyAreaId:
+  
+})
