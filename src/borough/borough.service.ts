@@ -28,7 +28,10 @@ export class BoroughService {
 
   async findCommunityDistrictsByBoroughId(id: string) {
     const boroughCheck = await this.boroughRepository.checkById(id);
-    if (boroughCheck === false) throw new ResourceNotFoundException();
+    if (boroughCheck === false)
+      throw new ResourceNotFoundException(
+        "cannot find borough for community districts",
+      );
 
     const communityDistricts =
       await this.boroughRepository.findCommunityDistrictsByBoroughId(id);
@@ -47,7 +50,9 @@ export class BoroughService {
         params,
       );
     if (communityDistrictGeoJson === undefined)
-      throw new ResourceNotFoundException();
+      throw new ResourceNotFoundException(
+        "cannot find community district geojson",
+      );
 
     const geometry = JSON.parse(communityDistrictGeoJson.geometry);
     const properties = produce(

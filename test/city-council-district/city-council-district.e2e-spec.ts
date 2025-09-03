@@ -171,7 +171,7 @@ describe("City Council District e2e", () => {
       const response = await request(app.getHttpServer())
         .get(`/city-council-districts/${missingId}/geojson`)
         .expect(404);
-      expect(response.body.message).toBe(HttpName.NOT_FOUND);
+      expect(response.body.message).toMatch(/city council district/);
     });
 
     it("should 500 when the database errors", async () => {

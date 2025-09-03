@@ -9,3 +9,4 @@ properties:
 required:
   - statusCode
   - message
+  - error

@@ -8,7 +8,7 @@ export type Error = {
    */
   message: string;
   /**
-   * @type string | undefined
+   * @type string
    */
-  error?: string;
+  error: string;
 };

@@ -106,7 +106,7 @@ describe("Zoning District Classes e2e", () => {
         .get(`/zoning-district-classes/${missingId}`)
         .expect(404);
 
-      expect(response.body.message).toBe(HttpName.NOT_FOUND);
+      expect(response.body.message).toMatch(/zoning district class/);
     });
 
     it("should 500 and throw data retrieval error", async () => {

@@ -159,7 +159,8 @@ export class CapitalProjectService {
         params,
       );
 
-    if (capitalProjects.length < 1) throw new ResourceNotFoundException();
+    if (capitalProjects.length < 1)
+      throw new ResourceNotFoundException("cannot find capital project");
     return capitalProjects[0];
   }
 
@@ -171,7 +172,10 @@ export class CapitalProjectService {
         params,
       );
 
-    if (capitalProjects.length < 1) throw new ResourceNotFoundException();
+    if (capitalProjects.length < 1)
+      throw new ResourceNotFoundException(
+        "cannot find capital project geojson",
+      );
 
     const capitalProject = capitalProjects[0];
 
@@ -207,7 +211,10 @@ export class CapitalProjectService {
         params.managingCode,
         params.capitalProjectId,
       );
-    if (capitalProjectCheck === false) throw new ResourceNotFoundException();
+    if (capitalProjectCheck === false)
+      throw new ResourceNotFoundException(
+        "cannot find capital project for commitments",
+      );
 
     const capitalCommitments =
       await this.capitalProjectRepository.findCapitalCommitmentsByManagingCodeCapitalProjectId(

@@ -225,7 +225,7 @@ describe("TaxLots", () => {
       const response = await request(app.getHttpServer())
         .get(`/tax-lots/${missingBbl}`)
         .expect(404);
-      expect(response.body.message).toBe(HttpName.NOT_FOUND);
+      expect(response.body.message).toMatch(/tax lot/);
     });
 
     it("should 500 when the database errors", async () => {
@@ -278,7 +278,7 @@ describe("TaxLots", () => {
       const response = await request(app.getHttpServer())
         .get(`/tax-lots/${missingBbl}/geojson`)
         .expect(404);
-      expect(response.body.message).toBe(HttpName.NOT_FOUND);
+      expect(response.body.message).toMatch(/tax lot geojson/);
     });
 
     it("should 500 when the database errors", async () => {
@@ -333,7 +333,7 @@ describe("TaxLots", () => {
       const response = await request(app.getHttpServer())
         .get(`/tax-lots/${missingBbl}/zoning-districts`)
         .expect(404);
-      expect(response.body.message).toBe(HttpName.NOT_FOUND);
+      expect(response.body.message).toMatch(/tax lot for zoning districts/);
     });
 
     it("should 500 when the database errors", async () => {
@@ -391,7 +391,9 @@ describe("TaxLots", () => {
       const response = await request(app.getHttpServer())
         .get(`/tax-lots/${missingBbl}/zoning-districts/classes`)
         .expect(404);
-      expect(response.body.message).toBe(HttpName.NOT_FOUND);
+      expect(response.body.message).toMatch(
+        /tax lot for zoning district classes/,
+      );
     });
 
     it("should 500 when the database errors", async () => {

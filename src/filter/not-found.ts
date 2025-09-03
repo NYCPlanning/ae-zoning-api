@@ -18,7 +18,8 @@ export class NotFoundExceptionFilter implements ExceptionFilter {
     const httpStatus = HttpStatus.NOT_FOUND;
     const responseBody = {
       statusCode: httpStatus,
-      message: HttpName.NOT_FOUND,
+      message: exception.message,
+      error: HttpName.NOT_FOUND,
     };
 
     const ctx = host.switchToHttp();
