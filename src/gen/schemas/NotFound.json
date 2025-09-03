@@ -5,6 +5,6 @@
     "message": { "type": "string" },
     "error": { "type": "string" }
   },
-  "required": ["statusCode", "message"],
+  "required": ["statusCode", "message", "error"],
   "x-readme-ref-name": "Error"
 }

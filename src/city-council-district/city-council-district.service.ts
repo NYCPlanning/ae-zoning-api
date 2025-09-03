@@ -40,7 +40,9 @@ export class CityCouncilDistrictService {
         cityCouncilDistrictId,
       });
     if (cityCouncilDistrictGeoJson === undefined)
-      throw new ResourceNotFoundException();
+      throw new ResourceNotFoundException(
+        "cannot find city council district geojson",
+      );
 
     const geometry = JSON.parse(
       cityCouncilDistrictGeoJson.geometry,

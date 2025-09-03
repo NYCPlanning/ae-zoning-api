@@ -11,7 +11,8 @@ export class ZoningDistrictService {
 
   async findById(id: string) {
     const zoningDistrict = await this.zoningDistrictRepository.findById(id);
-    if (zoningDistrict === undefined) throw new ResourceNotFoundException();
+    if (zoningDistrict === undefined)
+      throw new ResourceNotFoundException("cannot find zoning district");
 
     return zoningDistrict;
   }
@@ -19,7 +20,10 @@ export class ZoningDistrictService {
   async findZoningDistrictClassesById(id: string) {
     const zoningDistrictCheck =
       await this.zoningDistrictRepository.checkById(id);
-    if (zoningDistrictCheck === false) throw new ResourceNotFoundException();
+    if (zoningDistrictCheck === false)
+      throw new ResourceNotFoundException(
+        "cannot find zoning district for zoning district classes",
+      );
     const zoningDistrictClasses =
       await this.zoningDistrictRepository.findZoningDistrictClassesById(id);
 

@@ -113,12 +113,12 @@ describe("Borough e2e", () => {
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
 
-    it("should 404 and when finding by a missing id", async () => {
+    it("should 404 when finding by a missing id", async () => {
       const missingId = "9";
       const response = await request(app.getHttpServer())
         .get(`/boroughs/${missingId}/community-districts`)
         .expect(404);
-      expect(response.body.message).toBe(HttpName.NOT_FOUND);
+      expect(response.body.message).toMatch(/borough for community districts/);
     });
 
     it("should 500 when the database errors", async () => {
@@ -180,7 +180,7 @@ describe("Borough e2e", () => {
       const response = await request(app.getHttpServer())
         .get(`/boroughs/1/community-districts/${missingId}/geojson`)
         .expect(404);
-      expect(response.body.message).toBe(HttpName.NOT_FOUND);
+      expect(response.body.message).toMatch(/community district geojson/);
     });
 
     it("should 500 when the database errors", async () => {

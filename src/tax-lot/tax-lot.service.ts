@@ -181,13 +181,15 @@ export class TaxLotService {
 
   async findByBbl(bbl: string) {
     const result = await this.taxLotRepository.findByBbl(bbl);
-    if (result === undefined) throw new ResourceNotFoundException();
+    if (result === undefined)
+      throw new ResourceNotFoundException("cannot find tax lot");
     return result;
   }
 
   async findGeoJsonByBbl(bbl: string) {
     const result = await this.taxLotRepository.findByBblSpatial(bbl);
-    if (result === undefined) throw new ResourceNotFoundException();
+    if (result === undefined)
+      throw new ResourceNotFoundException("cannot find tax lot geojson");
 
     const geometry = JSON.parse(result.geometry) as MultiPolygon;
 
@@ -208,7 +210,10 @@ export class TaxLotService {
 
   async findZoningDistrictsByBbl(bbl: string) {
     const taxLotCheck = await this.taxLotRepository.checkByBbl(bbl);
-    if (taxLotCheck === false) throw new ResourceNotFoundException();
+    if (taxLotCheck === false)
+      throw new ResourceNotFoundException(
+        "cannot find tax lot for zoning districts",
+      );
     const zoningDistricts =
       await this.taxLotRepository.findZoningDistrictsByBbl(bbl);
     return {
@@ -218,7 +223,10 @@ export class TaxLotService {
 
   async findZoningDistrictClassesByBbl(bbl: string) {
     const taxLotCheck = await this.taxLotRepository.checkByBbl(bbl);
-    if (taxLotCheck === false) throw new ResourceNotFoundException();
+    if (taxLotCheck === false)
+      throw new ResourceNotFoundException(
+        "cannot find tax lot for zoning district classes",
+      );
 
     const zoningDistrictClasses =
       await this.taxLotRepository.findZoningDistrictClassesByBbl(bbl);

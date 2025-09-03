@@ -53,7 +53,7 @@ describe("Zoning district e2e", () => {
       const response = await request(app.getHttpServer())
         .get(`/zoning-districts/${missingId}`)
         .expect(404);
-      expect(response.body.message).toBe(HttpName.NOT_FOUND);
+      expect(response.body.message).toMatch(/zoning district/);
     });
 
     it("should 500 when the database errors", async () => {
@@ -101,7 +101,9 @@ describe("Zoning district e2e", () => {
       const response = await request(app.getHttpServer())
         .get(`/zoning-districts/${missingId}/classes`)
         .expect(404);
-      expect(response.body.message).toBe(HttpName.NOT_FOUND);
+      expect(response.body.message).toMatch(
+        /zoning district for zoning district classes/,
+      );
     });
 
     it("should 500 when the database errors", async () => {

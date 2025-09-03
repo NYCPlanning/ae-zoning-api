@@ -453,7 +453,7 @@ describe("Capital Projects", () => {
         .get(`/capital-projects/${managingCode}/${capitalProjectId}`)
         .expect(404);
 
-      expect(response.body.message).toBe(HttpName.NOT_FOUND);
+      expect(response.body.message).toMatch(/capital project/);
     });
 
     it("should 500 when the database errors", async () => {
@@ -531,7 +531,7 @@ describe("Capital Projects", () => {
         .get(`/capital-projects/${managingCode}/${capitalProjectId}`)
         .expect(404);
 
-      expect(response.body.message).toBe(HttpName.NOT_FOUND);
+      expect(response.body.message).toMatch(/capital project/);
     });
 
     it("should 500 when the database errors", async () => {
@@ -663,7 +663,7 @@ describe("Capital Projects", () => {
         )
         .expect(404);
 
-      expect(response.body.message).toBe(HttpName.NOT_FOUND);
+      expect(response.body.message).toMatch(/capital project for commitments/);
     });
 
     it("should 500 when the database errors", async () => {
