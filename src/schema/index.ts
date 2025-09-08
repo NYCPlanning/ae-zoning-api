@@ -9,6 +9,7 @@ export * from "./capital-project";
 export * from "./capital-project-checkbook";
 export * from "./capital-project-fund";
 export * from "./city-council-district";
+export * from "./community-board-budget-request";
 export * from "./community-district";
 export * from "./geometry";
 export * from "./land-use";

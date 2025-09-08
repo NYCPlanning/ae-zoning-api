@@ -1,0 +1,26 @@
+get:
+  summary: Find community board budget request policy areas
+  operationId: findCommunityBoardBudgetRequestPolicyAreas
+  tags:
+    - Community Board Budget Requests
+  parameters:
+    - $ref: ../components/parameters/cbbrNeedGroupIdQueryParam.yaml
+    - $ref: ../components/parameters/agencyInitialsQueryParam.yaml
+  responses:
+    '200':
+      description: An object containing a list of policy areas
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              cbbrPolicyAreas:
+                type: array
+                items:
+                  $ref: ../components/schemas/CommunityBoardBudgetRequestPolicyArea.yaml
+            required:
+              - cbbrPolicyAreas
+    '400':
+      $ref: ../components/responses/BadRequest.yaml
+    '500':
+      $ref: ../components/responses/InternalServerError.yaml

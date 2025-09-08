@@ -1,0 +1,8 @@
+name: agencyInitials
+required: false
+in: query
+schema:
+  type: string
+  example: DOT
+description: >-
+  A string of variable length containing the initials of the agency.

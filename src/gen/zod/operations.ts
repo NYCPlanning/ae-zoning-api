@@ -110,6 +110,12 @@ import {
   findCityCouncilDistrictTilesPathParamsSchema,
 } from "./findCityCouncilDistrictTilesSchema";
 import {
+  findCommunityBoardBudgetRequestPolicyAreasQueryResponseSchema,
+  findCommunityBoardBudgetRequestPolicyAreas400Schema,
+  findCommunityBoardBudgetRequestPolicyAreas500Schema,
+  findCommunityBoardBudgetRequestPolicyAreasQueryParamsSchema,
+} from "./findCommunityBoardBudgetRequestPolicyAreasSchema";
+import {
   findCommunityDistrictTilesQueryResponseSchema,
   findCommunityDistrictTiles400Schema,
   findCommunityDistrictTiles500Schema,
@@ -531,6 +537,24 @@ export const operations = {
       500: findCityCouncilDistrictTiles500Schema,
     },
   },
+  findCommunityBoardBudgetRequestPolicyAreas: {
+    request: undefined,
+    parameters: {
+      path: undefined,
+      query: findCommunityBoardBudgetRequestPolicyAreasQueryParamsSchema,
+      header: undefined,
+    },
+    responses: {
+      200: findCommunityBoardBudgetRequestPolicyAreasQueryResponseSchema,
+      400: findCommunityBoardBudgetRequestPolicyAreas400Schema,
+      500: findCommunityBoardBudgetRequestPolicyAreas500Schema,
+      default: findCommunityBoardBudgetRequestPolicyAreasQueryResponseSchema,
+    },
+    errors: {
+      400: findCommunityBoardBudgetRequestPolicyAreas400Schema,
+      500: findCommunityBoardBudgetRequestPolicyAreas500Schema,
+    },
+  },
   findCommunityDistrictTiles: {
     request: undefined,
     parameters: {
@@ -822,6 +846,9 @@ export const paths = {
   },
   "/city-council-districts/{z}/{x}/{y}.pbf": {
     get: operations["findCityCouncilDistrictTiles"],
+  },
+  "/community-board-budget-requests/policy-areas": {
+    get: operations["findCommunityBoardBudgetRequestPolicyAreas"],
   },
   "/community-districts/{z}/{x}/{y}.pbf": {
     get: operations["findCommunityDistrictTiles"],
