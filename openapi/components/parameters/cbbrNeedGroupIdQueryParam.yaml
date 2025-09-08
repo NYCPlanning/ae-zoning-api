@@ -1,0 +1,8 @@
+name: cbbrNeedGroupId
+required: false
+in: query
+schema:
+  type: integer
+  example: 1
+description: >-
+  The number used to refer to the need group.

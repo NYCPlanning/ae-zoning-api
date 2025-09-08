@@ -9,6 +9,7 @@ import { BoroughModule } from "./borough/borough.module";
 import { LandUseModule } from "./land-use/land-use.module";
 import { TaxLotModule } from "./tax-lot/tax-lot.module";
 import { ZoningDistrictModule } from "./zoning-district/zoning-district.module";
+import { CommunityBoardBudgetRequestModule } from "./community-board-budget-request/community-board-budget-request.module";
 import {
   DbConfig,
   FeatureFlagConfig,
@@ -58,6 +59,7 @@ import { CacheModule } from "@nestjs/cache-manager";
     CityCouncilDistrictModule,
     CapitalCommitmentTypeModule,
     CapitalProjectModule,
+    CommunityBoardBudgetRequestModule,
     CommunityDistrictModule,
     LandUseModule,
     TaxLotModule,
