@@ -23,6 +23,10 @@ tags:
     description: >-
       An endpoint that returns or is otherwise related to NYC city council
       districts
+  - name: Community Board Budget Requests
+    description: >-
+      An endpoint that returns or is otherwise related to NYC Community
+      Board Budget Requests (CBBRs)
   - name: Community Districts
     description: >-
       An endpoint that returns or is otherwise related to NYC community
@@ -79,6 +83,8 @@ paths:
     $ref: paths/city-council-districts_{cityCouncilDistrictId}_capital-projects.yaml
   /city-council-districts/{z}/{x}/{y}.pbf:
     $ref: paths/city-council-districts_{z}_{x}_{y}.pbf.yaml
+  /community-board-budget-requests/policy-areas:
+    $ref: paths/community-board-budget-requests_policy-areas.yaml
   /community-districts/{z}/{x}/{y}.pbf:
     $ref: paths/community-districts_{z}_{x}_{y}.pbf.yaml
   /land-uses:
