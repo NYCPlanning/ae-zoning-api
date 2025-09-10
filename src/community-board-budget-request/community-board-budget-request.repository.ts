@@ -42,7 +42,8 @@ export class CommunityBoardBudgetRequestRepository {
               ? eq(cbbrOptionCascade.agencyInitials, agencyInitials)
               : undefined,
           ),
-        );
+        )
+        .orderBy(cbbrPolicyArea.id);
     } catch {
       throw new DataRetrievalException("cannot find policy areas");
     }
