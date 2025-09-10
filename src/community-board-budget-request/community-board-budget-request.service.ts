@@ -9,13 +9,11 @@ export class CommunityBoardBudgetRequestService {
     private readonly communityBoardBudgetRequestRepository: CommunityBoardBudgetRequestRepository,
   ) {}
 
-  async findManyCbbrPolicyArea(
+  async findPolicyAreas(
     params: FindCommunityBoardBudgetRequestPolicyAreasQueryParams,
   ) {
     const cbbrPolicyAreas =
-      await this.communityBoardBudgetRequestRepository.findManyCbbrPolicyArea(
-        params,
-      );
+      await this.communityBoardBudgetRequestRepository.findPolicyAreas(params);
     return {
       cbbrPolicyAreas,
     };
