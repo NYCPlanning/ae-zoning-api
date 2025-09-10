@@ -24,7 +24,7 @@ export class CommunityBoardBudgetRequestController {
   ) {}
 
   @Get("/policy-areas")
-  async findManyCbbrPolicyArea(
+  async findPolicyAreas(
     @Query(
       new ZodTransformPipe(
         findCommunityBoardBudgetRequestPolicyAreasQueryParamsSchema,
@@ -32,8 +32,6 @@ export class CommunityBoardBudgetRequestController {
     )
     queryParams: FindCommunityBoardBudgetRequestPolicyAreasQueryParams,
   ) {
-    return this.communityBoardBudgetRequestService.findManyCbbrPolicyArea(
-      queryParams,
-    );
+    return this.communityBoardBudgetRequestService.findPolicyAreas(queryParams);
   }
 }

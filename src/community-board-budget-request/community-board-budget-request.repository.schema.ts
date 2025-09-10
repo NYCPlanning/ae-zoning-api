@@ -1,10 +1,6 @@
 import { cbbrPolicyAreaEntitySchema } from "src/schema";
 import { z } from "zod";
 
-export const findManyCbbrPolicyAreaRepoSchema = z.array(
-  cbbrPolicyAreaEntitySchema,
-);
+export const findPolicyAreasRepoSchema = z.array(cbbrPolicyAreaEntitySchema);
 
-export type FindManyCbbrPolicyAreaRepo = z.infer<
-  typeof findManyCbbrPolicyAreaRepoSchema
->;
+export type findPolicyAreasRepo = z.infer<typeof findPolicyAreasRepoSchema>;
