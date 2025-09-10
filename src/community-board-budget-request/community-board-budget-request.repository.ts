@@ -1,7 +1,7 @@
 import { Inject } from "@nestjs/common";
 import { DB, DbType } from "src/global/providers/db.provider";
 import { DataRetrievalException } from "src/exception";
-import { findPolicyAreasRepo } from "./community-board-budget-request.repository.schema";
+import { FindPolicyAreasRepo } from "./community-board-budget-request.repository.schema";
 import { cbbrPolicyArea, cbbrOptionCascade } from "src/schema";
 import { eq, and, sql } from "drizzle-orm";
 import { FindCommunityBoardBudgetRequestPolicyAreasQueryParams } from "src/gen";
@@ -18,7 +18,7 @@ export class CommunityBoardBudgetRequestRepository {
   async findPolicyAreas({
     cbbrNeedGroupId,
     agencyInitials,
-  }: FindCommunityBoardBudgetRequestPolicyAreasQueryParams): Promise<findPolicyAreasRepo> {
+  }: FindCommunityBoardBudgetRequestPolicyAreasQueryParams): Promise<FindPolicyAreasRepo> {
     try {
       return await this.db
         .selectDistinct({
