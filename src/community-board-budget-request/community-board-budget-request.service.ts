@@ -20,9 +20,12 @@ export class CommunityBoardBudgetRequestService {
       const checkAgencyInitials =
         await this.agencyRepository.checkByInitials(agencyInitials);
       if (checkAgencyInitials === false) {
-        throw new InvalidRequestParameterException("Invalid agency initials");
+        throw new InvalidRequestParameterException(
+          "Agency initials do not exist",
+        );
       }
     }
+
     if (cbbrNeedGroupId !== undefined) {
       const checkNeedGroupId =
         await this.communityBoardBudgetRequestRepository.checkNeedGroupById(
