@@ -22,6 +22,15 @@ export const cbbrNeedGroup = pgTable("cbbr_need_group", {
   description: text("description").notNull(),
 });
 
+export const cbbrNeedGroupEntitySchema = z.object({
+  id: z.number(),
+  description: z.string(),
+});
+
+export type CbbrNeedGroupEntitySchema = z.infer<
+  typeof cbbrNeedGroupEntitySchema
+>;
+
 export const cbbrNeed = pgTable("cbbr_need", {
   id: smallint("id").generatedByDefaultAsIdentity().primaryKey(),
   description: text("description").notNull(),

@@ -11,9 +11,6 @@ export class AgencyRepositoryMock {
   );
 
   async checkByInitials(managingAgency: string): Promise<CheckByInitialsRepo> {
-    // override so cbbr tests work correctly
-    if (managingAgency === "DOHMH") return true;
-
     return this.agencies.some((row) => row.initials === managingAgency);
   }
 

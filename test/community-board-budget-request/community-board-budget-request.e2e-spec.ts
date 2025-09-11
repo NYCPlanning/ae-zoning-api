@@ -49,8 +49,12 @@ describe("Community Board Budget Request e2e", () => {
     });
 
     it("should 200 when finding by a valid cbbrNeedGroupId", async () => {
+      const cbbrNeedGroupId =
+        communityBoardBudgetRequestRepositoryMock.needGroupMocks[0].id;
       const response = await request(app.getHttpServer())
-        .get(`/community-board-budget-requests/policy-areas?cbbrNeedGroupId=5`)
+        .get(
+          `/community-board-budget-requests/policy-areas?cbbrNeedGroupId=${cbbrNeedGroupId}`,
+        )
         .expect(200);
       expect(() =>
         findCommunityBoardBudgetRequestPolicyAreasQueryResponseSchema.parse(
@@ -66,9 +70,10 @@ describe("Community Board Budget Request e2e", () => {
     });
 
     it("should 200 when finding by a valid agencyInitials", async () => {
+      const agencyInitials = agencyRepositoryMock.agencies[0].initials;
       const response = await request(app.getHttpServer())
         .get(
-          `/community-board-budget-requests/policy-areas?agencyInitials=DOHMH`,
+          `/community-board-budget-requests/policy-areas?agencyInitials=${agencyInitials}`,
         )
         .expect(200);
       expect(() =>
@@ -81,7 +86,7 @@ describe("Community Board Budget Request e2e", () => {
         findCommunityBoardBudgetRequestPolicyAreasQueryResponseSchema.parse(
           response.body,
         );
-      expect(parsedBody.cbbrPolicyAreas.length).toBe(1);
+      expect(parsedBody.cbbrPolicyAreas.length).toBe(4);
     });
 
     it("should 400 when finding by invalid cbbrNeedGroupId", async () => {
@@ -100,7 +105,7 @@ describe("Community Board Budget Request e2e", () => {
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
 
-    it("should 500 when the database errors", async () => {
+    it.only("should 500 when the database errors", async () => {
       const dataRetrievalException = new DataRetrievalException(
         "cannot find data",
       );

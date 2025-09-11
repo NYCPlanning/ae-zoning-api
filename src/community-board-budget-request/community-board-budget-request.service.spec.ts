@@ -5,6 +5,7 @@ import { CommunityBoardBudgetRequestService } from "./community-board-budget-req
 import { CommunityBoardBudgetRequestRepository } from "./community-board-budget-request.repository";
 import { AgencyRepositoryMock } from "test/agency/agency.repository.mock";
 import { AgencyRepository } from "src/agency/agency.repository";
+import { InvalidRequestParameterException } from "src/exception";
 
 describe("Community Board Budget Request service unit", () => {
   let communityBoardBudgetRequestService: CommunityBoardBudgetRequestService;
@@ -50,8 +51,8 @@ describe("Community Board Budget Request service unit", () => {
     });
 
     it("should filter policy areas by cbbrNeedGroupId", async () => {
-      const { needGroupId } =
-        communityBoardBudgetRequestRepositoryMock.cbbrOptionCascade[0];
+      const { id: needGroupId } =
+        communityBoardBudgetRequestRepositoryMock.needGroupMocks[0];
       const policyAreas =
         await communityBoardBudgetRequestService.findPolicyAreas({
           cbbrNeedGroupId: needGroupId,
@@ -59,14 +60,23 @@ describe("Community Board Budget Request service unit", () => {
       expect(policyAreas.cbbrPolicyAreas.length).toBe(1);
     });
 
+    it("should return an InvalidRequestParameter error when an agency with the given initials cannot be found", async () => {
+      const agencyInitials = "FAKE";
+
+      expect(
+        communityBoardBudgetRequestService.findPolicyAreas({
+          agencyInitials,
+        }),
+      ).rejects.toThrow(InvalidRequestParameterException);
+    });
+
     it("should filter policy areas by agencyInitials", async () => {
-      const { agencyInitials } =
-        communityBoardBudgetRequestRepositoryMock.cbbrOptionCascade[0];
+      const { initials: agencyInitials } = agencyRepositoryMock.agencies[0];
       const policyAreas =
         await communityBoardBudgetRequestService.findPolicyAreas({
           agencyInitials,
         });
-      expect(policyAreas.cbbrPolicyAreas.length).toBe(1);
+      expect(policyAreas.cbbrPolicyAreas.length).toBe(4);
     });
   });
 });
