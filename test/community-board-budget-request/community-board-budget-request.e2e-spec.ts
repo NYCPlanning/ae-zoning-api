@@ -119,7 +119,7 @@ describe("Community Board Budget Request e2e", () => {
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
 
-    it.only("should 500 when the database errors", async () => {
+    it("should 500 when the database errors", async () => {
       const dataRetrievalException = new DataRetrievalException(
         "cannot find data",
       );
