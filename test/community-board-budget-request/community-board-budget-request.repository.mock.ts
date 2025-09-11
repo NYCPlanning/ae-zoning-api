@@ -1,5 +1,8 @@
 import { generateMock } from "@anatine/zod-mock";
-import { FindPolicyAreasRepo } from "src/community-board-budget-request/community-board-budget-request.repository.schema";
+import {
+  CheckNeedGroupByIdRepo,
+  FindPolicyAreasRepo,
+} from "src/community-board-budget-request/community-board-budget-request.repository.schema";
 import {
   cbbrNeedGroupEntitySchema,
   CbbrPolicyAreaEntitySchema,
@@ -20,6 +23,10 @@ export class CommunityBoardBudgetRequestRepositoryMock {
   needGroupMocks = Array.from(Array(8), (_, i) =>
     generateMock(cbbrNeedGroupEntitySchema, { seed: i + 1 }),
   );
+
+  checkNeedGroupById(id: number): CheckNeedGroupByIdRepo {
+    return this.needGroupMocks.some((needGroup) => needGroup.id === id);
+  }
 
   get policyAreasCriteria(): Array<
     [

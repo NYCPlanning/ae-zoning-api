@@ -98,6 +98,20 @@ describe("Community Board Budget Request e2e", () => {
     });
 
     it("should 400 when finding by invalid agencyInitials", async () => {
+      it("should 400 when finding by a missing cbbrNeedGroupId", async () => {
+        const response = await request(app.getHttpServer()).get(
+          "/community-board-budget-requests/policy-areas?cbbrNeedGroupId=0",
+        );
+        expect(response.body.message).toMatch(/Need group id does not exist/);
+        expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      });
+      it("should 400 when finding by a missing cbbrNeedGroupId", async () => {
+        const response = await request(app.getHttpServer()).get(
+          "/community-board-budget-requests/policy-areas?cbbrNeedGroupId=0",
+        );
+        expect(response.body.message).toMatch(/Need group id does not exist/);
+        expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      });
       const response = await request(app.getHttpServer()).get(
         "/community-board-budget-requests/policy-areas?agencyInitials=NONE",
       );

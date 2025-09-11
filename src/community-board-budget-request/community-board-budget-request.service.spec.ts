@@ -50,6 +50,16 @@ describe("Community Board Budget Request service unit", () => {
       expect(policyAreas.cbbrPolicyAreas.length).toBe(8);
     });
 
+    it("should return an InvalidRequestParameter error when a need group with the given id cannot be found", async () => {
+      const cbbrNeedGroupId = 0;
+
+      expect(
+        communityBoardBudgetRequestService.findPolicyAreas({
+          cbbrNeedGroupId,
+        }),
+      ).rejects.toThrow(InvalidRequestParameterException);
+    });
+
     it("should filter policy areas by cbbrNeedGroupId", async () => {
       const { id: needGroupId } =
         communityBoardBudgetRequestRepositoryMock.needGroupMocks[0];
