@@ -3,11 +3,16 @@ import { DB, DbType } from "src/global/providers/db.provider";
 import { DataRetrievalException } from "src/exception";
 import {
   CheckNeedGroupByIdRepo,
+  CheckPolicyAreaByIdRepo,
+  FindNeedGroupsRepo,
   FindPolicyAreasRepo,
 } from "./community-board-budget-request.repository.schema";
-import { cbbrPolicyArea, cbbrOptionCascade } from "src/schema";
+import { cbbrNeedGroup, cbbrPolicyArea, cbbrOptionCascade } from "src/schema";
 import { eq, and, sql } from "drizzle-orm";
-import { FindCommunityBoardBudgetRequestPolicyAreasQueryParams } from "src/gen";
+import {
+  FindCommunityBoardBudgetRequestNeedGroupsQueryParams,
+  FindCommunityBoardBudgetRequestPolicyAreasQueryParams,
+} from "src/gen";
 import { Cache } from "cache-manager";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
 
@@ -48,6 +53,72 @@ export class CommunityBoardBudgetRequestRepository {
       );
     }
   }
+
+  #checkPolicyAreaById = this.db.query.cbbrPolicyArea
+    .findFirst({
+      columns: {
+        id: true,
+      },
+      where: (cbbrPolicyArea, { eq, sql }) =>
+        eq(cbbrPolicyArea.id, sql.placeholder("id")),
+    })
+    .prepare("#checkPolicyAreaById");
+
+  async checkPolicyAreaById(id: number): Promise<CheckPolicyAreaByIdRepo> {
+    const key = JSON.stringify({
+      id,
+      domain: "communityBoardBudgetRequest",
+      function: "checkPolicyAreaById",
+    });
+    const cachedValue: CheckPolicyAreaByIdRepo | null =
+      await this.cacheManager.get(key);
+    if (cachedValue !== null) return cachedValue;
+    try {
+      const result = await this.#checkPolicyAreaById.execute({ id });
+      const value = result !== undefined;
+      this.cacheManager.set(key, value);
+      return value;
+    } catch {
+      throw new DataRetrievalException(
+        "cannot find community board budget request policy area by its id",
+      );
+    }
+  }
+
+  async findNeedGroups({
+    cbbrPolicyAreaId,
+    agencyInitials,
+  }: FindCommunityBoardBudgetRequestNeedGroupsQueryParams): Promise<FindNeedGroupsRepo> {
+    try {
+      return await this.db
+        .selectDistinct({
+          id: cbbrNeedGroup.id,
+          description: cbbrNeedGroup.description,
+        })
+        .from(cbbrNeedGroup)
+        .leftJoin(
+          cbbrOptionCascade,
+          and(
+            sql`${cbbrPolicyAreaId !== undefined || agencyInitials !== undefined} IS TRUE`,
+            eq(cbbrNeedGroup.id, cbbrOptionCascade.needGroupId),
+          ),
+        )
+        .where(
+          and(
+            cbbrPolicyAreaId !== undefined
+              ? eq(cbbrOptionCascade.policyAreaId, cbbrPolicyAreaId)
+              : undefined,
+            agencyInitials !== undefined
+              ? eq(cbbrOptionCascade.agencyInitials, agencyInitials)
+              : undefined,
+          ),
+        )
+        .orderBy(cbbrNeedGroup.id);
+    } catch {
+      throw new DataRetrievalException("cannot find need groups");
+    }
+  }
+
   async findPolicyAreas({
     cbbrNeedGroupId,
     agencyInitials,

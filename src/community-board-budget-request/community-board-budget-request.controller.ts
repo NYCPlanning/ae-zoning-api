@@ -1,6 +1,8 @@
 import { Controller, Get, Injectable, Query, UseFilters } from "@nestjs/common";
 import { CommunityBoardBudgetRequestService } from "./community-board-budget-request.service";
 import {
+  FindCommunityBoardBudgetRequestNeedGroupsQueryParams,
+  findCommunityBoardBudgetRequestNeedGroupsQueryParamsSchema,
   FindCommunityBoardBudgetRequestPolicyAreasQueryParams,
   findCommunityBoardBudgetRequestPolicyAreasQueryParamsSchema,
 } from "src/gen";
@@ -22,6 +24,18 @@ export class CommunityBoardBudgetRequestController {
   constructor(
     private readonly communityBoardBudgetRequestService: CommunityBoardBudgetRequestService,
   ) {}
+
+  @Get("/need-groups")
+  async findNeedGroups(
+    @Query(
+      new ZodTransformPipe(
+        findCommunityBoardBudgetRequestNeedGroupsQueryParamsSchema,
+      ),
+    )
+    queryParams: FindCommunityBoardBudgetRequestNeedGroupsQueryParams,
+  ) {
+    return this.communityBoardBudgetRequestService.findNeedGroups(queryParams);
+  }
 
   @Get("/policy-areas")
   async findPolicyAreas(
