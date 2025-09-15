@@ -1,0 +1,26 @@
+get:
+  summary: Find community board budget request need groups
+  operationId: findCommunityBoardBudgetRequestNeedGroups
+  tags:
+    - Community Board Budget Requests
+  parameters:
+    - $ref: ../components/parameters/cbbrPolicyAreaIdQueryParam.yaml
+    - $ref: ../components/parameters/agencyInitialsQueryParam.yaml
+  responses:
+    '200':
+      description: An object containing a list of need groups
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              cbbrNeedGroups:
+                type: array
+                items:
+                  $ref: ../components/schemas/CommunityBoardBudgetRequestNeedGroup.yaml
+            required:
+              - cbbrNeedGroups
+    '400':
+      $ref: ../components/responses/BadRequest.yaml
+    '500':
+      $ref: ../components/responses/InternalServerError.yaml
