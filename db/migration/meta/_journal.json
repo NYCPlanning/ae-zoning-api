@@ -169,6 +169,13 @@
       "when": 1754936537597,
       "tag": "0023_yielding_malice",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1758119257887,
+      "tag": "0024_faulty_dragon_man",
+      "breakpoints": true
     }
   ]
 }
