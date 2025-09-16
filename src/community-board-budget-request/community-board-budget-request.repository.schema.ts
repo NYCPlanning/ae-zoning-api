@@ -1,8 +1,13 @@
 import {
   cbbrPolicyAreaEntitySchema,
   cbbrNeedGroupEntitySchema,
+  agencyEntitySchema,
 } from "src/schema";
 import { z } from "zod";
+
+export const findAgencyRepoSchema = z.array(agencyEntitySchema);
+
+export type FindAgenciesRepo = z.infer<typeof findAgencyRepoSchema>;
 
 export const findNeedGroupRepoSchema = z.array(cbbrNeedGroupEntitySchema);
 

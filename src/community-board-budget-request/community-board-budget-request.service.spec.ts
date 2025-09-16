@@ -3,6 +3,7 @@ import { Test } from "@nestjs/testing";
 import {
   findCommunityBoardBudgetRequestPolicyAreasQueryResponseSchema,
   findCommunityBoardBudgetRequestNeedGroupsQueryResponseSchema,
+  findCommunityBoardBudgetRequestAgenciesQueryResponseSchema,
 } from "src/gen";
 import { CommunityBoardBudgetRequestService } from "./community-board-budget-request.service";
 import { CommunityBoardBudgetRequestRepository } from "./community-board-budget-request.repository";
@@ -34,6 +35,64 @@ describe("Community Board Budget Request service unit", () => {
       moduleRef.get<CommunityBoardBudgetRequestService>(
         CommunityBoardBudgetRequestService,
       );
+  });
+
+  describe("findAgencies", () => {
+    it("should return a findCommunityBoardBudgetRequestAgenciesQueryResponseSchema compliant object", async () => {
+      const agencies = await communityBoardBudgetRequestService.findAgencies(
+        {},
+      );
+      expect(() =>
+        findCommunityBoardBudgetRequestAgenciesQueryResponseSchema.parse(
+          agencies,
+        ),
+      ).not.toThrow();
+    });
+
+    it("should return the full list of agencies", async () => {
+      const agencies = await communityBoardBudgetRequestService.findAgencies(
+        {},
+      );
+      expect(agencies.cbbrAgencies.length).toBe(2);
+    });
+
+    it("should return an InvalidRequestParameter error when a policy area with the given id cannot be found", async () => {
+      const cbbrPolicyAreaId = 0;
+
+      expect(
+        communityBoardBudgetRequestService.findAgencies({
+          cbbrPolicyAreaId,
+        }),
+      ).rejects.toThrow(InvalidRequestParameterException);
+    });
+
+    it("should filter agencies by cbbrPolicyAreaId", async () => {
+      const { id: policyAreaId } =
+        communityBoardBudgetRequestRepositoryMock.policyAreaMocks[0];
+      const agencies = await communityBoardBudgetRequestService.findAgencies({
+        cbbrPolicyAreaId: policyAreaId,
+      });
+      expect(agencies.cbbrAgencies.length).toBe(1);
+    });
+
+    it("should return an InvalidRequestParameter error when a need group with the given id cannot be found", async () => {
+      const cbbrNeedGroupId = 0;
+
+      expect(
+        communityBoardBudgetRequestService.findAgencies({
+          cbbrNeedGroupId,
+        }),
+      ).rejects.toThrow(InvalidRequestParameterException);
+    });
+
+    it("should filter agencies by cbbrNeedGroupId", async () => {
+      const { id: needGroupId } =
+        communityBoardBudgetRequestRepositoryMock.needGroupMocks[0];
+      const agencies = await communityBoardBudgetRequestService.findAgencies({
+        cbbrNeedGroupId: needGroupId,
+      });
+      expect(agencies.cbbrAgencies.length).toBe(1);
+    });
   });
 
   describe("findNeedGroups", () => {

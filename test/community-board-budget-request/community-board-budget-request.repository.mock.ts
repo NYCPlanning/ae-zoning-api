@@ -2,6 +2,7 @@ import { generateMock } from "@anatine/zod-mock";
 import {
   CheckNeedGroupByIdRepo,
   CheckPolicyAreaByIdRepo,
+  FindAgenciesRepo,
   FindNeedGroupsRepo,
   FindPolicyAreasRepo,
 } from "src/community-board-budget-request/community-board-budget-request.repository.schema";
@@ -10,6 +11,7 @@ import {
   cbbrNeedGroupEntitySchema,
   CbbrPolicyAreaEntitySchema,
   cbbrPolicyAreaEntitySchema,
+  AgencyEntitySchema,
 } from "src/schema";
 import { AgencyRepositoryMock } from "test/agency/agency.repository.mock";
 
@@ -33,6 +35,27 @@ export class CommunityBoardBudgetRequestRepositoryMock {
 
   checkPolicyAreaById(id: number): CheckPolicyAreaByIdRepo {
     return this.policyAreaMocks.some((policyArea) => policyArea.id === id);
+  }
+
+  get agenciesCriteria(): Array<
+    [
+      {
+        needGroupId: number;
+        policyAreaId: number;
+      },
+      AgencyEntitySchema,
+    ]
+  > {
+    const agencyMocks = this.agencyRepoMock.agencies;
+    return agencyMocks.map((mockAgency, i) => {
+      return [
+        {
+          needGroupId: this.needGroupMocks[i].id,
+          policyAreaId: this.policyAreaMocks[i].id,
+        },
+        mockAgency,
+      ];
+    });
   }
 
   get needGroupsCriteria(): Array<
@@ -75,6 +98,30 @@ export class CommunityBoardBudgetRequestRepositoryMock {
         mockPolicyArea,
       ];
     });
+  }
+
+  async findAgencies({
+    cbbrPolicyAreaId,
+    cbbrNeedGroupId,
+  }: {
+    cbbrPolicyAreaId?: number;
+    cbbrNeedGroupId?: number;
+  }): Promise<FindAgenciesRepo> {
+    return this.agenciesCriteria
+      .filter(([criteria, _]) => {
+        if (
+          cbbrPolicyAreaId !== undefined &&
+          cbbrPolicyAreaId !== criteria.policyAreaId
+        )
+          return false;
+        if (
+          cbbrNeedGroupId !== undefined &&
+          cbbrNeedGroupId !== criteria.needGroupId
+        )
+          return false;
+        return true;
+      })
+      .map(([_, agency]) => agency);
   }
 
   async findNeedGroups({

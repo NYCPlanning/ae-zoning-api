@@ -32,6 +32,7 @@ export * from "./FindCapitalProjectsByCityCouncilId";
 export * from "./FindCityCouncilDistrictGeoJsonByCityCouncilDistrictId";
 export * from "./FindCityCouncilDistrictTiles";
 export * from "./FindCityCouncilDistricts";
+export * from "./FindCommunityBoardBudgetRequestAgencies";
 export * from "./FindCommunityBoardBudgetRequestNeedGroups";
 export * from "./FindCommunityBoardBudgetRequestPolicyAreas";
 export * from "./FindCommunityDistrictGeoJsonByBoroughIdCommunityDistrictId";

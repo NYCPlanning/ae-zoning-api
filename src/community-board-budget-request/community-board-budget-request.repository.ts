@@ -6,10 +6,17 @@ import {
   CheckPolicyAreaByIdRepo,
   FindNeedGroupsRepo,
   FindPolicyAreasRepo,
+  FindAgenciesRepo,
 } from "./community-board-budget-request.repository.schema";
-import { cbbrNeedGroup, cbbrPolicyArea, cbbrOptionCascade } from "src/schema";
-import { eq, and, sql } from "drizzle-orm";
 import {
+  agency,
+  cbbrNeedGroup,
+  cbbrPolicyArea,
+  cbbrOptionCascade,
+} from "src/schema";
+import { eq, and, sql, isNotNull } from "drizzle-orm";
+import {
+  FindCommunityBoardBudgetRequestAgenciesQueryParams,
   FindCommunityBoardBudgetRequestNeedGroupsQueryParams,
   FindCommunityBoardBudgetRequestPolicyAreasQueryParams,
 } from "src/gen";
@@ -82,6 +89,38 @@ export class CommunityBoardBudgetRequestRepository {
       throw new DataRetrievalException(
         "cannot find community board budget request policy area by its id",
       );
+    }
+  }
+
+  async findAgencies({
+    cbbrPolicyAreaId,
+    cbbrNeedGroupId,
+  }: FindCommunityBoardBudgetRequestAgenciesQueryParams): Promise<FindAgenciesRepo> {
+    try {
+      return await this.db
+        .selectDistinct({
+          initials: agency.initials,
+          name: agency.name,
+        })
+        .from(agency)
+        .leftJoin(
+          cbbrOptionCascade,
+          eq(agency.initials, cbbrOptionCascade.agencyInitials),
+        )
+        .where(
+          and(
+            isNotNull(cbbrOptionCascade.agencyInitials),
+            cbbrNeedGroupId !== undefined
+              ? eq(cbbrOptionCascade.needGroupId, cbbrNeedGroupId)
+              : undefined,
+            cbbrPolicyAreaId !== undefined
+              ? eq(cbbrOptionCascade.policyAreaId, cbbrPolicyAreaId)
+              : undefined,
+          ),
+        )
+        .orderBy(agency.name);
+    } catch {
+      throw new DataRetrievalException("cannot find agencies");
     }
   }
 
