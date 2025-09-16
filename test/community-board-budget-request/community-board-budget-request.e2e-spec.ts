@@ -7,6 +7,7 @@ import { CommunityBoardBudgetRequestRepository } from "src/community-board-budge
 import { CommunityBoardBudgetRequestRepositoryMock } from "./community-board-budget-request.repository.mock";
 import { CommunityBoardBudgetRequestModule } from "src/community-board-budget-request/community-board-budget-request.module";
 import {
+  findCommunityBoardBudgetRequestAgenciesQueryResponseSchema,
   findCommunityBoardBudgetRequestNeedGroupsQueryResponseSchema,
   findCommunityBoardBudgetRequestPolicyAreasQueryResponseSchema,
 } from "src/gen";
@@ -31,6 +32,118 @@ describe("Community Board Budget Request e2e", () => {
       .compile();
     app = moduleRef.createNestApplication();
     await app.init();
+  });
+
+  describe("findAgencies", () => {
+    it("should 200 and return all CBBR agencies", async () => {
+      const response = await request(app.getHttpServer())
+        .get(`/community-board-budget-requests/agencies`)
+        .expect(200);
+      expect(() =>
+        findCommunityBoardBudgetRequestAgenciesQueryResponseSchema.parse(
+          response.body,
+        ),
+      ).not.toThrow();
+
+      const parsedBody =
+        findCommunityBoardBudgetRequestAgenciesQueryResponseSchema.parse(
+          response.body,
+        );
+      expect(parsedBody.cbbrAgencies.length).toBe(2);
+    });
+
+    it("should 200 when finding by a valid cbbrNeedGroupId", async () => {
+      const cbbrNeedGroupId =
+        communityBoardBudgetRequestRepositoryMock.needGroupMocks[0].id;
+      const response = await request(app.getHttpServer())
+        .get(
+          `/community-board-budget-requests/agencies?cbbrNeedGroupId=${cbbrNeedGroupId}`,
+        )
+        .expect(200);
+      expect(() =>
+        findCommunityBoardBudgetRequestAgenciesQueryResponseSchema.parse(
+          response.body,
+        ),
+      ).not.toThrow();
+
+      const parsedBody =
+        findCommunityBoardBudgetRequestAgenciesQueryResponseSchema.parse(
+          response.body,
+        );
+      expect(parsedBody.cbbrAgencies.length).toBe(1);
+    });
+
+    it("should 200 when finding by a valid cbbrPolicyAreaId", async () => {
+      const cbbrPolicyAreaId =
+        communityBoardBudgetRequestRepositoryMock.policyAreaMocks[0].id;
+      const response = await request(app.getHttpServer())
+        .get(
+          `/community-board-budget-requests/agencies?cbbrPolicyAreaId=${cbbrPolicyAreaId}`,
+        )
+        .expect(200);
+      expect(() =>
+        findCommunityBoardBudgetRequestAgenciesQueryResponseSchema.parse(
+          response.body,
+        ),
+      ).not.toThrow();
+
+      const parsedBody =
+        findCommunityBoardBudgetRequestAgenciesQueryResponseSchema.parse(
+          response.body,
+        );
+      expect(parsedBody.cbbrAgencies.length).toBe(1);
+    });
+
+    it("should 400 when finding by invalid cbbrNeedGroupId", async () => {
+      const response = await request(app.getHttpServer()).get(
+        "/community-board-budget-requests/agencies?cbbrNeedGroupId=b4d",
+      );
+      expect(response.body.message).toMatch(/cbbrNeedGroupId: Expected number/);
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 when finding by a missing cbbrNeedGroupId", async () => {
+      const response = await request(app.getHttpServer()).get(
+        "/community-board-budget-requests/agencies?cbbrNeedGroupId=0",
+      );
+      expect(response.body.message).toMatch(/Need group id does not exist/);
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 when finding by invalid cbbrPolicyAreaId", async () => {
+      const response = await request(app.getHttpServer()).get(
+        "/community-board-budget-requests/agencies?cbbrPolicyAreaId=b4d",
+      );
+      expect(response.body.message).toMatch(
+        /cbbrPolicyAreaId: Expected number/,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 when finding by a missing cbbrPolicyAreaId", async () => {
+      const response = await request(app.getHttpServer()).get(
+        "/community-board-budget-requests/agencies?cbbrPolicyAreaId=0",
+      );
+      expect(response.body.message).toMatch(/Policy area id does not exist/);
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 500 when the database errors", async () => {
+      const dataRetrievalException = new DataRetrievalException(
+        "cannot find data",
+      );
+      jest
+        .spyOn(communityBoardBudgetRequestRepositoryMock, "findAgencies")
+        .mockImplementationOnce(() => {
+          throw dataRetrievalException;
+        });
+
+      const response = await request(app.getHttpServer())
+        .get(`/community-board-budget-requests/agencies`)
+        .expect(500);
+      expect(response.body.message).toBe(dataRetrievalException.message);
+      expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);
+    });
   });
 
   describe("findNeedGroups", () => {

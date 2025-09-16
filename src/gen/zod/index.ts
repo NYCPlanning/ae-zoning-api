@@ -32,6 +32,7 @@ export * from "./findCapitalProjectsSchema";
 export * from "./findCityCouncilDistrictGeoJsonByCityCouncilDistrictIdSchema";
 export * from "./findCityCouncilDistrictTilesSchema";
 export * from "./findCityCouncilDistrictsSchema";
+export * from "./findCommunityBoardBudgetRequestAgenciesSchema";
 export * from "./findCommunityBoardBudgetRequestNeedGroupsSchema";
 export * from "./findCommunityBoardBudgetRequestPolicyAreasSchema";
 export * from "./findCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdSchema";

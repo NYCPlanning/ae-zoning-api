@@ -5,6 +5,8 @@ import {
   findCommunityBoardBudgetRequestNeedGroupsQueryParamsSchema,
   FindCommunityBoardBudgetRequestPolicyAreasQueryParams,
   findCommunityBoardBudgetRequestPolicyAreasQueryParamsSchema,
+  FindCommunityBoardBudgetRequestAgenciesQueryParams,
+  findCommunityBoardBudgetRequestAgenciesQueryParamsSchema,
 } from "src/gen";
 import {
   BadRequestExceptionFilter,
@@ -24,6 +26,18 @@ export class CommunityBoardBudgetRequestController {
   constructor(
     private readonly communityBoardBudgetRequestService: CommunityBoardBudgetRequestService,
   ) {}
+
+  @Get("/agencies")
+  async findAgencies(
+    @Query(
+      new ZodTransformPipe(
+        findCommunityBoardBudgetRequestAgenciesQueryParamsSchema,
+      ),
+    )
+    queryParams: FindCommunityBoardBudgetRequestAgenciesQueryParams,
+  ) {
+    return this.communityBoardBudgetRequestService.findAgencies(queryParams);
+  }
 
   @Get("/need-groups")
   async findNeedGroups(

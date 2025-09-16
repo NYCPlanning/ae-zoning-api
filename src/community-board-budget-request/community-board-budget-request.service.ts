@@ -1,6 +1,7 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { CommunityBoardBudgetRequestRepository } from "./community-board-budget-request.repository";
 import {
+  FindCommunityBoardBudgetRequestAgenciesQueryParams,
   FindCommunityBoardBudgetRequestNeedGroupsQueryParams,
   FindCommunityBoardBudgetRequestPolicyAreasQueryParams,
 } from "src/gen";
@@ -14,6 +15,42 @@ export class CommunityBoardBudgetRequestService {
     private readonly communityBoardBudgetRequestRepository: CommunityBoardBudgetRequestRepository,
     private readonly agencyRepository: AgencyRepository,
   ) {}
+
+  async findAgencies({
+    cbbrPolicyAreaId,
+    cbbrNeedGroupId,
+  }: FindCommunityBoardBudgetRequestAgenciesQueryParams) {
+    if (cbbrNeedGroupId !== undefined) {
+      const checkNeedGroupId =
+        await this.communityBoardBudgetRequestRepository.checkNeedGroupById(
+          cbbrNeedGroupId,
+        );
+      if (checkNeedGroupId === false)
+        throw new InvalidRequestParameterException(
+          "Need group id does not exist",
+        );
+    }
+
+    if (cbbrPolicyAreaId !== undefined) {
+      const checkPolicyAreaId =
+        await this.communityBoardBudgetRequestRepository.checkPolicyAreaById(
+          cbbrPolicyAreaId,
+        );
+      if (checkPolicyAreaId === false)
+        throw new InvalidRequestParameterException(
+          "Policy area id does not exist",
+        );
+    }
+
+    const cbbrAgencies =
+      await this.communityBoardBudgetRequestRepository.findAgencies({
+        cbbrPolicyAreaId,
+        cbbrNeedGroupId,
+      });
+    return {
+      cbbrAgencies,
+    };
+  }
 
   async findNeedGroups({
     cbbrPolicyAreaId,
