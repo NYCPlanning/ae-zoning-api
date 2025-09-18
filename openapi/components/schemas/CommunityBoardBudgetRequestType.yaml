@@ -1,0 +1,6 @@
+type: string
+nullable: false
+enum:
+  - C
+  - E
+description: The type of budget request (Capital or Expense).

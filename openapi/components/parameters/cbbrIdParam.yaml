@@ -1,0 +1,7 @@
+name: cbbrId
+required: true
+in: path
+schema:
+  type: string
+  example: 203202629C
+description: The id for the community board budget request
