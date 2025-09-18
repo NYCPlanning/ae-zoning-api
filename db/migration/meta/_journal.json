@@ -176,6 +176,13 @@
       "when": 1758119257887,
       "tag": "0024_faulty_dragon_man",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1758228537933,
+      "tag": "0025_warm_rocket_raccoon",
+      "breakpoints": true
     }
   ]
 }

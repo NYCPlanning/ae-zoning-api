@@ -1,0 +1,1 @@
+ALTER TABLE "community_board_budget_request" ADD COLUMN "is_continued_support" boolean;
