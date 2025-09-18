@@ -1,0 +1,60 @@
+type: object
+properties:
+  id:
+    type: string
+    description: The id for the community board budget request.
+    example: 203202629C
+  cbbrPolicyAreaId:
+    type: integer
+    description: The id for the policy area of the request.
+    example: 1
+  title:
+    type: string
+    description: The title of the budget request.
+    example: Other programs to address public health issues requests
+  description: 
+    type: string
+    description: Description of the budget request.
+    example: Jackie Robinson Playground is unsafe and outdated; new play equipment is needed. The playground is one of the few family-friendly open spaces in the immediate area. It is adjacent to an elementary school and nearby several public housing developments. Due to the playground's high usage the Board requests a complete upgrade to the park.
+  communityBoardId:
+    type: string
+    description: The id of the community board that made the request.
+    example: BX03
+  agencyInitials:
+    type: string
+    description: Initials of the agency of which the request was made.
+    example: DPR
+  priority:
+    type: number
+    description: The board's ranking of the request's priority
+    example: 29
+  cbbrType:
+    $ref: ./CommunityBoardBudgetRequestType.yaml
+    nullable: false
+  isMapped:
+    type: boolean
+    description: Whether the budget request has associated mappable data
+    example: true
+  isContinuedSupport:
+    type: boolean
+    description: Whether the budget request is for Continued Support
+    example: true
+  cbbrAgencyResponseTypeId:
+    type: number
+    description: The id of the agency's response type
+    example: 1
+  cbbrAgencyResponse:
+    type: string
+    description: The agency's written explanation for the response type
+    example: We have funding in place for capital improvements to Jackie Robinson Playground and just held the community input scope meeting to inform the design for the site.
+required:
+  - id
+  - cbbrPolicyAreaId
+  - title
+  - description
+  - communityBoardId
+  - agencyInitials
+  - priority
+  - cbbrType
+  - isMapped
+  - isContinuedSupport

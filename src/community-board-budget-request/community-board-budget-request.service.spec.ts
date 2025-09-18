@@ -4,16 +4,27 @@ import {
   findCommunityBoardBudgetRequestPolicyAreasQueryResponseSchema,
   findCommunityBoardBudgetRequestNeedGroupsQueryResponseSchema,
   findCommunityBoardBudgetRequestAgenciesQueryResponseSchema,
+  findCommunityBoardBudgetRequestByIdQueryResponseSchema,
 } from "src/gen";
 import { CommunityBoardBudgetRequestService } from "./community-board-budget-request.service";
 import { CommunityBoardBudgetRequestRepository } from "./community-board-budget-request.repository";
 import { AgencyRepositoryMock } from "test/agency/agency.repository.mock";
 import { AgencyRepository } from "src/agency/agency.repository";
-import { InvalidRequestParameterException } from "src/exception";
+import {
+  InvalidRequestParameterException,
+  ResourceNotFoundException,
+} from "src/exception";
+import { BoroughRepositoryMock } from "test/borough/borough.repository.mock";
+import { CommunityDistrictRepositoryMock } from "test/community-district/community-district.repository.mock";
+import { BoroughRepository } from "src/borough/borough.repository";
 
 describe("Community Board Budget Request service unit", () => {
   let communityBoardBudgetRequestService: CommunityBoardBudgetRequestService;
   const agencyRepositoryMock = new AgencyRepositoryMock();
+  const communityDistrictRepositoryMock = new CommunityDistrictRepositoryMock();
+  const boroughRepositoryMock = new BoroughRepositoryMock(
+    communityDistrictRepositoryMock,
+  );
   const communityBoardBudgetRequestRepositoryMock =
     new CommunityBoardBudgetRequestRepositoryMock(agencyRepositoryMock);
 
@@ -23,12 +34,15 @@ describe("Community Board Budget Request service unit", () => {
         CommunityBoardBudgetRequestService,
         CommunityBoardBudgetRequestRepository,
         AgencyRepository,
+        BoroughRepository,
       ],
     })
       .overrideProvider(CommunityBoardBudgetRequestRepository)
       .useValue(communityBoardBudgetRequestRepositoryMock)
       .overrideProvider(AgencyRepository)
       .useValue(agencyRepositoryMock)
+      .overrideProvider(BoroughRepository)
+      .useValue(boroughRepositoryMock)
       .compile();
 
     communityBoardBudgetRequestService =
@@ -206,6 +220,28 @@ describe("Community Board Budget Request service unit", () => {
           agencyInitials,
         });
       expect(policyAreas.cbbrPolicyAreas.length).toBe(4);
+    });
+  });
+
+  describe("findById", () => {
+    it("should return a findCommunityBoardBudgetRequestByIdQueryResponseSchema compliant object", async () => {
+      const cbbrMock = communityBoardBudgetRequestRepositoryMock.cbbrMocks[0];
+      const cbbr = await communityBoardBudgetRequestService.findById({
+        cbbrId: cbbrMock.id,
+      });
+      expect(() =>
+        findCommunityBoardBudgetRequestByIdQueryResponseSchema.parse(cbbr),
+      ).not.toThrow();
+    });
+
+    it("should throw a resource error when requesting a non-existent cbbrId", async () => {
+      const nonExistentCbbrId = "1234XYZ";
+
+      expect(() =>
+        communityBoardBudgetRequestService.findById({
+          cbbrId: nonExistentCbbrId,
+        }),
+      ).rejects.toThrow(ResourceNotFoundException);
     });
   });
 });

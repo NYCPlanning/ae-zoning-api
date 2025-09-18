@@ -3,6 +3,8 @@ import {
   CheckNeedGroupByIdRepo,
   CheckPolicyAreaByIdRepo,
   FindAgenciesRepo,
+  FindCommunityBoardBudgetRequestByIdRepo,
+  findCommunityBoardBudgetRequestByIdRepoSchema,
   FindNeedGroupsRepo,
   FindPolicyAreasRepo,
 } from "src/community-board-budget-request/community-board-budget-request.repository.schema";
@@ -28,6 +30,10 @@ export class CommunityBoardBudgetRequestRepositoryMock {
   needGroupMocks = Array.from(Array(8), (_, i) =>
     generateMock(cbbrNeedGroupEntitySchema, { seed: i + 1 }),
   );
+
+  cbbrMocks = generateMock(findCommunityBoardBudgetRequestByIdRepoSchema, {
+    seed: 1,
+  });
 
   checkNeedGroupById(id: number): CheckNeedGroupByIdRepo {
     return this.needGroupMocks.some((needGroup) => needGroup.id === id);
@@ -170,5 +176,14 @@ export class CommunityBoardBudgetRequestRepositoryMock {
         return true;
       })
       .map(([_, policyArea]) => policyArea);
+  }
+
+  async findById({
+    cbbrId,
+  }: {
+    cbbrId: string;
+  }): Promise<FindCommunityBoardBudgetRequestByIdRepo> {
+    const cbbr = this.cbbrMocks.find((cbbr) => cbbr.id === cbbrId);
+    return cbbr === undefined ? [] : [cbbr];
   }
 }

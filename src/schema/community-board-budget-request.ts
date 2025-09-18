@@ -53,6 +53,11 @@ export const cbbrRequest = pgTable("cbbr_request", {
   description: text("description").notNull(),
 });
 
+export const cbbrRequestEntitySchema = z.object({
+  id: z.number(),
+  description: z.string(),
+});
+
 export const cbbrOptionCascade = pgTable(
   "cbbr_option_cascade",
   {
@@ -88,12 +93,13 @@ export const cbbrAgencyCategoryResponse = pgTable(
     description: text("description").notNull(),
   },
 );
+
 export const communityBoardBudgetRequest = pgTable(
   "community_board_budget_request",
   {
     id: text("id").notNull().primaryKey(),
     internalId: text("internal_id").notNull(),
-    title: text("title"),
+    title: text("title").notNull(),
     boroughId: char("borough_id", { length: 1 }).notNull(),
     communityDistrictId: char("community_district_id", { length: 2 }).notNull(),
     agency: text("agency")
@@ -102,9 +108,9 @@ export const communityBoardBudgetRequest = pgTable(
     managingCode: char("managing_code", { length: 3 })
       .notNull()
       .references(() => managingCode.id),
-    agencyCategoryResponse: smallint("agency_category_response_id")
-      .notNull()
-      .references(() => cbbrAgencyCategoryResponse.id),
+    agencyCategoryResponse: smallint("agency_category_response_id").references(
+      () => cbbrAgencyCategoryResponse.id,
+    ),
     agencyResponse: text("agency_response"),
     requestType: text("request_type").notNull(),
     policyArea: smallint("policy_area_id")
@@ -120,7 +126,7 @@ export const communityBoardBudgetRequest = pgTable(
     request: smallint("request_id").references(() => cbbrRequest.id),
     explanation: text("explanation"),
     isLocationSpecific: boolean("is_location_specific").notNull(),
-    isContinuedSupport: boolean("is_continued_support"),
+    isContinuedSupport: boolean("is_continued_support").notNull(),
     liFtMPnt: multiPointGeom("li_ft_m_pnt", 2263),
     liFtMPoly: multiPolygonGeom("li_ft_m_poly", 2263),
     mercatorLabel: pointGeom("mercator_label", 3857),
@@ -146,3 +152,19 @@ export const communityBoardBudgetRequest = pgTable(
     index().using("GIST", table.mercatorFillMPnt),
   ],
 );
+
+export const communityBoardBudgetRequestEntitySchema = z.object({
+  id: z.string(),
+  cbbrPolicyAreaId: z.number(),
+  title: z.string(),
+  boroughId: z.string(),
+  communityDistrictId: z.string(),
+  description: z.string().nullable(),
+  agencyInitials: z.string(),
+  priority: z.number(),
+  cbbrType: z.enum(["Capital", "Expense"]),
+  isMapped: z.boolean(),
+  isContinuedSupport: z.boolean(),
+  agencyCategoryResponse: z.number().nullable(),
+  agencyResponse: z.string().nullable(),
+});

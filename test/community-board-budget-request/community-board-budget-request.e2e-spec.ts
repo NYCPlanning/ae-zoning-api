@@ -8,16 +8,25 @@ import { CommunityBoardBudgetRequestRepositoryMock } from "./community-board-bud
 import { CommunityBoardBudgetRequestModule } from "src/community-board-budget-request/community-board-budget-request.module";
 import {
   findCommunityBoardBudgetRequestAgenciesQueryResponseSchema,
+  findCommunityBoardBudgetRequestByIdQueryResponseSchema,
   findCommunityBoardBudgetRequestNeedGroupsQueryResponseSchema,
   findCommunityBoardBudgetRequestPolicyAreasQueryResponseSchema,
 } from "src/gen";
 import { AgencyRepositoryMock } from "test/agency/agency.repository.mock";
 import { AgencyRepository } from "src/agency/agency.repository";
+import { CommunityDistrictRepositoryMock } from "test/community-district/community-district.repository.mock";
+import { BoroughRepositoryMock } from "test/borough/borough.repository.mock";
+import { BoroughRepository } from "src/borough/borough.repository";
 
 describe("Community Board Budget Request e2e", () => {
   let app: INestApplication;
 
   const agencyRepositoryMock = new AgencyRepositoryMock();
+  const communityDistrictRepositoryMock = new CommunityDistrictRepositoryMock();
+  const boroughRepositoryMock = new BoroughRepositoryMock(
+    communityDistrictRepositoryMock,
+  );
+
   const communityBoardBudgetRequestRepositoryMock =
     new CommunityBoardBudgetRequestRepositoryMock(agencyRepositoryMock);
 
@@ -29,6 +38,8 @@ describe("Community Board Budget Request e2e", () => {
       .useValue(communityBoardBudgetRequestRepositoryMock)
       .overrideProvider(AgencyRepository)
       .useValue(agencyRepositoryMock)
+      .overrideProvider(BoroughRepository)
+      .useValue(boroughRepositoryMock)
       .compile();
     app = moduleRef.createNestApplication();
     await app.init();
@@ -347,6 +358,53 @@ describe("Community Board Budget Request e2e", () => {
         .expect(500);
       expect(response.body.message).toBe(dataRetrievalException.message);
       expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);
+    });
+  });
+
+  describe("findById", () => {
+    it("should 200 and return a community board budget request", async () => {
+      const cbbrMock = communityBoardBudgetRequestRepositoryMock.cbbrMocks[0];
+
+      const response = await request(app.getHttpServer())
+        .get(`/community-board-budget-requests/${cbbrMock.id}`)
+        .expect(200);
+
+      expect(() =>
+        findCommunityBoardBudgetRequestByIdQueryResponseSchema.parse(
+          response.body,
+        ),
+      ).not.toThrow();
+    });
+
+    it("should 404 when finding a non-existent cbbrId", async () => {
+      const nonExistentCbbrId = "1234XYZ";
+
+      const response = await request(app.getHttpServer())
+        .get(`/community-board-budget-requests/${nonExistentCbbrId}`)
+        .expect(404);
+
+      expect(response.body.message).toMatch(
+        /Cannot find Community Board Budget Request/,
+      );
+    });
+
+    it("should 500 when the database errors", async () => {
+      const dataRetrievalException = new DataRetrievalException(
+        "cannot find data",
+      );
+      jest
+        .spyOn(communityBoardBudgetRequestRepositoryMock, "findById")
+        .mockImplementationOnce(() => {
+          throw dataRetrievalException;
+        });
+
+      const cbbrMock = communityBoardBudgetRequestRepositoryMock.cbbrMocks[0];
+
+      const response = await request(app.getHttpServer())
+        .get(`/community-board-budget-requests/${cbbrMock.id}`)
+        .expect(500);
+      expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);
+      expect(response.body.message).toBe(dataRetrievalException.message);
     });
   });
 
