@@ -83,6 +83,8 @@ paths:
     $ref: paths/city-council-districts_{cityCouncilDistrictId}_capital-projects.yaml
   /city-council-districts/{z}/{x}/{y}.pbf:
     $ref: paths/city-council-districts_{z}_{x}_{y}.pbf.yaml
+  /community-board-budget-requests/{cbbrId}:
+    $ref: paths/community-board-budget-requests_{cbbrId}.yaml
   /community-board-budget-requests/agencies:
     $ref: paths/community-board-budget-requests_agencies.yaml
   /community-board-budget-requests/need-groups:

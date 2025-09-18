@@ -17,6 +17,27 @@ export const findPolicyAreasRepoSchema = z.array(cbbrPolicyAreaEntitySchema);
 
 export type FindPolicyAreasRepo = z.infer<typeof findPolicyAreasRepoSchema>;
 
+export const findCommunityBoardBudgetRequestByIdRepoSchema = z.array(
+  z.object({
+    id: z.string(),
+    cbbrPolicyAreaId: z.number(),
+    title: z.string(),
+    communityBoardId: z.string(),
+    description: z.string().nullable(),
+    agencyInitials: z.string(),
+    priority: z.number(),
+    cbbrType: z.enum(["Capital", "Expense"]),
+    isMapped: z.boolean(),
+    isContinuedSupport: z.boolean(),
+    agencyCategoryResponse: z.number().nullable(),
+    agencyResponse: z.string().nullable(),
+  }),
+);
+
+export type FindCommunityBoardBudgetRequestByIdRepo = z.infer<
+  typeof findCommunityBoardBudgetRequestByIdRepoSchema
+>;
+
 export const checkNeedGroupByIdRepoSchema = z.boolean();
 
 export type CheckNeedGroupByIdRepo = z.infer<

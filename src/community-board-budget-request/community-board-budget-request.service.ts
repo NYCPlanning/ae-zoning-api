@@ -2,11 +2,16 @@ import { Inject, Injectable } from "@nestjs/common";
 import { CommunityBoardBudgetRequestRepository } from "./community-board-budget-request.repository";
 import {
   FindCommunityBoardBudgetRequestAgenciesQueryParams,
+  FindCommunityBoardBudgetRequestByIdPathParams,
   FindCommunityBoardBudgetRequestNeedGroupsQueryParams,
   FindCommunityBoardBudgetRequestPolicyAreasQueryParams,
 } from "src/gen";
 import { AgencyRepository } from "src/agency/agency.repository";
-import { InvalidRequestParameterException } from "src/exception";
+import { BoroughRepository } from "src/borough/borough.repository";
+import {
+  InvalidRequestParameterException,
+  ResourceNotFoundException,
+} from "src/exception";
 
 @Injectable()
 export class CommunityBoardBudgetRequestService {
@@ -14,6 +19,7 @@ export class CommunityBoardBudgetRequestService {
     @Inject(CommunityBoardBudgetRequestRepository)
     private readonly communityBoardBudgetRequestRepository: CommunityBoardBudgetRequestRepository,
     private readonly agencyRepository: AgencyRepository,
+    private readonly boroughRepository: BoroughRepository,
   ) {}
 
   async findAgencies({
@@ -120,5 +126,18 @@ export class CommunityBoardBudgetRequestService {
     return {
       cbbrPolicyAreas,
     };
+  }
+
+  async findById({ cbbrId }: FindCommunityBoardBudgetRequestByIdPathParams) {
+    const communityBoardBudgetRequests =
+      await this.communityBoardBudgetRequestRepository.findById({ cbbrId });
+
+    if (communityBoardBudgetRequests.length < 1) {
+      throw new ResourceNotFoundException(
+        "Cannot find Community Board Budget Request",
+      );
+    }
+
+    return communityBoardBudgetRequests[0];
   }
 }
