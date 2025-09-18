@@ -119,6 +119,7 @@ export const communityBoardBudgetRequest = pgTable(
     request: smallint("request_id").references(() => cbbrRequest.id),
     explanation: text("explanation"),
     isLocationSpecific: boolean("is_location_specific").notNull(),
+    isContinuedSupport: boolean("is_continued_support"),
     liFtMPnt: multiPointGeom("li_ft_m_pnt", 2263),
     liFtMPoly: multiPolygonGeom("li_ft_m_poly", 2263),
     mercatorLabel: pointGeom("mercator_label", 3857),
