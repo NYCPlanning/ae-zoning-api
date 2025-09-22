@@ -93,6 +93,7 @@ export const communityBoardBudgetRequest = pgTable(
   {
     id: text("id").notNull().primaryKey(),
     internalId: text("internal_id").notNull(),
+    title: text("title"),
     boroughId: char("borough_id", { length: 1 }).notNull(),
     communityDistrictId: char("community_district_id", { length: 2 }).notNull(),
     agency: text("agency")
