@@ -183,6 +183,13 @@
       "when": 1758228537933,
       "tag": "0025_warm_rocket_raccoon",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1758558536839,
+      "tag": "0026_funny_franklin_storm",
+      "breakpoints": true
     }
   ]
 }
