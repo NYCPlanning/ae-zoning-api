@@ -5,6 +5,7 @@ import {
   Param,
   Query,
   UseFilters,
+  UsePipes,
 } from "@nestjs/common";
 import { CommunityBoardBudgetRequestService } from "./community-board-budget-request.service";
 import {
@@ -15,6 +16,8 @@ import {
   FindCommunityBoardBudgetRequestAgenciesQueryParams,
   findCommunityBoardBudgetRequestAgenciesQueryParamsSchema,
   FindCommunityBoardBudgetRequestByIdPathParams,
+  findCommunityBoardBudgetRequestTilesPathParamsSchema,
+  FindCommunityBoardBudgetRequestTilesPathParams,
 } from "src/gen";
 import {
   BadRequestExceptionFilter,
@@ -76,5 +79,17 @@ export class CommunityBoardBudgetRequestController {
     @Param() params: FindCommunityBoardBudgetRequestByIdPathParams,
   ) {
     return this.communityBoardBudgetRequestService.findById(params);
+  }
+
+  @UsePipes(
+    new ZodTransformPipe(findCommunityBoardBudgetRequestTilesPathParamsSchema),
+  )
+  @Get("/:z/:x/:y.pbf")
+  async findTiles(
+    @Param() params: FindCommunityBoardBudgetRequestTilesPathParams,
+  ) {
+    const tile =
+      await this.communityBoardBudgetRequestService.findTiles(params);
+    return tile;
   }
 }

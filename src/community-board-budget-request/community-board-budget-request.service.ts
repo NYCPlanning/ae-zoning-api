@@ -5,6 +5,7 @@ import {
   FindCommunityBoardBudgetRequestByIdPathParams,
   FindCommunityBoardBudgetRequestNeedGroupsQueryParams,
   FindCommunityBoardBudgetRequestPolicyAreasQueryParams,
+  FindCommunityBoardBudgetRequestTilesPathParams,
 } from "src/gen";
 import { AgencyRepository } from "src/agency/agency.repository";
 import { BoroughRepository } from "src/borough/borough.repository";
@@ -139,5 +140,9 @@ export class CommunityBoardBudgetRequestService {
     }
 
     return communityBoardBudgetRequests[0];
+  }
+
+  async findTiles(params: FindCommunityBoardBudgetRequestTilesPathParams) {
+    return await this.communityBoardBudgetRequestRepository.findTiles(params);
   }
 }

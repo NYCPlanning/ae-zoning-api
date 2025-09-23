@@ -2,6 +2,7 @@ import {
   cbbrPolicyAreaEntitySchema,
   cbbrNeedGroupEntitySchema,
   agencyEntitySchema,
+  mvtEntitySchema,
 } from "src/schema";
 import { z } from "zod";
 
@@ -49,3 +50,7 @@ export const checkPolicyAreaByIdRepoSchema = z.boolean();
 export type CheckPolicyAreaByIdRepo = z.infer<
   typeof checkPolicyAreaByIdRepoSchema
 >;
+
+export const findTilesRepoSchema = mvtEntitySchema;
+
+export type FindTilesRepo = z.infer<typeof findTilesRepoSchema>;

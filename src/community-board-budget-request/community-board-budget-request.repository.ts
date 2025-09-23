@@ -8,6 +8,7 @@ import {
   FindPolicyAreasRepo,
   FindAgenciesRepo,
   FindCommunityBoardBudgetRequestByIdRepo,
+  FindTilesRepo,
 } from "./community-board-budget-request.repository.schema";
 import {
   agency,
@@ -23,15 +24,21 @@ import {
   FindCommunityBoardBudgetRequestByIdPathParams,
   FindCommunityBoardBudgetRequestNeedGroupsQueryParams,
   FindCommunityBoardBudgetRequestPolicyAreasQueryParams,
+  FindCommunityBoardBudgetRequestTilesPathParams,
 } from "src/gen";
 import { Cache } from "cache-manager";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
+import {
+  TILE_CACHE,
+  TileCacheService,
+} from "src/global/providers/tile-cache.provider";
 
 export class CommunityBoardBudgetRequestRepository {
   constructor(
     @Inject(DB)
     private readonly db: DbType,
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
+    @Inject(TILE_CACHE) private readonly tileCache: TileCacheService,
   ) {}
 
   #checkNeedGroupById = this.db.query.cbbrNeedGroup
@@ -228,6 +235,63 @@ export class CommunityBoardBudgetRequestRepository {
     } catch {
       throw new DataRetrievalException(
         "Cannot find Community Board Budget Request with given id",
+      );
+    }
+  }
+
+  async findTiles({
+    z,
+    x,
+    y,
+  }: FindCommunityBoardBudgetRequestTilesPathParams): Promise<FindTilesRepo> {
+    const cacheKey = JSON.stringify({
+      domain: "communityBoardBudgetRequest",
+      function: "findTiles",
+      z,
+      x,
+      y,
+    });
+    const cachedTiles =
+      await this.tileCache.get<Buffer<ArrayBufferLike>>(cacheKey);
+    if (cachedTiles !== null) return cachedTiles;
+    try {
+      const tile = this.db
+        .select({
+          id: communityBoardBudgetRequest.id,
+          geom: sql<string>`
+              CASE
+                WHEN ${communityBoardBudgetRequest.mercatorFillMPoly} && ST_TileEnvelope(${z},${x},${y})
+                  THEN ST_AsMVTGeom(
+                    ${communityBoardBudgetRequest.mercatorFillMPoly},
+                    ST_TileEnvelope(${z},${x},${y}),
+                    4096,
+                    64,
+                    true
+                  )
+                WHEN ${communityBoardBudgetRequest.mercatorFillMPnt} && ST_TileEnvelope(${z},${x},${y})
+                  THEN ST_AsMVTGeom(
+                    ${communityBoardBudgetRequest.mercatorFillMPnt},
+                    ST_TileEnvelope(${z},${x},${y}),
+                    4096,
+                    64,
+                    true
+                  )
+              END`.as("geom"),
+        })
+        .from(communityBoardBudgetRequest)
+        .as("tile");
+      const data = await this.db
+        .select({
+          mvt: sql<Buffer>`ST_AsMVT(tile, 'community-board-budget-request-fill', 4096, 'geom')`,
+        })
+        .from(tile)
+        .where(isNotNull(tile.geom));
+      const { mvt } = data[0];
+      this.tileCache.set(cacheKey, mvt);
+      return mvt;
+    } catch {
+      throw new DataRetrievalException(
+        "cannot find community board budget request tiles",
       );
     }
   }
