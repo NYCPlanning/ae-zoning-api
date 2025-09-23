@@ -24,7 +24,7 @@
     "communityBoardId": {
       "type": "string",
       "description": "The id of the community board that made the request.",
-      "example": 203
+      "example": "BX03"
     },
     "agencyInitials": {
       "type": "string",
