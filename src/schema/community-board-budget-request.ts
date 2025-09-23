@@ -123,7 +123,7 @@ export const communityBoardBudgetRequest = pgTable(
       .notNull()
       .references(() => cbbrNeed.id),
     request: smallint("request_id").references(() => cbbrRequest.id),
-    explanation: text("explanation").notNull(),
+    explanation: text("explanation"),
     isLocationSpecific: boolean("is_location_specific").notNull(),
     isContinuedSupport: boolean("is_continued_support").notNull(),
     liFtMPnt: multiPointGeom("li_ft_m_pnt", 2263),
@@ -158,7 +158,7 @@ export const communityBoardBudgetRequestEntitySchema = z.object({
   title: z.string(),
   boroughId: z.string(),
   communityDistrictId: z.string(),
-  description: z.string(),
+  description: z.string().nullable(),
   agencyInitials: z.string(),
   priority: z.number(),
   cbbrType: z.string(),

@@ -7,6 +7,7 @@ import {
   FindCommunityBoardBudgetRequestPolicyAreasQueryParams,
 } from "src/gen";
 import { AgencyRepository } from "src/agency/agency.repository";
+import { BoroughRepository } from "src/borough/borough.repository";
 import {
   InvalidRequestParameterException,
   ResourceNotFoundException,
@@ -18,6 +19,7 @@ export class CommunityBoardBudgetRequestService {
     @Inject(CommunityBoardBudgetRequestRepository)
     private readonly communityBoardBudgetRequestRepository: CommunityBoardBudgetRequestRepository,
     private readonly agencyRepository: AgencyRepository,
+    private readonly boroughRepository: BoroughRepository,
   ) {}
 
   async findAgencies({
@@ -127,8 +129,14 @@ export class CommunityBoardBudgetRequestService {
   }
 
   async findById({ cbbrId }: FindCommunityBoardBudgetRequestByIdPathParams) {
-    const communityBoardBudgetRequests =
-      await this.communityBoardBudgetRequestRepository.findById({ cbbrId });
+    const communityBoardBudgetRequestsPromise =
+      this.communityBoardBudgetRequestRepository.findById({ cbbrId });
+    const boroughsPromise = this.boroughRepository.findMany();
+
+    const [communityBoardBudgetRequests, boroughs] = await Promise.all([
+      communityBoardBudgetRequestsPromise,
+      boroughsPromise,
+    ]);
 
     if (communityBoardBudgetRequests.length < 1) {
       throw new ResourceNotFoundException(
@@ -152,12 +160,16 @@ export class CommunityBoardBudgetRequestService {
       agencyResponse,
     } = communityBoardBudgetRequests[0];
 
+    const boroughAbbr = boroughs.find(
+      (borough) => borough.id === boroughId,
+    )?.abbr;
+
     return {
       id,
       cbbrPolicyAreaId,
       title,
       description,
-      communityBoardId: `${boroughId}${communityDistrictId}`,
+      communityBoardId: `${boroughAbbr}${communityDistrictId}`,
       agencyInitials,
       priority,
       cbbrType,
