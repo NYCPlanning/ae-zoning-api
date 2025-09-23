@@ -2,11 +2,15 @@ import { Inject, Injectable } from "@nestjs/common";
 import { CommunityBoardBudgetRequestRepository } from "./community-board-budget-request.repository";
 import {
   FindCommunityBoardBudgetRequestAgenciesQueryParams,
+  FindCommunityBoardBudgetRequestByIdPathParams,
   FindCommunityBoardBudgetRequestNeedGroupsQueryParams,
   FindCommunityBoardBudgetRequestPolicyAreasQueryParams,
 } from "src/gen";
 import { AgencyRepository } from "src/agency/agency.repository";
-import { InvalidRequestParameterException } from "src/exception";
+import {
+  InvalidRequestParameterException,
+  ResourceNotFoundException,
+} from "src/exception";
 
 @Injectable()
 export class CommunityBoardBudgetRequestService {
@@ -119,6 +123,48 @@ export class CommunityBoardBudgetRequestService {
       });
     return {
       cbbrPolicyAreas,
+    };
+  }
+
+  async findById({ cbbrId }: FindCommunityBoardBudgetRequestByIdPathParams) {
+    const communityBoardBudgetRequests =
+      await this.communityBoardBudgetRequestRepository.findById({ cbbrId });
+
+    if (communityBoardBudgetRequests.length < 1) {
+      throw new ResourceNotFoundException(
+        "Cannot find Community Board Budget Request",
+      );
+    }
+
+    const {
+      id,
+      cbbrPolicyAreaId,
+      title,
+      description,
+      boroughId,
+      communityDistrictId,
+      agencyInitials,
+      priority,
+      cbbrType,
+      isMapped,
+      isContinuedSupport,
+      agencyCategoryResponse,
+      agencyResponse,
+    } = communityBoardBudgetRequests[0];
+
+    return {
+      id,
+      cbbrPolicyAreaId,
+      title,
+      description,
+      communityBoardId: `${boroughId}${communityDistrictId}`,
+      agencyInitials,
+      priority,
+      cbbrType,
+      isMapped,
+      isContinuedSupport,
+      agencyCategoryResponse,
+      agencyResponse,
     };
   }
 }

@@ -2,6 +2,7 @@ import {
   cbbrPolicyAreaEntitySchema,
   cbbrNeedGroupEntitySchema,
   agencyEntitySchema,
+  communityBoardBudgetRequestEntitySchema,
 } from "src/schema";
 import { z } from "zod";
 
@@ -16,6 +17,14 @@ export type FindNeedGroupsRepo = z.infer<typeof findNeedGroupRepoSchema>;
 export const findPolicyAreasRepoSchema = z.array(cbbrPolicyAreaEntitySchema);
 
 export type FindPolicyAreasRepo = z.infer<typeof findPolicyAreasRepoSchema>;
+
+export const findCommunityBoardBudgetRequestByIdRepoSchema = z.array(
+  communityBoardBudgetRequestEntitySchema,
+);
+
+export type FindCommunityBoardBudgetRequestByIdRepo = z.infer<
+  typeof findCommunityBoardBudgetRequestByIdRepoSchema
+>;
 
 export const checkNeedGroupByIdRepoSchema = z.boolean();
 

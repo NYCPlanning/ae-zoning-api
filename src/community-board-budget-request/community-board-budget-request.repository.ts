@@ -7,16 +7,20 @@ import {
   FindNeedGroupsRepo,
   FindPolicyAreasRepo,
   FindAgenciesRepo,
+  FindCommunityBoardBudgetRequestByIdRepo,
 } from "./community-board-budget-request.repository.schema";
 import {
   agency,
   cbbrNeedGroup,
   cbbrPolicyArea,
   cbbrOptionCascade,
+  communityBoardBudgetRequest,
+  cbbrRequest,
 } from "src/schema";
 import { eq, and, sql, isNotNull } from "drizzle-orm";
 import {
   FindCommunityBoardBudgetRequestAgenciesQueryParams,
+  FindCommunityBoardBudgetRequestByIdPathParams,
   FindCommunityBoardBudgetRequestNeedGroupsQueryParams,
   FindCommunityBoardBudgetRequestPolicyAreasQueryParams,
 } from "src/gen";
@@ -189,6 +193,41 @@ export class CommunityBoardBudgetRequestRepository {
         .orderBy(cbbrPolicyArea.id);
     } catch {
       throw new DataRetrievalException("cannot find policy areas");
+    }
+  }
+
+  async findById({
+    cbbrId,
+  }: FindCommunityBoardBudgetRequestByIdPathParams): Promise<FindCommunityBoardBudgetRequestByIdRepo> {
+    try {
+      return await this.db
+        .select({
+          id: communityBoardBudgetRequest.id,
+          cbbrPolicyAreaId: communityBoardBudgetRequest.policyArea,
+          title: communityBoardBudgetRequest.title,
+          description: communityBoardBudgetRequest.explanation,
+          boroughId: communityBoardBudgetRequest.boroughId,
+          communityDistrictId: communityBoardBudgetRequest.communityDistrictId,
+          agencyInitials: communityBoardBudgetRequest.agency,
+          priority: communityBoardBudgetRequest.priority,
+          cbbrType: communityBoardBudgetRequest.requestType,
+          isMapped: communityBoardBudgetRequest.isLocationSpecific,
+          isContinuedSupport: communityBoardBudgetRequest.isContinuedSupport,
+          agencyCategoryResponse:
+            communityBoardBudgetRequest.agencyCategoryResponse,
+          agencyResponse: communityBoardBudgetRequest.agencyResponse,
+        })
+        .from(communityBoardBudgetRequest)
+        .where(eq(communityBoardBudgetRequest.id, cbbrId))
+        .leftJoin(
+          cbbrRequest,
+          eq(communityBoardBudgetRequest.request, cbbrRequest.id),
+        )
+        .limit(1);
+    } catch {
+      throw new DataRetrievalException(
+        "Cannot find Community Board Budget Request with given id",
+      );
     }
   }
 }

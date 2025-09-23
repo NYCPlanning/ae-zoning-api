@@ -1,4 +1,11 @@
-import { Controller, Get, Injectable, Query, UseFilters } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Injectable,
+  Param,
+  Query,
+  UseFilters,
+} from "@nestjs/common";
 import { CommunityBoardBudgetRequestService } from "./community-board-budget-request.service";
 import {
   FindCommunityBoardBudgetRequestNeedGroupsQueryParams,
@@ -7,6 +14,7 @@ import {
   findCommunityBoardBudgetRequestPolicyAreasQueryParamsSchema,
   FindCommunityBoardBudgetRequestAgenciesQueryParams,
   findCommunityBoardBudgetRequestAgenciesQueryParamsSchema,
+  FindCommunityBoardBudgetRequestByIdPathParams,
 } from "src/gen";
 import {
   BadRequestExceptionFilter,
@@ -61,5 +69,12 @@ export class CommunityBoardBudgetRequestController {
     queryParams: FindCommunityBoardBudgetRequestPolicyAreasQueryParams,
   ) {
     return this.communityBoardBudgetRequestService.findPolicyAreas(queryParams);
+  }
+
+  @Get("/:cbbrId")
+  async findById(
+    @Param() params: FindCommunityBoardBudgetRequestByIdPathParams,
+  ) {
+    return this.communityBoardBudgetRequestService.findById(params);
   }
 }
