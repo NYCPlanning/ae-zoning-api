@@ -20,6 +20,7 @@ import {
   cityCouncilDistrict,
   communityBoardBudgetRequest,
   borough,
+  cbbrAgencyCategoryResponse,
 } from "src/schema";
 import { eq, and, or, sql, isNotNull, inArray } from "drizzle-orm";
 import {
@@ -500,6 +501,20 @@ export class CommunityBoardBudgetRequestRepository {
       throw new DataRetrievalException(
         "Cannot find Community Board Budget Requests count",
       );
+    }
+  }
+
+  async findAgencyResponseTypes() {
+    try {
+      return await this.db
+        .select({
+          id: cbbrAgencyCategoryResponse.id,
+          description: cbbrAgencyCategoryResponse.description,
+        })
+        .from(cbbrAgencyCategoryResponse)
+        .orderBy(cbbrAgencyCategoryResponse.id);
+    } catch {
+      throw new DataRetrievalException("cannot find agency response types");
     }
   }
 }
