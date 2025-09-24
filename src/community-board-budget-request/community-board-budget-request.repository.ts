@@ -39,7 +39,7 @@ export class CommunityBoardBudgetRequestRepository {
     private readonly db: DbType,
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
     @Inject(TILE_CACHE) private readonly tileCache: TileCacheService,
-  ) {}
+  ) { }
 
   #checkNeedGroupById = this.db.query.cbbrNeedGroup
     .findFirst({
@@ -251,9 +251,9 @@ export class CommunityBoardBudgetRequestRepository {
       x,
       y,
     });
-    const cachedTiles =
-      await this.tileCache.get<Buffer<ArrayBufferLike>>(cacheKey);
-    if (cachedTiles !== null) return cachedTiles;
+    // const cachedTiles =
+    //   await this.tileCache.get<Buffer<ArrayBufferLike>>(cacheKey);
+    // if (cachedTiles !== null) return cachedTiles;
     try {
       const tileFill = this.db
         .select({
@@ -350,7 +350,7 @@ export class CommunityBoardBudgetRequestRepository {
         .where(isNotNull(tileLabel.geomLabel));
       const [fill, label] = await Promise.all([dataFill, dataLabel]);
       const mvt = Buffer.concat([fill[0].mvt, label[0].mvt]);
-      this.tileCache.set(cacheKey, mvt);
+      // this.tileCache.set(cacheKey, mvt);
       return mvt;
     } catch (e) {
       console.log(e);
