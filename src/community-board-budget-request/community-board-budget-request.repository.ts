@@ -255,10 +255,27 @@ export class CommunityBoardBudgetRequestRepository {
       await this.tileCache.get<Buffer<ArrayBufferLike>>(cacheKey);
     if (cachedTiles !== null) return cachedTiles;
     try {
-      const tile = this.db
+      const tileFill = this.db
         .select({
-          id: communityBoardBudgetRequest.id,
-          geom: sql<string>`
+          id: sql`${communityBoardBudgetRequest.id}`.as("id"),
+          policyAreaId: sql`${communityBoardBudgetRequest.policyArea}`.as(
+            "policyAreaId",
+          ),
+          needGroupId: sql`${communityBoardBudgetRequest.needGroup}`.as(
+            "needGroupId",
+          ),
+          agencyInitials: sql`${communityBoardBudgetRequest.agency}`.as(
+            "agencyInitials",
+          ),
+          agencyCategoryReponseId:
+            sql`${communityBoardBudgetRequest.agencyCategoryResponse}`.as(
+              "agencyCategoryReponseId",
+            ),
+          communityBoardId:
+            sql`${borough.abbr} || ${communityBoardBudgetRequest.communityDistrictId}`.as(
+              "communityBoardId",
+            ),
+          geomFill: sql<string>`
               CASE
                 WHEN ${communityBoardBudgetRequest.mercatorFillMPoly} && ST_TileEnvelope(${z},${x},${y})
                   THEN ST_AsMVTGeom(
@@ -276,20 +293,67 @@ export class CommunityBoardBudgetRequestRepository {
                     64,
                     true
                   )
-              END`.as("geom"),
+              END`.as("geomFill"),
         })
         .from(communityBoardBudgetRequest)
+        .leftJoin(
+          borough,
+          eq(communityBoardBudgetRequest.boroughId, borough.id),
+        )
         .as("tile");
-      const data = await this.db
+      const dataFill = this.db
         .select({
-          mvt: sql<Buffer>`ST_AsMVT(tile, 'community-board-budget-request-fill', 4096, 'geom')`,
+          mvt: sql<Buffer>`ST_AsMVT(tile, 'community-board-budget-request-fill', 4096, 'geomFill')`,
         })
-        .from(tile)
-        .where(isNotNull(tile.geom));
-      const { mvt } = data[0];
+        .from(tileFill)
+        .where(isNotNull(tileFill.geomFill));
+
+      const tileLabel = this.db
+        .select({
+          id: sql`${communityBoardBudgetRequest.id}`.as("id"),
+          policyAreaId: sql`${communityBoardBudgetRequest.policyArea}`.as(
+            "policyAreaId",
+          ),
+          needGroupId: sql`${communityBoardBudgetRequest.needGroup}`.as(
+            "needGroupId",
+          ),
+          agencyInitials: sql`${communityBoardBudgetRequest.agency}`.as(
+            "agencyInitials",
+          ),
+          agencyCategoryReponseId:
+            sql`${communityBoardBudgetRequest.agencyCategoryResponse}`.as(
+              "agencyCategoryReponseId",
+            ),
+          communityBoardId:
+            sql`${borough.abbr} || ${communityBoardBudgetRequest.communityDistrictId}`.as(
+              "communityBoardId",
+            ),
+          geomLabel: sql`ST_AsMVTGeom(
+      		  ${communityBoardBudgetRequest.mercatorLabel},
+      		  ST_TileEnvelope(${z}, ${x}, ${y}),
+      		  4096, 64, true)`.as("geomLabel"),
+        })
+        .from(communityBoardBudgetRequest)
+        .leftJoin(
+          borough,
+          eq(communityBoardBudgetRequest.boroughId, borough.id),
+        )
+        .where(
+          sql`${communityBoardBudgetRequest.mercatorLabel} && ST_TileEnvelope(${z},${x},${y})`,
+        )
+        .as("tile");
+      const dataLabel = this.db
+        .select({
+          mvt: sql<Buffer>`ST_AsMVT(tile, 'community-board-budget-request-label', 4096, 'geomLabel')`,
+        })
+        .from(tileLabel)
+        .where(isNotNull(tileLabel.geomLabel));
+      const [fill, label] = await Promise.all([dataFill, dataLabel]);
+      const mvt = Buffer.concat([fill[0].mvt, label[0].mvt]);
       this.tileCache.set(cacheKey, mvt);
       return mvt;
-    } catch {
+    } catch (e) {
+      console.log(e);
       throw new DataRetrievalException(
         "cannot find community board budget request tiles",
       );

@@ -4,9 +4,11 @@ import {
   Injectable,
   Param,
   Query,
+  Res,
   UseFilters,
   UsePipes,
 } from "@nestjs/common";
+import { Response } from "express";
 import { CommunityBoardBudgetRequestService } from "./community-board-budget-request.service";
 import {
   FindCommunityBoardBudgetRequestNeedGroupsQueryParams,
@@ -87,9 +89,11 @@ export class CommunityBoardBudgetRequestController {
   @Get("/:z/:x/:y.pbf")
   async findTiles(
     @Param() params: FindCommunityBoardBudgetRequestTilesPathParams,
+    @Res() res: Response,
   ) {
     const tile =
       await this.communityBoardBudgetRequestService.findTiles(params);
-    return tile;
+    res.set("Content-Type", "application/x-protobuf");
+    res.send(tile);
   }
 }
