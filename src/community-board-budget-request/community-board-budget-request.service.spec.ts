@@ -6,6 +6,7 @@ import {
   findCommunityBoardBudgetRequestAgenciesQueryResponseSchema,
   findCommunityBoardBudgetRequestByIdQueryResponseSchema,
   findCommunityBoardBudgetRequestsQueryResponseSchema,
+  findCommunityBoardBudgetRequestAgencyResponseTypesQueryResponseSchema,
 } from "src/gen";
 import { CommunityBoardBudgetRequestService } from "./community-board-budget-request.service";
 import { CommunityBoardBudgetRequestRepository } from "./community-board-budget-request.repository";
@@ -123,7 +124,7 @@ describe("Community Board Budget Request service unit", () => {
       ).not.toThrow();
     });
 
-    it("should return the full list of policy areas", async () => {
+    it("should return the full list of need groups", async () => {
       const needGroups =
         await communityBoardBudgetRequestService.findNeedGroups({});
       expect(needGroups.cbbrNeedGroups.length).toBe(8);
@@ -139,7 +140,7 @@ describe("Community Board Budget Request service unit", () => {
       ).rejects.toThrow(InvalidRequestParameterException);
     });
 
-    it("should filter policy areas by cbbrPolicyAreaId", async () => {
+    it("should filter need groups by cbbrPolicyAreaId", async () => {
       const { id: policyAreaId } =
         communityBoardBudgetRequestRepositoryMock.policyAreaMocks[0];
       const needGroups =
@@ -159,7 +160,7 @@ describe("Community Board Budget Request service unit", () => {
       ).rejects.toThrow(InvalidRequestParameterException);
     });
 
-    it("should filter policy areas by agencyInitials", async () => {
+    it("should filter need groups by agencyInitials", async () => {
       const { initials: agencyInitials } = agencyRepositoryMock.agencies[0];
       const needGroups =
         await communityBoardBudgetRequestService.findNeedGroups({
@@ -544,6 +545,24 @@ describe("Community Board Budget Request service unit", () => {
         continuedSupport.totalBudgetRequests +
           nonContinuedSupport.totalBudgetRequests,
       ).toBe(all.totalBudgetRequests);
+    });
+  });
+
+  describe("findAgencyResponseTypes", () => {
+    it("should return a findCommunityBoardBudgetRequestAgencyResponseTypesQueryResponseSchema compliant object", async () => {
+      const agencyResponseTypes =
+        await communityBoardBudgetRequestService.findAgencyResponseTypes();
+      expect(() =>
+        findCommunityBoardBudgetRequestAgencyResponseTypesQueryResponseSchema.parse(
+          agencyResponseTypes,
+        ),
+      ).not.toThrow();
+    });
+
+    it("should return the full list of agency response types", async () => {
+      const agencyResponseTypes =
+        await communityBoardBudgetRequestService.findAgencyResponseTypes();
+      expect(agencyResponseTypes.cbbrAgencyResponseTypes.length).toBe(6);
     });
   });
 });

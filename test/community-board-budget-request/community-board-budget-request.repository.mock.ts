@@ -44,6 +44,10 @@ export class CommunityBoardBudgetRequestRepositoryMock {
     generateMock(cbbrPolicyAreaEntitySchema, { seed: i + 1 }),
   );
 
+  agencyResponseTypesMocks = Array.from(Array(6), (_, i) =>
+    generateMock(cbbrAgencyCategoryResponseEntitySchema, { seed: i + 1 }),
+  );
+
   checkPolicyAreaById(id: number): CheckPolicyAreaByIdRepo {
     return this.policyAreaMocks.some((policyArea) => policyArea.id === id);
   }
@@ -204,6 +208,10 @@ export class CommunityBoardBudgetRequestRepositoryMock {
   findByIdMocks = generateMock(findCommunityBoardBudgetRequestByIdRepoSchema, {
     seed: 1,
   });
+
+  async findAgencyResponseTypes() {
+    return this.agencyResponseTypesMocks;
+  }
 
   async findById({
     cbbrId,

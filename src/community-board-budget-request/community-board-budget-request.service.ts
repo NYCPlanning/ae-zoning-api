@@ -272,4 +272,9 @@ export class CommunityBoardBudgetRequestService {
       totalBudgetRequests,
     };
   }
+  async findAgencyResponseTypes() {
+    const cbbrAgencyResponseTypes =
+      await this.communityBoardBudgetRequestRepository.findAgencyResponseTypes();
+    return { cbbrAgencyResponseTypes };
+  }
 }

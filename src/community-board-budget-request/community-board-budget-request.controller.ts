@@ -107,6 +107,11 @@ export class CommunityBoardBudgetRequestController {
     return this.communityBoardBudgetRequestService.findPolicyAreas(queryParams);
   }
 
+  @Get("/agency-response-types")
+  async findAgencyResponseTypes() {
+    return this.communityBoardBudgetRequestService.findAgencyResponseTypes();
+  }
+
   @Get("/:cbbrId")
   async findById(
     @Param() params: FindCommunityBoardBudgetRequestByIdPathParams,

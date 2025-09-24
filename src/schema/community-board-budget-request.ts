@@ -99,6 +99,10 @@ export const cbbrAgencyCategoryResponseEntitySchema = z.object({
   description: z.string(),
 });
 
+export type CbbrAgencyCategoryResponseEntitySchema = z.infer<
+  typeof cbbrAgencyCategoryResponseEntitySchema
+>;
+
 export const communityBoardBudgetRequest = pgTable(
   "community_board_budget_request",
   {
