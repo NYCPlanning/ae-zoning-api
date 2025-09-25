@@ -1,12 +1,14 @@
 import { z } from "zod";
 
-export const MultiPointSchema = z
+export const multiPointJsonSchema = z
   .string()
   .regex(
     /^{"type":"MultiPoint","coordinates":\[(\[-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?,-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?\])(,\[-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?,-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?\]){0,}\]}$/,
   );
 
-export const MultiPolygonSchema = z
+export type MultiPointJson = z.infer<typeof multiPointJsonSchema>;
+
+export const multiPolygonJsonSchema = z
   .string()
   /**
    * Geometries are formatted as strings that are shaped like geometry objects.
@@ -38,3 +40,5 @@ export const MultiPolygonSchema = z
   .regex(
     /^{"type":"MultiPolygon","coordinates":\[\[(\[\[-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?,-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?\](,\[-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?,-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?\]){3,}\])(,\[\[-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?,-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?\](,\[-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?,-?[1-9]([0-9]{0,})(\.[0-9]{1,14})?\]){3,}\]){0,}\]\]}$/,
   );
+
+export type MultiPolygonJson = z.infer<typeof multiPolygonJsonSchema>;

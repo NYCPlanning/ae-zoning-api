@@ -9,11 +9,15 @@ import {
   boolean,
 } from "drizzle-orm/pg-core";
 import { z } from "zod";
-import { agency } from "./agency";
+import { agency, agencyEntitySchema } from "./agency";
 import { sql } from "drizzle-orm";
-import { managingCode } from "./managing-code";
-import { communityDistrict } from "./community-district";
+import { managingCode, managingCodeEntitySchema } from "./managing-code";
+import {
+  communityDistrict,
+  communityDistrictEntitySchema,
+} from "./community-district";
 import { multiPointGeom, multiPolygonGeom, pointGeom } from "src/drizzle-pgis";
+import { boroughEntitySchema } from "./borough";
 
 export const cbbrPolicyArea = pgTable("cbbr_policy_area", {
   id: smallint("id").generatedByDefaultAsIdentity().primaryKey(),
@@ -21,7 +25,7 @@ export const cbbrPolicyArea = pgTable("cbbr_policy_area", {
 });
 
 export const cbbrPolicyAreaEntitySchema = z.object({
-  id: z.number(),
+  id: z.number().int(),
   description: z.string(),
 });
 
@@ -35,7 +39,7 @@ export const cbbrNeedGroup = pgTable("cbbr_need_group", {
 });
 
 export const cbbrNeedGroupEntitySchema = z.object({
-  id: z.number(),
+  id: z.number().int(),
   description: z.string(),
 });
 
@@ -48,13 +52,20 @@ export const cbbrNeed = pgTable("cbbr_need", {
   description: text("description").notNull(),
 });
 
+export const cbbrNeedEntitySchema = z.object({
+  id: z.number().int(),
+  description: z.string(),
+});
+
+export type CbbrNeedEntitySchema = z.infer<typeof cbbrNeedEntitySchema>;
+
 export const cbbrRequest = pgTable("cbbr_request", {
   id: smallint("id").generatedByDefaultAsIdentity().primaryKey(),
   description: text("description").notNull(),
 });
 
 export const cbbrRequestEntitySchema = z.object({
-  id: z.number(),
+  id: z.number().int(),
   description: z.string(),
 });
 
@@ -95,7 +106,7 @@ export const cbbrAgencyCategoryResponse = pgTable(
 );
 
 export const cbbrAgencyCategoryResponseEntitySchema = z.object({
-  id: z.number(),
+  id: z.number().int(),
   description: z.string(),
 });
 
@@ -162,20 +173,30 @@ export const communityBoardBudgetRequest = pgTable(
   ],
 );
 
+export const cbbrRequestTypeEntitySchema = z.enum(["Capital", "Expense"]);
+
+export type CbbrRequestTypeEntity = z.infer<typeof cbbrRequestTypeEntitySchema>;
+
 export const communityBoardBudgetRequestEntitySchema = z.object({
   id: z.string(),
-  cbbrPolicyAreaId: z.number(),
+  internalId: z.string(),
   title: z.string(),
-  boroughId: z.string(),
-  communityDistrictId: z.string(),
-  description: z.string().nullable(),
-  agencyInitials: z.string(),
-  priority: z.number(),
-  cbbrType: z.enum(["Capital", "Expense"]),
-  isMapped: z.boolean(),
-  isContinuedSupport: z.boolean(),
-  agencyCategoryResponse: z.number().nullable(),
+  boroughId: boroughEntitySchema.shape.id,
+  communityDistrictId: communityDistrictEntitySchema.shape.id,
+  agency: agencyEntitySchema.shape.initials,
+  managingCode: managingCodeEntitySchema.shape.id,
+  agencyCategoryReponse:
+    cbbrAgencyCategoryResponseEntitySchema.shape.id.nullable(),
   agencyResponse: z.string().nullable(),
+  requestType: cbbrRequestTypeEntitySchema,
+  policyArea: cbbrPolicyAreaEntitySchema.shape.id,
+  needGroup: cbbrNeedGroupEntitySchema.shape.id,
+  priority: z.number().int(),
+  need: cbbrNeedEntitySchema.shape.id,
+  request: cbbrRequestEntitySchema.shape.id,
+  explanation: z.string().nullable(),
+  isLocationSpecific: z.boolean(),
+  isContinuedSupport: z.boolean(),
 });
 
 export const communityBoardBudgetRequestPageItemEntitySchema = z.object({

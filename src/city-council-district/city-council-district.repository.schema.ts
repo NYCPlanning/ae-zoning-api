@@ -1,13 +1,13 @@
 import { mvtEntitySchema } from "src/schema/mvt";
 import {
   cityCouncilDistrictEntitySchema,
-  MultiPolygonSchema,
+  multiPolygonJsonSchema,
 } from "src/schema";
 import { z } from "zod";
 
 export const cityCouncilDistrictGeoJsonEntitySchema =
   cityCouncilDistrictEntitySchema.extend({
-    geometry: MultiPolygonSchema,
+    geometry: multiPolygonJsonSchema,
   });
 
 export type CityCouncilDistrictGeoJsonEntity = z.infer<

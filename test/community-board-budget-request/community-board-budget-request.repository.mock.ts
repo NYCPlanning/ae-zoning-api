@@ -3,18 +3,21 @@ import {
   CheckNeedGroupByIdRepo,
   CheckPolicyAreaByIdRepo,
   FindAgenciesRepo,
-  FindCommunityBoardBudgetRequestByIdRepo,
-  findCommunityBoardBudgetRequestByIdRepoSchema,
-  FindManyCommunityBoardBudgetRequestRepo,
+  FindByIdRepo,
+  findByIdRepoSchema,
+  FindGeoJsonByIdRepo,
+  findGeoJsonByIdRepoSchema,
+  FindManyRepo,
   FindNeedGroupsRepo,
   FindPolicyAreasRepo,
-  FindCountCommunityBoardBudgetRequestRepo,
   CheckAgencyCategoryResponseByIdRepo,
-  findManyCommunityBoardBudgetRequestEntitySchema,
-  FindManyCommunityBoardBudgetRequestEntity,
   FindTilesRepo,
   findTilesRepoSchema,
+  manyCommunityBoardBudgetRequestRepoSchema,
+  ManyCommunityBoardBudgetRequestRepo,
+  FindCountRepo,
 } from "src/community-board-budget-request/community-board-budget-request.repository.schema";
+import { FindCommunityBoardBudgetRequestGeoJsonByIdPathParams } from "src/gen/types/FindCommunityBoardBudgetRequestGeoJsonById";
 import {
   CbbrNeedGroupEntitySchema,
   cbbrNeedGroupEntitySchema,
@@ -42,12 +45,12 @@ export class CommunityBoardBudgetRequestRepositoryMock {
     this.communityDistrictRepoMock = communityDistrictRepoMock;
   }
 
-  policyAreaMocks = Array.from(Array(8), (_, i) =>
-    generateMock(cbbrPolicyAreaEntitySchema, { seed: i + 1 }),
-  );
-
   agencyCategoryResponsesMocks = Array.from(Array(8), (_, i) =>
     generateMock(cbbrAgencyCategoryResponseEntitySchema, { seed: i + 1 }),
+  );
+
+  policyAreaMocks = Array.from(Array(8), (_, i) =>
+    generateMock(cbbrPolicyAreaEntitySchema, { seed: i + 1 }),
   );
 
   checkPolicyAreaById(id: number): CheckPolicyAreaByIdRepo {
@@ -205,7 +208,7 @@ export class CommunityBoardBudgetRequestRepositoryMock {
       .map(([_, agency]) => agency);
   }
 
-  findByIdMocks = generateMock(findCommunityBoardBudgetRequestByIdRepoSchema, {
+  findByIdMocks = generateMock(findByIdRepoSchema, {
     seed: 1,
   });
 
@@ -213,17 +216,13 @@ export class CommunityBoardBudgetRequestRepositoryMock {
     return this.agencyCategoryResponsesMocks;
   }
 
-  async findById({
-    cbbrId,
-  }: {
-    cbbrId: string;
-  }): Promise<FindCommunityBoardBudgetRequestByIdRepo> {
+  async findById({ cbbrId }: { cbbrId: string }): Promise<FindByIdRepo> {
     const cbbr = this.findByIdMocks.find((cbbr) => cbbr.id === cbbrId);
     return cbbr === undefined ? [] : [cbbr];
   }
 
   findManyMocks = Array.from(Array(8), (_, i) =>
-    generateMock(findManyCommunityBoardBudgetRequestEntitySchema, {
+    generateMock(manyCommunityBoardBudgetRequestRepoSchema, {
       seed: i + 1,
     }),
   );
@@ -242,7 +241,7 @@ export class CommunityBoardBudgetRequestRepositoryMock {
         isMapped: boolean;
         isContinuedSupport: boolean;
       },
-      FindManyCommunityBoardBudgetRequestEntity,
+      ManyCommunityBoardBudgetRequestRepo,
     ]
   > {
     const communityDistricts = this.communityDistrictRepoMock.districts;
@@ -292,7 +291,7 @@ export class CommunityBoardBudgetRequestRepositoryMock {
     cbbrAgencyCategoryResponseIds: Array<number> | null;
     isMapped: boolean | null;
     isContinuedSupport: boolean | null;
-  }): Promise<FindManyCommunityBoardBudgetRequestRepo> {
+  }): Promise<FindManyRepo> {
     return this.findManyCriteria
       .filter(([criteria, _]) => {
         if (
@@ -365,7 +364,7 @@ export class CommunityBoardBudgetRequestRepositoryMock {
     isContinuedSupport: boolean | null;
     limit: number;
     offset: number;
-  }): Promise<FindManyCommunityBoardBudgetRequestRepo> {
+  }): Promise<FindManyRepo> {
     return await this.filterCommunityBoardBudgetRequests(params);
   }
 
@@ -382,10 +381,28 @@ export class CommunityBoardBudgetRequestRepositoryMock {
     isContinuedSupport: boolean | null;
     limit: number;
     offset: number;
-  }): Promise<FindCountCommunityBoardBudgetRequestRepo> {
+  }): Promise<FindCountRepo> {
     const cbbrs = await this.filterCommunityBoardBudgetRequests(params);
 
     return cbbrs.length;
+  }
+
+  findGeoJsonByIdMock = generateMock(findGeoJsonByIdRepoSchema, {
+    seed: 1,
+    stringMap: {
+      minDate: () => "2018-01-01",
+      maxDate: () => "2045-12-31",
+    },
+  });
+
+  async findGeoJsonById({
+    cbbrId,
+  }: FindCommunityBoardBudgetRequestGeoJsonByIdPathParams): Promise<FindGeoJsonByIdRepo> {
+    const results = this.findGeoJsonByIdMock.filter(
+      (cbbrGeoJson) => cbbrGeoJson.id === cbbrId,
+    );
+
+    return results === undefined ? [] : results;
   }
 
   findTilesMock = generateMock(findTilesRepoSchema);

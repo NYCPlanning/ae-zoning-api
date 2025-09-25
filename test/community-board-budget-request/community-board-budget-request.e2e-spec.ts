@@ -9,6 +9,7 @@ import { CommunityBoardBudgetRequestModule } from "src/community-board-budget-re
 import {
   findCommunityBoardBudgetRequestAgenciesQueryResponseSchema,
   findCommunityBoardBudgetRequestByIdQueryResponseSchema,
+  findCommunityBoardBudgetRequestGeoJsonByIdQueryResponseSchema,
   findCommunityBoardBudgetRequestNeedGroupsQueryResponseSchema,
   findCommunityBoardBudgetRequestPolicyAreasQueryResponseSchema,
   findCommunityBoardBudgetRequestsQueryResponseSchema,
@@ -993,6 +994,54 @@ describe("Community Board Budget Request e2e", () => {
     });
   });
 
+  describe("findGeoJsonById", () => {
+    it("should 200 and return a community board budget request with budget details", async () => {
+      const communityBoardBudgetRequestGeoJsonMock =
+        communityBoardBudgetRequestRepositoryMock.findGeoJsonByIdMock[0];
+      const { id } = communityBoardBudgetRequestGeoJsonMock;
+      const response = await request(app.getHttpServer())
+        .get(`/community-board-budget-requests/${id}/geojson`)
+        .expect(200);
+
+      expect(() =>
+        findCommunityBoardBudgetRequestGeoJsonByIdQueryResponseSchema.parse(
+          response.body,
+        ),
+      ).not.toThrow();
+    });
+
+    it("should 404 when finding by missing community board budget request id", async () => {
+      const communityBoardBudgetRequestId = "1234XYZ";
+
+      const response = await request(app.getHttpServer())
+        .get(
+          `/community-board-budget-requests/${communityBoardBudgetRequestId}/geojson`,
+        )
+        .expect(404);
+
+      expect(response.body.message).toMatch(/community board budget request/);
+    });
+
+    it("should 500 when the database errors", async () => {
+      const dataRetrievalException = new DataRetrievalException(
+        "cannot find data",
+      );
+      jest
+        .spyOn(communityBoardBudgetRequestRepositoryMock, "findGeoJsonById")
+        .mockImplementationOnce(() => {
+          throw dataRetrievalException;
+        });
+
+      const communityBoardBudgetRequestMock =
+        communityBoardBudgetRequestRepositoryMock.findGeoJsonByIdMock[0];
+      const { id } = communityBoardBudgetRequestMock;
+      const response = await request(app.getHttpServer())
+        .get(`/community-board-budget-requests/${id}/geojson`)
+        .expect(500);
+      expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);
+      expect(response.body.message).toBe(dataRetrievalException.message);
+    });
+  });
   afterAll(async () => {
     await app.close();
   });

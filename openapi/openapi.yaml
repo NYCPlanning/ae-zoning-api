@@ -92,6 +92,8 @@ paths:
     $ref: paths/community-board-budget-requests.yaml
   /community-board-budget-requests/{cbbrId}:
     $ref: paths/community-board-budget-requests_{cbbrId}.yaml
+  /community-board-budget-requests/{cbbrId}/geojson:
+    $ref: paths/community-board-budget-requests_{cbbrId}_geojson.yaml
   /community-board-budget-requests/agencies:
     $ref: paths/community-board-budget-requests_agencies.yaml
   /community-board-budget-requests/agency-category-responses:

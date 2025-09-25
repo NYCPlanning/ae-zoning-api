@@ -1,7 +1,7 @@
 import {
   boroughEntitySchema,
   communityDistrictEntitySchema,
-  MultiPolygonSchema,
+  multiPolygonJsonSchema,
   mvtEntitySchema,
 } from "src/schema";
 import { z } from "zod";
@@ -24,7 +24,7 @@ export type FindCommunityDistrictsByBoroughIdRepo = z.infer<
 
 export const communityDistrictGeoJsonEntitySchema =
   communityDistrictEntitySchema.extend({
-    geometry: MultiPolygonSchema,
+    geometry: multiPolygonJsonSchema,
   });
 
 export type CommunityDistrictGeoJsonEntity = z.infer<
