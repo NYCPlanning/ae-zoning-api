@@ -44,6 +44,7 @@ import {
   TILE_CACHE,
   TileCacheService,
 } from "src/global/providers/tile-cache.provider";
+import { capitalProjectTile } from "src/schema/views";
 
 export class CapitalProjectRepository {
   constructor(
@@ -500,69 +501,36 @@ export class CapitalProjectRepository {
     params: FindCapitalProjectTilesPathParams,
   ): Promise<FindTilesRepo> {
     const { z, x, y } = params;
-    // const cacheKey = JSON.stringify({
-    //   domain: "capitalProject",
-    //   function: "findTiles",
-    //   z,
-    //   x,
-    //   y,
-    // });
-    // const cachedTiles =
-    //   await this.tileCache.get<Buffer<ArrayBufferLike>>(cacheKey);
-    // if (cachedTiles !== null) return cachedTiles;
+    const cacheKey = JSON.stringify({
+      domain: "capitalProject",
+      function: "findTiles",
+      z,
+      x,
+      y,
+    });
+    const cachedTiles =
+      await this.tileCache.get<Buffer<ArrayBufferLike>>(cacheKey);
+    if (cachedTiles !== null) return cachedTiles;
     try {
       const tile = this.db
         .select({
           managingCodeCapitalProjectId:
-            sql<string>`${capitalProject.managingCode} || ${capitalProject.id}`.as(
-              `managingCodeCapitalProjectId`,
-            ),
-          managingAgency: sql`${capitalProject.managingAgency}`.as(
-            `managingAgency`,
-          ),
-          commitmentsTotal:
-            // numeric type is econded as string, double precision type is encoded in mvt as number
-            sql`SUM(${capitalCommitmentFund.value})::double precision`
-              .mapWith(Number)
-              .as("commitmentsTotal"),
-          agencyBudgets: sql<
-            Array<string>
-          >`ARRAY_TO_JSON(ARRAY_AGG(DISTINCT ${capitalCommitment.budgetLineCode}))`.as(
-            "agencyBudgets",
-          ),
+            capitalProjectTile.managingCodeCapitalProjectId,
+          managingAgency: capitalProjectTile.managingAgency,
+          commitmentsTotal: capitalProjectTile.commitmentsTotal,
+          agencyBudgets: capitalProjectTile.agencyBudgets,
           geom: sql<string>`
                 ST_AsMVTGeom(
-                  ${capitalProject.mercatorFill},
+                  ${capitalProjectTile.mercatorFill},
                   ST_TileEnvelope(${z},${x},${y}),
                   4096,
                   64,
                   true
                 )`.as("geom"),
         })
-        .from(capitalProject)
-        .leftJoin(
-          capitalCommitment,
-          and(
-            eq(capitalCommitment.capitalProjectId, capitalProject.id),
-            eq(capitalCommitment.managingCode, capitalProject.managingCode),
-          ),
-        )
-        .leftJoin(
-          capitalCommitmentFund,
-          eq(capitalCommitmentFund.capitalCommitmentId, capitalCommitment.id),
-        )
+        .from(capitalProjectTile)
         .where(
-          and(
-            sql`${capitalProject.mercatorFill} && ST_TileEnvelope(${z},${x},${y})`,
-            eq(capitalCommitmentFund.category, "total"),
-          ),
-        )
-        .groupBy(
-          capitalProject.id,
-          capitalProject.managingCode,
-          capitalProject.managingAgency,
-          capitalProject.mercatorFillMPnt,
-          capitalProject.mercatorFillMPoly,
+          sql`${capitalProjectTile.mercatorFill} && ST_TileEnvelope(${z},${x},${y})`,
         )
         .as("tile");
       const data = await this.db
@@ -572,9 +540,10 @@ export class CapitalProjectRepository {
         .from(tile)
         .where(isNotNull(tile.geom));
       const { mvt } = data[0];
-      // this.tileCache.set(cacheKey, mvt);
+      this.tileCache.set(cacheKey, mvt);
       return mvt;
-    } catch {
+    } catch (e) {
+      console.log(e);
       throw new DataRetrievalException("cannot find capital project tiles");
     }
   }
