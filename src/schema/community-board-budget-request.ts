@@ -94,6 +94,11 @@ export const cbbrAgencyCategoryResponse = pgTable(
   },
 );
 
+export const cbbrAgencyCategoryResponseEntitySchema = z.object({
+  id: z.number(),
+  description: z.string(),
+});
+
 export const communityBoardBudgetRequest = pgTable(
   "community_board_budget_request",
   {
@@ -167,4 +172,14 @@ export const communityBoardBudgetRequestEntitySchema = z.object({
   isContinuedSupport: z.boolean(),
   agencyCategoryResponse: z.number().nullable(),
   agencyResponse: z.string().nullable(),
+});
+
+export const communityBoardBudgetRequestPageItemEntitySchema = z.object({
+  id: z.string(),
+  cbbrPolicyAreaId: z.number(),
+  title: z.string(),
+  boroughId: z.string(),
+  communityDistrictId: z.string(),
+  isMapped: z.boolean(),
+  isContinuedSupport: z.boolean(),
 });

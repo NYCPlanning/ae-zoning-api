@@ -15,6 +15,8 @@ import {
   FindCommunityBoardBudgetRequestAgenciesQueryParams,
   findCommunityBoardBudgetRequestAgenciesQueryParamsSchema,
   FindCommunityBoardBudgetRequestByIdPathParams,
+  findCommunityBoardBudgetRequestsQueryParamsSchema,
+  FindCommunityBoardBudgetRequestsQueryParams,
 } from "src/gen";
 import {
   BadRequestExceptionFilter,
@@ -34,6 +36,40 @@ export class CommunityBoardBudgetRequestController {
   constructor(
     private readonly communityBoardBudgetRequestService: CommunityBoardBudgetRequestService,
   ) {}
+
+  @Get("/")
+  async findMany(
+    @Query(
+      new ZodTransformPipe(findCommunityBoardBudgetRequestsQueryParamsSchema),
+    )
+    {
+      communityDistrictId,
+      cityCouncilDistrictId,
+      cbbrAgencyResponseTypeIds,
+      cbbrNeedGroupId,
+      cbbrPolicyAreaId,
+      cbbrType,
+      agencyInitials,
+      isContinuedSupport,
+      isMapped,
+      limit,
+      offset,
+    }: FindCommunityBoardBudgetRequestsQueryParams,
+  ) {
+    return await this.communityBoardBudgetRequestService.findMany({
+      communityDistrictCombinedId: communityDistrictId,
+      cityCouncilDistrictId,
+      cbbrAgencyResponseTypeIds,
+      cbbrNeedGroupId,
+      cbbrPolicyAreaId,
+      cbbrType,
+      agencyInitials,
+      isContinuedSupport,
+      isMapped,
+      limit,
+      offset,
+    });
+  }
 
   @Get("/agencies")
   async findAgencies(

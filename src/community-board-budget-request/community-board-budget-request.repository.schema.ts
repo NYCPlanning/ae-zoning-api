@@ -38,6 +38,33 @@ export type FindCommunityBoardBudgetRequestByIdRepo = z.infer<
   typeof findCommunityBoardBudgetRequestByIdRepoSchema
 >;
 
+export const findManyCommunityBoardBudgetRequestEntitySchema = z.object({
+  id: z.string(),
+  cbbrPolicyAreaId: z.number(),
+  title: z.string(),
+  communityBoardId: z.string(),
+  isMapped: z.boolean(),
+  isContinuedSupport: z.boolean(),
+});
+
+export type FindManyCommunityBoardBudgetRequestEntity = z.infer<
+  typeof findManyCommunityBoardBudgetRequestEntitySchema
+>;
+
+export const findManyCommunityBoardBudgetRequestRepoSchema = z.array(
+  findManyCommunityBoardBudgetRequestEntitySchema,
+);
+
+export type FindManyCommunityBoardBudgetRequestRepo = z.infer<
+  typeof findManyCommunityBoardBudgetRequestRepoSchema
+>;
+
+export const findCountCommunityBoardBudgetRequestRepoSchema = z.number();
+
+export type FindCountCommunityBoardBudgetRequestRepo = z.infer<
+  typeof findCountCommunityBoardBudgetRequestRepoSchema
+>;
+
 export const checkNeedGroupByIdRepoSchema = z.boolean();
 
 export type CheckNeedGroupByIdRepo = z.infer<
@@ -48,4 +75,10 @@ export const checkPolicyAreaByIdRepoSchema = z.boolean();
 
 export type CheckPolicyAreaByIdRepo = z.infer<
   typeof checkPolicyAreaByIdRepoSchema
+>;
+
+export const checkAgencyResponseTypeByIdRepoSchema = z.boolean();
+
+export type CheckAgencyResponseTypeByIdRepo = z.infer<
+  typeof checkAgencyResponseTypeByIdRepoSchema
 >;
