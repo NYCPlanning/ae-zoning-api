@@ -1,0 +1,17 @@
+get:
+  summary: Mapbox Vector Tiles for community board budget requests
+  operationId: findCommunityBoardBudgetRequestTiles
+  tags:
+    - MVT
+    - Community Board Budget Requests
+  parameters:
+    - $ref: ../components/parameters/viewportZoomParam.yaml
+    - $ref: ../components/parameters/viewportXParam.yaml
+    - $ref: ../components/parameters/viewportYParam.yaml
+  responses:
+    '200':
+      $ref: ../components/responses/MVT.yaml
+    '400':
+      $ref: ../components/responses/BadRequest.yaml
+    '500':
+      $ref: ../components/responses/InternalServerError.yaml

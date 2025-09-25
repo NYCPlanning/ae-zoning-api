@@ -11,6 +11,7 @@ import {
   FindCommunityBoardBudgetRequestByIdRepo,
   FindManyCommunityBoardBudgetRequestRepo,
   FindCountCommunityBoardBudgetRequestRepo,
+  FindTilesRepo,
 } from "./community-board-budget-request.repository.schema";
 import {
   agency,
@@ -28,15 +29,21 @@ import {
   FindCommunityBoardBudgetRequestByIdPathParams,
   FindCommunityBoardBudgetRequestNeedGroupsQueryParams,
   FindCommunityBoardBudgetRequestPolicyAreasQueryParams,
+  FindCommunityBoardBudgetRequestTilesPathParams,
 } from "src/gen";
 import { Cache } from "cache-manager";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
+import {
+  TILE_CACHE,
+  TileCacheService,
+} from "src/global/providers/tile-cache.provider";
 
 export class CommunityBoardBudgetRequestRepository {
   constructor(
     @Inject(DB)
     private readonly db: DbType,
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
+    @Inject(TILE_CACHE) private readonly tileCache: TileCacheService,
   ) {}
 
   #checkAgencyResponseTypeById = this.db.query.cbbrAgencyCategoryResponse
@@ -515,6 +522,132 @@ export class CommunityBoardBudgetRequestRepository {
         .orderBy(cbbrAgencyCategoryResponse.id);
     } catch {
       throw new DataRetrievalException("cannot find agency response types");
+    }
+  }
+
+  async findTiles({
+    z,
+    x,
+    y,
+  }: FindCommunityBoardBudgetRequestTilesPathParams): Promise<FindTilesRepo> {
+    const cacheKey = JSON.stringify({
+      domain: "communityBoardBudgetRequest",
+      function: "findTiles",
+      z,
+      x,
+      y,
+    });
+    const cachedTiles =
+      await this.tileCache.get<Buffer<ArrayBufferLike>>(cacheKey);
+    if (cachedTiles !== null) return cachedTiles;
+    try {
+      const tileFill = this.db
+        .select({
+          id: sql`${communityBoardBudgetRequest.id}`.as("id"),
+          policyAreaId: sql`${communityBoardBudgetRequest.policyArea}`.as(
+            "policyAreaId",
+          ),
+          needGroupId: sql`${communityBoardBudgetRequest.needGroup}`.as(
+            "needGroupId",
+          ),
+          agencyInitials: sql`${communityBoardBudgetRequest.agency}`.as(
+            "agencyInitials",
+          ),
+          agencyCategoryReponseId:
+            sql`${communityBoardBudgetRequest.agencyCategoryResponse}`.as(
+              "agencyCategoryReponseId",
+            ),
+          communityBoardId:
+            sql`${borough.abbr} || ${communityBoardBudgetRequest.communityDistrictId}`.as(
+              "communityBoardId",
+            ),
+          geomFill: sql<string>`
+                CASE
+                  WHEN ${communityBoardBudgetRequest.mercatorFillMPoly} && ST_TileEnvelope(${z},${x},${y})
+                    THEN ST_AsMVTGeom(
+                      ${communityBoardBudgetRequest.mercatorFillMPoly},
+                      ST_TileEnvelope(${z},${x},${y}),
+                      4096,
+                      64,
+                      true
+                    )
+                  WHEN ${communityBoardBudgetRequest.mercatorFillMPnt} && ST_TileEnvelope(${z},${x},${y})
+                    THEN ST_AsMVTGeom(
+                      ${communityBoardBudgetRequest.mercatorFillMPnt},
+                      ST_TileEnvelope(${z},${x},${y}),
+                      4096,
+                      64,
+                      true
+                    )
+                END`.as("geomFill"),
+        })
+        .from(communityBoardBudgetRequest)
+        .leftJoin(
+          borough,
+          eq(communityBoardBudgetRequest.boroughId, borough.id),
+        )
+        .where(
+          or(
+            sql`${communityBoardBudgetRequest.mercatorFillMPnt} && ST_TileEnvelope(${z},${x},${y})`,
+            sql`${communityBoardBudgetRequest.mercatorFillMPoly} && ST_TileEnvelope(${z},${x},${y})`,
+          ),
+        )
+        .as("tile");
+      const dataFill = this.db
+        .select({
+          mvt: sql<Buffer>`ST_AsMVT(tile, 'community-board-budget-request-fill', 4096, 'geomFill')`,
+        })
+        .from(tileFill)
+        .where(isNotNull(tileFill.geomFill));
+
+      const tileLabel = this.db
+        .select({
+          id: sql`${communityBoardBudgetRequest.id}`.as("id"),
+          policyAreaId: sql`${communityBoardBudgetRequest.policyArea}`.as(
+            "policyAreaId",
+          ),
+          needGroupId: sql`${communityBoardBudgetRequest.needGroup}`.as(
+            "needGroupId",
+          ),
+          agencyInitials: sql`${communityBoardBudgetRequest.agency}`.as(
+            "agencyInitials",
+          ),
+          agencyCategoryReponseId:
+            sql`${communityBoardBudgetRequest.agencyCategoryResponse}`.as(
+              "agencyCategoryReponseId",
+            ),
+          communityBoardId:
+            sql`${borough.abbr} || ${communityBoardBudgetRequest.communityDistrictId}`.as(
+              "communityBoardId",
+            ),
+          geomLabel: sql`ST_AsMVTGeom(
+        		  ${communityBoardBudgetRequest.mercatorLabel},
+        		  ST_TileEnvelope(${z}, ${x}, ${y}),
+        		  4096, 64, true)`.as("geomLabel"),
+        })
+        .from(communityBoardBudgetRequest)
+        .leftJoin(
+          borough,
+          eq(communityBoardBudgetRequest.boroughId, borough.id),
+        )
+        .where(
+          sql`${communityBoardBudgetRequest.mercatorLabel} && ST_TileEnvelope(${z},${x},${y})`,
+        )
+        .as("tile");
+      const dataLabel = this.db
+        .select({
+          mvt: sql<Buffer>`ST_AsMVT(tile, 'community-board-budget-request-label', 4096, 'geomLabel')`,
+        })
+        .from(tileLabel)
+        .where(isNotNull(tileLabel.geomLabel));
+      const [fill, label] = await Promise.all([dataFill, dataLabel]);
+      const mvt = Buffer.concat([fill[0].mvt, label[0].mvt]);
+      this.tileCache.set(cacheKey, mvt);
+      return mvt;
+    } catch {
+      throw new DataRetrievalException(
+        "cannot find community board budget request tiles",
+      );
     }
   }
 }

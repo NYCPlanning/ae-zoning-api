@@ -4,8 +4,11 @@ import {
   Injectable,
   Param,
   Query,
+  Res,
   UseFilters,
+  UsePipes,
 } from "@nestjs/common";
+import { Response } from "express";
 import { CommunityBoardBudgetRequestService } from "./community-board-budget-request.service";
 import {
   FindCommunityBoardBudgetRequestNeedGroupsQueryParams,
@@ -17,6 +20,8 @@ import {
   FindCommunityBoardBudgetRequestByIdPathParams,
   findCommunityBoardBudgetRequestsQueryParamsSchema,
   FindCommunityBoardBudgetRequestsQueryParams,
+  findCommunityBoardBudgetRequestTilesPathParamsSchema,
+  FindCommunityBoardBudgetRequestTilesPathParams,
 } from "src/gen";
 import {
   BadRequestExceptionFilter,
@@ -117,5 +122,19 @@ export class CommunityBoardBudgetRequestController {
     @Param() params: FindCommunityBoardBudgetRequestByIdPathParams,
   ) {
     return this.communityBoardBudgetRequestService.findById(params);
+  }
+
+  @UsePipes(
+    new ZodTransformPipe(findCommunityBoardBudgetRequestTilesPathParamsSchema),
+  )
+  @Get("/:z/:x/:y.pbf")
+  async findTiles(
+    @Param() params: FindCommunityBoardBudgetRequestTilesPathParams,
+    @Res() res: Response,
+  ) {
+    const tile =
+      await this.communityBoardBudgetRequestService.findTiles(params);
+    res.set("Content-Type", "application/x-protobuf");
+    res.send(tile);
   }
 }

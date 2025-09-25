@@ -6,6 +6,7 @@ import {
   FindCommunityBoardBudgetRequestByIdPathParams,
   FindCommunityBoardBudgetRequestNeedGroupsQueryParams,
   FindCommunityBoardBudgetRequestPolicyAreasQueryParams,
+  FindCommunityBoardBudgetRequestTilesPathParams,
 } from "src/gen";
 import { AgencyRepository } from "src/agency/agency.repository";
 import {
@@ -276,5 +277,9 @@ export class CommunityBoardBudgetRequestService {
     const cbbrAgencyResponseTypes =
       await this.communityBoardBudgetRequestRepository.findAgencyResponseTypes();
     return { cbbrAgencyResponseTypes };
+  }
+
+  async findTiles(params: FindCommunityBoardBudgetRequestTilesPathParams) {
+    return await this.communityBoardBudgetRequestRepository.findTiles(params);
   }
 }
