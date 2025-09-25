@@ -36,10 +36,10 @@
       "description": "The board's ranking of the request's priority",
       "example": 29
     },
-    "cbbrType": {
+    "requestType": {
       "nullable": false,
       "type": "string",
-      "enum": ["C", "E"],
+      "enum": ["Capital", "Expense"],
       "description": "The type of budget request (Capital or Expense).",
       "x-readme-ref-name": "CommunityBoardBudgetRequestType"
     },

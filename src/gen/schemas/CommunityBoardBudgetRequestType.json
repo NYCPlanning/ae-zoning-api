@@ -1,7 +1,7 @@
 {
   "type": "string",
   "nullable": false,
-  "enum": ["C", "E"],
+  "enum": ["Capital", "Expense"],
   "description": "The type of budget request (Capital or Expense).",
   "x-readme-ref-name": "CommunityBoardBudgetRequestType"
 }

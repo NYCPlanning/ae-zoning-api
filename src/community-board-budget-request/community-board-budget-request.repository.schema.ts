@@ -18,12 +18,20 @@ export const findPolicyAreasRepoSchema = z.array(cbbrPolicyAreaEntitySchema);
 
 export type FindPolicyAreasRepo = z.infer<typeof findPolicyAreasRepoSchema>;
 
-export const findCommunityBoardBudgetRequestByIdRepoSchema = z.array(
-  communityBoardBudgetRequestEntitySchema,
-);
+export const communityBoardBudgetRequestRepoSchema =
+  communityBoardBudgetRequestEntitySchema
+    .omit({
+      boroughId: true,
+      communityDistrictId: true,
+    })
+    .extend({
+      communityBoardId: z.string(),
+    });
+
+export const findIdRepoSchema = z.array(communityBoardBudgetRequestRepoSchema);
 
 export type FindCommunityBoardBudgetRequestByIdRepo = z.infer<
-  typeof findCommunityBoardBudgetRequestByIdRepoSchema
+  typeof findIdRepoSchema
 >;
 
 export const checkNeedGroupByIdRepoSchema = z.boolean();

@@ -1,6 +1,6 @@
 type: string
 nullable: false
 enum:
-  - C
-  - E
+  - Capital
+  - Expense
 description: The type of budget request (Capital or Expense).

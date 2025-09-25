@@ -129,14 +129,8 @@ export class CommunityBoardBudgetRequestService {
   }
 
   async findById({ cbbrId }: FindCommunityBoardBudgetRequestByIdPathParams) {
-    const communityBoardBudgetRequestsPromise =
-      this.communityBoardBudgetRequestRepository.findById({ cbbrId });
-    const boroughsPromise = this.boroughRepository.findMany();
-
-    const [communityBoardBudgetRequests, boroughs] = await Promise.all([
-      communityBoardBudgetRequestsPromise,
-      boroughsPromise,
-    ]);
+    const communityBoardBudgetRequests =
+      await this.communityBoardBudgetRequestRepository.findById({ cbbrId });
 
     if (communityBoardBudgetRequests.length < 1) {
       throw new ResourceNotFoundException(
@@ -144,39 +138,6 @@ export class CommunityBoardBudgetRequestService {
       );
     }
 
-    const {
-      id,
-      cbbrPolicyAreaId,
-      title,
-      description,
-      boroughId,
-      communityDistrictId,
-      agencyInitials,
-      priority,
-      cbbrType,
-      isMapped,
-      isContinuedSupport,
-      agencyCategoryResponse,
-      agencyResponse,
-    } = communityBoardBudgetRequests[0];
-
-    const boroughAbbr = boroughs.find(
-      (borough) => borough.id === boroughId,
-    )?.abbr;
-
-    return {
-      id,
-      cbbrPolicyAreaId,
-      title,
-      description,
-      communityBoardId: `${boroughAbbr}${communityDistrictId}`,
-      agencyInitials,
-      priority,
-      cbbrType,
-      isMapped,
-      isContinuedSupport,
-      agencyCategoryResponse,
-      agencyResponse,
-    };
+    return communityBoardBudgetRequests[0];
   }
 }

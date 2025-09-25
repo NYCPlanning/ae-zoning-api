@@ -20,7 +20,7 @@ export const communityBoardBudgetRequestSchema = z.object({
   priority: z.coerce
     .number()
     .describe("The board's ranking of the request's priority"),
-  cbbrType: z.lazy(() => communityBoardBudgetRequestTypeSchema),
+  requestType: z.lazy(() => communityBoardBudgetRequestTypeSchema).optional(),
   isMapped: z
     .boolean()
     .describe("Whether the budget request has associated mappable data"),

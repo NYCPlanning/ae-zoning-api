@@ -37,9 +37,9 @@ export type CommunityBoardBudgetRequest = {
    */
   priority: number;
   /**
-   * @type string
+   * @type string | undefined
    */
-  cbbrType: CommunityBoardBudgetRequestType;
+  requestType?: CommunityBoardBudgetRequestType;
   /**
    * @description Whether the budget request has associated mappable data
    * @type boolean

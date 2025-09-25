@@ -12,7 +12,7 @@ properties:
     type: string
     description: The title of the budget request.
     example: Other programs to address public health issues requests
-  description: 
+  description:
     type: string
     description: Description of the budget request.
     example: Jackie Robinson Playground is unsafe and outdated; new play equipment is needed. The playground is one of the few family-friendly open spaces in the immediate area. It is adjacent to an elementary school and nearby several public housing developments. Due to the playground's high usage the Board requests a complete upgrade to the park.
@@ -28,7 +28,7 @@ properties:
     type: number
     description: The board's ranking of the request's priority
     example: 29
-  cbbrType:
+  requestType:
     $ref: ./CommunityBoardBudgetRequestType.yaml
     nullable: false
   isMapped:

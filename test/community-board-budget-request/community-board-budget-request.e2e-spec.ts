@@ -361,9 +361,10 @@ describe("Community Board Budget Request e2e", () => {
     });
   });
 
-  describe("findById", () => {
+  describe.only("findById", () => {
     it("should 200 and return a community board budget request", async () => {
       const cbbrMock = communityBoardBudgetRequestRepositoryMock.cbbrMocks[0];
+      console.log(cbbrMock);
 
       const response = await request(app.getHttpServer())
         .get(`/community-board-budget-requests/${cbbrMock.id}`)

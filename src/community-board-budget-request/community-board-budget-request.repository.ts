@@ -15,8 +15,9 @@ import {
   cbbrPolicyArea,
   cbbrOptionCascade,
   communityBoardBudgetRequest,
-  cbbrRequest,
+  borough,
 } from "src/schema";
+import { CommunityBoardBudgetRequestType } from "src/gen";
 import { eq, and, sql, isNotNull } from "drizzle-orm";
 import {
   FindCommunityBoardBudgetRequestAgenciesQueryParams,
@@ -206,11 +207,10 @@ export class CommunityBoardBudgetRequestRepository {
           cbbrPolicyAreaId: communityBoardBudgetRequest.policyArea,
           title: communityBoardBudgetRequest.title,
           description: communityBoardBudgetRequest.explanation,
-          boroughId: communityBoardBudgetRequest.boroughId,
-          communityDistrictId: communityBoardBudgetRequest.communityDistrictId,
+          communityBoardId: sql<string>`${borough.abbr} || ${communityBoardBudgetRequest.communityDistrictId}`,
           agencyInitials: communityBoardBudgetRequest.agency,
           priority: communityBoardBudgetRequest.priority,
-          cbbrType: communityBoardBudgetRequest.requestType,
+          requestType: sql<CommunityBoardBudgetRequestType>`${communityBoardBudgetRequest.requestType}`,
           isMapped: communityBoardBudgetRequest.isLocationSpecific,
           isContinuedSupport: communityBoardBudgetRequest.isContinuedSupport,
           agencyCategoryResponse:
@@ -220,8 +220,8 @@ export class CommunityBoardBudgetRequestRepository {
         .from(communityBoardBudgetRequest)
         .where(eq(communityBoardBudgetRequest.id, cbbrId))
         .leftJoin(
-          cbbrRequest,
-          eq(communityBoardBudgetRequest.request, cbbrRequest.id),
+          borough,
+          eq(borough.id, communityBoardBudgetRequest.boroughId),
         )
         .limit(1);
     } catch {

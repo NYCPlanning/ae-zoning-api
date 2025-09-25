@@ -33,9 +33,6 @@ export class CommunityBoardBudgetRequestRepositoryMock {
 
   cbbrMocks = generateMock(findCommunityBoardBudgetRequestByIdRepoSchema, {
     seed: 1,
-    stringMap: {
-      cbbrType: () => "C",
-    },
   });
 
   checkNeedGroupById(id: number): CheckNeedGroupByIdRepo {

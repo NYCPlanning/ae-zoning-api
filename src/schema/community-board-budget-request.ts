@@ -14,6 +14,7 @@ import { sql } from "drizzle-orm";
 import { managingCode } from "./managing-code";
 import { communityDistrict } from "./community-district";
 import { multiPointGeom, multiPolygonGeom, pointGeom } from "src/drizzle-pgis";
+import { communityBoardBudgetRequestTypeSchema } from "src/gen";
 
 export const cbbrPolicyArea = pgTable("cbbr_policy_area", {
   id: smallint("id").generatedByDefaultAsIdentity().primaryKey(),
@@ -161,7 +162,7 @@ export const communityBoardBudgetRequestEntitySchema = z.object({
   description: z.string().nullable(),
   agencyInitials: z.string(),
   priority: z.number(),
-  cbbrType: z.string(),
+  requestType: communityBoardBudgetRequestTypeSchema,
   isMapped: z.boolean(),
   isContinuedSupport: z.boolean(),
   agencyCategoryResponse: z.number().nullable(),
