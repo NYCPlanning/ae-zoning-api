@@ -18,7 +18,7 @@ import {
   communityBoardBudgetRequest,
   borough,
 } from "src/schema";
-import { eq, and, sql, isNotNull, or } from "drizzle-orm";
+import { eq, and, sql, isNotNull } from "drizzle-orm";
 import {
   FindCommunityBoardBudgetRequestAgenciesQueryParams,
   FindCommunityBoardBudgetRequestByIdPathParams,
@@ -244,16 +244,16 @@ export class CommunityBoardBudgetRequestRepository {
     x,
     y,
   }: FindCommunityBoardBudgetRequestTilesPathParams): Promise<FindTilesRepo> {
-    const cacheKey = JSON.stringify({
-      domain: "communityBoardBudgetRequest",
-      function: "findTiles",
-      z,
-      x,
-      y,
-    });
-    const cachedTiles =
-      await this.tileCache.get<Buffer<ArrayBufferLike>>(cacheKey);
-    if (cachedTiles !== null) return cachedTiles;
+    // const cacheKey = JSON.stringify({
+    //   domain: "communityBoardBudgetRequest",
+    //   function: "findTiles",
+    //   z,
+    //   x,
+    //   y,
+    // });
+    // const cachedTiles =
+    //   await this.tileCache.get<Buffer<ArrayBufferLike>>(cacheKey);
+    // if (cachedTiles !== null) return cachedTiles;
     try {
       const tileFill = this.db
         .select({
@@ -275,25 +275,13 @@ export class CommunityBoardBudgetRequestRepository {
             sql`${borough.abbr} || ${communityBoardBudgetRequest.communityDistrictId}`.as(
               "communityBoardId",
             ),
-          geomFill: sql<string>`
-              CASE
-                WHEN ${communityBoardBudgetRequest.mercatorFillMPoly} && ST_TileEnvelope(${z},${x},${y})
-                  THEN ST_AsMVTGeom(
-                    ${communityBoardBudgetRequest.mercatorFillMPoly},
+          geomFill: sql<string>`ST_AsMVTGeom(
+                    ${communityBoardBudgetRequest.mercatorFill},
                     ST_TileEnvelope(${z},${x},${y}),
                     4096,
                     64,
                     true
-                  )
-                WHEN ${communityBoardBudgetRequest.mercatorFillMPnt} && ST_TileEnvelope(${z},${x},${y})
-                  THEN ST_AsMVTGeom(
-                    ${communityBoardBudgetRequest.mercatorFillMPnt},
-                    ST_TileEnvelope(${z},${x},${y}),
-                    4096,
-                    64,
-                    true
-                  )
-              END`.as("geomFill"),
+                  )`.as("geomFill"),
         })
         .from(communityBoardBudgetRequest)
         .leftJoin(
@@ -301,10 +289,7 @@ export class CommunityBoardBudgetRequestRepository {
           eq(communityBoardBudgetRequest.boroughId, borough.id),
         )
         .where(
-          or(
-            sql`${communityBoardBudgetRequest.mercatorFillMPnt} && ST_TileEnvelope(${z},${x},${y})`,
-            sql`${communityBoardBudgetRequest.mercatorFillMPoly} && ST_TileEnvelope(${z},${x},${y})`,
-          ),
+          sql`${communityBoardBudgetRequest.mercatorFill} && ST_TileEnvelope(${z},${x},${y})`,
         )
         .as("tile");
       const dataFill = this.db
@@ -356,7 +341,7 @@ export class CommunityBoardBudgetRequestRepository {
         .where(isNotNull(tileLabel.geomLabel));
       const [fill, label] = await Promise.all([dataFill, dataLabel]);
       const mvt = Buffer.concat([fill[0].mvt, label[0].mvt]);
-      this.tileCache.set(cacheKey, mvt);
+      // this.tileCache.set(cacheKey, mvt);
       return mvt;
     } catch (e) {
       console.log(e);

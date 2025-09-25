@@ -1,4 +1,5 @@
 export enum SimpleFeature {
+  GEOMETRY = "geometry",
   POINT = "point",
   MULTI_POINT = "multiPoint",
   LINE_STRING = "lineString",

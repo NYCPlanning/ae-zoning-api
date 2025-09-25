@@ -14,6 +14,7 @@ import { sql } from "drizzle-orm";
 import { managingCode } from "./managing-code";
 import { communityDistrict } from "./community-district";
 import { multiPointGeom, multiPolygonGeom, pointGeom } from "src/drizzle-pgis";
+import { geom } from "src/drizzle-pgis/geometry";
 
 export const cbbrPolicyArea = pgTable("cbbr_policy_area", {
   id: smallint("id").generatedByDefaultAsIdentity().primaryKey(),
@@ -130,6 +131,7 @@ export const communityBoardBudgetRequest = pgTable(
     liFtMPnt: multiPointGeom("li_ft_m_pnt", 2263),
     liFtMPoly: multiPolygonGeom("li_ft_m_poly", 2263),
     mercatorLabel: pointGeom("mercator_label", 3857),
+    mercatorFill: geom("mercator_fill", 3857),
     mercatorFillMPnt: multiPointGeom("mercator_fill_m_pnt", 3857),
     mercatorFillMPoly: multiPolygonGeom("mercator_fill_m_poly", 3857),
   },

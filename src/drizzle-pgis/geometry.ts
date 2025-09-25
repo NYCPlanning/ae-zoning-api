@@ -20,6 +20,8 @@ export const geometry =
       },
     })(name);
 
+export const geom = geometry<Geometry>(SimpleFeature.GEOMETRY);
+
 export const pointGeom = geometry<Point>(SimpleFeature.POINT);
 
 export const multiPointGeom = geometry<MultiPoint>(SimpleFeature.MULTI_POINT);
