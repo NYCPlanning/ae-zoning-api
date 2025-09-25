@@ -18,7 +18,7 @@ import {
   communityBoardBudgetRequest,
   borough,
 } from "src/schema";
-import { eq, and, sql, isNotNull } from "drizzle-orm";
+import { eq, and, sql, isNotNull, or } from "drizzle-orm";
 import {
   FindCommunityBoardBudgetRequestAgenciesQueryParams,
   FindCommunityBoardBudgetRequestByIdPathParams,
@@ -299,6 +299,13 @@ export class CommunityBoardBudgetRequestRepository {
         .leftJoin(
           borough,
           eq(communityBoardBudgetRequest.boroughId, borough.id),
+        )
+        .where(
+          // sql`${communityBoardBudgetRequest.mercatorFillMPoly} && ST_TileEnvelope(${z},${x},${y}) OR ${communityBoardBudgetRequest.mercatorFillMPnt} && ST_TileEnvelope(${z},${x},${y})`,
+          or(
+            isNotNull(communityBoardBudgetRequest.mercatorFillMPnt),
+            isNotNull(communityBoardBudgetRequest.mercatorFillMPoly),
+          ),
         )
         .as("tile");
       const dataFill = this.db
