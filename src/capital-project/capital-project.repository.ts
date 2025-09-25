@@ -562,7 +562,15 @@ export class CapitalProjectRepository {
           capitalCommitmentFund,
           eq(capitalCommitmentFund.capitalCommitmentId, capitalCommitment.id),
         )
-        .where(eq(capitalCommitmentFund.category, "total"))
+        .where(
+          and(
+            or(
+              sql`${capitalProject.mercatorFillMPnt} && ST_TileEnvelope(${z},${x},${y})`,
+              sql`${capitalProject.mercatorFillMPoly} && ST_TileEnvelope(${z},${x},${y})`,
+            ),
+            eq(capitalCommitmentFund.category, "total"),
+          ),
+        )
         .groupBy(
           capitalProject.id,
           capitalProject.managingCode,
