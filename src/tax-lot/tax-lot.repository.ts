@@ -5,6 +5,7 @@ import { ConfigType } from "@nestjs/config";
 import { eq, sql } from "drizzle-orm";
 import { DataRetrievalException } from "src/exception";
 import {
+  MultiPolygonJson,
   taxLot,
   zoningDistrict,
   zoningDistrictClass,
@@ -222,7 +223,7 @@ export class TaxLotRepository {
           address: true,
         },
         extras: {
-          geometry: sql<string>`ST_AsGeoJSON(${taxLot.wgs84}, 6)`.as(
+          geometry: sql<MultiPolygonJson>`ST_AsGeoJSON(${taxLot.wgs84}, 6)`.as(
             "geometry",
           ),
         },

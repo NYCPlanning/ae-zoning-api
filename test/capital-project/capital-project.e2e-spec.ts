@@ -559,7 +559,7 @@ describe("Capital Projects", () => {
       const capitalProjectId = "JIRO";
 
       const response = await request(app.getHttpServer())
-        .get(`/capital-projects/${managingCode}/${capitalProjectId}`)
+        .get(`/capital-projects/${managingCode}/${capitalProjectId}/geojson`)
         .expect(404);
 
       expect(response.body.message).toMatch(/capital project/);

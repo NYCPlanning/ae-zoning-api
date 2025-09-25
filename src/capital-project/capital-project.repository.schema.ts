@@ -4,8 +4,8 @@ import {
   capitalCommitmentEntitySchema,
   capitalCommitmentFundEntitySchema,
   capitalProjectEntitySchema,
-  MultiPointSchema,
-  MultiPolygonSchema,
+  multiPointJsonSchema,
+  multiPolygonJsonSchema,
 } from "src/schema";
 import { mvtEntitySchema } from "src/schema/mvt";
 import { z } from "zod";
@@ -49,9 +49,17 @@ export type FindByManagingCodeCapitalProjectIdRepo = z.infer<
   typeof findByManagingCodeCapitalProjectIdRepoSchema
 >;
 
+export const capitalProjectGeometrySchema = z
+  .union([multiPointJsonSchema, multiPolygonJsonSchema])
+  .nullable();
+
+export type CapitalProjectGeometrySchema = z.infer<
+  typeof capitalProjectGeometrySchema
+>;
+
 export const capitalProjectBudgetedGeoJsonEntitySchema =
   capitalProjectBudgetedEntitySchema.extend({
-    geometry: z.union([MultiPointSchema, MultiPolygonSchema]).nullable(),
+    geometry: capitalProjectGeometrySchema,
   });
 
 export type CapitalProjectBudgetedGeoJsonEntityRepo = z.infer<

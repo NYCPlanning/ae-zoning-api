@@ -14,6 +14,12 @@ import {
   ResourceNotFoundException,
 } from "src/exception";
 import { CommunityDistrictRepository } from "src/community-district/community-district.repository";
+import { FindCommunityBoardBudgetRequestGeoJsonByIdPathParams } from "src/gen/types/FindCommunityBoardBudgetRequestGeoJsonById";
+import {
+  CommunityBoardBudgetRequestGeoJsonRepo,
+  CommunityBoardBudgetRequestRepo,
+} from "./community-board-budget-request.repository.schema";
+import { produce } from "immer";
 
 @Injectable()
 export class CommunityBoardBudgetRequestService {
@@ -271,6 +277,39 @@ export class CommunityBoardBudgetRequestService {
       offset,
       total: communityBoardBudgetRequests.length,
       totalBudgetRequests,
+      order: "id",
+    };
+  }
+
+  async findGeoJsonById(
+    params: FindCommunityBoardBudgetRequestGeoJsonByIdPathParams,
+  ) {
+    const communityBoardBudgetRequests =
+      await this.communityBoardBudgetRequestRepository.findGeoJsonById(params);
+
+    if (communityBoardBudgetRequests.length < 1)
+      throw new ResourceNotFoundException(
+        "cannot find community board budget request geojson",
+      );
+
+    const communityBoardBudgetRequest = communityBoardBudgetRequests[0];
+    const geometry =
+      communityBoardBudgetRequest.geometry === null
+        ? null
+        : JSON.parse(communityBoardBudgetRequest.geometry);
+
+    const properties = produce(
+      communityBoardBudgetRequest as Partial<CommunityBoardBudgetRequestGeoJsonRepo>,
+      (draft) => {
+        delete draft["geometry"];
+      },
+    ) as CommunityBoardBudgetRequestRepo;
+
+    return {
+      id: communityBoardBudgetRequest.id,
+      type: "Feature",
+      properties,
+      geometry,
     };
   }
   async findAgencyCategoryResponses() {

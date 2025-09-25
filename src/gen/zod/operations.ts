@@ -134,6 +134,13 @@ import {
   findCommunityBoardBudgetRequestByIdPathParamsSchema,
 } from "./findCommunityBoardBudgetRequestByIdSchema";
 import {
+  findCommunityBoardBudgetRequestGeoJsonByIdQueryResponseSchema,
+  findCommunityBoardBudgetRequestGeoJsonById400Schema,
+  findCommunityBoardBudgetRequestGeoJsonById404Schema,
+  findCommunityBoardBudgetRequestGeoJsonById500Schema,
+  findCommunityBoardBudgetRequestGeoJsonByIdPathParamsSchema,
+} from "./findCommunityBoardBudgetRequestGeoJsonByIdSchema";
+import {
   findCommunityBoardBudgetRequestAgenciesQueryResponseSchema,
   findCommunityBoardBudgetRequestAgencies400Schema,
   findCommunityBoardBudgetRequestAgencies500Schema,
@@ -659,6 +666,26 @@ export const operations = {
       500: findCommunityBoardBudgetRequestById500Schema,
     },
   },
+  findCommunityBoardBudgetRequestGeoJsonById: {
+    request: undefined,
+    parameters: {
+      path: findCommunityBoardBudgetRequestGeoJsonByIdPathParamsSchema,
+      query: undefined,
+      header: undefined,
+    },
+    responses: {
+      200: findCommunityBoardBudgetRequestGeoJsonByIdQueryResponseSchema,
+      400: findCommunityBoardBudgetRequestGeoJsonById400Schema,
+      404: findCommunityBoardBudgetRequestGeoJsonById404Schema,
+      500: findCommunityBoardBudgetRequestGeoJsonById500Schema,
+      default: findCommunityBoardBudgetRequestGeoJsonByIdQueryResponseSchema,
+    },
+    errors: {
+      400: findCommunityBoardBudgetRequestGeoJsonById400Schema,
+      404: findCommunityBoardBudgetRequestGeoJsonById404Schema,
+      500: findCommunityBoardBudgetRequestGeoJsonById500Schema,
+    },
+  },
   findCommunityBoardBudgetRequestAgencies: {
     request: undefined,
     parameters: {
@@ -1056,6 +1083,9 @@ export const paths = {
   },
   "/community-board-budget-requests/{cbbrId}": {
     get: operations["findCommunityBoardBudgetRequestById"],
+  },
+  "/community-board-budget-requests/{cbbrId}/geojson": {
+    get: operations["findCommunityBoardBudgetRequestGeoJsonById"],
   },
   "/community-board-budget-requests/agencies": {
     get: operations["findCommunityBoardBudgetRequestAgencies"],
