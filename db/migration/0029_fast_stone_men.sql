@@ -1,0 +1,1 @@
+ALTER TABLE "capital_project" ADD COLUMN "mercator_fill" geometry(geometry,3857);

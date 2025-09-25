@@ -204,6 +204,13 @@
       "when": 1758821379118,
       "tag": "0028_yummy_proteus",
       "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1758822548159,
+      "tag": "0029_fast_stone_men",
+      "breakpoints": true
     }
   ]
 }

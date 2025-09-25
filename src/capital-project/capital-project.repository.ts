@@ -500,16 +500,16 @@ export class CapitalProjectRepository {
     params: FindCapitalProjectTilesPathParams,
   ): Promise<FindTilesRepo> {
     const { z, x, y } = params;
-    const cacheKey = JSON.stringify({
-      domain: "capitalProject",
-      function: "findTiles",
-      z,
-      x,
-      y,
-    });
-    const cachedTiles =
-      await this.tileCache.get<Buffer<ArrayBufferLike>>(cacheKey);
-    if (cachedTiles !== null) return cachedTiles;
+    // const cacheKey = JSON.stringify({
+    //   domain: "capitalProject",
+    //   function: "findTiles",
+    //   z,
+    //   x,
+    //   y,
+    // });
+    // const cachedTiles =
+    //   await this.tileCache.get<Buffer<ArrayBufferLike>>(cacheKey);
+    // if (cachedTiles !== null) return cachedTiles;
     try {
       const tile = this.db
         .select({
@@ -531,24 +531,13 @@ export class CapitalProjectRepository {
             "agencyBudgets",
           ),
           geom: sql<string>`
-            CASE
-              WHEN ${capitalProject.mercatorFillMPoly} && ST_TileEnvelope(${z},${x},${y})
-                THEN ST_AsMVTGeom(
-                  ${capitalProject.mercatorFillMPoly},
+                ST_AsMVTGeom(
+                  ${capitalProject.mercatorFill},
                   ST_TileEnvelope(${z},${x},${y}),
                   4096,
                   64,
                   true
-                )
-              WHEN ${capitalProject.mercatorFillMPnt} && ST_TileEnvelope(${z},${x},${y})
-                THEN ST_AsMVTGeom(
-                  ${capitalProject.mercatorFillMPnt},
-                  ST_TileEnvelope(${z},${x},${y}),
-                  4096,
-                  64,
-                  true
-                )
-            END`.as("geom"),
+                )`.as("geom"),
         })
         .from(capitalProject)
         .leftJoin(
@@ -564,10 +553,7 @@ export class CapitalProjectRepository {
         )
         .where(
           and(
-            or(
-              sql`${capitalProject.mercatorFillMPnt} && ST_TileEnvelope(${z},${x},${y})`,
-              sql`${capitalProject.mercatorFillMPoly} && ST_TileEnvelope(${z},${x},${y})`,
-            ),
+            sql`${capitalProject.mercatorFill} && ST_TileEnvelope(${z},${x},${y})`,
             eq(capitalCommitmentFund.category, "total"),
           ),
         )
@@ -586,7 +572,7 @@ export class CapitalProjectRepository {
         .from(tile)
         .where(isNotNull(tile.geom));
       const { mvt } = data[0];
-      this.tileCache.set(cacheKey, mvt);
+      // this.tileCache.set(cacheKey, mvt);
       return mvt;
     } catch {
       throw new DataRetrievalException("cannot find capital project tiles");
