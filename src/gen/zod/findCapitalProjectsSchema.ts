@@ -45,7 +45,7 @@ export const findCapitalProjectsQueryParamsSchema = z
     isMapped: z
       .boolean()
       .describe(
-        "Used to filter whether a capital project has associated geographic coordinates.",
+        "Used to filter whether a capital project or community board budget request has associated geographic coordinates.",
       )
       .optional(),
     limit: z.coerce

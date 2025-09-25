@@ -5,6 +5,7 @@ import {
   findCommunityBoardBudgetRequestNeedGroupsQueryResponseSchema,
   findCommunityBoardBudgetRequestAgenciesQueryResponseSchema,
   findCommunityBoardBudgetRequestByIdQueryResponseSchema,
+  findCommunityBoardBudgetRequestsQueryResponseSchema,
 } from "src/gen";
 import { CommunityBoardBudgetRequestService } from "./community-board-budget-request.service";
 import { CommunityBoardBudgetRequestRepository } from "./community-board-budget-request.repository";
@@ -14,35 +15,37 @@ import {
   InvalidRequestParameterException,
   ResourceNotFoundException,
 } from "src/exception";
-import { BoroughRepositoryMock } from "test/borough/borough.repository.mock";
 import { CommunityDistrictRepositoryMock } from "test/community-district/community-district.repository.mock";
-import { BoroughRepository } from "src/borough/borough.repository";
+import { CityCouncilDistrictRepositoryMock } from "test/city-council-district/city-council-district.repository.mock";
+import { CityCouncilDistrictRepository } from "src/city-council-district/city-council-district.repository";
+import { CommunityDistrictRepository } from "src/community-district/community-district.repository";
+import { CommunityBoardBudgetRequestModule } from "./community-board-budget-request.module";
 
 describe("Community Board Budget Request service unit", () => {
   let communityBoardBudgetRequestService: CommunityBoardBudgetRequestService;
   const agencyRepositoryMock = new AgencyRepositoryMock();
+  const cityCouncilDistrictRepositoryMock =
+    new CityCouncilDistrictRepositoryMock();
   const communityDistrictRepositoryMock = new CommunityDistrictRepositoryMock();
-  const boroughRepositoryMock = new BoroughRepositoryMock(
-    communityDistrictRepositoryMock,
-  );
   const communityBoardBudgetRequestRepositoryMock =
-    new CommunityBoardBudgetRequestRepositoryMock(agencyRepositoryMock);
+    new CommunityBoardBudgetRequestRepositoryMock(
+      agencyRepositoryMock,
+      cityCouncilDistrictRepositoryMock,
+      communityDistrictRepositoryMock,
+    );
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
-      providers: [
-        CommunityBoardBudgetRequestService,
-        CommunityBoardBudgetRequestRepository,
-        AgencyRepository,
-        BoroughRepository,
-      ],
+      imports: [CommunityBoardBudgetRequestModule],
     })
       .overrideProvider(CommunityBoardBudgetRequestRepository)
       .useValue(communityBoardBudgetRequestRepositoryMock)
       .overrideProvider(AgencyRepository)
       .useValue(agencyRepositoryMock)
-      .overrideProvider(BoroughRepository)
-      .useValue(boroughRepositoryMock)
+      .overrideProvider(CityCouncilDistrictRepository)
+      .useValue(cityCouncilDistrictRepositoryMock)
+      .overrideProvider(CommunityDistrictRepository)
+      .useValue(communityDistrictRepositoryMock)
       .compile();
 
     communityBoardBudgetRequestService =
@@ -225,7 +228,8 @@ describe("Community Board Budget Request service unit", () => {
 
   describe("findById", () => {
     it("should return a findCommunityBoardBudgetRequestByIdQueryResponseSchema compliant object", async () => {
-      const cbbrMock = communityBoardBudgetRequestRepositoryMock.cbbrMocks[0];
+      const cbbrMock =
+        communityBoardBudgetRequestRepositoryMock.findByIdMocks[0];
       const cbbr = await communityBoardBudgetRequestService.findById({
         cbbrId: cbbrMock.id,
       });
@@ -242,6 +246,304 @@ describe("Community Board Budget Request service unit", () => {
           cbbrId: nonExistentCbbrId,
         }),
       ).rejects.toThrow(ResourceNotFoundException);
+    });
+  });
+
+  describe("findMany", () => {
+    it("should return a list of community board budget requests", async () => {
+      const cbbrs = await communityBoardBudgetRequestService.findMany({});
+
+      expect(() =>
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(cbbrs),
+      ).not.toThrow();
+
+      const parsedBody =
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(cbbrs);
+      expect(parsedBody.limit).toBe(20);
+      expect(parsedBody.offset).toBe(0);
+      expect(parsedBody.communityBoardBudgetRequests.length).toBe(
+        communityBoardBudgetRequestRepositoryMock.findManyMocks.length,
+      );
+      expect(parsedBody.communityBoardBudgetRequests.length).toBeGreaterThan(0);
+      expect(parsedBody.total).toBe(
+        parsedBody.communityBoardBudgetRequests.length,
+      );
+      expect(parsedBody.totalBudgetRequests).toBe(
+        parsedBody.communityBoardBudgetRequests.length,
+      );
+    });
+
+    it("should return a list of community board budget requests filtered by community district", async () => {
+      const communityDistrict = communityDistrictRepositoryMock.districts[0];
+      const cbbrs = await communityBoardBudgetRequestService.findMany({
+        communityDistrictCombinedId: `${communityDistrict.boroughId}${communityDistrict.id}`,
+      });
+
+      expect(() =>
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(cbbrs),
+      ).not.toThrow();
+
+      const parsedBody =
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(cbbrs);
+      expect(parsedBody.limit).toBe(20);
+      expect(parsedBody.offset).toBe(0);
+      expect(parsedBody.communityBoardBudgetRequests.length).toBeGreaterThan(0);
+      expect(parsedBody.total).toBe(
+        parsedBody.communityBoardBudgetRequests.length,
+      );
+      expect(parsedBody.totalBudgetRequests).toBe(
+        parsedBody.communityBoardBudgetRequests.length,
+      );
+    });
+
+    it("should return a list of community board budget requests filtered by city council district", async () => {
+      const cityCouncilDistrictId =
+        cityCouncilDistrictRepositoryMock.districts[0].id;
+      const cbbrs = await communityBoardBudgetRequestService.findMany({
+        cityCouncilDistrictId,
+      });
+
+      expect(() =>
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(cbbrs),
+      ).not.toThrow();
+
+      const parsedBody =
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(cbbrs);
+      expect(parsedBody.limit).toBe(20);
+      expect(parsedBody.offset).toBe(0);
+      expect(parsedBody.communityBoardBudgetRequests.length).toBeGreaterThan(0);
+      expect(parsedBody.total).toBe(
+        parsedBody.communityBoardBudgetRequests.length,
+      );
+      expect(parsedBody.totalBudgetRequests).toBe(
+        parsedBody.communityBoardBudgetRequests.length,
+      );
+    });
+
+    it("should return a list of community board budget requests filtered by policy area", async () => {
+      const cbbrPolicyAreaId =
+        communityBoardBudgetRequestRepositoryMock.policyAreaMocks[0].id;
+      const cbbrs = await communityBoardBudgetRequestService.findMany({
+        cbbrPolicyAreaId,
+      });
+
+      expect(() =>
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(cbbrs),
+      ).not.toThrow();
+
+      const parsedBody =
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(cbbrs);
+      expect(parsedBody.limit).toBe(20);
+      expect(parsedBody.offset).toBe(0);
+      expect(parsedBody.communityBoardBudgetRequests.length).toBeGreaterThan(0);
+      expect(parsedBody.total).toBe(
+        parsedBody.communityBoardBudgetRequests.length,
+      );
+      expect(parsedBody.totalBudgetRequests).toBe(
+        parsedBody.communityBoardBudgetRequests.length,
+      );
+    });
+
+    it("should return a list of community board budget requests filtered by need group", async () => {
+      const cbbrNeedGroupId =
+        communityBoardBudgetRequestRepositoryMock.needGroupMocks[0].id;
+      const cbbrs = await communityBoardBudgetRequestService.findMany({
+        cbbrNeedGroupId,
+      });
+
+      expect(() =>
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(cbbrs),
+      ).not.toThrow();
+
+      const parsedBody =
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(cbbrs);
+      expect(parsedBody.limit).toBe(20);
+      expect(parsedBody.offset).toBe(0);
+      expect(parsedBody.communityBoardBudgetRequests.length).toBeGreaterThan(0);
+      expect(parsedBody.total).toBe(
+        parsedBody.communityBoardBudgetRequests.length,
+      );
+      expect(parsedBody.totalBudgetRequests).toBe(
+        parsedBody.communityBoardBudgetRequests.length,
+      );
+    });
+
+    it("should return a list of community board budget requests filtered by agency initials", async () => {
+      const agencyInitials = agencyRepositoryMock.agencies[0].initials;
+      const cbbrs = await communityBoardBudgetRequestService.findMany({
+        agencyInitials,
+      });
+
+      expect(() =>
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(cbbrs),
+      ).not.toThrow();
+
+      const parsedBody =
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(cbbrs);
+      expect(parsedBody.limit).toBe(20);
+      expect(parsedBody.offset).toBe(0);
+      expect(parsedBody.communityBoardBudgetRequests.length).toBeGreaterThan(0);
+      expect(parsedBody.total).toBe(
+        parsedBody.communityBoardBudgetRequests.length,
+      );
+      expect(parsedBody.totalBudgetRequests).toBe(
+        parsedBody.communityBoardBudgetRequests.length,
+      );
+    });
+
+    it("should return a list of community board budget requests filtered by request type", async () => {
+      const cbbrs = await communityBoardBudgetRequestService.findMany({
+        cbbrType: "C",
+      });
+
+      expect(() =>
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(cbbrs),
+      ).not.toThrow();
+
+      const parsedBody =
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(cbbrs);
+      expect(parsedBody.limit).toBe(20);
+      expect(parsedBody.offset).toBe(0);
+      expect(parsedBody.communityBoardBudgetRequests.length).toBeGreaterThan(0);
+      expect(parsedBody.total).toBe(
+        parsedBody.communityBoardBudgetRequests.length,
+      );
+      expect(parsedBody.totalBudgetRequests).toBe(
+        parsedBody.communityBoardBudgetRequests.length,
+      );
+    });
+
+    it("should return a list of community board budget requests filtered by agency response types", async () => {
+      const cbbrAgencyResponseTypeIds = [
+        communityBoardBudgetRequestRepositoryMock.agencyCategoryResponseMocks[0]
+          .id,
+        communityBoardBudgetRequestRepositoryMock.agencyCategoryResponseMocks[1]
+          .id,
+      ];
+      const cbbrs = await communityBoardBudgetRequestService.findMany({
+        cbbrAgencyResponseTypeIds,
+      });
+
+      expect(() =>
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(cbbrs),
+      ).not.toThrow();
+
+      const parsedBody =
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(cbbrs);
+      expect(parsedBody.limit).toBe(20);
+      expect(parsedBody.offset).toBe(0);
+      expect(parsedBody.communityBoardBudgetRequests.length).toBeGreaterThan(0);
+      expect(parsedBody.total).toBe(
+        parsedBody.communityBoardBudgetRequests.length,
+      );
+      expect(parsedBody.totalBudgetRequests).toBe(
+        parsedBody.communityBoardBudgetRequests.length,
+      );
+    });
+
+    it("should return a list of mapped or unmapped community board budget requests", async () => {
+      const mappedCbbrs = await communityBoardBudgetRequestService.findMany({
+        isMapped: true,
+      });
+
+      expect(() =>
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(mappedCbbrs),
+      ).not.toThrow();
+
+      const mapped =
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(mappedCbbrs);
+      expect(mapped.limit).toBe(20);
+      expect(mapped.offset).toBe(0);
+      expect(mapped.total).toBe(mapped.communityBoardBudgetRequests.length);
+      expect(mapped.totalBudgetRequests).toBe(
+        mapped.communityBoardBudgetRequests.length,
+      );
+
+      const unMappedCbbrs = await communityBoardBudgetRequestService.findMany({
+        isMapped: false,
+      });
+
+      expect(() =>
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(
+          unMappedCbbrs,
+        ),
+      ).not.toThrow();
+
+      const unMapped =
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(
+          unMappedCbbrs,
+        );
+      expect(unMapped.limit).toBe(20);
+      expect(unMapped.offset).toBe(0);
+      expect(unMapped.total).toBe(unMapped.communityBoardBudgetRequests.length);
+      expect(unMapped.totalBudgetRequests).toBe(
+        unMapped.communityBoardBudgetRequests.length,
+      );
+
+      const allCbbrs = await communityBoardBudgetRequestService.findMany({});
+      const all =
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(allCbbrs);
+      expect(mapped.totalBudgetRequests + unMapped.totalBudgetRequests).toBe(
+        all.totalBudgetRequests,
+      );
+    });
+
+    it("should return a list of community board budget requests filtered by whether or not they are for continued support", async () => {
+      const continuedSupportCbbrs =
+        await communityBoardBudgetRequestService.findMany({
+          isContinuedSupport: true,
+        });
+
+      expect(() =>
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(
+          continuedSupportCbbrs,
+        ),
+      ).not.toThrow();
+
+      const continuedSupport =
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(
+          continuedSupportCbbrs,
+        );
+      expect(continuedSupport.limit).toBe(20);
+      expect(continuedSupport.offset).toBe(0);
+      expect(continuedSupport.total).toBe(
+        continuedSupport.communityBoardBudgetRequests.length,
+      );
+      expect(continuedSupport.totalBudgetRequests).toBe(
+        continuedSupport.communityBoardBudgetRequests.length,
+      );
+
+      const nonContinuedSupportCbbrs =
+        await communityBoardBudgetRequestService.findMany({
+          isContinuedSupport: false,
+        });
+
+      expect(() =>
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(
+          nonContinuedSupportCbbrs,
+        ),
+      ).not.toThrow();
+
+      const nonContinuedSupport =
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(
+          nonContinuedSupportCbbrs,
+        );
+      expect(nonContinuedSupport.limit).toBe(20);
+      expect(nonContinuedSupport.offset).toBe(0);
+      expect(nonContinuedSupport.total).toBe(
+        nonContinuedSupport.communityBoardBudgetRequests.length,
+      );
+      expect(nonContinuedSupport.totalBudgetRequests).toBe(
+        nonContinuedSupport.communityBoardBudgetRequests.length,
+      );
+
+      const allCbbrs = await communityBoardBudgetRequestService.findMany({});
+      const all =
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(allCbbrs);
+      expect(
+        continuedSupport.totalBudgetRequests +
+          nonContinuedSupport.totalBudgetRequests,
+      ).toBe(all.totalBudgetRequests);
     });
   });
 });

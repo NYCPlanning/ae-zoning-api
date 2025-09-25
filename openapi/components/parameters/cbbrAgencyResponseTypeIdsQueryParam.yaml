@@ -1,0 +1,15 @@
+name: cbbrAgencyResponseTypeIds
+required: false
+in: query
+schema:
+  type: array
+  items:
+    type: integer
+  minItems: 1
+  maxItems: 6
+style: form
+explode: true
+example: 1,2,3
+description: >-
+  An array containing the IDs of the agency response types of the
+  Community Board Budget Requests.
