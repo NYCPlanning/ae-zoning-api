@@ -168,3 +168,13 @@ export const communityBoardBudgetRequestEntitySchema = z.object({
   agencyCategoryResponse: z.number().nullable(),
   agencyResponse: z.string().nullable(),
 });
+
+export const communityBoardBudgetRequestPageItemEntitySchema = z.object({
+  id: z.string(),
+  cbbrPolicyAreaId: z.number(),
+  title: z.string(),
+  boroughId: z.string(),
+  communityDistrictId: z.string(),
+  isMapped: z.boolean(),
+  isContinuedSupport: z.boolean(),
+});

@@ -33,7 +33,7 @@ export type FindCapitalProjectsQueryParams = {
    */
   commitmentsTotalMax?: string;
   /**
-   * @description Used to filter whether a capital project has associated geographic coordinates.
+   * @description Used to filter whether a capital project or community board budget request has associated geographic coordinates.
    * @type boolean | undefined
    */
   isMapped?: boolean;

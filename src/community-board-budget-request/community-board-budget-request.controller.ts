@@ -15,6 +15,8 @@ import {
   FindCommunityBoardBudgetRequestAgenciesQueryParams,
   findCommunityBoardBudgetRequestAgenciesQueryParamsSchema,
   FindCommunityBoardBudgetRequestByIdPathParams,
+  findCommunityBoardBudgetRequestsQueryParamsSchema,
+  FindCommunityBoardBudgetRequestsQueryParams,
 } from "src/gen";
 import {
   BadRequestExceptionFilter,
@@ -34,6 +36,16 @@ export class CommunityBoardBudgetRequestController {
   constructor(
     private readonly communityBoardBudgetRequestService: CommunityBoardBudgetRequestService,
   ) {}
+
+  @Get("/")
+  async findMany(
+    @Query(
+      new ZodTransformPipe(findCommunityBoardBudgetRequestsQueryParamsSchema),
+    )
+    queryParams: FindCommunityBoardBudgetRequestsQueryParams,
+  ) {
+    return await this.communityBoardBudgetRequestService.findMany(queryParams);
+  }
 
   @Get("/agencies")
   async findAgencies(

@@ -38,6 +38,32 @@ export type FindCommunityBoardBudgetRequestByIdRepo = z.infer<
   typeof findCommunityBoardBudgetRequestByIdRepoSchema
 >;
 
+export const findManyCommunityBoardBudgetRequestEntitySchema = z.object({
+  id: z.string(),
+  cbbrPolicyAreaId: z.number(),
+  title: z.string(),
+  communityBoardId: z.string(),
+  isMapped: z.boolean(),
+  isContinuedSupport: z.boolean(),
+});
+
+export type FindManyCommunityBoardBudgetRequestEntity = z.infer<
+  typeof findManyCommunityBoardBudgetRequestEntitySchema
+>;
+
+export const findManyCommunityBoardBudgetRequestRepoSchema = z.array(
+  findManyCommunityBoardBudgetRequestEntitySchema,
+);
+
+export type FindManyCommunityBoardBudgetRequestRepo =
+  Array<FindManyCommunityBoardBudgetRequestEntity>;
+
+export const findCountCommunityBoardBudgetRequestRepoSchema = z.number();
+
+export type FindCountCommunityBoardBudgetRequestRepo = z.infer<
+  typeof findCountCommunityBoardBudgetRequestRepoSchema
+>;
+
 export const checkNeedGroupByIdRepoSchema = z.boolean();
 
 export type CheckNeedGroupByIdRepo = z.infer<
@@ -48,4 +74,33 @@ export const checkPolicyAreaByIdRepoSchema = z.boolean();
 
 export type CheckPolicyAreaByIdRepo = z.infer<
   typeof checkPolicyAreaByIdRepoSchema
+>;
+
+export const checkAgencyResponseTypeByIdRepoSchema = z.boolean();
+
+export type CheckAgencyResponseTypeByIdRepo = z.infer<
+  typeof checkAgencyResponseTypeByIdRepoSchema
+>;
+
+// The below are used only for testing
+export const findManyCommunityBoardBudgetRequestsExtendedEntitySchema =
+  z.object({
+    id: z.string(),
+    cbbrPolicyAreaId: z.number(),
+    cbbrNeedGroupId: z.number(),
+    title: z.string(),
+    communityBoardId: z.string(),
+    cityCouncilDistrictId: z.string(),
+    description: z.string().nullable(),
+    agencyInitials: z.string(),
+    priority: z.number(),
+    cbbrType: z.enum(["C", "E"]),
+    isMapped: z.boolean(),
+    isContinuedSupport: z.boolean(),
+    agencyCategoryResponse: z.number().nullable(),
+    agencyResponse: z.string().nullable(),
+  });
+
+export type FindManyCommunityBoardBudgetRequestsExtendedEntity = z.infer<
+  typeof findManyCommunityBoardBudgetRequestsExtendedEntitySchema
 >;

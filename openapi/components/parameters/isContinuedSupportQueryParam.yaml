@@ -1,0 +1,11 @@
+name: isContinuedSupport
+required: false
+in: query
+schema:
+  type: boolean
+  example: true
+description: >-
+  Used to filter whether a community board
+  budget request is for Continued Support.
+  Note: All Continued Support requests are
+  of the "Capital" cbbrType.

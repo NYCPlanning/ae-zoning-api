@@ -1,0 +1,11 @@
+name: cbbrType
+required: false
+in: query
+schema:
+  type: string
+  enum:
+    - C
+    - E
+  example: C
+description: >-
+  The type of budget request, C for Capital, or E for Expense.

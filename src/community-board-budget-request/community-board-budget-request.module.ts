@@ -4,6 +4,7 @@ import { CommunityBoardBudgetRequestController } from "./community-board-budget-
 import { CommunityBoardBudgetRequestRepository } from "./community-board-budget-request.repository";
 import { AgencyRepository } from "src/agency/agency.repository";
 import { BoroughRepository } from "src/borough/borough.repository";
+import { CityCouncilDistrictRepository } from "src/city-council-district/city-council-district.repository";
 
 @Module({
   exports: [CommunityBoardBudgetRequestService],
@@ -12,6 +13,7 @@ import { BoroughRepository } from "src/borough/borough.repository";
     CommunityBoardBudgetRequestRepository,
     AgencyRepository,
     BoroughRepository,
+    CityCouncilDistrictRepository,
   ],
   controllers: [CommunityBoardBudgetRequestController],
 })

@@ -7,7 +7,6 @@ import {
   FindCommunityBoardBudgetRequestPolicyAreasQueryParams,
 } from "src/gen";
 import { AgencyRepository } from "src/agency/agency.repository";
-import { BoroughRepository } from "src/borough/borough.repository";
 import {
   InvalidRequestParameterException,
   ResourceNotFoundException,
@@ -19,7 +18,6 @@ export class CommunityBoardBudgetRequestService {
     @Inject(CommunityBoardBudgetRequestRepository)
     private readonly communityBoardBudgetRequestRepository: CommunityBoardBudgetRequestRepository,
     private readonly agencyRepository: AgencyRepository,
-    private readonly boroughRepository: BoroughRepository,
   ) {}
 
   async findAgencies({
@@ -139,5 +137,107 @@ export class CommunityBoardBudgetRequestService {
     }
 
     return communityBoardBudgetRequests[0];
+  }
+
+  async findMany({
+    boroughId = null,
+    communityDistrictId = null,
+    cityCouncilDistrictId = null,
+    cbbrPolicyAreaId = null,
+    cbbrNeedGroupId = null,
+    agencyInitials = null,
+    cbbrType = null,
+    cbbrAgencyResponseTypeId = null,
+    isMapped = null,
+    isContinuedSupport = null,
+    limit = 20,
+    offset = 0,
+  }: {
+    boroughId?: string | null;
+    communityDistrictId?: string | null;
+    cityCouncilDistrictId?: string | null;
+    cbbrPolicyAreaId?: number | null;
+    cbbrNeedGroupId?: number | null;
+    agencyInitials?: string | null;
+    cbbrType?: string | null;
+    cbbrAgencyResponseTypeId?: Array<number> | null;
+    isMapped?: boolean | null;
+    isContinuedSupport?: boolean | null;
+    limit?: number;
+    offset?: number;
+  }) {
+    // Parameter validations
+    const checklist: Array<Promise<unknown | undefined>> = [];
+
+    if (cbbrPolicyAreaId !== null) {
+      checklist.push(
+        this.communityBoardBudgetRequestRepository.checkPolicyAreaById(
+          cbbrPolicyAreaId,
+        ),
+      );
+    }
+
+    if (cbbrNeedGroupId !== null) {
+      checklist.push(
+        this.communityBoardBudgetRequestRepository.checkNeedGroupById(
+          cbbrNeedGroupId,
+        ),
+      );
+    }
+
+    if (agencyInitials !== null) {
+      checklist.push(this.agencyRepository.checkByInitials(agencyInitials));
+    }
+
+    if (cbbrAgencyResponseTypeId !== null) {
+      cbbrAgencyResponseTypeId.forEach((id) => {
+        checklist.push(
+          this.communityBoardBudgetRequestRepository.checkAgencyResponseTypeById(
+            id,
+          ),
+        );
+      });
+    }
+
+    const checkedList = await Promise.all(checklist);
+
+    if (checkedList.some((result) => result === false))
+      throw new InvalidRequestParameterException(
+        "could not check one or more of the parameters",
+      );
+
+    // Data queries
+    const totalCountParams = {
+      boroughId,
+      communityDistrictId,
+      cityCouncilDistrictId,
+      cbbrPolicyAreaId,
+      cbbrNeedGroupId,
+      agencyInitials,
+      cbbrType,
+      cbbrAgencyResponseTypeId,
+      isMapped,
+      isContinuedSupport,
+    };
+
+    const cbbrsPromise = this.communityBoardBudgetRequestRepository.findMany({
+      ...totalCountParams,
+      limit,
+      offset,
+    });
+
+    const cbbrsCountPromise =
+      this.communityBoardBudgetRequestRepository.findCount(totalCountParams);
+
+    const [communityBoardBudgetRequests, totalBudgetRequests] =
+      await Promise.all([cbbrsPromise, cbbrsCountPromise]);
+
+    return {
+      communityBoardBudgetRequests,
+      limit,
+      offset,
+      total: communityBoardBudgetRequests.length,
+      totalBudgetRequests,
+    };
   }
 }

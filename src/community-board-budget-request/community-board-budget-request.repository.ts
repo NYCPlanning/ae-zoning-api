@@ -4,20 +4,24 @@ import { DataRetrievalException } from "src/exception";
 import {
   CheckNeedGroupByIdRepo,
   CheckPolicyAreaByIdRepo,
+  CheckAgencyResponseTypeByIdRepo,
   FindNeedGroupsRepo,
   FindPolicyAreasRepo,
   FindAgenciesRepo,
   FindCommunityBoardBudgetRequestByIdRepo,
+  FindManyCommunityBoardBudgetRequestRepo,
+  FindCountCommunityBoardBudgetRequestRepo,
 } from "./community-board-budget-request.repository.schema";
 import {
   agency,
   cbbrNeedGroup,
   cbbrPolicyArea,
   cbbrOptionCascade,
+  cityCouncilDistrict,
   communityBoardBudgetRequest,
   borough,
 } from "src/schema";
-import { eq, and, sql, isNotNull } from "drizzle-orm";
+import { eq, and, or, sql, isNotNull, inArray } from "drizzle-orm";
 import {
   FindCommunityBoardBudgetRequestAgenciesQueryParams,
   FindCommunityBoardBudgetRequestByIdPathParams,
@@ -33,6 +37,39 @@ export class CommunityBoardBudgetRequestRepository {
     private readonly db: DbType,
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
   ) {}
+
+  #checkAgencyResponseTypeById = this.db.query.cbbrAgencyCategoryResponse
+    .findFirst({
+      columns: {
+        id: true,
+      },
+      where: (cbbrAgencyCategoryResponse, { eq, sql }) =>
+        eq(cbbrAgencyCategoryResponse.id, sql.placeholder("id")),
+    })
+    .prepare("#checkAgencyResponseTypeById");
+
+  async checkAgencyResponseTypeById(
+    id: number,
+  ): Promise<CheckAgencyResponseTypeByIdRepo> {
+    const key = JSON.stringify({
+      id,
+      domain: "communityBoardBudgetRequest",
+      function: "checkAgencyResponseTypeById",
+    });
+    const cachedValue: CheckAgencyResponseTypeByIdRepo | null =
+      await this.cacheManager.get(key);
+    if (cachedValue !== null) return cachedValue;
+    try {
+      const result = await this.#checkAgencyResponseTypeById.execute({ id });
+      const value = result !== undefined;
+      this.cacheManager.set(key, value);
+      return value;
+    } catch {
+      throw new DataRetrievalException(
+        "cannot find community board budget request agency response type by its id",
+      );
+    }
+  }
 
   #checkNeedGroupById = this.db.query.cbbrNeedGroup
     .findFirst({
@@ -228,6 +265,231 @@ export class CommunityBoardBudgetRequestRepository {
     } catch {
       throw new DataRetrievalException(
         "Cannot find Community Board Budget Request with given id",
+      );
+    }
+  }
+
+  async findMany({
+    boroughId,
+    communityDistrictId,
+    cityCouncilDistrictId,
+    cbbrPolicyAreaId,
+    cbbrNeedGroupId,
+    agencyInitials,
+    cbbrType,
+    cbbrAgencyResponseTypeId,
+    isMapped,
+    isContinuedSupport,
+    limit,
+    offset,
+  }: {
+    boroughId: string | null;
+    communityDistrictId: string | null;
+    cityCouncilDistrictId: string | null;
+    cbbrPolicyAreaId: number | null;
+    cbbrNeedGroupId: number | null;
+    agencyInitials: string | null;
+    cbbrType: string | null;
+    cbbrAgencyResponseTypeId: Array<number> | null;
+    isMapped: boolean | null;
+    isContinuedSupport: boolean | null;
+    limit: number;
+    offset: number;
+  }): Promise<FindManyCommunityBoardBudgetRequestRepo> {
+    try {
+      return await this.db
+        .select({
+          id: communityBoardBudgetRequest.id,
+          cbbrPolicyAreaId: communityBoardBudgetRequest.policyArea,
+          title: communityBoardBudgetRequest.title,
+          communityBoardId: sql<string>`${borough.abbr} || ${communityBoardBudgetRequest.communityDistrictId}`,
+          isMapped: communityBoardBudgetRequest.isLocationSpecific,
+          isContinuedSupport: communityBoardBudgetRequest.isContinuedSupport,
+        })
+        .from(communityBoardBudgetRequest)
+        .leftJoin(
+          borough,
+          eq(borough.id, communityBoardBudgetRequest.boroughId),
+        )
+        .leftJoin(
+          cityCouncilDistrict,
+          and(
+            sql`${cityCouncilDistrictId !== null} IS TRUE`,
+            or(
+              sql`ST_Intersects(${cityCouncilDistrict.liFt}, ${communityBoardBudgetRequest.liFtMPoly})`,
+              sql`ST_Intersects(${cityCouncilDistrict.liFt}, ${communityBoardBudgetRequest.liFtMPnt})`,
+            ),
+          ),
+        )
+        .where(
+          and(
+            cityCouncilDistrictId !== null
+              ? eq(cityCouncilDistrict.id, cityCouncilDistrictId)
+              : undefined,
+            boroughId !== null
+              ? eq(communityBoardBudgetRequest.boroughId, boroughId)
+              : undefined,
+            communityDistrictId !== null
+              ? eq(
+                  sql<string>`${communityBoardBudgetRequest.boroughId} || ${communityBoardBudgetRequest.communityDistrictId}`,
+                  communityDistrictId,
+                )
+              : undefined,
+            cbbrPolicyAreaId !== null
+              ? eq(communityBoardBudgetRequest.policyArea, cbbrPolicyAreaId)
+              : undefined,
+            cbbrNeedGroupId !== null
+              ? eq(communityBoardBudgetRequest.needGroup, cbbrNeedGroupId)
+              : undefined,
+            agencyInitials !== null
+              ? eq(communityBoardBudgetRequest.agency, agencyInitials)
+              : undefined,
+            cbbrType === "C"
+              ? eq(communityBoardBudgetRequest.requestType, "Capital")
+              : undefined,
+            cbbrType === "E"
+              ? eq(communityBoardBudgetRequest.requestType, "Expense")
+              : undefined,
+            cbbrAgencyResponseTypeId !== null
+              ? inArray(
+                  communityBoardBudgetRequest.agencyCategoryResponse,
+                  cbbrAgencyResponseTypeId,
+                )
+              : undefined,
+            isMapped !== null
+              ? eq(communityBoardBudgetRequest.isLocationSpecific, isMapped)
+              : undefined,
+            isContinuedSupport !== null
+              ? eq(
+                  communityBoardBudgetRequest.isContinuedSupport,
+                  isContinuedSupport,
+                )
+              : undefined,
+          ),
+        )
+        .limit(limit)
+        .offset(offset)
+        .orderBy(communityBoardBudgetRequest.id);
+    } catch {
+      throw new DataRetrievalException(
+        "Cannot find Community Board Budget Requests",
+      );
+    }
+  }
+
+  async findCount({
+    boroughId,
+    communityDistrictId,
+    cityCouncilDistrictId,
+    cbbrPolicyAreaId,
+    cbbrNeedGroupId,
+    agencyInitials,
+    cbbrType,
+    cbbrAgencyResponseTypeId,
+    isMapped,
+    isContinuedSupport,
+  }: {
+    boroughId: string | null;
+    communityDistrictId: string | null;
+    cityCouncilDistrictId: string | null;
+    cbbrPolicyAreaId: number | null;
+    cbbrNeedGroupId: number | null;
+    agencyInitials: string | null;
+    cbbrType: string | null;
+    cbbrAgencyResponseTypeId: Array<number> | null;
+    isMapped: boolean | null;
+    isContinuedSupport: boolean | null;
+  }): Promise<FindCountCommunityBoardBudgetRequestRepo> {
+    const key = JSON.stringify({
+      boroughId,
+      communityDistrictId,
+      cityCouncilDistrictId,
+      cbbrPolicyAreaId,
+      cbbrNeedGroupId,
+      agencyInitials,
+      cbbrType,
+      cbbrAgencyResponseTypeId,
+      isMapped,
+      isContinuedSupport,
+      domain: "capitalProject",
+      function: "findCount",
+    });
+
+    try {
+      const results = await this.db
+        .select({
+          total:
+            sql`COUNT(DISTINCT(${communityBoardBudgetRequest.id}))`.mapWith(
+              Number,
+            ),
+        })
+        .from(communityBoardBudgetRequest)
+        .leftJoin(
+          borough,
+          eq(borough.id, communityBoardBudgetRequest.boroughId),
+        )
+        .leftJoin(
+          cityCouncilDistrict,
+          and(
+            sql`${cityCouncilDistrictId !== null} IS TRUE`,
+            or(
+              sql`ST_Intersects(${cityCouncilDistrict.liFt}, ${communityBoardBudgetRequest.liFtMPoly})`,
+              sql`ST_Intersects(${cityCouncilDistrict.liFt}, ${communityBoardBudgetRequest.liFtMPnt})`,
+            ),
+          ),
+        )
+        .where(
+          and(
+            cityCouncilDistrictId !== null
+              ? eq(cityCouncilDistrict.id, cityCouncilDistrictId)
+              : undefined,
+            boroughId !== null
+              ? eq(communityBoardBudgetRequest.boroughId, boroughId)
+              : undefined,
+            communityDistrictId !== null
+              ? eq(
+                  sql<string>`${communityBoardBudgetRequest.boroughId} || ${communityBoardBudgetRequest.communityDistrictId}`,
+                  communityDistrictId,
+                )
+              : undefined,
+            cbbrPolicyAreaId !== null
+              ? eq(communityBoardBudgetRequest.policyArea, cbbrPolicyAreaId)
+              : undefined,
+            cbbrNeedGroupId !== null
+              ? eq(communityBoardBudgetRequest.needGroup, cbbrNeedGroupId)
+              : undefined,
+            agencyInitials !== null
+              ? eq(communityBoardBudgetRequest.agency, agencyInitials)
+              : undefined,
+            cbbrType === "C"
+              ? eq(communityBoardBudgetRequest.requestType, "Capital")
+              : undefined,
+            cbbrType === "E"
+              ? eq(communityBoardBudgetRequest.requestType, "Expense")
+              : undefined,
+            cbbrAgencyResponseTypeId !== null
+              ? inArray(
+                  communityBoardBudgetRequest.agencyCategoryResponse,
+                  cbbrAgencyResponseTypeId,
+                )
+              : undefined,
+            isMapped !== null
+              ? eq(communityBoardBudgetRequest.isLocationSpecific, isMapped)
+              : undefined,
+            isContinuedSupport !== null
+              ? eq(
+                  communityBoardBudgetRequest.isContinuedSupport,
+                  isContinuedSupport,
+                )
+              : undefined,
+          ),
+        );
+      const { total } = results[0];
+      this.cacheManager.set(key, total);
+      return total;
+    } catch {
+      throw new DataRetrievalException(
+        "Cannot find Community Board Budget Requests count",
       );
     }
   }
