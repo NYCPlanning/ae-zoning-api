@@ -212,7 +212,7 @@ export class CityCouncilDistrictRepository {
         )
         .as("tile");
 
-      const dataFill = await this.db
+      const dataFill = this.db
         .select({
           mvt: sql`ST_AsMVT(tile, 'city-council-district-fill', 4096, 'geomFill')`,
         })
