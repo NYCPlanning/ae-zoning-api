@@ -507,9 +507,9 @@ export class CapitalProjectRepository {
       x,
       y,
     });
-    // const cachedTiles =
-    //   await this.tileCache.get<Buffer<ArrayBufferLike>>(cacheKey);
-    // if (cachedTiles !== null) return cachedTiles;
+    const cachedTiles =
+      await this.tileCache.get<Buffer<ArrayBufferLike>>(cacheKey);
+    if (cachedTiles !== null) return cachedTiles;
     try {
       const tile = this.db
         .select({
@@ -567,8 +567,6 @@ export class CapitalProjectRepository {
             or(
               sql`${capitalProject.mercatorFillMPnt} && ST_TileEnvelope(${z},${x},${y})`,
               sql`${capitalProject.mercatorFillMPoly} && ST_TileEnvelope(${z},${x},${y})`,
-              // isNotNull(capitalProject.mercatorFillMPnt),
-              // isNotNull(capitalProject.mercatorFillMPoly),
             ),
             eq(capitalCommitmentFund.category, "total"),
           ),
@@ -588,7 +586,7 @@ export class CapitalProjectRepository {
         .from(tile)
         .where(isNotNull(tile.geom));
       const { mvt } = data[0];
-      // this.tileCache.set(cacheKey, mvt);
+      this.tileCache.set(cacheKey, mvt);
       return mvt;
     } catch {
       throw new DataRetrievalException("cannot find capital project tiles");
