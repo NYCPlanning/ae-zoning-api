@@ -3,6 +3,9 @@ import {
   cbbrNeedGroupEntitySchema,
   agencyEntitySchema,
   cbbrAgencyCategoryResponseEntitySchema,
+  communityBoardBudgetRequestEntitySchema,
+  cbbrRequestTypeEntitySchema,
+  multiPolygonJsonSchema,
   mvtEntitySchema,
 } from "src/schema";
 import { z } from "zod";
@@ -27,53 +30,79 @@ export type FindAgencyResponseTypesRepo = z.infer<
   typeof findAgencyResponseTypesRepoSchema
 >;
 
-export const findCommunityBoardBudgetRequestByIdRepoSchema = z.array(
-  z.object({
-    id: z.string(),
-    cbbrPolicyAreaId: z.number(),
-    title: z.string(),
-    communityBoardId: z.string(),
-    description: z.string().nullable(),
-    agencyInitials: z.string(),
-    priority: z.number(),
-    cbbrType: z.enum(["Capital", "Expense"]),
-    isMapped: z.boolean(),
-    isContinuedSupport: z.boolean(),
-    agencyCategoryResponse: z.number().nullable(),
-    agencyResponse: z.string().nullable(),
-  }),
+export const communityBoardBudgetRequestRepoSchema =
+  communityBoardBudgetRequestEntitySchema
+    .omit({
+      boroughId: true,
+      communityDistrictId: true,
+      requestType: true,
+      isLocationSpecific: true,
+    })
+    .extend({
+      communityBoardId: z.string(),
+      cbbrType: cbbrRequestTypeEntitySchema,
+      isMapped: z.boolean(),
+    });
+
+export type CommunityBoardBudgetRequestRepo = z.infer<
+  typeof communityBoardBudgetRequestRepoSchema
+>;
+
+export const findByIdRepoSchema = z.array(
+  communityBoardBudgetRequestRepoSchema,
 );
 
-export type FindCommunityBoardBudgetRequestByIdRepo = z.infer<
-  typeof findCommunityBoardBudgetRequestByIdRepoSchema
+export type FindByIdRepo = z.infer<typeof findByIdRepoSchema>;
+
+export const communityBoardBudgetRequestGeometrySchema = z
+  .union([multiPolygonJsonSchema, multiPolygonJsonSchema])
+  .nullable();
+
+export type CommunityBoardBudgetRequestGeometry = z.infer<
+  typeof communityBoardBudgetRequestGeometrySchema
 >;
 
-export const findManyCommunityBoardBudgetRequestEntitySchema = z.object({
-  id: z.string(),
-  cbbrPolicyAreaId: z.number(),
-  title: z.string(),
-  communityBoardId: z.string(),
-  isMapped: z.boolean(),
-  isContinuedSupport: z.boolean(),
-});
+export const manyCommunityBoardBudgetRequestRepoSchema =
+  communityBoardBudgetRequestEntitySchema
+    .pick({
+      id: true,
+      cbbrPolicyAreaId: true,
+      title: true,
+      isContinuedSupport: true,
+    })
+    .extend({
+      communityBoardId: z.string(),
+      isMapped: z.boolean(),
+    });
 
-export type FindManyCommunityBoardBudgetRequestEntity = z.infer<
-  typeof findManyCommunityBoardBudgetRequestEntitySchema
+export type ManyCommunityBoardBudgetRequestRepo = z.infer<
+  typeof manyCommunityBoardBudgetRequestRepoSchema
 >;
 
-export const findManyCommunityBoardBudgetRequestRepoSchema = z.array(
-  findManyCommunityBoardBudgetRequestEntitySchema,
+export const findManyRepoSchema = z.array(
+  manyCommunityBoardBudgetRequestRepoSchema,
 );
 
-export type FindManyCommunityBoardBudgetRequestRepo = z.infer<
-  typeof findManyCommunityBoardBudgetRequestRepoSchema
+export type FindManyRepo = z.infer<typeof findManyRepoSchema>;
+
+export const findCountRepoSchema = z.number();
+
+export type FindCountRepo = z.infer<typeof findCountRepoSchema>;
+
+export const communityBoardBudgetRequestGeoJsonRepoSchema =
+  communityBoardBudgetRequestRepoSchema.extend({
+    geometry: communityBoardBudgetRequestGeometrySchema,
+  });
+
+export type CommunityBoardBudgetRequestGeoJsonRepo = z.infer<
+  typeof communityBoardBudgetRequestGeoJsonRepoSchema
 >;
 
-export const findCountCommunityBoardBudgetRequestRepoSchema = z.number();
+export const findGeoJsonByIdRepoSchema = z.array(
+  communityBoardBudgetRequestGeoJsonRepoSchema,
+);
 
-export type FindCountCommunityBoardBudgetRequestRepo = z.infer<
-  typeof findCountCommunityBoardBudgetRequestRepoSchema
->;
+export type FindGeoJsonByIdRepo = z.infer<typeof findGeoJsonByIdRepoSchema>;
 
 export const checkNeedGroupByIdRepoSchema = z.boolean();
 

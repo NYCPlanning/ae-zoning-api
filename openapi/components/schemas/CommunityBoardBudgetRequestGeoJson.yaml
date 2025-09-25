@@ -1,0 +1,21 @@
+type: object
+properties:
+  id:
+    type: string
+    description: The id for the community board budget request.
+    example: 203202629C
+  type:
+    type: string
+    enum:
+      - Feature
+  geometry:
+    oneOf:
+      - $ref: ./MultiPoint.yaml
+      - $ref: ./MultiPolygon.yaml
+  properties:
+    $ref: ./CommunityBoardBudgetRequest.yaml
+required:
+  - id
+  - type
+  - geometry
+  - properties

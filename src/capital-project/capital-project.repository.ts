@@ -30,6 +30,7 @@ import {
   communityDistrict,
 } from "src/schema";
 import {
+  CapitalProjectGeometrySchema,
   CheckByManagingCodeCapitalProjectIdRepo,
   FindByManagingCodeCapitalProjectIdRepo,
   FindCapitalCommitmentsByManagingCodeCapitalProjectIdRepo,
@@ -453,7 +454,7 @@ export class CapitalProjectRepository {
             Array<string>
           >`ARRAY_AGG(DISTINCT ${agencyBudget.type})`,
           commitmentsTotal: sum(capitalCommitmentFund.value).mapWith(Number),
-          geometry: sql<string | null>`
+          geometry: sql<CapitalProjectGeometrySchema>`
             CASE
             WHEN
               ${capitalProject.liFtMPoly} IS NOT null

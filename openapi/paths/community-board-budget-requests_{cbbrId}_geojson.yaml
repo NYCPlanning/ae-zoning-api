@@ -1,0 +1,21 @@
+get:
+  summary: Find details about a specific budget request as a geojson feature
+  operationId: findCommunityBoardBudgetRequestGeoJsonById
+  tags:
+    - Community Board Budget Requests
+    - GeoJSON
+  parameters:
+    - $ref: ../components/parameters/cbbrIdParam.yaml
+  responses:
+    '200':
+      description: A geojson object of community board budget request details
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/CommunityBoardBudgetRequestGeoJson.yaml
+    '400':
+      $ref: ../components/responses/BadRequest.yaml
+    '404':
+      $ref: ../components/responses/NotFound.yaml
+    '500':
+      $ref: ../components/responses/InternalServerError.yaml
