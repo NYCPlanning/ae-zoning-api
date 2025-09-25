@@ -1,0 +1,50 @@
+allOf:
+  - $ref: ./Page.yaml
+  - type: object
+    properties:
+      communityBoardBudgetRequests:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+              description: The id for the community board budget request.
+              example: 203202629C
+            cbbrPolicyAreaId:
+              type: integer
+              description: The id for the policy area of the request.
+              example: 1
+            title:
+              type: string
+              description: The title of the budget request.
+              example: Other programs to address public health issues requests
+            communityBoardId:
+              type: string
+              description: The id of the community board that made the request.
+              example: BX03
+            isMapped:
+              type: boolean
+              description: Whether the budget request has associated mappable data
+              example: true
+            isContinuedSupport:
+              type: boolean
+              description: Whether the budget request is for Continued Support
+              example: true
+          required:
+            - id
+            - cbbrPolicyAreaId
+            - title
+            - communityBoardId
+            - isMapped
+            - isContinuedSupport
+      totalBudgetRequests:
+        type: integer
+        description: >-
+          The total number of results matching the query parameters.
+        minimum: 0
+        example: 212
+    required:
+      - communityBoardBudgetRequests
+      - totalBudgetRequests
+

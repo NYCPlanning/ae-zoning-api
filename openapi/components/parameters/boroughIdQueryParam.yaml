@@ -1,0 +1,10 @@
+name: boroughId
+required: false
+in: query
+schema:
+  type: string
+  pattern: ^([0-9]{1})$
+  example: '1'
+description: >-
+  A single character numeric string containing the common number used to refer
+  to the borough. Possible values are 1-5.

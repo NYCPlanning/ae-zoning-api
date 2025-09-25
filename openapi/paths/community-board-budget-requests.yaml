@@ -1,0 +1,33 @@
+get:
+  summary: Find paginated budget requests
+  operationId: findCommunityBoardBudgetRequests
+  tags:
+    - Community Board Budget Requests
+  parameters:
+    - $ref: ../components/parameters/boroughIdQueryParam.yaml
+    - $ref: ../components/parameters/communityDistrictIdQueryParam.yaml
+    - $ref: ../components/parameters/cityCouncilDistrictIdQueryParam.yaml
+    - $ref: ../components/parameters/cbbrPolicyAreaIdQueryParam.yaml
+    - $ref: ../components/parameters/cbbrNeedGroupIdQueryParam.yaml
+    - $ref: ../components/parameters/agencyInitialsQueryParam.yaml
+    - $ref: ../components/parameters/cbbrTypeQueryParam.yaml
+    - $ref: ../components/parameters/cbbrAgencyResponseTypeIdQueryParam.yaml
+    - $ref: ../components/parameters/isMappedQueryParam.yaml
+    - $ref: ../components/parameters/isContinuedSupportQueryParam.yaml
+    - $ref: ../components/parameters/limitParam.yaml
+    - $ref: ../components/parameters/offsetParam.yaml
+  responses:
+    '200':
+      description: >-
+        An object containing pagination metadata and an array of community
+        board budget requests
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/CommunityBoardBudgetRequestPage.yaml
+    '400':
+      $ref: ../components/responses/BadRequest.yaml
+    '404':
+      $ref: ../components/responses/NotFound.yaml
+    '500':
+      $ref: ../components/responses/InternalServerError.yaml
