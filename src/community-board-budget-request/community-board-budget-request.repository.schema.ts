@@ -3,6 +3,7 @@ import {
   cbbrNeedGroupEntitySchema,
   agencyEntitySchema,
   cbbrAgencyCategoryResponseEntitySchema,
+  mvtEntitySchema,
 } from "src/schema";
 import { z } from "zod";
 
@@ -91,3 +92,7 @@ export const checkAgencyResponseTypeByIdRepoSchema = z.boolean();
 export type CheckAgencyResponseTypeByIdRepo = z.infer<
   typeof checkAgencyResponseTypeByIdRepoSchema
 >;
+
+export const findTilesRepoSchema = mvtEntitySchema;
+
+export type FindTilesRepo = z.infer<typeof findTilesRepoSchema>;

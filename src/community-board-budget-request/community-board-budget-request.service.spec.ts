@@ -7,6 +7,7 @@ import {
   findCommunityBoardBudgetRequestByIdQueryResponseSchema,
   findCommunityBoardBudgetRequestsQueryResponseSchema,
   findCommunityBoardBudgetRequestAgencyResponseTypesQueryResponseSchema,
+  findCommunityBoardBudgetRequestTilesQueryResponseSchema,
 } from "src/gen";
 import { CommunityBoardBudgetRequestService } from "./community-board-budget-request.service";
 import { CommunityBoardBudgetRequestRepository } from "./community-board-budget-request.repository";
@@ -563,6 +564,19 @@ describe("Community Board Budget Request service unit", () => {
       const agencyResponseTypes =
         await communityBoardBudgetRequestService.findAgencyResponseTypes();
       expect(agencyResponseTypes.cbbrAgencyResponseTypes.length).toBe(6);
+    });
+  });
+
+  describe("findTiles", () => {
+    it("should return an mvt when requesting coordinates", async () => {
+      const mvt = await communityBoardBudgetRequestService.findTiles({
+        z: 1,
+        x: 1,
+        y: 1,
+      });
+      expect(() =>
+        findCommunityBoardBudgetRequestTilesQueryResponseSchema.parse(mvt),
+      ).not.toThrow();
     });
   });
 });
