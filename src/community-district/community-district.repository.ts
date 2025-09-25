@@ -82,7 +82,7 @@ export class CommunityDistrictRepository {
         )
         .as("tile");
 
-      const dataFill = await this.db
+      const dataFill = this.db
         .select({
           mvt: sql<Buffer>`ST_AsMVT(tile, 'community-district-fill', 4096, 'geomFill')`,
         })
