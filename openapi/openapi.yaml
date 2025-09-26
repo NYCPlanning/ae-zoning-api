@@ -70,6 +70,8 @@ paths:
     $ref: paths/capital-projects_{managingCode}_{capitalProjectId}_geojson.yaml
   /capital-projects/{managingCode}/{capitalProjectId}:
     $ref: paths/capital-projects_{managingCode}_{capitalProjectId}.yaml
+  /capital-projects/managing-agencies:
+    $ref: paths/capital-projects_managing-agencies.yaml
   /capital-projects/{z}/{x}/{y}.pbf:
     $ref: paths/capital-projects_{z}_{x}_{y}.pbf.yaml
   /city-council-districts:

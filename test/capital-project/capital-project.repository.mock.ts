@@ -21,7 +21,7 @@ import {
 import { AgencyRepositoryMock } from "test/agency/agency.repository.mock";
 import { CityCouncilDistrictRepositoryMock } from "test/city-council-district/city-council-district.repository.mock";
 import { CommunityDistrictRepositoryMock } from "test/community-district/community-district.repository.mock";
-import { capitalProjectEntitySchema } from "src/schema";
+import { agencyEntitySchema, capitalProjectEntitySchema } from "src/schema";
 
 export class CapitalProjectRepositoryMock {
   agencyRepoMock: AgencyRepositoryMock;
@@ -217,6 +217,14 @@ export class CapitalProjectRepositoryMock {
       isMapped,
     });
     return results.slice(offset, limit + offset);
+  }
+
+  managingAgenciesMock = Array.from(Array(10), (_, index) =>
+    generateMock(agencyEntitySchema, { seed: index + 1 }),
+  );
+
+  findManagingAgencies() {
+    return this.managingAgenciesMock;
   }
 
   async findCount({

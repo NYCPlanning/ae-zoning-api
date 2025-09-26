@@ -151,6 +151,15 @@ export class CapitalProjectService {
     };
   }
 
+  async findManagingAgencies() {
+    const managingAgencies =
+      await this.capitalProjectRepository.findManagingAgencies();
+    return {
+      managingAgencies,
+      order: "initials",
+    };
+  }
+
   async findByManagingCodeCapitalProjectId(
     params: FindCapitalProjectByManagingCodeCapitalProjectIdPathParams,
   ) {

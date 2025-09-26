@@ -17,6 +17,7 @@ import {
   findCapitalCommitmentsByManagingCodeCapitalProjectIdQueryResponseSchema,
   findCapitalProjectByManagingCodeCapitalProjectIdQueryResponseSchema,
   findCapitalProjectGeoJsonByManagingCodeCapitalProjectIdQueryResponseSchema,
+  findCapitalProjectManagingAgenciesQueryResponseSchema,
   findCapitalProjectsQueryResponseSchema,
 } from "src/gen";
 import { AgencyBudgetRepository } from "src/agency-budget/agency-budget.repository";
@@ -404,6 +405,36 @@ describe("Capital Projects", () => {
         /cannot have isMapped filter in conjunction/,
       );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+  });
+
+  describe("findCapitalProjectManagingAgencies", () => {
+    it("should 200 and return capital project managing agencies", async () => {
+      const response = await request(app.getHttpServer())
+        .get(`/capital-projects/managing-agencies`)
+        .expect(200);
+      expect(() =>
+        findCapitalProjectManagingAgenciesQueryResponseSchema.parse(
+          response.body,
+        ),
+      ).not.toThrow();
+    });
+
+    it("should 500 when the database errors", async () => {
+      const dataRetrievalException = new DataRetrievalException(
+        "cannot find data",
+      );
+      jest
+        .spyOn(capitalProjectRepositoryMock, "findManagingAgencies")
+        .mockImplementationOnce(() => {
+          throw dataRetrievalException;
+        });
+
+      const response = await request(app.getHttpServer())
+        .get(`/capital-projects/managing-agencies`)
+        .expect(500);
+      expect(response.body.message).toBe(dataRetrievalException.message);
+      expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);
     });
   });
 

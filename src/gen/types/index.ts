@@ -27,6 +27,7 @@ export * from "./FindCapitalCommitmentTypes";
 export * from "./FindCapitalCommitmentsByManagingCodeCapitalProjectId";
 export * from "./FindCapitalProjectByManagingCodeCapitalProjectId";
 export * from "./FindCapitalProjectGeoJsonByManagingCodeCapitalProjectId";
+export * from "./FindCapitalProjectManagingAgencies";
 export * from "./FindCapitalProjectTiles";
 export * from "./FindCapitalProjectTilesByBoroughIdCommunityDistrictId";
 export * from "./FindCapitalProjectTilesByCityCouncilDistrictId";
