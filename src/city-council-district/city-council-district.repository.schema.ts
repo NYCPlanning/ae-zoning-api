@@ -26,6 +26,14 @@ export const findTilesRepoSchema = mvtEntitySchema;
 
 export type FindTilesRepo = z.infer<typeof findTilesRepoSchema>;
 
+export const findCommunityBoardBudgetRequestTilesByCityCouncilDistrictIdRepoSchema =
+  mvtEntitySchema;
+
+export type FindCommunityBoardBudgetRequestTilesByCityCouncilDistrictIdRepo =
+  z.infer<
+    typeof findCommunityBoardBudgetRequestTilesByCityCouncilDistrictIdRepoSchema
+  >;
+
 export const findCapitalProjectTilesByCityCouncilDistrictIdRepoSchema =
   mvtEntitySchema;
 

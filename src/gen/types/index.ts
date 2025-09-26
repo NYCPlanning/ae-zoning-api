@@ -41,6 +41,7 @@ export * from "./FindCommunityBoardBudgetRequestAgencyResponseTypes";
 export * from "./FindCommunityBoardBudgetRequestById";
 export * from "./FindCommunityBoardBudgetRequestNeedGroups";
 export * from "./FindCommunityBoardBudgetRequestPolicyAreas";
+export * from "./FindCommunityBoardBudgetRequestTilesByCityCouncilDistrictId";
 export * from "./FindCommunityBoardBudgetRequests";
 export * from "./FindCommunityBoardBudgetRequestTiles";
 export * from "./FindCommunityDistrictGeoJsonByBoroughIdCommunityDistrictId";
