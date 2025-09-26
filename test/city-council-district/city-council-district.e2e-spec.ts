@@ -59,7 +59,7 @@ describe("City Council District e2e", () => {
   });
 
   describe("findCityCouncilDistricts", () => {
-    it("should 200 amd return all city council districts", async () => {
+    it("should 200 and return all city council districts", async () => {
       const response = await request(app.getHttpServer())
         .get(`/city-council-districts`)
         .expect(200);
@@ -345,7 +345,7 @@ describe("City Council District e2e", () => {
   describe("findCapitalProjectsByCityCouncilDistrictId", () => {
     const mock = cityCouncilDistrictRepositoryMock.districts[0];
 
-    it("should 200 amd return all capital projects for a city council district", async () => {
+    it("should 200 and return all capital projects for a city council district", async () => {
       const response = await request(app.getHttpServer())
         .get(`/city-council-districts/${mock.id}/capital-projects`)
         .expect(200);
@@ -362,7 +362,7 @@ describe("City Council District e2e", () => {
       expect(parsedBody.offset).toBe(0);
     });
 
-    it("should 200 amd return all capital projects for a city council district with user specified offset and limit", async () => {
+    it("should 200 and return all capital projects for a city council district with user specified offset and limit", async () => {
       const limit = 10;
       const offset = 3;
       const response = await request(app.getHttpServer())
