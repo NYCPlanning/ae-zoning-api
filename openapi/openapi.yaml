@@ -79,6 +79,9 @@ paths:
   /city-council-districts/{cityCouncilDistrictId}/capital-projects/{z}/{x}/{y}.pbf:
     $ref: >-
       paths/city-council-districts_{cityCouncilDistrictId}_capital-projects_{z}_{x}_{y}.pbf.yaml
+  /city-council-districts/{cityCouncilDistrictId}/community-board-budget-requests/{z}/{x}/{y}.pbf:
+    $ref: >-
+      paths/city-council-districts_{cityCouncilDistrictId}_community-board-budget-requests_{z}_{x}_{y}.pbf.yaml
   /city-council-districts/{cityCouncilDistrictId}/capital-projects:
     $ref: paths/city-council-districts_{cityCouncilDistrictId}_capital-projects.yaml
   /city-council-districts/{z}/{x}/{y}.pbf:
