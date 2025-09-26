@@ -7,6 +7,7 @@ import {
   FindTilesRepo,
   FindGeoJsonByIdRepo,
   FindCapitalProjectTilesByCityCouncilDistrictIdRepo,
+  FindCommunityBoardBudgetRequestTilesByCityCouncilDistrictIdRepo,
 } from "./city-council-district.repository.schema";
 import {
   FindCapitalProjectTilesByCityCouncilDistrictIdPathParams,
@@ -322,6 +323,7 @@ export class CityCouncilDistrictRepository {
       const [fill, label] = await Promise.all([dataFill, dataLabel]);
       const mvt = Buffer.concat([fill[0].mvt, label[0].mvt]);
       return mvt;
+    } catch {
       throw new DataRetrievalException(
         "cannot find community board budget request tiles",
       );
