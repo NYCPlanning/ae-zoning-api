@@ -73,6 +73,11 @@ import {
   findCapitalProjectByManagingCodeCapitalProjectIdPathParamsSchema,
 } from "./findCapitalProjectByManagingCodeCapitalProjectIdSchema";
 import {
+  findCapitalProjectManagingAgenciesQueryResponseSchema,
+  findCapitalProjectManagingAgencies400Schema,
+  findCapitalProjectManagingAgencies500Schema,
+} from "./findCapitalProjectManagingAgenciesSchema";
+import {
   findCapitalProjectTilesQueryResponseSchema,
   findCapitalProjectTiles400Schema,
   findCapitalProjectTiles500Schema,
@@ -465,6 +470,24 @@ export const operations = {
       400: findCapitalProjectByManagingCodeCapitalProjectId400Schema,
       404: findCapitalProjectByManagingCodeCapitalProjectId404Schema,
       500: findCapitalProjectByManagingCodeCapitalProjectId500Schema,
+    },
+  },
+  findCapitalProjectManagingAgencies: {
+    request: undefined,
+    parameters: {
+      path: undefined,
+      query: undefined,
+      header: undefined,
+    },
+    responses: {
+      200: findCapitalProjectManagingAgenciesQueryResponseSchema,
+      400: findCapitalProjectManagingAgencies400Schema,
+      500: findCapitalProjectManagingAgencies500Schema,
+      default: findCapitalProjectManagingAgenciesQueryResponseSchema,
+    },
+    errors: {
+      400: findCapitalProjectManagingAgencies400Schema,
+      500: findCapitalProjectManagingAgencies500Schema,
     },
   },
   findCapitalProjectTiles: {
@@ -999,6 +1022,9 @@ export const paths = {
   },
   "/capital-projects/{managingCode}/{capitalProjectId}": {
     get: operations["findCapitalProjectByManagingCodeCapitalProjectId"],
+  },
+  "/capital-projects/managing-agencies": {
+    get: operations["findCapitalProjectManagingAgencies"],
   },
   "/capital-projects/{z}/{x}/{y}.pbf": {
     get: operations["findCapitalProjectTiles"],

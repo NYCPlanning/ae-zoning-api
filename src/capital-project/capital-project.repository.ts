@@ -21,6 +21,7 @@ import {
 } from "src/gen";
 import { DB, DbType } from "src/global/providers/db.provider";
 import {
+  agency,
   agencyBudget,
   budgetLine,
   capitalCommitment,
@@ -35,6 +36,7 @@ import {
   FindCapitalCommitmentsByManagingCodeCapitalProjectIdRepo,
   FindCountRepo,
   FindGeoJsonByManagingCodeCapitalProjectIdRepo,
+  FindManagingAgenciesRepo,
   FindManyRepo,
   FindTilesRepo,
 } from "./capital-project.repository.schema";
@@ -207,6 +209,27 @@ export class CapitalProjectRepository {
         );
     } catch {
       throw new DataRetrievalException("cannot find capital projects");
+    }
+  }
+
+  async findManagingAgencies(): Promise<FindManagingAgenciesRepo> {
+    try {
+      return await this.db
+        .selectDistinct({
+          initials: agency.initials,
+          name: agency.name,
+        })
+        .from(agency)
+        .leftJoin(
+          capitalProject,
+          eq(capitalProject.managingAgency, agency.initials),
+        )
+        .where(isNotNull(capitalProject.managingAgency))
+        .orderBy(agency.initials);
+    } catch {
+      throw new DataRetrievalException(
+        "query failed for capital project managing agencies",
+      );
     }
   }
 

@@ -14,6 +14,7 @@ import {
   findCapitalCommitmentsByManagingCodeCapitalProjectIdQueryResponseSchema,
   findCapitalProjectByManagingCodeCapitalProjectIdQueryResponseSchema,
   findCapitalProjectGeoJsonByManagingCodeCapitalProjectIdQueryResponseSchema,
+  findCapitalProjectManagingAgenciesQueryResponseSchema,
   findCapitalProjectTilesQueryResponseSchema,
   findCapitalProjectsQueryResponseSchema,
 } from "src/gen";
@@ -368,6 +369,15 @@ describe("CapitalProjectService", () => {
           capitalProjectId: missingCapitalProjectId,
         }),
       ).rejects.toThrow(ResourceNotFoundException);
+    });
+  });
+
+  describe("findManagingAgencies", () => {
+    it("should return capital project managing agencies", async () => {
+      const response = await capitalProjectService.findManagingAgencies();
+      expect(() =>
+        findCapitalProjectManagingAgenciesQueryResponseSchema.parse(response),
+      ).not.toThrow();
     });
   });
 
