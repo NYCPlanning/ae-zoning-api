@@ -6,6 +6,7 @@ import {
   findCityCouncilDistrictsQueryResponseSchema,
   findCityCouncilDistrictGeoJsonByCityCouncilDistrictIdQueryResponseSchema,
   findCapitalProjectTilesByCityCouncilDistrictIdQueryResponseSchema,
+  findCommunityBoardBudgetRequestTilesByCityCouncilDistrictIdQueryResponseSchema,
 } from "src/gen";
 import { CityCouncilDistrictService } from "./city-council-district.service";
 import { ResourceNotFoundException } from "src/exception";
@@ -91,6 +92,25 @@ describe("City Council District service unit", () => {
         );
       expect(() =>
         findCapitalProjectTilesByCityCouncilDistrictIdQueryResponseSchema.parse(
+          mvt,
+        ),
+      ).not.toThrow();
+    });
+  });
+
+  describe("findCommunityBoardBudgetRequestTilesByCityCouncilDistrictId", () => {
+    it("should return an mvt when requesting coordinates", async () => {
+      const mvt =
+        await cityCouncilDistrictService.findCommunityBoardBudgetRequestTilesByCityCouncilDistrictId(
+          {
+            cityCouncilDistrictId: "1",
+            z: 1,
+            x: 1,
+            y: 1,
+          },
+        );
+      expect(() =>
+        findCommunityBoardBudgetRequestTilesByCityCouncilDistrictIdQueryResponseSchema.parse(
           mvt,
         ),
       ).not.toThrow();
