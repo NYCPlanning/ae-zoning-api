@@ -97,6 +97,12 @@ import {
   findCapitalProjectTilesByCityCouncilDistrictIdPathParamsSchema,
 } from "./findCapitalProjectTilesByCityCouncilDistrictIdSchema";
 import {
+  findCommunityBoardBudgetRequestTilesByCityCouncilDistrictIdQueryResponseSchema,
+  findCommunityBoardBudgetRequestTilesByCityCouncilDistrictId400Schema,
+  findCommunityBoardBudgetRequestTilesByCityCouncilDistrictId500Schema,
+  findCommunityBoardBudgetRequestTilesByCityCouncilDistrictIdPathParamsSchema,
+} from "./findCommunityBoardBudgetRequestTilesByCityCouncilDistrictIdSchema";
+import {
   findCapitalProjectsByCityCouncilIdQueryResponseSchema,
   findCapitalProjectsByCityCouncilId400Schema,
   findCapitalProjectsByCityCouncilId500Schema,
@@ -535,6 +541,25 @@ export const operations = {
     errors: {
       400: findCapitalProjectTilesByCityCouncilDistrictId400Schema,
       500: findCapitalProjectTilesByCityCouncilDistrictId500Schema,
+    },
+  },
+  findCommunityBoardBudgetRequestTilesByCityCouncilDistrictId: {
+    request: undefined,
+    parameters: {
+      path: findCommunityBoardBudgetRequestTilesByCityCouncilDistrictIdPathParamsSchema,
+      query: undefined,
+      header: undefined,
+    },
+    responses: {
+      200: findCommunityBoardBudgetRequestTilesByCityCouncilDistrictIdQueryResponseSchema,
+      400: findCommunityBoardBudgetRequestTilesByCityCouncilDistrictId400Schema,
+      500: findCommunityBoardBudgetRequestTilesByCityCouncilDistrictId500Schema,
+      default:
+        findCommunityBoardBudgetRequestTilesByCityCouncilDistrictIdQueryResponseSchema,
+    },
+    errors: {
+      400: findCommunityBoardBudgetRequestTilesByCityCouncilDistrictId400Schema,
+      500: findCommunityBoardBudgetRequestTilesByCityCouncilDistrictId500Schema,
     },
   },
   findCapitalProjectsByCityCouncilId: {
@@ -987,6 +1012,12 @@ export const paths = {
   "/city-council-districts/{cityCouncilDistrictId}/capital-projects/{z}/{x}/{y}.pbf":
     {
       get: operations["findCapitalProjectTilesByCityCouncilDistrictId"],
+    },
+  "/city-council-districts/{cityCouncilDistrictId}/community-board-budget-requests/{z}/{x}/{y}.pbf":
+    {
+      get: operations[
+        "findCommunityBoardBudgetRequestTilesByCityCouncilDistrictId"
+      ],
     },
   "/city-council-districts/{cityCouncilDistrictId}/capital-projects": {
     get: operations["findCapitalProjectsByCityCouncilId"],

@@ -20,6 +20,8 @@ import {
   findCityCouncilDistrictGeoJsonByCityCouncilDistrictIdPathParamsSchema,
   FindCityCouncilDistrictTilesPathParams,
   findCityCouncilDistrictTilesPathParamsSchema,
+  FindCommunityBoardBudgetRequestTilesByCityCouncilDistrictIdPathParams,
+  findCommunityBoardBudgetRequestTilesByCityCouncilDistrictIdPathParamsSchema,
 } from "src/gen";
 import { Response } from "express";
 import { ZodTransformPipe } from "src/pipes/zod-transform-pipe";
@@ -85,6 +87,25 @@ export class CityCouncilDistrictController {
   ) {
     const tiles =
       await this.cityCouncilDistrictService.findCapitalProjectTilesByCityCouncilDistrictId(
+        params,
+      );
+    res.set("Content-Type", "application/x-protobuf");
+    res.send(tiles);
+  }
+
+  @UsePipes(
+    new ZodTransformPipe(
+      findCommunityBoardBudgetRequestTilesByCityCouncilDistrictIdPathParamsSchema,
+    ),
+  )
+  @Get("/:cityCouncilDistrictId/community-board-budget-requests/:z/:x/:y.pbf")
+  async findCommunityBoardBudgetRequestsTilesCityCouncilDistrictId(
+    @Param()
+    params: FindCommunityBoardBudgetRequestTilesByCityCouncilDistrictIdPathParams,
+    @Res() res: Response,
+  ) {
+    const tiles =
+      await this.cityCouncilDistrictService.findCommunityBoardBudgetRequestTilesByCityCouncilDistrictId(
         params,
       );
     res.set("Content-Type", "application/x-protobuf");
