@@ -378,12 +378,47 @@ export class CapitalProjectRepository {
     return value;
   }
 
+  #capitalProjectDetail = this.db.$with("capitalProjectDetail").as(
+    this.db
+      .select({
+        id: capitalProject.id,
+        managingCode: capitalProject.managingCode,
+        sponsoringAgencies: sql<
+          Array<string>
+        >`ARRAY_AGG(DISTINCT ${agencyBudget.sponsor})`.as("sponsoringAgencies"),
+        budgetTypes: sql<
+          Array<string>
+        >`ARRAY_AGG(DISTINCT ${agencyBudget.type})`.as("budgetTypes"),
+        commitmentsTotal: sum(capitalCommitmentFund.value)
+          .mapWith(Number)
+          .as("commitmentsTotal"),
+      })
+      .from(capitalProject)
+      .leftJoin(
+        capitalCommitment,
+        and(
+          eq(capitalProject.managingCode, capitalCommitment.managingCode),
+          eq(capitalProject.id, capitalCommitment.capitalProjectId),
+        ),
+      )
+      .leftJoin(
+        agencyBudget,
+        eq(agencyBudget.code, capitalCommitment.budgetLineCode),
+      )
+      .leftJoin(
+        capitalCommitmentFund,
+        eq(capitalCommitmentFund.capitalCommitmentId, capitalCommitment.id),
+      )
+      .groupBy(capitalProject.managingCode, capitalProject.id),
+  );
   async findByManagingCodeCapitalProjectId(
     params: FindCapitalProjectByManagingCodeCapitalProjectIdPathParams,
   ): Promise<FindByManagingCodeCapitalProjectIdRepo> {
     const { managingCode, capitalProjectId } = params;
     try {
+      const capitalProjectDetail = this.#capitalProjectDetail;
       return await this.db
+        .with(capitalProjectDetail)
         .select({
           id: capitalProject.id,
           managingCode: capitalProject.managingCode,
@@ -392,40 +427,27 @@ export class CapitalProjectRepository {
           minDate: capitalProject.minDate,
           maxDate: capitalProject.maxDate,
           category: sql<CapitalProjectCategory>`${capitalProject.category}`,
-          sponsoringAgencies: sql<
-            Array<string>
-          >`ARRAY_AGG(DISTINCT ${agencyBudget.sponsor})`,
-          budgetTypes: sql<
-            Array<string>
-          >`ARRAY_AGG(DISTINCT ${agencyBudget.type})`,
-          commitmentsTotal: sum(capitalCommitmentFund.value).mapWith(Number),
+          sponsoringAgencies: capitalProjectDetail.sponsoringAgencies,
+          budgetTypes: capitalProjectDetail.budgetTypes,
+          commitmentsTotal: capitalProjectDetail.commitmentsTotal,
         })
         .from(capitalProject)
         .leftJoin(
-          capitalCommitment,
+          capitalProjectDetail,
           and(
-            eq(capitalProject.managingCode, capitalCommitment.managingCode),
-            eq(capitalProject.id, capitalCommitment.capitalProjectId),
+            eq(capitalProject.managingCode, capitalProjectDetail.managingCode),
+            eq(capitalProject.id, capitalProjectDetail.id),
           ),
-        )
-        .leftJoin(
-          agencyBudget,
-          eq(agencyBudget.code, capitalCommitment.budgetLineCode),
-        )
-        .leftJoin(
-          capitalCommitmentFund,
-          eq(capitalCommitmentFund.capitalCommitmentId, capitalCommitment.id),
         )
         .where(
           and(
             eq(capitalProject.managingCode, managingCode),
             eq(capitalProject.id, capitalProjectId),
-            eq(capitalCommitmentFund.category, "total"),
           ),
         )
-        .groupBy(capitalProject.managingCode, capitalProject.id)
         .limit(1);
-    } catch {
+    } catch (e) {
+      console.debug(e);
       throw new DataRetrievalException(
         "cannot check capital project given managing code and capital project id",
       );
@@ -500,16 +522,16 @@ export class CapitalProjectRepository {
     params: FindCapitalProjectTilesPathParams,
   ): Promise<FindTilesRepo> {
     const { z, x, y } = params;
-    const cacheKey = JSON.stringify({
-      domain: "capitalProject",
-      function: "findTiles",
-      z,
-      x,
-      y,
-    });
-    const cachedTiles =
-      await this.tileCache.get<Buffer<ArrayBufferLike>>(cacheKey);
-    if (cachedTiles !== null) return cachedTiles;
+    // const cacheKey = JSON.stringify({
+    //   domain: "capitalProject",
+    //   function: "findTiles",
+    //   z,
+    //   x,
+    //   y,
+    // });
+    // const cachedTiles =
+    //   await this.tileCache.get<Buffer<ArrayBufferLike>>(cacheKey);
+    // if (cachedTiles !== null) return cachedTiles;
     try {
       const tile = this.db
         .select({
@@ -578,7 +600,7 @@ export class CapitalProjectRepository {
         .from(tile)
         .where(isNotNull(tile.geom));
       const { mvt } = data[0];
-      this.tileCache.set(cacheKey, mvt);
+      // this.tileCache.set(cacheKey, mvt);
       return mvt;
     } catch {
       throw new DataRetrievalException("cannot find capital project tiles");

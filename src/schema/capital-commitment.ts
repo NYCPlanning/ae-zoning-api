@@ -2,6 +2,7 @@ import {
   char,
   date,
   foreignKey,
+  index,
   pgTable,
   text,
   uuid,
@@ -34,6 +35,8 @@ export const capitalCommitment = pgTable(
       columns: [table.budgetLineCode, table.budgetLineId],
       foreignColumns: [budgetLine.code, budgetLine.id],
     }),
+    index().on(table.capitalProjectId),
+    index().on(table.managingCode),
   ],
 );
 

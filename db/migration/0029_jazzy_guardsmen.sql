@@ -1,0 +1,1 @@
+CREATE INDEX "capital_commitment_fund_capital_fund_category_index" ON "capital_commitment_fund" USING btree ("capital_fund_category");

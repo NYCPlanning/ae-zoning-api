@@ -1,6 +1,6 @@
 services:
   db:
-    build: 
+    build:
       context: ./db
     environment:
       - POSTGRES_USER=${DATABASE_USER}
@@ -12,5 +12,10 @@ services:
       - data
     volumes:
       - ./db-volume:/var/lib/postgresql/data
+    deploy:
+      resources:
+        limits:
+          cpus: 2
+          memory: 4GB
 networks:
   data:

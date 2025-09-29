@@ -1,0 +1,2 @@
+CREATE INDEX "capital_commitment_capital_project_id_index" ON "capital_commitment" USING btree ("capital_project_id");--> statement-breakpoint
+CREATE INDEX "capital_commitment_managing_code_index" ON "capital_commitment" USING btree ("managing_code");
