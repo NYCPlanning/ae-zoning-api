@@ -44,6 +44,7 @@ import {
   TILE_CACHE,
   TileCacheService,
 } from "src/global/providers/tile-cache.provider";
+import { capitalProjectAggregated } from "src/schema/views";
 
 export class CapitalProjectRepository {
   constructor(
@@ -416,9 +417,7 @@ export class CapitalProjectRepository {
   ): Promise<FindByManagingCodeCapitalProjectIdRepo> {
     const { managingCode, capitalProjectId } = params;
     try {
-      const capitalProjectDetail = this.#capitalProjectDetail;
       return await this.db
-        .with(capitalProjectDetail)
         .select({
           id: capitalProject.id,
           managingCode: capitalProject.managingCode,
@@ -427,16 +426,19 @@ export class CapitalProjectRepository {
           minDate: capitalProject.minDate,
           maxDate: capitalProject.maxDate,
           category: sql<CapitalProjectCategory>`${capitalProject.category}`,
-          sponsoringAgencies: capitalProjectDetail.sponsoringAgencies,
-          budgetTypes: capitalProjectDetail.budgetTypes,
-          commitmentsTotal: capitalProjectDetail.commitmentsTotal,
+          sponsoringAgencies: capitalProjectAggregated.sponsoringAgencies,
+          budgetTypes: capitalProjectAggregated.budgetTypes,
+          commitmentsTotal: capitalProjectAggregated.commitmentsTotal,
         })
         .from(capitalProject)
         .leftJoin(
-          capitalProjectDetail,
+          capitalProjectAggregated,
           and(
-            eq(capitalProject.managingCode, capitalProjectDetail.managingCode),
-            eq(capitalProject.id, capitalProjectDetail.id),
+            eq(
+              capitalProject.managingCode,
+              capitalProjectAggregated.managingCode,
+            ),
+            eq(capitalProject.id, capitalProjectAggregated.id),
           ),
         )
         .where(

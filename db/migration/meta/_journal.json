@@ -211,6 +211,13 @@
       "when": 1759169272265,
       "tag": "0029_jazzy_guardsmen",
       "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1759176573748,
+      "tag": "0030_naive_joseph",
+      "breakpoints": true
     }
   ]
 }
