@@ -4,13 +4,6 @@ import { errorSchema } from "./errorSchema";
 
 export const findCommunityBoardBudgetRequestsQueryParamsSchema = z
   .object({
-    boroughId: z.coerce
-      .string()
-      .regex(new RegExp("^([0-9]{1})$"))
-      .describe(
-        "A single character numeric string containing the common number used to refer to the borough. Possible values are 1-5.",
-      )
-      .optional(),
     communityDistrictId: z.coerce
       .string()
       .regex(new RegExp("^([0-9]{3})$"))
@@ -94,12 +87,6 @@ export const findCommunityBoardBudgetRequests200Schema = z.lazy(
  * @description Invalid client request
  */
 export const findCommunityBoardBudgetRequests400Schema = z.lazy(
-  () => errorSchema,
-);
-/**
- * @description Requested resource does not exist or is not available
- */
-export const findCommunityBoardBudgetRequests404Schema = z.lazy(
   () => errorSchema,
 );
 /**

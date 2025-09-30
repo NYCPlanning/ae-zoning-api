@@ -42,9 +42,33 @@ export class CommunityBoardBudgetRequestController {
     @Query(
       new ZodTransformPipe(findCommunityBoardBudgetRequestsQueryParamsSchema),
     )
-    queryParams: FindCommunityBoardBudgetRequestsQueryParams,
+    {
+      communityDistrictId,
+      cityCouncilDistrictId,
+      cbbrAgencyResponseTypeId,
+      cbbrNeedGroupId,
+      cbbrPolicyAreaId,
+      cbbrType,
+      agencyInitials,
+      isContinuedSupport,
+      isMapped,
+      limit,
+      offset,
+    }: FindCommunityBoardBudgetRequestsQueryParams,
   ) {
-    return await this.communityBoardBudgetRequestService.findMany(queryParams);
+    return await this.communityBoardBudgetRequestService.findMany({
+      communityDistrictCombinedId: communityDistrictId,
+      cityCouncilDistrictId,
+      cbbrAgencyResponseTypeId,
+      cbbrNeedGroupId,
+      cbbrPolicyAreaId,
+      cbbrType,
+      agencyInitials,
+      isContinuedSupport,
+      isMapped,
+      limit,
+      offset,
+    });
   }
 
   @Get("/agencies")

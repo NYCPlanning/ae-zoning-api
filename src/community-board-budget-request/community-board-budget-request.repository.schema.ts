@@ -55,8 +55,9 @@ export const findManyCommunityBoardBudgetRequestRepoSchema = z.array(
   findManyCommunityBoardBudgetRequestEntitySchema,
 );
 
-export type FindManyCommunityBoardBudgetRequestRepo =
-  Array<FindManyCommunityBoardBudgetRequestEntity>;
+export type FindManyCommunityBoardBudgetRequestRepo = z.infer<
+  typeof findManyCommunityBoardBudgetRequestRepoSchema
+>;
 
 export const findCountCommunityBoardBudgetRequestRepoSchema = z.number();
 

@@ -4,7 +4,6 @@ get:
   tags:
     - Community Board Budget Requests
   parameters:
-    - $ref: ../components/parameters/boroughIdQueryParam.yaml
     - $ref: ../components/parameters/communityDistrictIdQueryParam.yaml
     - $ref: ../components/parameters/cityCouncilDistrictIdQueryParam.yaml
     - $ref: ../components/parameters/cbbrPolicyAreaIdQueryParam.yaml
@@ -27,7 +26,5 @@ get:
             $ref: ../components/schemas/CommunityBoardBudgetRequestPage.yaml
     '400':
       $ref: ../components/responses/BadRequest.yaml
-    '404':
-      $ref: ../components/responses/NotFound.yaml
     '500':
       $ref: ../components/responses/InternalServerError.yaml

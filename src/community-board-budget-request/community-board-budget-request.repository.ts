@@ -289,7 +289,7 @@ export class CommunityBoardBudgetRequestRepository {
     cbbrPolicyAreaId: number | null;
     cbbrNeedGroupId: number | null;
     agencyInitials: string | null;
-    cbbrType: string | null;
+    cbbrType: "Capital" | "Expense" | null;
     cbbrAgencyResponseTypeId: Array<number> | null;
     isMapped: boolean | null;
     isContinuedSupport: boolean | null;
@@ -303,7 +303,10 @@ export class CommunityBoardBudgetRequestRepository {
           cbbrPolicyAreaId: communityBoardBudgetRequest.policyArea,
           title: communityBoardBudgetRequest.title,
           communityBoardId: sql<string>`${borough.abbr} || ${communityBoardBudgetRequest.communityDistrictId}`,
-          isMapped: communityBoardBudgetRequest.isLocationSpecific,
+          isMapped: sql<boolean>`${or(
+            isNotNull(communityBoardBudgetRequest.liFtMPnt),
+            isNotNull(communityBoardBudgetRequest.liFtMPoly),
+          )}`,
           isContinuedSupport: communityBoardBudgetRequest.isContinuedSupport,
         })
         .from(communityBoardBudgetRequest)
@@ -326,13 +329,13 @@ export class CommunityBoardBudgetRequestRepository {
             cityCouncilDistrictId !== null
               ? eq(cityCouncilDistrict.id, cityCouncilDistrictId)
               : undefined,
-            boroughId !== null
-              ? eq(communityBoardBudgetRequest.boroughId, boroughId)
-              : undefined,
-            communityDistrictId !== null
-              ? eq(
-                  sql<string>`${communityBoardBudgetRequest.boroughId} || ${communityBoardBudgetRequest.communityDistrictId}`,
-                  communityDistrictId,
+            boroughId !== null && communityDistrictId !== null
+              ? and(
+                  eq(communityBoardBudgetRequest.boroughId, boroughId),
+                  eq(
+                    communityBoardBudgetRequest.communityDistrictId,
+                    communityDistrictId,
+                  ),
                 )
               : undefined,
             cbbrPolicyAreaId !== null
@@ -344,11 +347,8 @@ export class CommunityBoardBudgetRequestRepository {
             agencyInitials !== null
               ? eq(communityBoardBudgetRequest.agency, agencyInitials)
               : undefined,
-            cbbrType === "C"
-              ? eq(communityBoardBudgetRequest.requestType, "Capital")
-              : undefined,
-            cbbrType === "E"
-              ? eq(communityBoardBudgetRequest.requestType, "Expense")
+            cbbrType !== null
+              ? eq(communityBoardBudgetRequest.requestType, cbbrType)
               : undefined,
             cbbrAgencyResponseTypeId !== null
               ? inArray(
@@ -357,7 +357,13 @@ export class CommunityBoardBudgetRequestRepository {
                 )
               : undefined,
             isMapped !== null
-              ? eq(communityBoardBudgetRequest.isLocationSpecific, isMapped)
+              ? eq(
+                  sql<boolean>`${or(
+                    isNotNull(communityBoardBudgetRequest.liFtMPnt),
+                    isNotNull(communityBoardBudgetRequest.liFtMPoly),
+                  )}`,
+                  isMapped,
+                )
               : undefined,
             isContinuedSupport !== null
               ? eq(
@@ -395,7 +401,7 @@ export class CommunityBoardBudgetRequestRepository {
     cbbrPolicyAreaId: number | null;
     cbbrNeedGroupId: number | null;
     agencyInitials: string | null;
-    cbbrType: string | null;
+    cbbrType: "Capital" | "Expense" | null;
     cbbrAgencyResponseTypeId: Array<number> | null;
     isMapped: boolean | null;
     isContinuedSupport: boolean | null;
@@ -443,13 +449,13 @@ export class CommunityBoardBudgetRequestRepository {
             cityCouncilDistrictId !== null
               ? eq(cityCouncilDistrict.id, cityCouncilDistrictId)
               : undefined,
-            boroughId !== null
-              ? eq(communityBoardBudgetRequest.boroughId, boroughId)
-              : undefined,
-            communityDistrictId !== null
-              ? eq(
-                  sql<string>`${communityBoardBudgetRequest.boroughId} || ${communityBoardBudgetRequest.communityDistrictId}`,
-                  communityDistrictId,
+            boroughId !== null && communityDistrictId !== null
+              ? and(
+                  eq(communityBoardBudgetRequest.boroughId, boroughId),
+                  eq(
+                    communityBoardBudgetRequest.communityDistrictId,
+                    communityDistrictId,
+                  ),
                 )
               : undefined,
             cbbrPolicyAreaId !== null
@@ -461,11 +467,8 @@ export class CommunityBoardBudgetRequestRepository {
             agencyInitials !== null
               ? eq(communityBoardBudgetRequest.agency, agencyInitials)
               : undefined,
-            cbbrType === "C"
-              ? eq(communityBoardBudgetRequest.requestType, "Capital")
-              : undefined,
-            cbbrType === "E"
-              ? eq(communityBoardBudgetRequest.requestType, "Expense")
+            cbbrType !== null
+              ? eq(communityBoardBudgetRequest.requestType, cbbrType)
               : undefined,
             cbbrAgencyResponseTypeId !== null
               ? inArray(
@@ -473,8 +476,14 @@ export class CommunityBoardBudgetRequestRepository {
                   cbbrAgencyResponseTypeId,
                 )
               : undefined,
-            isMapped !== null
-              ? eq(communityBoardBudgetRequest.isLocationSpecific, isMapped)
+            isMapped !== undefined
+              ? eq(
+                  sql<boolean>`${or(
+                    isNotNull(communityBoardBudgetRequest.liFtMPnt),
+                    isNotNull(communityBoardBudgetRequest.liFtMPoly),
+                  )}`,
+                  isMapped,
+                )
               : undefined,
             isContinuedSupport !== null
               ? eq(

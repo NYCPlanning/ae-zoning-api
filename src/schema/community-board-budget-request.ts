@@ -94,6 +94,11 @@ export const cbbrAgencyCategoryResponse = pgTable(
   },
 );
 
+export const cbbrAgencyCategoryResponseEntitySchema = z.object({
+  id: z.number(),
+  description: z.string(),
+});
+
 export const communityBoardBudgetRequest = pgTable(
   "community_board_budget_request",
   {

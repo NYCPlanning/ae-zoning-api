@@ -9,11 +9,6 @@ export type FindCommunityBoardBudgetRequestsQueryParamsCbbrType =
   (typeof findCommunityBoardBudgetRequestsQueryParamsCbbrType)[keyof typeof findCommunityBoardBudgetRequestsQueryParamsCbbrType];
 export type FindCommunityBoardBudgetRequestsQueryParams = {
   /**
-   * @description A single character numeric string containing the common number used to refer to the borough. Possible values are 1-5.
-   * @type string | undefined
-   */
-  boroughId?: string;
-  /**
    * @description The three character numeric string containing the concatenation of the borough and community district ids.
    * @type string | undefined
    */
@@ -79,10 +74,6 @@ export type FindCommunityBoardBudgetRequests200 =
  */
 export type FindCommunityBoardBudgetRequests400 = Error;
 /**
- * @description Requested resource does not exist or is not available
- */
-export type FindCommunityBoardBudgetRequests404 = Error;
-/**
  * @description Server side error
  */
 export type FindCommunityBoardBudgetRequests500 = Error;
@@ -96,6 +87,5 @@ export type FindCommunityBoardBudgetRequestsQuery = {
   QueryParams: FindCommunityBoardBudgetRequestsQueryParams;
   Errors:
     | FindCommunityBoardBudgetRequests400
-    | FindCommunityBoardBudgetRequests404
     | FindCommunityBoardBudgetRequests500;
 };

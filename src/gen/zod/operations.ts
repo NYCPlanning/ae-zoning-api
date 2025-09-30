@@ -112,7 +112,6 @@ import {
 import {
   findCommunityBoardBudgetRequestsQueryResponseSchema,
   findCommunityBoardBudgetRequests400Schema,
-  findCommunityBoardBudgetRequests404Schema,
   findCommunityBoardBudgetRequests500Schema,
   findCommunityBoardBudgetRequestsQueryParamsSchema,
 } from "./findCommunityBoardBudgetRequestsSchema";
@@ -573,13 +572,11 @@ export const operations = {
     responses: {
       200: findCommunityBoardBudgetRequestsQueryResponseSchema,
       400: findCommunityBoardBudgetRequests400Schema,
-      404: findCommunityBoardBudgetRequests404Schema,
       500: findCommunityBoardBudgetRequests500Schema,
       default: findCommunityBoardBudgetRequestsQueryResponseSchema,
     },
     errors: {
       400: findCommunityBoardBudgetRequests400Schema,
-      404: findCommunityBoardBudgetRequests404Schema,
       500: findCommunityBoardBudgetRequests500Schema,
     },
   },

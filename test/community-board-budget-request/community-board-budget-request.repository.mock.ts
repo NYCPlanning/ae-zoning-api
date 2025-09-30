@@ -8,10 +8,10 @@ import {
   FindManyCommunityBoardBudgetRequestRepo,
   FindNeedGroupsRepo,
   FindPolicyAreasRepo,
-  findManyCommunityBoardBudgetRequestsExtendedEntitySchema,
-  FindManyCommunityBoardBudgetRequestsExtendedEntity,
   FindCountCommunityBoardBudgetRequestRepo,
   CheckAgencyResponseTypeByIdRepo,
+  findManyCommunityBoardBudgetRequestEntitySchema,
+  FindManyCommunityBoardBudgetRequestEntity,
 } from "src/community-board-budget-request/community-board-budget-request.repository.schema";
 import {
   CbbrNeedGroupEntitySchema,
@@ -19,121 +19,86 @@ import {
   CbbrPolicyAreaEntitySchema,
   cbbrPolicyAreaEntitySchema,
   AgencyEntitySchema,
+  cbbrAgencyCategoryResponseEntitySchema,
 } from "src/schema";
 import { AgencyRepositoryMock } from "test/agency/agency.repository.mock";
 import { CityCouncilDistrictRepositoryMock } from "test/city-council-district/city-council-district.repository.mock";
+import { CommunityDistrictRepositoryMock } from "test/community-district/community-district.repository.mock";
 
 export class CommunityBoardBudgetRequestRepositoryMock {
   agencyRepoMock: AgencyRepositoryMock;
   cityCouncilDistrictRepoMock: CityCouncilDistrictRepositoryMock;
+  communityDistrictRepoMock: CommunityDistrictRepositoryMock;
 
   constructor(
     agencyRepoMock: AgencyRepositoryMock,
     cityCouncilDistrictRepoMock: CityCouncilDistrictRepositoryMock,
+    communityDistrictRepoMock: CommunityDistrictRepositoryMock,
   ) {
     this.agencyRepoMock = agencyRepoMock;
     this.cityCouncilDistrictRepoMock = cityCouncilDistrictRepoMock;
-  }
-
-  boroughsMocks = [
-    {
-      id: "1",
-      title: "Manhattan",
-      abbr: "MN",
-    },
-    {
-      id: "2",
-      title: "Bronx",
-      abbr: "BX",
-    },
-    {
-      id: "3",
-      title: "Brooklyn",
-      abbr: "BK",
-    },
-    {
-      id: "4",
-      title: "Queens",
-      abbr: "QN",
-    },
-    {
-      id: "5",
-      title: "Staten Island",
-      abbr: "SI",
-    },
-  ];
-
-  getBoroughAbbrFromId(id: string) {
-    return this.boroughsMocks.find((borough) => id === borough.id)?.abbr;
-  }
-
-  getBoroughIdFromAbbr(abbr: string) {
-    return this.boroughsMocks.find((borough) => abbr === borough.abbr)?.id;
-  }
-
-  generateCommunityBoardId(i: number) {
-    const borough = this.boroughsMocks.find(
-      (borough) => borough.id === (((i + 1) % 5) + 1).toString(),
-    );
-    return `${borough === undefined ? "MN" : borough.abbr}${(i + 1).toString().padStart(2, "0")}`;
+    this.communityDistrictRepoMock = communityDistrictRepoMock;
   }
 
   policyAreaMocks = Array.from(Array(8), (_, i) =>
     generateMock(cbbrPolicyAreaEntitySchema, { seed: i + 1 }),
   );
 
-  needGroupMocks = Array.from(Array(8), (_, i) =>
-    generateMock(cbbrNeedGroupEntitySchema, { seed: i + 1 }),
-  );
-
-  cbbrMocks = generateMock(findCommunityBoardBudgetRequestByIdRepoSchema, {
-    seed: 1,
-  });
-
-  manyCbbrMocks = Array.from(Array(8), (_, i) =>
-    // Needs to be the full object to be able to filter, even though the return is findManyCommunityBoardBudgetRequestEntitySchema
-    generateMock(findManyCommunityBoardBudgetRequestsExtendedEntitySchema, {
-      seed: i + 1,
-      stringMap: {
-        cityCouncilDistrictId: () => (i + 1).toString(),
-        communityBoardId: () => this.generateCommunityBoardId(i),
-      },
-    }),
-  );
-
-  checkNeedGroupById(id: number): CheckNeedGroupByIdRepo {
-    return this.needGroupMocks.some((needGroup) => needGroup.id === id);
-  }
-
   checkPolicyAreaById(id: number): CheckPolicyAreaByIdRepo {
     return this.policyAreaMocks.some((policyArea) => policyArea.id === id);
   }
 
-  checkAgencyResponseTypeById(id: number): CheckAgencyResponseTypeByIdRepo {
-    return this.manyCbbrMocks.some(
-      (cbbr) => cbbr.agencyCategoryResponse === id,
-    );
-  }
-
-  get agenciesCriteria(): Array<
+  get policyAreasCriteria(): Array<
     [
       {
+        agencyInitials: string;
         needGroupId: number;
-        policyAreaId: number;
       },
-      AgencyEntitySchema,
+      CbbrPolicyAreaEntitySchema,
     ]
   > {
     const agencyMocks = this.agencyRepoMock.agencies;
-    return agencyMocks.map((mockAgency, i) => {
+    return this.policyAreaMocks.map((mockPolicyArea, i) => {
       return [
         {
+          agencyInitials: agencyMocks[i % 2].initials,
           needGroupId: this.needGroupMocks[i].id,
-          policyAreaId: this.policyAreaMocks[i].id,
         },
-        mockAgency,
+        mockPolicyArea,
       ];
     });
+  }
+
+  async findPolicyAreas({
+    cbbrNeedGroupId,
+    agencyInitials,
+  }: {
+    cbbrNeedGroupId?: number;
+    agencyInitials?: string;
+  }): Promise<FindPolicyAreasRepo> {
+    return this.policyAreasCriteria
+      .filter(([criteria, _]) => {
+        if (
+          cbbrNeedGroupId !== undefined &&
+          cbbrNeedGroupId !== criteria.needGroupId
+        )
+          return false;
+        if (
+          agencyInitials !== undefined &&
+          agencyInitials !== criteria.agencyInitials
+        )
+          return false;
+        return true;
+      })
+      .map(([_, policyArea]) => policyArea);
+  }
+
+  needGroupMocks = Array.from(Array(8), (_, i) =>
+    generateMock(cbbrNeedGroupEntitySchema, { seed: i + 1 }),
+  );
+
+  checkNeedGroupById(id: number): CheckNeedGroupByIdRepo {
+    return this.needGroupMocks.some((needGroup) => needGroup.id === id);
   }
 
   get needGroupsCriteria(): Array<
@@ -157,23 +122,57 @@ export class CommunityBoardBudgetRequestRepositoryMock {
     });
   }
 
-  get policyAreasCriteria(): Array<
+  async findNeedGroups({
+    cbbrPolicyAreaId,
+    agencyInitials,
+  }: {
+    cbbrPolicyAreaId?: number;
+    agencyInitials?: string;
+  }): Promise<FindNeedGroupsRepo> {
+    return this.needGroupsCriteria
+      .filter(([criteria, _]) => {
+        if (
+          cbbrPolicyAreaId !== undefined &&
+          cbbrPolicyAreaId !== criteria.policyAreaId
+        )
+          return false;
+        if (
+          agencyInitials !== undefined &&
+          agencyInitials !== criteria.agencyInitials
+        )
+          return false;
+        return true;
+      })
+      .map(([_, needGroup]) => needGroup);
+  }
+
+  agencyCategoryResponseMocks = Array.from(Array(8), (_, i) =>
+    generateMock(cbbrAgencyCategoryResponseEntitySchema, { seed: i + 1 }),
+  );
+
+  checkAgencyResponseTypeById(id: number): CheckAgencyResponseTypeByIdRepo {
+    return this.agencyCategoryResponseMocks.some(
+      (categoryResponse) => categoryResponse.id === id,
+    );
+  }
+
+  get agenciesCriteria(): Array<
     [
       {
-        agencyInitials: string;
         needGroupId: number;
+        policyAreaId: number;
       },
-      CbbrPolicyAreaEntitySchema,
+      AgencyEntitySchema,
     ]
   > {
     const agencyMocks = this.agencyRepoMock.agencies;
-    return this.policyAreaMocks.map((mockPolicyArea, i) => {
+    return agencyMocks.map((mockAgency, i) => {
       return [
         {
-          agencyInitials: agencyMocks[i % 2].initials,
           needGroupId: this.needGroupMocks[i].id,
+          policyAreaId: this.policyAreaMocks[i].id,
         },
-        mockPolicyArea,
+        mockAgency,
       ];
     });
   }
@@ -202,61 +201,65 @@ export class CommunityBoardBudgetRequestRepositoryMock {
       .map(([_, agency]) => agency);
   }
 
-  async findNeedGroups({
-    cbbrPolicyAreaId,
-    agencyInitials,
-  }: {
-    cbbrPolicyAreaId?: number;
-    agencyInitials?: string;
-  }): Promise<FindNeedGroupsRepo> {
-    return this.needGroupsCriteria
-      .filter(([criteria, _]) => {
-        if (
-          cbbrPolicyAreaId !== undefined &&
-          cbbrPolicyAreaId !== criteria.policyAreaId
-        )
-          return false;
-        if (
-          agencyInitials !== undefined &&
-          agencyInitials !== criteria.agencyInitials
-        )
-          return false;
-        return true;
-      })
-      .map(([_, needGroup]) => needGroup);
-  }
-
-  async findPolicyAreas({
-    cbbrNeedGroupId,
-    agencyInitials,
-  }: {
-    cbbrNeedGroupId?: number;
-    agencyInitials?: string;
-  }): Promise<FindPolicyAreasRepo> {
-    return this.policyAreasCriteria
-      .filter(([criteria, _]) => {
-        if (
-          cbbrNeedGroupId !== undefined &&
-          cbbrNeedGroupId !== criteria.needGroupId
-        )
-          return false;
-        if (
-          agencyInitials !== undefined &&
-          agencyInitials !== criteria.agencyInitials
-        )
-          return false;
-        return true;
-      })
-      .map(([_, policyArea]) => policyArea);
-  }
+  findByIdMocks = generateMock(findCommunityBoardBudgetRequestByIdRepoSchema, {
+    seed: 1,
+  });
 
   async findById({
     cbbrId,
   }: {
     cbbrId: string;
   }): Promise<FindCommunityBoardBudgetRequestByIdRepo> {
-    const cbbr = this.cbbrMocks.find((cbbr) => cbbr.id === cbbrId);
+    const cbbr = this.findByIdMocks.find((cbbr) => cbbr.id === cbbrId);
     return cbbr === undefined ? [] : [cbbr];
+  }
+
+  findManyMocks = Array.from(Array(8), (_, i) =>
+    generateMock(findManyCommunityBoardBudgetRequestEntitySchema, {
+      seed: i + 1,
+    }),
+  );
+
+  get findManyCriteria(): Array<
+    [
+      {
+        boroughId: string;
+        communityDistrictId: string;
+        cityCouncilDistrictId: string;
+        cbbrPolicyAreaId: number;
+        cbbrNeedGroupId: number;
+        agencyInitials: string;
+        cbbrType: "Capital" | "Expense";
+        cbbrAgencyResponseTypeId: number;
+        isMapped: boolean;
+        isContinuedSupport: boolean;
+      },
+      FindManyCommunityBoardBudgetRequestEntity,
+    ]
+  > {
+    const communityDistricts = this.communityDistrictRepoMock.districts;
+    const cityCouncilDistrictRepoMock =
+      this.cityCouncilDistrictRepoMock.districts;
+    const policyAreas = this.policyAreaMocks;
+    const needGroups = this.needGroupMocks;
+    const agencies = this.agencyRepoMock.agencies;
+    const categoryResponses = this.agencyCategoryResponseMocks;
+
+    return this.findManyMocks.map((mockBudgetRequestResponse, i) => [
+      {
+        boroughId: communityDistricts[i % 2].boroughId,
+        communityDistrictId: communityDistricts[i % 2].id,
+        cityCouncilDistrictId: cityCouncilDistrictRepoMock[i % 2].id,
+        cbbrPolicyAreaId: policyAreas[i].id,
+        cbbrNeedGroupId: needGroups[i].id,
+        agencyInitials: agencies[i % 2].initials,
+        cbbrType: i % 2 === 0 ? "Capital" : "Expense",
+        cbbrAgencyResponseTypeId: categoryResponses[i].id,
+        isMapped: i % 3 === 0,
+        isContinuedSupport: i % 4 === 0,
+      },
+      mockBudgetRequestResponse,
+    ]);
   }
 
   async filterCommunityBoardBudgetRequests({
@@ -281,67 +284,62 @@ export class CommunityBoardBudgetRequestRepositoryMock {
     cbbrAgencyResponseTypeId: Array<number> | null;
     isMapped: boolean | null;
     isContinuedSupport: boolean | null;
-  }) {
-    return this.manyCbbrMocks.reduce(
-      (
-        acc: FindManyCommunityBoardBudgetRequestRepo,
-        curr: FindManyCommunityBoardBudgetRequestsExtendedEntity,
-      ) => {
+  }): Promise<FindManyCommunityBoardBudgetRequestRepo> {
+    return this.findManyCriteria
+      .filter(([criteria, _]) => {
         if (
           boroughId !== null &&
-          this.getBoroughIdFromAbbr(curr.communityBoardId.slice(0, 2)) !==
-            boroughId
-        )
-          return acc;
-        if (
           communityDistrictId !== null &&
-          `${this.getBoroughIdFromAbbr(curr.communityBoardId.slice(0, 2))}${curr.communityBoardId.slice(2, 4)}` !==
-            communityDistrictId
+          (boroughId !== criteria.boroughId ||
+            communityDistrictId !== criteria.communityDistrictId)
         )
-          return acc;
+          return false;
+
         if (
           cityCouncilDistrictId !== null &&
-          curr.cityCouncilDistrictId !== cityCouncilDistrictId
+          criteria.cityCouncilDistrictId !== cityCouncilDistrictId
         )
-          return acc;
+          return false;
+
         if (
           cbbrPolicyAreaId !== null &&
-          curr.cbbrPolicyAreaId !== cbbrPolicyAreaId
+          criteria.cbbrPolicyAreaId !== cbbrPolicyAreaId
         )
-          return acc;
+          return false;
+
         if (
           cbbrNeedGroupId !== null &&
-          curr.cbbrNeedGroupId !== cbbrNeedGroupId
+          criteria.cbbrNeedGroupId !== cbbrNeedGroupId
         )
-          return acc;
-        if (cbbrType !== null && curr.cbbrType !== cbbrType) return acc;
-        if (agencyInitials !== null && curr.agencyInitials !== agencyInitials)
-          return acc;
-        if (cbbrType !== null && curr.cbbrType !== cbbrType) return acc;
+          return false;
+
+        if (cbbrType !== null && criteria.cbbrType !== cbbrType) return false;
+
+        if (
+          agencyInitials !== null &&
+          criteria.agencyInitials !== agencyInitials
+        )
+          return false;
+
+        if (cbbrType !== null && criteria.cbbrType !== cbbrType) return false;
+
         if (
           cbbrAgencyResponseTypeId !== null &&
-          curr.agencyCategoryResponse !== null &&
-          cbbrAgencyResponseTypeId.includes(curr.agencyCategoryResponse)
+          !cbbrAgencyResponseTypeId.includes(criteria.cbbrAgencyResponseTypeId)
         )
-          return acc;
-        if (isMapped !== null && curr.isMapped !== isMapped) return acc;
+          return false;
+
+        if (isMapped !== null && criteria.isMapped !== isMapped) return false;
+
         if (
           isContinuedSupport !== null &&
-          curr.isContinuedSupport !== isContinuedSupport
+          criteria.isContinuedSupport !== isContinuedSupport
         )
-          return acc;
+          return false;
 
-        return acc.concat({
-          id: curr.id,
-          cbbrPolicyAreaId: curr.cbbrPolicyAreaId,
-          title: curr.title,
-          communityBoardId: curr.communityBoardId,
-          isMapped: curr.isMapped,
-          isContinuedSupport: curr.isContinuedSupport,
-        });
-      },
-      [],
-    );
+        return true;
+      })
+      .map(([_, budgetRequest]) => budgetRequest);
   }
 
   async findMany(params: {
@@ -358,9 +356,7 @@ export class CommunityBoardBudgetRequestRepositoryMock {
     limit: number;
     offset: number;
   }): Promise<FindManyCommunityBoardBudgetRequestRepo> {
-    const cbbrs = await this.filterCommunityBoardBudgetRequests(params);
-
-    return cbbrs === undefined ? [] : cbbrs;
+    return await this.filterCommunityBoardBudgetRequests(params);
   }
 
   async findCount(params: {
@@ -379,6 +375,6 @@ export class CommunityBoardBudgetRequestRepositoryMock {
   }): Promise<FindCountCommunityBoardBudgetRequestRepo> {
     const cbbrs = await this.filterCommunityBoardBudgetRequests(params);
 
-    return cbbrs.length === undefined ? 0 : cbbrs.length;
+    return cbbrs.length;
   }
 }
