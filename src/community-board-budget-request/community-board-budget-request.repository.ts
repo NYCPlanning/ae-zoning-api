@@ -476,7 +476,7 @@ export class CommunityBoardBudgetRequestRepository {
                   cbbrAgencyResponseTypeId,
                 )
               : undefined,
-            isMapped !== undefined
+            isMapped !== null
               ? eq(
                   sql<boolean>`${or(
                     isNotNull(communityBoardBudgetRequest.liFtMPnt),
