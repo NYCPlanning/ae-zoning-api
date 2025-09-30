@@ -545,54 +545,31 @@ export class CapitalProjectRepository {
             `managingAgency`,
           ),
           commitmentsTotal:
-            // numeric type is econded as string, double precision type is encoded in mvt as number
-            sql`SUM(${capitalCommitmentFund.value})::double precision`
-              .mapWith(Number)
-              .as("commitmentsTotal"),
-          agencyBudgets: sql<
-            Array<string>
-          >`ARRAY_TO_JSON(ARRAY_AGG(DISTINCT ${capitalCommitment.budgetLineCode}))`.as(
-            "agencyBudgets",
-          ),
+            sql`${capitalProjectAggregated.commitmentsTotal}`.as(
+              "commitmentsTotal",
+            ),
           geom: sql<string>`
-            CASE
-              WHEN ${capitalProject.mercatorFillMPoly} && ST_TileEnvelope(${z},${x},${y})
-                THEN ST_AsMVTGeom(
-                  ${capitalProject.mercatorFillMPoly},
+                ST_AsMVTGeom(
+                  ${capitalProjectAggregated.mercatorFill},
                   ST_TileEnvelope(${z},${x},${y}),
                   4096,
                   64,
                   true
-                )
-              WHEN ${capitalProject.mercatorFillMPnt} && ST_TileEnvelope(${z},${x},${y})
-                THEN ST_AsMVTGeom(
-                  ${capitalProject.mercatorFillMPnt},
-                  ST_TileEnvelope(${z},${x},${y}),
-                  4096,
-                  64,
-                  true
-                )
-            END`.as("geom"),
+                )`.as("geom"),
         })
         .from(capitalProject)
         .leftJoin(
-          capitalCommitment,
+          capitalProjectAggregated,
           and(
-            eq(capitalCommitment.capitalProjectId, capitalProject.id),
-            eq(capitalCommitment.managingCode, capitalProject.managingCode),
+            eq(capitalProjectAggregated.id, capitalProject.id),
+            eq(
+              capitalProjectAggregated.managingCode,
+              capitalProject.managingCode,
+            ),
           ),
         )
-        .leftJoin(
-          capitalCommitmentFund,
-          eq(capitalCommitmentFund.capitalCommitmentId, capitalCommitment.id),
-        )
-        .where(eq(capitalCommitmentFund.category, "total"))
-        .groupBy(
-          capitalProject.id,
-          capitalProject.managingCode,
-          capitalProject.managingAgency,
-          capitalProject.mercatorFillMPnt,
-          capitalProject.mercatorFillMPoly,
+        .where(
+          sql`${capitalProjectAggregated.mercatorFill} && ST_TileEnvelope(${z},${x},${y})`,
         )
         .as("tile");
       const data = await this.db
