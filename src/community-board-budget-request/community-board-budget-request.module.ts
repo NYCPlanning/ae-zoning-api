@@ -3,7 +3,6 @@ import { CommunityBoardBudgetRequestService } from "./community-board-budget-req
 import { CommunityBoardBudgetRequestController } from "./community-board-budget-request.controller";
 import { CommunityBoardBudgetRequestRepository } from "./community-board-budget-request.repository";
 import { AgencyRepository } from "src/agency/agency.repository";
-import { BoroughRepository } from "src/borough/borough.repository";
 import { CityCouncilDistrictRepository } from "src/city-council-district/city-council-district.repository";
 import { CommunityDistrictRepository } from "src/community-district/community-district.repository";
 
@@ -13,7 +12,6 @@ import { CommunityDistrictRepository } from "src/community-district/community-di
     CommunityBoardBudgetRequestService,
     CommunityBoardBudgetRequestRepository,
     AgencyRepository,
-    BoroughRepository,
     CityCouncilDistrictRepository,
     CommunityDistrictRepository,
   ],

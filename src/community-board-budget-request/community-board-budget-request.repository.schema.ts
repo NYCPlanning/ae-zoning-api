@@ -82,26 +82,3 @@ export const checkAgencyResponseTypeByIdRepoSchema = z.boolean();
 export type CheckAgencyResponseTypeByIdRepo = z.infer<
   typeof checkAgencyResponseTypeByIdRepoSchema
 >;
-
-// The below are used only for testing
-export const findManyCommunityBoardBudgetRequestsExtendedEntitySchema =
-  z.object({
-    id: z.string(),
-    cbbrPolicyAreaId: z.number(),
-    cbbrNeedGroupId: z.number(),
-    title: z.string(),
-    communityBoardId: z.string(),
-    cityCouncilDistrictId: z.string(),
-    description: z.string().nullable(),
-    agencyInitials: z.string(),
-    priority: z.number(),
-    cbbrType: z.enum(["C", "E"]),
-    isMapped: z.boolean(),
-    isContinuedSupport: z.boolean(),
-    agencyCategoryResponse: z.number().nullable(),
-    agencyResponse: z.string().nullable(),
-  });
-
-export type FindManyCommunityBoardBudgetRequestsExtendedEntity = z.infer<
-  typeof findManyCommunityBoardBudgetRequestsExtendedEntitySchema
->;

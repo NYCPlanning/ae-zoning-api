@@ -16,10 +16,9 @@ import {
 import { AgencyRepositoryMock } from "test/agency/agency.repository.mock";
 import { AgencyRepository } from "src/agency/agency.repository";
 import { CommunityDistrictRepositoryMock } from "test/community-district/community-district.repository.mock";
-import { BoroughRepositoryMock } from "test/borough/borough.repository.mock";
-import { BoroughRepository } from "src/borough/borough.repository";
 import { CityCouncilDistrictRepositoryMock } from "test/city-council-district/city-council-district.repository.mock";
 import { CityCouncilDistrictRepository } from "src/city-council-district/city-council-district.repository";
+import { CommunityDistrictRepository } from "src/community-district/community-district.repository";
 
 describe("Community Board Budget Request e2e", () => {
   let app: INestApplication;
@@ -27,14 +26,12 @@ describe("Community Board Budget Request e2e", () => {
   const agencyRepositoryMock = new AgencyRepositoryMock();
   const cityCouncilDistrictRepoMock = new CityCouncilDistrictRepositoryMock();
   const communityDistrictRepositoryMock = new CommunityDistrictRepositoryMock();
-  const boroughRepositoryMock = new BoroughRepositoryMock(
-    communityDistrictRepositoryMock,
-  );
 
   const communityBoardBudgetRequestRepositoryMock =
     new CommunityBoardBudgetRequestRepositoryMock(
       agencyRepositoryMock,
       cityCouncilDistrictRepoMock,
+      communityDistrictRepositoryMock,
     );
 
   beforeAll(async () => {
@@ -47,8 +44,8 @@ describe("Community Board Budget Request e2e", () => {
       .useValue(agencyRepositoryMock)
       .overrideProvider(CityCouncilDistrictRepository)
       .useValue(cityCouncilDistrictRepoMock)
-      .overrideProvider(BoroughRepository)
-      .useValue(boroughRepositoryMock)
+      .overrideProvider(CommunityDistrictRepository)
+      .useValue(communityDistrictRepositoryMock)
       .compile();
     app = moduleRef.createNestApplication();
     await app.init();
@@ -372,7 +369,8 @@ describe("Community Board Budget Request e2e", () => {
 
   describe("findById", () => {
     it("should 200 and return a community board budget request", async () => {
-      const cbbrMock = communityBoardBudgetRequestRepositoryMock.cbbrMocks[0];
+      const cbbrMock =
+        communityBoardBudgetRequestRepositoryMock.findByIdMocks[0];
 
       const response = await request(app.getHttpServer())
         .get(`/community-board-budget-requests/${cbbrMock.id}`)
@@ -407,7 +405,8 @@ describe("Community Board Budget Request e2e", () => {
           throw dataRetrievalException;
         });
 
-      const cbbrMock = communityBoardBudgetRequestRepositoryMock.cbbrMocks[0];
+      const cbbrMock =
+        communityBoardBudgetRequestRepositoryMock.findByIdMocks[0];
 
       const response = await request(app.getHttpServer())
         .get(`/community-board-budget-requests/${cbbrMock.id}`)
@@ -436,43 +435,8 @@ describe("Community Board Budget Request e2e", () => {
       expect(parsedBody.limit).toBe(20);
       expect(parsedBody.offset).toBe(0);
       expect(parsedBody.communityBoardBudgetRequests.length).toBe(
-        communityBoardBudgetRequestRepositoryMock.manyCbbrMocks.length,
+        communityBoardBudgetRequestRepositoryMock.findManyMocks.length,
       );
-      expect(parsedBody.communityBoardBudgetRequests.length).toBeGreaterThan(0);
-      expect(parsedBody.total).toBe(
-        parsedBody.communityBoardBudgetRequests.length,
-      );
-      expect(parsedBody.totalBudgetRequests).toBe(
-        parsedBody.communityBoardBudgetRequests.length,
-      );
-    });
-
-    it("should 200 when finding cbbrs by boroughId", async () => {
-      const boroughAbbr =
-        communityBoardBudgetRequestRepositoryMock.manyCbbrMocks[0].communityBoardId.slice(
-          0,
-          2,
-        );
-      const boroughId =
-        communityBoardBudgetRequestRepositoryMock.getBoroughIdFromAbbr(
-          boroughAbbr,
-        );
-      const response = await request(app.getHttpServer())
-        .get(`/community-board-budget-requests?boroughId=${boroughId}`)
-        .expect(200);
-
-      expect(() =>
-        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(
-          response.body,
-        ),
-      ).not.toThrow();
-
-      const parsedBody =
-        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(
-          response.body,
-        );
-      expect(parsedBody.limit).toBe(20);
-      expect(parsedBody.offset).toBe(0);
       expect(parsedBody.communityBoardBudgetRequests.length).toBeGreaterThan(0);
       expect(parsedBody.total).toBe(
         parsedBody.communityBoardBudgetRequests.length,
@@ -483,22 +447,10 @@ describe("Community Board Budget Request e2e", () => {
     });
 
     it("should 200 when finding cbbrs by communityDistrictId", async () => {
-      const boroughAbbr =
-        communityBoardBudgetRequestRepositoryMock.manyCbbrMocks[0].communityBoardId.slice(
-          0,
-          2,
-        );
-      const boroughId =
-        communityBoardBudgetRequestRepositoryMock.getBoroughIdFromAbbr(
-          boroughAbbr,
-        );
-      const communityDistrictId = `${boroughId}${communityBoardBudgetRequestRepositoryMock.manyCbbrMocks[0].communityBoardId.slice(
-        2,
-        4,
-      )}`;
+      const communityDistrict = communityDistrictRepositoryMock.districts[0];
       const response = await request(app.getHttpServer())
         .get(
-          `/community-board-budget-requests?communityDistrictId=${communityDistrictId}`,
+          `/community-board-budget-requests?communityDistrictId=${communityDistrict.boroughId}${communityDistrict.id}`,
         )
         .expect(200);
 
@@ -524,12 +476,10 @@ describe("Community Board Budget Request e2e", () => {
     });
 
     it("should 200 when finding cbbrs by cityCouncilDistrictId", async () => {
-      const cityCouncilDistrictId =
-        communityBoardBudgetRequestRepositoryMock.manyCbbrMocks[0]
-          .cityCouncilDistrictId;
+      const cityCouncilDistrict = cityCouncilDistrictRepoMock.districts[0];
       const response = await request(app.getHttpServer())
         .get(
-          `/community-board-budget-requests?cityCouncilDistrictId=${cityCouncilDistrictId}`,
+          `/community-board-budget-requests?cityCouncilDistrictId=${cityCouncilDistrict.id}`,
         )
         .expect(200);
 
@@ -556,8 +506,7 @@ describe("Community Board Budget Request e2e", () => {
 
     it("should 200 when finding cbbrs by cbbrPolicyAreaId", async () => {
       const cbbrPolicyAreaId =
-        communityBoardBudgetRequestRepositoryMock.manyCbbrMocks[0]
-          .cbbrPolicyAreaId;
+        communityBoardBudgetRequestRepositoryMock.policyAreaMocks[0].id;
       const response = await request(app.getHttpServer())
         .get(
           `/community-board-budget-requests?cbbrPolicyAreaId=${cbbrPolicyAreaId}`,
@@ -587,8 +536,7 @@ describe("Community Board Budget Request e2e", () => {
 
     it("should 200 when finding cbbrs by cbbrNeedGroupId", async () => {
       const cbbrNeedGroupId =
-        communityBoardBudgetRequestRepositoryMock.manyCbbrMocks[0]
-          .cbbrNeedGroupId;
+        communityBoardBudgetRequestRepositoryMock.needGroupMocks[0].id;
       const response = await request(app.getHttpServer())
         .get(
           `/community-board-budget-requests?cbbrNeedGroupId=${cbbrNeedGroupId}`,
@@ -617,12 +565,11 @@ describe("Community Board Budget Request e2e", () => {
     });
 
     it("should 200 when finding cbbrs by agencyInitials", async () => {
-      const agencyInitials =
-        communityBoardBudgetRequestRepositoryMock.manyCbbrMocks[0]
-          .agencyInitials;
+      const agency = agencyRepositoryMock.agencies[0];
+
       const response = await request(app.getHttpServer())
         .get(
-          `/community-board-budget-requests?agencyInitials=${agencyInitials}`,
+          `/community-board-budget-requests?agencyInitials=${agency.initials}`,
         )
         .expect(200);
 
@@ -648,8 +595,7 @@ describe("Community Board Budget Request e2e", () => {
     });
 
     it("should 200 when finding cbbrs by cbbrType", async () => {
-      const cbbrType =
-        communityBoardBudgetRequestRepositoryMock.manyCbbrMocks[0].cbbrType[0];
+      const cbbrType = "C";
       const response = await request(app.getHttpServer())
         .get(`/community-board-budget-requests?cbbrType=${cbbrType}`)
         .expect(200);
@@ -677,14 +623,15 @@ describe("Community Board Budget Request e2e", () => {
 
     it("should 200 when finding cbbrs by cbbrAgencyResponseTypeId", async () => {
       const cbbrAgencyResponseTypeId = [
-        communityBoardBudgetRequestRepositoryMock.manyCbbrMocks[0]
-          .agencyCategoryResponse,
-        communityBoardBudgetRequestRepositoryMock.manyCbbrMocks[1]
-          .agencyCategoryResponse,
+        communityBoardBudgetRequestRepositoryMock.agencyCategoryResponseMocks[0]
+          .id,
+        communityBoardBudgetRequestRepositoryMock.agencyCategoryResponseMocks[1]
+          .id,
       ];
+
       const response = await request(app.getHttpServer())
         .get(
-          `/community-board-budget-requests?cbbrAgencyResponseTypeId=${cbbrAgencyResponseTypeId}`,
+          `/community-board-budget-requests?cbbrAgencyResponseTypeId=${cbbrAgencyResponseTypeId.join()}`,
         )
         .expect(200);
 
@@ -755,19 +702,6 @@ describe("Community Board Budget Request e2e", () => {
       );
       expect(parsedBody.totalBudgetRequests).toBe(
         parsedBody.communityBoardBudgetRequests.length,
-      );
-    });
-
-    it("should 400 when finding cbbrs by an invalid boroughId", async () => {
-      const boroughId = false;
-
-      const response = await request(app.getHttpServer())
-        .get(`/community-board-budget-requests?boroughId=${boroughId}`)
-        .expect(400);
-
-      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
-      expect(response.body.message).toMatch(
-        /Invalid request parameter: boroughId: Invalid/,
       );
     });
 
@@ -842,7 +776,7 @@ describe("Community Board Budget Request e2e", () => {
 
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
       expect(response.body.message).toMatch(
-        /Invalid request parameter: could not check one or more of the parameters/,
+        /one or more values for parameters do not exist/,
       );
     });
 
