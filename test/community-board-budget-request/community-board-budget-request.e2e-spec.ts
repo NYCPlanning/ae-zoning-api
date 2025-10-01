@@ -720,6 +720,21 @@ describe("Community Board Budget Request e2e", () => {
       );
     });
 
+    it("should 400 when finding cbbrs by a missing communityDistrictId", async () => {
+      const communityDistrictId = "909";
+
+      const response = await request(app.getHttpServer())
+        .get(
+          `/community-board-budget-requests?communityDistrictId=${communityDistrictId}`,
+        )
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /one or more values for parameters do not exist/,
+      );
+    });
+
     it("should 400 when finding cbbrs by an invalid cityCouncilDistrictId", async () => {
       const cityCouncilDistrictId = false;
 
@@ -732,6 +747,21 @@ describe("Community Board Budget Request e2e", () => {
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
       expect(response.body.message).toMatch(
         /Invalid request parameter: cityCouncilDistrictId: Invalid/,
+      );
+    });
+
+    it("should 400 when finding cbbrs by a missing cityCouncilDistrictId", async () => {
+      const cityCouncilDistrictId = "90";
+
+      const response = await request(app.getHttpServer())
+        .get(
+          `/community-board-budget-requests?cityCouncilDistrictId=${cityCouncilDistrictId}`,
+        )
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /one or more values for parameters do not exist/,
       );
     });
 
@@ -750,6 +780,21 @@ describe("Community Board Budget Request e2e", () => {
       );
     });
 
+    it("should 400 when finding cbbrs by a missing cbbrPolicyAreaId", async () => {
+      const cbbrPolicyAreaId = 20;
+
+      const response = await request(app.getHttpServer())
+        .get(
+          `/community-board-budget-requests?cbbrPolicyAreaId=${cbbrPolicyAreaId}`,
+        )
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /one or more values for parameters do not exist/,
+      );
+    });
+
     it("should 400 when finding cbbrs by an invalid cbbrNeedGroupId", async () => {
       const cbbrNeedGroupId = false;
 
@@ -765,7 +810,22 @@ describe("Community Board Budget Request e2e", () => {
       );
     });
 
-    it("should 400 when finding cbbrs by an invalid agencyInitials", async () => {
+    it("should 400 when finding cbbrs by a missing cbbrNeedGroupId", async () => {
+      const cbbrNeedGroupId = 20;
+
+      const response = await request(app.getHttpServer())
+        .get(
+          `/community-board-budget-requests?cbbrNeedGroupId=${cbbrNeedGroupId}`,
+        )
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /one or more values for parameters do not exist/,
+      );
+    });
+
+    it("should 400 when finding cbbrs by an invalid/missing agencyInitials", async () => {
       const agencyInitials = false;
 
       const response = await request(app.getHttpServer())
@@ -808,6 +868,21 @@ describe("Community Board Budget Request e2e", () => {
       );
     });
 
+    it("should 400 when finding cbbrs by a missing cbbrAgencyResponseTypeId", async () => {
+      const cbbrAgencyResponseTypeId = [12, 13];
+
+      const response = await request(app.getHttpServer())
+        .get(
+          `/community-board-budget-requests?cbbrAgencyResponseTypeId=${cbbrAgencyResponseTypeId.join()}`,
+        )
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /one or more values for parameters do not exist/,
+      );
+    });
+
     it("should 400 when finding cbbrs by an invalid isMapped", async () => {
       const isMapped = "maybe";
 
@@ -818,6 +893,21 @@ describe("Community Board Budget Request e2e", () => {
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
       expect(response.body.message).toMatch(
         /Invalid request parameter: invalid value for boolean schema property/,
+      );
+    });
+
+    it("should 400 when finding cbbrs by isMapped and geographic filters", async () => {
+      const isMapped = false;
+      const cityCouncilDistrict = cityCouncilDistrictRepoMock.districts[0];
+      const response = await request(app.getHttpServer())
+        .get(
+          `/community-board-budget-requests?isMapped=${isMapped}&cityCouncilDistrictId=${cityCouncilDistrict.id}`,
+        )
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /cannot have isMapped filter in conjunction with other geographic filter/,
       );
     });
 
