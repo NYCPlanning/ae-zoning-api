@@ -38,7 +38,7 @@ export const findCommunityBoardBudgetRequestsQueryParamsSchema = z
       .enum(["C", "E"])
       .describe("The type of budget request, C for Capital, or E for Expense.")
       .optional(),
-    cbbrAgencyResponseTypeId: z
+    cbbrAgencyResponseTypeIds: z
       .array(z.coerce.number().int())
       .min(1)
       .max(6)

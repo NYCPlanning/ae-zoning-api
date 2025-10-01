@@ -414,14 +414,14 @@ describe("Community Board Budget Request service unit", () => {
     });
 
     it("should return a list of community board budget requests filtered by agency response types", async () => {
-      const cbbrAgencyResponseTypeId = [
+      const cbbrAgencyResponseTypeIds = [
         communityBoardBudgetRequestRepositoryMock.agencyCategoryResponseMocks[0]
           .id,
         communityBoardBudgetRequestRepositoryMock.agencyCategoryResponseMocks[1]
           .id,
       ];
       const cbbrs = await communityBoardBudgetRequestService.findMany({
-        cbbrAgencyResponseTypeId,
+        cbbrAgencyResponseTypeIds,
       });
 
       expect(() =>

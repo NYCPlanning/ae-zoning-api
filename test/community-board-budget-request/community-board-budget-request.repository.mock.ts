@@ -270,7 +270,7 @@ export class CommunityBoardBudgetRequestRepositoryMock {
     cbbrNeedGroupId,
     agencyInitials,
     cbbrType,
-    cbbrAgencyResponseTypeId,
+    cbbrAgencyResponseTypeIds,
     isMapped,
     isContinuedSupport,
   }: {
@@ -281,7 +281,7 @@ export class CommunityBoardBudgetRequestRepositoryMock {
     cbbrNeedGroupId: number | null;
     agencyInitials: string | null;
     cbbrType: string | null;
-    cbbrAgencyResponseTypeId: Array<number> | null;
+    cbbrAgencyResponseTypeIds: Array<number> | null;
     isMapped: boolean | null;
     isContinuedSupport: boolean | null;
   }): Promise<FindManyCommunityBoardBudgetRequestRepo> {
@@ -324,8 +324,8 @@ export class CommunityBoardBudgetRequestRepositoryMock {
         if (cbbrType !== null && criteria.cbbrType !== cbbrType) return false;
 
         if (
-          cbbrAgencyResponseTypeId !== null &&
-          !cbbrAgencyResponseTypeId.includes(criteria.cbbrAgencyResponseTypeId)
+          cbbrAgencyResponseTypeIds !== null &&
+          !cbbrAgencyResponseTypeIds.includes(criteria.cbbrAgencyResponseTypeId)
         )
           return false;
 
@@ -350,7 +350,7 @@ export class CommunityBoardBudgetRequestRepositoryMock {
     cbbrNeedGroupId: number | null;
     agencyInitials: string | null;
     cbbrType: string | null;
-    cbbrAgencyResponseTypeId: Array<number> | null;
+    cbbrAgencyResponseTypeIds: Array<number> | null;
     isMapped: boolean | null;
     isContinuedSupport: boolean | null;
     limit: number;
@@ -367,7 +367,7 @@ export class CommunityBoardBudgetRequestRepositoryMock {
     cbbrNeedGroupId: number | null;
     agencyInitials: string | null;
     cbbrType: string | null;
-    cbbrAgencyResponseTypeId: Array<number> | null;
+    cbbrAgencyResponseTypeIds: Array<number> | null;
     isMapped: boolean | null;
     isContinuedSupport: boolean | null;
     limit: number;

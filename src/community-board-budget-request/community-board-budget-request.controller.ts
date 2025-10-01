@@ -45,7 +45,7 @@ export class CommunityBoardBudgetRequestController {
     {
       communityDistrictId,
       cityCouncilDistrictId,
-      cbbrAgencyResponseTypeId,
+      cbbrAgencyResponseTypeIds,
       cbbrNeedGroupId,
       cbbrPolicyAreaId,
       cbbrType,
@@ -59,7 +59,7 @@ export class CommunityBoardBudgetRequestController {
     return await this.communityBoardBudgetRequestService.findMany({
       communityDistrictCombinedId: communityDistrictId,
       cityCouncilDistrictId,
-      cbbrAgencyResponseTypeId,
+      cbbrAgencyResponseTypeIds,
       cbbrNeedGroupId,
       cbbrPolicyAreaId,
       cbbrType,

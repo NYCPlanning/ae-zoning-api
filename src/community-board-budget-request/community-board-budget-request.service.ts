@@ -150,7 +150,7 @@ export class CommunityBoardBudgetRequestService {
     cbbrNeedGroupId = null,
     agencyInitials = null,
     cbbrType = null,
-    cbbrAgencyResponseTypeId = null,
+    cbbrAgencyResponseTypeIds = null,
     isMapped = null,
     isContinuedSupport = null,
     limit = 20,
@@ -162,7 +162,7 @@ export class CommunityBoardBudgetRequestService {
     cbbrNeedGroupId?: number | null;
     agencyInitials?: string | null;
     cbbrType?: "C" | "E" | null;
-    cbbrAgencyResponseTypeId?: Array<number> | null;
+    cbbrAgencyResponseTypeIds?: Array<number> | null;
     isMapped?: boolean | null;
     isContinuedSupport?: boolean | null;
     limit?: number;
@@ -197,8 +197,8 @@ export class CommunityBoardBudgetRequestService {
       checklist.push(this.agencyRepository.checkByInitials(agencyInitials));
     }
 
-    if (cbbrAgencyResponseTypeId !== null) {
-      cbbrAgencyResponseTypeId.forEach((id) => {
+    if (cbbrAgencyResponseTypeIds !== null) {
+      cbbrAgencyResponseTypeIds.forEach((id) => {
         checklist.push(
           this.communityBoardBudgetRequestRepository.checkAgencyResponseTypeById(
             id,
@@ -247,7 +247,7 @@ export class CommunityBoardBudgetRequestService {
       cbbrNeedGroupId,
       agencyInitials,
       cbbrType: cbbrTypeExpanded,
-      cbbrAgencyResponseTypeId,
+      cbbrAgencyResponseTypeIds,
       isMapped,
       isContinuedSupport,
     };

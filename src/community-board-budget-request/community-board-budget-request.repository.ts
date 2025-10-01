@@ -277,7 +277,7 @@ export class CommunityBoardBudgetRequestRepository {
     cbbrNeedGroupId,
     agencyInitials,
     cbbrType,
-    cbbrAgencyResponseTypeId,
+    cbbrAgencyResponseTypeIds,
     isMapped,
     isContinuedSupport,
     limit,
@@ -290,7 +290,7 @@ export class CommunityBoardBudgetRequestRepository {
     cbbrNeedGroupId: number | null;
     agencyInitials: string | null;
     cbbrType: "Capital" | "Expense" | null;
-    cbbrAgencyResponseTypeId: Array<number> | null;
+    cbbrAgencyResponseTypeIds: Array<number> | null;
     isMapped: boolean | null;
     isContinuedSupport: boolean | null;
     limit: number;
@@ -350,10 +350,10 @@ export class CommunityBoardBudgetRequestRepository {
             cbbrType !== null
               ? eq(communityBoardBudgetRequest.requestType, cbbrType)
               : undefined,
-            cbbrAgencyResponseTypeId !== null
+            cbbrAgencyResponseTypeIds !== null
               ? inArray(
                   communityBoardBudgetRequest.agencyCategoryResponse,
-                  cbbrAgencyResponseTypeId,
+                  cbbrAgencyResponseTypeIds,
                 )
               : undefined,
             isMapped !== null
@@ -391,7 +391,7 @@ export class CommunityBoardBudgetRequestRepository {
     cbbrNeedGroupId,
     agencyInitials,
     cbbrType,
-    cbbrAgencyResponseTypeId,
+    cbbrAgencyResponseTypeIds,
     isMapped,
     isContinuedSupport,
   }: {
@@ -402,7 +402,7 @@ export class CommunityBoardBudgetRequestRepository {
     cbbrNeedGroupId: number | null;
     agencyInitials: string | null;
     cbbrType: "Capital" | "Expense" | null;
-    cbbrAgencyResponseTypeId: Array<number> | null;
+    cbbrAgencyResponseTypeIds: Array<number> | null;
     isMapped: boolean | null;
     isContinuedSupport: boolean | null;
   }): Promise<FindCountCommunityBoardBudgetRequestRepo> {
@@ -414,7 +414,7 @@ export class CommunityBoardBudgetRequestRepository {
       cbbrNeedGroupId,
       agencyInitials,
       cbbrType,
-      cbbrAgencyResponseTypeId,
+      cbbrAgencyResponseTypeIds,
       isMapped,
       isContinuedSupport,
       domain: "capitalProject",
@@ -470,10 +470,10 @@ export class CommunityBoardBudgetRequestRepository {
             cbbrType !== null
               ? eq(communityBoardBudgetRequest.requestType, cbbrType)
               : undefined,
-            cbbrAgencyResponseTypeId !== null
+            cbbrAgencyResponseTypeIds !== null
               ? inArray(
                   communityBoardBudgetRequest.agencyCategoryResponse,
-                  cbbrAgencyResponseTypeId,
+                  cbbrAgencyResponseTypeIds,
                 )
               : undefined,
             isMapped !== null

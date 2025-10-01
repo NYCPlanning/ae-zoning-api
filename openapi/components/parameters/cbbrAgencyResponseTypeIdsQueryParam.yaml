@@ -1,4 +1,4 @@
-name: cbbrAgencyResponseTypeId
+name: cbbrAgencyResponseTypeIds
 required: false
 in: query
 schema:
