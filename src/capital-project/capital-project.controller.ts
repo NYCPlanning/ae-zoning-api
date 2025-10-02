@@ -54,6 +54,11 @@ export class CapitalProjectController {
     });
   }
 
+  @Get("/managing-agencies")
+  async findManagingAgencies() {
+    return await this.capitalProjectService.findManagingAgencies();
+  }
+
   @UsePipes(
     new ZodTransformPipe(
       findCapitalProjectByManagingCodeCapitalProjectIdPathParamsSchema,

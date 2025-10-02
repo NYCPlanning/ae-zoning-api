@@ -14,6 +14,12 @@ export const findManyRepoSchema = z.array(capitalProjectEntitySchema);
 
 export type FindManyRepo = z.infer<typeof findManyRepoSchema>;
 
+export const findManagingAgenciesRepoSchema = z.array(agencyEntitySchema);
+
+export type FindManagingAgenciesRepo = z.infer<
+  typeof findManagingAgenciesRepoSchema
+>;
+
 export const findCountRepoSchema = z.number();
 
 export type FindCountRepo = z.infer<typeof findCountRepoSchema>;
