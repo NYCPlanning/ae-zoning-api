@@ -121,8 +121,14 @@ export class CityCouncilDistrictController {
   )
   @Get("/:cityCouncilDistrictId/capital-projects")
   async findCapitalProjectsById(
-    @Param() pathParams: FindCapitalProjectsByCityCouncilIdPathParams,
-    @Query() queryParams: FindCapitalProjectsByCityCouncilIdQueryParams,
+    @Param(
+      new ZodTransformPipe(findCapitalProjectsByCityCouncilIdPathParamsSchema),
+    )
+    pathParams: FindCapitalProjectsByCityCouncilIdPathParams,
+    @Query(
+      new ZodTransformPipe(findCapitalProjectsByCityCouncilIdQueryParamsSchema),
+    )
+    queryParams: FindCapitalProjectsByCityCouncilIdQueryParams,
   ) {
     return await this.capitalProjectService.findMany({
       ...pathParams,
