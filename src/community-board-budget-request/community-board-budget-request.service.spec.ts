@@ -7,6 +7,7 @@ import {
   findCommunityBoardBudgetRequestByIdQueryResponseSchema,
   findCommunityBoardBudgetRequestsQueryResponseSchema,
   findCommunityBoardBudgetRequestAgencyResponseTypesQueryResponseSchema,
+  findCommunityBoardBudgetRequestGeoJsonByIdQueryResponseSchema,
   findCommunityBoardBudgetRequestTilesQueryResponseSchema,
 } from "src/gen";
 import { CommunityBoardBudgetRequestService } from "./community-board-budget-request.service";
@@ -564,6 +565,34 @@ describe("Community Board Budget Request service unit", () => {
       const agencyResponseTypes =
         await communityBoardBudgetRequestService.findAgencyResponseTypes();
       expect(agencyResponseTypes.cbbrAgencyResponseTypes.length).toBe(6);
+    });
+  });
+
+  describe("findGeoJsonById", () => {
+    it("should return a community board budget request geojson with a valid request", async () => {
+      const communityBoardBudgetRequestGeoJsonMock =
+        communityBoardBudgetRequestRepositoryMock.findGeoJsonByIdMock[0];
+      const { id: cbbrId } = communityBoardBudgetRequestGeoJsonMock;
+      const communityBoardBudgetRequestGeoJson =
+        await communityBoardBudgetRequestService.findGeoJsonById({
+          cbbrId,
+        });
+
+      expect(() =>
+        findCommunityBoardBudgetRequestGeoJsonByIdQueryResponseSchema.parse(
+          communityBoardBudgetRequestGeoJson,
+        ),
+      ).not.toThrow();
+    });
+
+    it("should throw a resource error when requesting a missing project", async () => {
+      const cbbrId = "1234XYZ";
+
+      expect(
+        communityBoardBudgetRequestService.findGeoJsonById({
+          cbbrId,
+        }),
+      ).rejects.toThrow(ResourceNotFoundException);
     });
   });
 

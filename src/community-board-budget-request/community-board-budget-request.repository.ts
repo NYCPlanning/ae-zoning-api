@@ -8,10 +8,12 @@ import {
   FindNeedGroupsRepo,
   FindPolicyAreasRepo,
   FindAgenciesRepo,
-  FindCommunityBoardBudgetRequestByIdRepo,
-  FindManyCommunityBoardBudgetRequestRepo,
-  FindCountCommunityBoardBudgetRequestRepo,
   FindTilesRepo,
+  FindManyRepo,
+  FindCountRepo,
+  FindByIdRepo,
+  FindGeoJsonByIdRepo,
+  CommunityBoardBudgetRequestGeometry,
 } from "./community-board-budget-request.repository.schema";
 import {
   agency,
@@ -22,6 +24,7 @@ import {
   communityBoardBudgetRequest,
   borough,
   cbbrAgencyCategoryResponse,
+  CbbrRequestTypeEntity,
 } from "src/schema";
 import { eq, and, or, sql, isNotNull, inArray } from "drizzle-orm";
 import {
@@ -243,7 +246,7 @@ export class CommunityBoardBudgetRequestRepository {
 
   async findById({
     cbbrId,
-  }: FindCommunityBoardBudgetRequestByIdPathParams): Promise<FindCommunityBoardBudgetRequestByIdRepo> {
+  }: FindCommunityBoardBudgetRequestByIdPathParams): Promise<FindByIdRepo> {
     try {
       return await this.db
         .select({
@@ -254,9 +257,7 @@ export class CommunityBoardBudgetRequestRepository {
           communityBoardId: sql<string>`${borough.abbr} || ${communityBoardBudgetRequest.communityDistrictId}`,
           agencyInitials: communityBoardBudgetRequest.agency,
           priority: communityBoardBudgetRequest.priority,
-          cbbrType: sql<
-            "Capital" | "Expense"
-          >`${communityBoardBudgetRequest.requestType}`,
+          cbbrType: sql<CbbrRequestTypeEntity>`${communityBoardBudgetRequest.requestType}`,
           isMapped: communityBoardBudgetRequest.isLocationSpecific,
           isContinuedSupport: communityBoardBudgetRequest.isContinuedSupport,
           agencyCategoryResponse:
@@ -303,7 +304,7 @@ export class CommunityBoardBudgetRequestRepository {
     isContinuedSupport: boolean | null;
     limit: number;
     offset: number;
-  }): Promise<FindManyCommunityBoardBudgetRequestRepo> {
+  }): Promise<FindManyRepo> {
     try {
       return await this.db
         .select({
@@ -413,7 +414,7 @@ export class CommunityBoardBudgetRequestRepository {
     cbbrAgencyResponseTypeIds: Array<number> | null;
     isMapped: boolean | null;
     isContinuedSupport: boolean | null;
-  }): Promise<FindCountCommunityBoardBudgetRequestRepo> {
+  }): Promise<FindCountRepo> {
     const key = JSON.stringify({
       boroughId,
       communityDistrictId,
@@ -428,7 +429,6 @@ export class CommunityBoardBudgetRequestRepository {
       domain: "capitalProject",
       function: "findCount",
     });
-
     try {
       const results = await this.db
         .select({
@@ -647,6 +647,50 @@ export class CommunityBoardBudgetRequestRepository {
     } catch {
       throw new DataRetrievalException(
         "cannot find community board budget request tiles",
+      );
+    }
+  }
+
+  async findGeoJsonById({
+    cbbrId,
+  }: FindCommunityBoardBudgetRequestByIdPathParams): Promise<FindGeoJsonByIdRepo> {
+    try {
+      return await this.db
+        .select({
+          id: communityBoardBudgetRequest.id,
+          cbbrPolicyAreaId: communityBoardBudgetRequest.policyArea,
+          title: communityBoardBudgetRequest.title,
+          description: communityBoardBudgetRequest.explanation,
+          communityBoardId: sql<string>`${borough.abbr} || ${communityBoardBudgetRequest.communityDistrictId}`,
+          agencyInitials: communityBoardBudgetRequest.agency,
+          priority: communityBoardBudgetRequest.priority,
+          cbbrType: sql<CbbrRequestTypeEntity>`${communityBoardBudgetRequest.requestType}`,
+          isMapped: communityBoardBudgetRequest.isLocationSpecific,
+          isContinuedSupport: communityBoardBudgetRequest.isContinuedSupport,
+          agencyCategoryResponse:
+            communityBoardBudgetRequest.agencyCategoryResponse,
+          agencyResponse: communityBoardBudgetRequest.agencyResponse,
+          geometry: sql<CommunityBoardBudgetRequestGeometry>`
+             CASE
+             WHEN
+               ${communityBoardBudgetRequest.liFtMPoly} IS NOT null
+             THEN
+               ST_asGeoJSON(ST_Transform(${communityBoardBudgetRequest.liFtMPoly}, 4326),6)
+             ELSE
+               ST_asGeoJSON(ST_Transform(${communityBoardBudgetRequest.liFtMPnt}, 4326),6)
+             END
+           `.as("geometry"),
+        })
+        .from(communityBoardBudgetRequest)
+        .where(eq(communityBoardBudgetRequest.id, cbbrId))
+        .leftJoin(
+          borough,
+          eq(borough.id, communityBoardBudgetRequest.boroughId),
+        )
+        .limit(1);
+    } catch {
+      throw new DataRetrievalException(
+        "Cannot find Community Board Budget Request GeoJson with given id",
       );
     }
   }

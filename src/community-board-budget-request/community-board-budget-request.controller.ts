@@ -22,6 +22,7 @@ import {
   FindCommunityBoardBudgetRequestsQueryParams,
   findCommunityBoardBudgetRequestTilesPathParamsSchema,
   FindCommunityBoardBudgetRequestTilesPathParams,
+  findCommunityBoardBudgetRequestByIdPathParamsSchema,
 } from "src/gen";
 import {
   BadRequestExceptionFilter,
@@ -29,6 +30,8 @@ import {
   NotFoundExceptionFilter,
 } from "src/filter";
 import { ZodTransformPipe } from "src/pipes/zod-transform-pipe";
+import { findCommunityBoardBudgetRequestGeoJsonByIdPathParamsSchema } from "src/gen/zod/findCommunityBoardBudgetRequestGeoJsonByIdSchema";
+import { FindCommunityBoardBudgetRequestGeoJsonByIdPathParams } from "src/gen/types/FindCommunityBoardBudgetRequestGeoJsonById";
 
 @Injectable()
 @UseFilters(
@@ -119,7 +122,10 @@ export class CommunityBoardBudgetRequestController {
 
   @Get("/:cbbrId")
   async findById(
-    @Param() params: FindCommunityBoardBudgetRequestByIdPathParams,
+    @Param(
+      new ZodTransformPipe(findCommunityBoardBudgetRequestByIdPathParamsSchema),
+    )
+    params: FindCommunityBoardBudgetRequestByIdPathParams,
   ) {
     return this.communityBoardBudgetRequestService.findById(params);
   }
@@ -136,5 +142,17 @@ export class CommunityBoardBudgetRequestController {
       await this.communityBoardBudgetRequestService.findTiles(params);
     res.set("Content-Type", "application/x-protobuf");
     res.send(tile);
+  }
+
+  @Get("/:cbbrId/geojson")
+  async findGeoJsonById(
+    @Param(
+      new ZodTransformPipe(
+        findCommunityBoardBudgetRequestGeoJsonByIdPathParamsSchema,
+      ),
+    )
+    params: FindCommunityBoardBudgetRequestGeoJsonByIdPathParams,
+  ) {
+    return this.communityBoardBudgetRequestService.findGeoJsonById(params);
   }
 }

@@ -162,6 +162,10 @@ export const communityBoardBudgetRequest = pgTable(
   ],
 );
 
+export const cbbrRequestTypeEntitySchema = z.enum(["Capital", "Expense"]);
+
+export type CbbrRequestTypeEntity = z.infer<typeof cbbrRequestTypeEntitySchema>;
+
 export const communityBoardBudgetRequestEntitySchema = z.object({
   id: z.string(),
   cbbrPolicyAreaId: z.number(),
@@ -171,8 +175,8 @@ export const communityBoardBudgetRequestEntitySchema = z.object({
   description: z.string().nullable(),
   agencyInitials: z.string(),
   priority: z.number(),
-  cbbrType: z.enum(["Capital", "Expense"]),
-  isMapped: z.boolean(),
+  requestType: cbbrRequestTypeEntitySchema,
+  isLocationSpecific: z.boolean(),
   isContinuedSupport: z.boolean(),
   agencyCategoryResponse: z.number().nullable(),
   agencyResponse: z.string().nullable(),

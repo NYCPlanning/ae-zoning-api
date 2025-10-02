@@ -2,7 +2,7 @@ import { z } from "zod";
 import {
   boroughEntitySchema,
   landUseEntitySchema,
-  MultiPolygonSchema,
+  multiPolygonJsonSchema,
   zoningDistrictClassEntitySchema,
   zoningDistrictEntitySchema,
 } from "src/schema";
@@ -53,7 +53,7 @@ export const findByBblRepoSchema = taxLotEntitySchema
 export type FindByBblRepo = z.infer<typeof findByBblRepoSchema>;
 
 export const findByBblSpatialRepoSchema = findByBblRepoSchema.extend({
-  geometry: MultiPolygonSchema,
+  geometry: multiPolygonJsonSchema,
 });
 
 export type FindByBblSpatialRepo = z.infer<typeof findByBblSpatialRepoSchema>;
