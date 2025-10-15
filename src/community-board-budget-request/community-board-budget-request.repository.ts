@@ -259,9 +259,9 @@ export class CommunityBoardBudgetRequestRepository {
           >`${communityBoardBudgetRequest.requestType}`,
           isMapped: communityBoardBudgetRequest.isLocationSpecific,
           isContinuedSupport: communityBoardBudgetRequest.isContinuedSupport,
-          agencyCategoryResponse:
+          cbbrAgencyResponseTypeId:
             communityBoardBudgetRequest.agencyCategoryResponse,
-          agencyResponse: communityBoardBudgetRequest.agencyResponse,
+          cbbrAgencyResponse: communityBoardBudgetRequest.agencyResponse,
         })
         .from(communityBoardBudgetRequest)
         .where(eq(communityBoardBudgetRequest.id, cbbrId))

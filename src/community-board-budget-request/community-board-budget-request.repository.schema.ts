@@ -39,8 +39,8 @@ export const findCommunityBoardBudgetRequestByIdRepoSchema = z.array(
     cbbrType: z.enum(["Capital", "Expense"]),
     isMapped: z.boolean(),
     isContinuedSupport: z.boolean(),
-    agencyCategoryResponse: z.number().nullable(),
-    agencyResponse: z.string().nullable(),
+    cbbrAgencyResponseTypeId: z.number().nullable(),
+    cbbrAgencyResponse: z.string().nullable(),
   }),
 );
 
