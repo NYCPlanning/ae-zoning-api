@@ -10,7 +10,7 @@ get:
     - $ref: ../components/parameters/cbbrNeedGroupIdQueryParam.yaml
     - $ref: ../components/parameters/agencyInitialsQueryParam.yaml
     - $ref: ../components/parameters/cbbrTypeQueryParam.yaml
-    - $ref: ../components/parameters/cbbrAgencyResponseTypeIdsQueryParam.yaml
+    - $ref: ../components/parameters/cbbrAgencyCategoryResponseIdsQueryParam.yaml
     - $ref: ../components/parameters/isMappedQueryParam.yaml
     - $ref: ../components/parameters/isContinuedSupportQueryParam.yaml
     - $ref: ../components/parameters/limitParam.yaml

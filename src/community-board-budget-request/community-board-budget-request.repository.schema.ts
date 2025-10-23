@@ -19,12 +19,12 @@ export const findPolicyAreasRepoSchema = z.array(cbbrPolicyAreaEntitySchema);
 
 export type FindPolicyAreasRepo = z.infer<typeof findPolicyAreasRepoSchema>;
 
-export const findAgencyResponseTypesRepoSchema = z.array(
+export const findAgencyCategoryResponsesRepoSchema = z.array(
   cbbrAgencyCategoryResponseEntitySchema,
 );
 
-export type FindAgencyResponseTypesRepo = z.infer<
-  typeof findAgencyResponseTypesRepoSchema
+export type FindAgencyCategoryResponsesRepo = z.infer<
+  typeof findAgencyCategoryResponsesRepoSchema
 >;
 
 export const findCommunityBoardBudgetRequestByIdRepoSchema = z.array(
@@ -39,7 +39,7 @@ export const findCommunityBoardBudgetRequestByIdRepoSchema = z.array(
     cbbrType: z.enum(["Capital", "Expense"]),
     isMapped: z.boolean(),
     isContinuedSupport: z.boolean(),
-    cbbrAgencyResponseTypeId: z.number().nullable(),
+    cbbrAgencyCategoryResponseId: z.number().nullable(),
     cbbrAgencyResponse: z.string().nullable(),
   }),
 );
@@ -87,10 +87,10 @@ export type CheckPolicyAreaByIdRepo = z.infer<
   typeof checkPolicyAreaByIdRepoSchema
 >;
 
-export const checkAgencyResponseTypeByIdRepoSchema = z.boolean();
+export const checkAgencyCategoryResponseByIdRepoSchema = z.boolean();
 
-export type CheckAgencyResponseTypeByIdRepo = z.infer<
-  typeof checkAgencyResponseTypeByIdRepoSchema
+export type CheckAgencyCategoryResponseByIdRepo = z.infer<
+  typeof checkAgencyCategoryResponseByIdRepoSchema
 >;
 
 export const findTilesRepoSchema = mvtEntitySchema;

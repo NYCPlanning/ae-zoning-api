@@ -50,7 +50,7 @@ export class CommunityBoardBudgetRequestController {
     {
       communityDistrictId,
       cityCouncilDistrictId,
-      cbbrAgencyResponseTypeIds,
+      cbbrAgencyCategoryResponseIds,
       cbbrNeedGroupId,
       cbbrPolicyAreaId,
       cbbrType,
@@ -64,7 +64,7 @@ export class CommunityBoardBudgetRequestController {
     return await this.communityBoardBudgetRequestService.findMany({
       communityDistrictCombinedId: communityDistrictId,
       cityCouncilDistrictId,
-      cbbrAgencyResponseTypeIds,
+      cbbrAgencyCategoryResponseIds,
       cbbrNeedGroupId,
       cbbrPolicyAreaId,
       cbbrType,
@@ -112,9 +112,9 @@ export class CommunityBoardBudgetRequestController {
     return this.communityBoardBudgetRequestService.findPolicyAreas(queryParams);
   }
 
-  @Get("/agency-response-types")
-  async findAgencyResponseTypes() {
-    return this.communityBoardBudgetRequestService.findAgencyResponseTypes();
+  @Get("/agency-category-responses")
+  async findAgencyCategoryResponses() {
+    return this.communityBoardBudgetRequestService.findAgencyCategoryResponses();
   }
 
   @Get("/:cbbrId")

@@ -6,7 +6,7 @@ import {
   findCommunityBoardBudgetRequestAgenciesQueryResponseSchema,
   findCommunityBoardBudgetRequestByIdQueryResponseSchema,
   findCommunityBoardBudgetRequestsQueryResponseSchema,
-  findCommunityBoardBudgetRequestAgencyResponseTypesQueryResponseSchema,
+  findCommunityBoardBudgetRequestAgencyCategoryResponsesQueryResponseSchema,
   findCommunityBoardBudgetRequestTilesQueryResponseSchema,
 } from "src/gen";
 import { CommunityBoardBudgetRequestService } from "./community-board-budget-request.service";
@@ -416,14 +416,14 @@ describe("Community Board Budget Request service unit", () => {
     });
 
     it("should return a list of community board budget requests filtered by agency response types", async () => {
-      const cbbrAgencyResponseTypeIds = [
-        communityBoardBudgetRequestRepositoryMock.agencyCategoryResponseMocks[0]
-          .id,
-        communityBoardBudgetRequestRepositoryMock.agencyCategoryResponseMocks[1]
-          .id,
+      const cbbrAgencyCategoryResponseIds = [
+        communityBoardBudgetRequestRepositoryMock
+          .agencyCategoryResponsesMocks[0].id,
+        communityBoardBudgetRequestRepositoryMock
+          .agencyCategoryResponsesMocks[1].id,
       ];
       const cbbrs = await communityBoardBudgetRequestService.findMany({
-        cbbrAgencyResponseTypeIds,
+        cbbrAgencyCategoryResponseIds,
       });
 
       expect(() =>
@@ -549,21 +549,23 @@ describe("Community Board Budget Request service unit", () => {
     });
   });
 
-  describe("findAgencyResponseTypes", () => {
-    it("should return a findCommunityBoardBudgetRequestAgencyResponseTypesQueryResponseSchema compliant object", async () => {
-      const agencyResponseTypes =
-        await communityBoardBudgetRequestService.findAgencyResponseTypes();
+  describe("findAgencyCategoryResponses", () => {
+    it("should return a findCommunityBoardBudgetRequestAgencyCategoryResponsesQueryResponseSchema compliant object", async () => {
+      const agencyCategoryResponses =
+        await communityBoardBudgetRequestService.findAgencyCategoryResponses();
       expect(() =>
-        findCommunityBoardBudgetRequestAgencyResponseTypesQueryResponseSchema.parse(
-          agencyResponseTypes,
+        findCommunityBoardBudgetRequestAgencyCategoryResponsesQueryResponseSchema.parse(
+          agencyCategoryResponses,
         ),
       ).not.toThrow();
     });
 
     it("should return the full list of agency response types", async () => {
-      const agencyResponseTypes =
-        await communityBoardBudgetRequestService.findAgencyResponseTypes();
-      expect(agencyResponseTypes.cbbrAgencyResponseTypes.length).toBe(6);
+      const agencyCategoryResponses =
+        await communityBoardBudgetRequestService.findAgencyCategoryResponses();
+      expect(agencyCategoryResponses.cbbrAgencyCategoryResponses.length).toBe(
+        8,
+      );
     });
   });
 

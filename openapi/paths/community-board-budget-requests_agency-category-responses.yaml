@@ -1,0 +1,23 @@
+get:
+  summary: Find community board budget request agency reponse categories 
+  operationId: findCommunityBoardBudgetRequestAgencyCategoryResponses
+  tags:
+    - Community Board Budget Requests
+  responses:
+    '200':
+      description: An object containing a list of agency reponse categories
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              cbbrAgencyCategoryResponses:
+                type: array
+                items:
+                  $ref: ../components/schemas/CommunityBoardBudgetRequestAgencyCategoryResponse.yaml
+            required:
+              - cbbrAgencyCategoryResponses
+    '400':
+      $ref: ../components/responses/BadRequest.yaml
+    '500':
+      $ref: ../components/responses/InternalServerError.yaml

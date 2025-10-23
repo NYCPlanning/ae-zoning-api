@@ -621,17 +621,17 @@ describe("Community Board Budget Request e2e", () => {
       );
     });
 
-    it("should 200 when finding cbbrs by cbbrAgencyResponseTypeIds", async () => {
-      const cbbrAgencyResponseTypeIds = [
-        communityBoardBudgetRequestRepositoryMock.agencyCategoryResponseMocks[0]
-          .id,
-        communityBoardBudgetRequestRepositoryMock.agencyCategoryResponseMocks[1]
-          .id,
+    it("should 200 when finding cbbrs by cbbrAgencyCategoryResponseIds", async () => {
+      const cbbrAgencyCategoryResponseIds = [
+        communityBoardBudgetRequestRepositoryMock
+          .agencyCategoryResponsesMocks[0].id,
+        communityBoardBudgetRequestRepositoryMock
+          .agencyCategoryResponsesMocks[1].id,
       ];
 
       const response = await request(app.getHttpServer())
         .get(
-          `/community-board-budget-requests?cbbrAgencyResponseTypeIds=${cbbrAgencyResponseTypeIds.join()}`,
+          `/community-board-budget-requests?cbbrAgencyCategoryResponseIds=${cbbrAgencyCategoryResponseIds.join()}`,
         )
         .expect(200);
 
@@ -853,27 +853,27 @@ describe("Community Board Budget Request e2e", () => {
       );
     });
 
-    it("should 400 when finding cbbrs by an invalid cbbrAgencyResponseTypeIds", async () => {
-      const cbbrAgencyResponseTypeIds = false;
+    it("should 400 when finding cbbrs by an invalid cbbrAgencyCategoryResponseIds", async () => {
+      const cbbrAgencyCategoryResponseIds = false;
 
       const response = await request(app.getHttpServer())
         .get(
-          `/community-board-budget-requests?cbbrAgencyResponseTypeIds=${cbbrAgencyResponseTypeIds}`,
+          `/community-board-budget-requests?cbbrAgencyCategoryResponseIds=${cbbrAgencyCategoryResponseIds}`,
         )
         .expect(400);
 
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
       expect(response.body.message).toMatch(
-        /Invalid request parameter: cbbrAgencyResponseTypeIds: Expected number, received nan/,
+        /Invalid request parameter: cbbrAgencyCategoryResponseIds: Expected number, received nan/,
       );
     });
 
-    it("should 400 when finding cbbrs by a missing cbbrAgencyResponseTypeIds", async () => {
-      const cbbrAgencyResponseTypeIds = [12, 13];
+    it("should 400 when finding cbbrs by a missing cbbrAgencyCategoryResponseIds", async () => {
+      const cbbrAgencyCategoryResponseIds = [12, 13];
 
       const response = await request(app.getHttpServer())
         .get(
-          `/community-board-budget-requests?cbbrAgencyResponseTypeIds=${cbbrAgencyResponseTypeIds.join()}`,
+          `/community-board-budget-requests?cbbrAgencyCategoryResponseIds=${cbbrAgencyCategoryResponseIds.join()}`,
         )
         .expect(400);
 

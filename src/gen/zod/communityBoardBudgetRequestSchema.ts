@@ -27,12 +27,12 @@ export const communityBoardBudgetRequestSchema = z.object({
   isContinuedSupport: z
     .boolean()
     .describe("Whether the budget request is for Continued Support"),
-  cbbrAgencyResponseTypeId: z.coerce
+  cbbrAgencyCategoryResponseId: z.coerce
     .number()
-    .describe("The id of the agency's response type")
+    .describe("The id of the agency's response category")
     .optional(),
   cbbrAgencyResponse: z.coerce
     .string()
-    .describe("The agency's written explanation for the response type")
+    .describe("The agency's written explanation for the response category")
     .optional(),
 });
