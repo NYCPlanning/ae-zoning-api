@@ -151,7 +151,7 @@ export class CommunityBoardBudgetRequestService {
     cbbrNeedGroupId = null,
     agencyInitials = null,
     cbbrType = null,
-    cbbrAgencyResponseTypeIds = null,
+    cbbrAgencyCategoryResponseIds = null,
     isMapped = null,
     isContinuedSupport = null,
     limit = 20,
@@ -163,7 +163,7 @@ export class CommunityBoardBudgetRequestService {
     cbbrNeedGroupId?: number | null;
     agencyInitials?: string | null;
     cbbrType?: "C" | "E" | null;
-    cbbrAgencyResponseTypeIds?: Array<number> | null;
+    cbbrAgencyCategoryResponseIds?: Array<number> | null;
     isMapped?: boolean | null;
     isContinuedSupport?: boolean | null;
     limit?: number;
@@ -198,10 +198,10 @@ export class CommunityBoardBudgetRequestService {
       checklist.push(this.agencyRepository.checkByInitials(agencyInitials));
     }
 
-    if (cbbrAgencyResponseTypeIds !== null) {
-      cbbrAgencyResponseTypeIds.forEach((id) => {
+    if (cbbrAgencyCategoryResponseIds !== null) {
+      cbbrAgencyCategoryResponseIds.forEach((id) => {
         checklist.push(
-          this.communityBoardBudgetRequestRepository.checkAgencyResponseTypeById(
+          this.communityBoardBudgetRequestRepository.checkAgencyCategoryResponseById(
             id,
           ),
         );
@@ -248,7 +248,7 @@ export class CommunityBoardBudgetRequestService {
       cbbrNeedGroupId,
       agencyInitials,
       cbbrType: cbbrTypeExpanded,
-      cbbrAgencyResponseTypeIds,
+      cbbrAgencyCategoryResponseIds,
       isMapped,
       isContinuedSupport,
     };
@@ -273,10 +273,10 @@ export class CommunityBoardBudgetRequestService {
       totalBudgetRequests,
     };
   }
-  async findAgencyResponseTypes() {
-    const cbbrAgencyResponseTypes =
-      await this.communityBoardBudgetRequestRepository.findAgencyResponseTypes();
-    return { cbbrAgencyResponseTypes };
+  async findAgencyCategoryResponses() {
+    const cbbrAgencyCategoryResponses =
+      await this.communityBoardBudgetRequestRepository.findAgencyCategoryResponses();
+    return { cbbrAgencyCategoryResponses };
   }
 
   async findTiles(params: FindCommunityBoardBudgetRequestTilesPathParams) {

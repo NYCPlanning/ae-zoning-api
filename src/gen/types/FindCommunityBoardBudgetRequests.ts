@@ -42,7 +42,7 @@ export type FindCommunityBoardBudgetRequestsQueryParams = {
    * @description An array containing the IDs of the agency response types of the Community Board Budget Requests.
    * @type array | undefined
    */
-  cbbrAgencyResponseTypeIds?: number[];
+  cbbrAgencyCategoryResponseIds?: number[];
   /**
    * @description Used to filter whether a capital project or community board budget request has associated geographic coordinates.
    * @type boolean | undefined

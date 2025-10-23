@@ -4,7 +4,7 @@ import { DataRetrievalException } from "src/exception";
 import {
   CheckNeedGroupByIdRepo,
   CheckPolicyAreaByIdRepo,
-  CheckAgencyResponseTypeByIdRepo,
+  CheckAgencyCategoryResponseByIdRepo,
   FindNeedGroupsRepo,
   FindPolicyAreasRepo,
   FindAgenciesRepo,
@@ -46,7 +46,7 @@ export class CommunityBoardBudgetRequestRepository {
     @Inject(TILE_CACHE) private readonly tileCache: TileCacheService,
   ) {}
 
-  #checkAgencyResponseTypeById = this.db.query.cbbrAgencyCategoryResponse
+  #checkAgencyCategoryResponseById = this.db.query.cbbrAgencyCategoryResponse
     .findFirst({
       columns: {
         id: true,
@@ -54,27 +54,29 @@ export class CommunityBoardBudgetRequestRepository {
       where: (cbbrAgencyCategoryResponse, { eq, sql }) =>
         eq(cbbrAgencyCategoryResponse.id, sql.placeholder("id")),
     })
-    .prepare("#checkAgencyResponseTypeById");
+    .prepare("#checkAgencyCategoryResponseById");
 
-  async checkAgencyResponseTypeById(
+  async checkAgencyCategoryResponseById(
     id: number,
-  ): Promise<CheckAgencyResponseTypeByIdRepo> {
+  ): Promise<CheckAgencyCategoryResponseByIdRepo> {
     const key = JSON.stringify({
       id,
       domain: "communityBoardBudgetRequest",
-      function: "checkAgencyResponseTypeById",
+      function: "checkAgencyCategoryResponseById",
     });
-    const cachedValue: CheckAgencyResponseTypeByIdRepo | null =
+    const cachedValue: CheckAgencyCategoryResponseByIdRepo | null =
       await this.cacheManager.get(key);
     if (cachedValue !== null) return cachedValue;
     try {
-      const result = await this.#checkAgencyResponseTypeById.execute({ id });
+      const result = await this.#checkAgencyCategoryResponseById.execute({
+        id,
+      });
       const value = result !== undefined;
       this.cacheManager.set(key, value);
       return value;
     } catch {
       throw new DataRetrievalException(
-        "cannot find community board budget request agency response type by its id",
+        "cannot find community board budget request agency response category by its id",
       );
     }
   }
@@ -259,7 +261,7 @@ export class CommunityBoardBudgetRequestRepository {
           >`${communityBoardBudgetRequest.requestType}`,
           isMapped: communityBoardBudgetRequest.isLocationSpecific,
           isContinuedSupport: communityBoardBudgetRequest.isContinuedSupport,
-          cbbrAgencyResponseTypeId:
+          cbbrAgencyCategoryResponseId:
             communityBoardBudgetRequest.agencyCategoryResponse,
           cbbrAgencyResponse: communityBoardBudgetRequest.agencyResponse,
         })
@@ -285,7 +287,7 @@ export class CommunityBoardBudgetRequestRepository {
     cbbrNeedGroupId,
     agencyInitials,
     cbbrType,
-    cbbrAgencyResponseTypeIds,
+    cbbrAgencyCategoryResponseIds,
     isMapped,
     isContinuedSupport,
     limit,
@@ -298,7 +300,7 @@ export class CommunityBoardBudgetRequestRepository {
     cbbrNeedGroupId: number | null;
     agencyInitials: string | null;
     cbbrType: "Capital" | "Expense" | null;
-    cbbrAgencyResponseTypeIds: Array<number> | null;
+    cbbrAgencyCategoryResponseIds: Array<number> | null;
     isMapped: boolean | null;
     isContinuedSupport: boolean | null;
     limit: number;
@@ -358,10 +360,10 @@ export class CommunityBoardBudgetRequestRepository {
             cbbrType !== null
               ? eq(communityBoardBudgetRequest.requestType, cbbrType)
               : undefined,
-            cbbrAgencyResponseTypeIds !== null
+            cbbrAgencyCategoryResponseIds !== null
               ? inArray(
                   communityBoardBudgetRequest.agencyCategoryResponse,
-                  cbbrAgencyResponseTypeIds,
+                  cbbrAgencyCategoryResponseIds,
                 )
               : undefined,
             isMapped !== null
@@ -399,7 +401,7 @@ export class CommunityBoardBudgetRequestRepository {
     cbbrNeedGroupId,
     agencyInitials,
     cbbrType,
-    cbbrAgencyResponseTypeIds,
+    cbbrAgencyCategoryResponseIds,
     isMapped,
     isContinuedSupport,
   }: {
@@ -410,7 +412,7 @@ export class CommunityBoardBudgetRequestRepository {
     cbbrNeedGroupId: number | null;
     agencyInitials: string | null;
     cbbrType: "Capital" | "Expense" | null;
-    cbbrAgencyResponseTypeIds: Array<number> | null;
+    cbbrAgencyCategoryResponseIds: Array<number> | null;
     isMapped: boolean | null;
     isContinuedSupport: boolean | null;
   }): Promise<FindCountCommunityBoardBudgetRequestRepo> {
@@ -422,7 +424,7 @@ export class CommunityBoardBudgetRequestRepository {
       cbbrNeedGroupId,
       agencyInitials,
       cbbrType,
-      cbbrAgencyResponseTypeIds,
+      cbbrAgencyCategoryResponseIds,
       isMapped,
       isContinuedSupport,
       domain: "capitalProject",
@@ -478,10 +480,10 @@ export class CommunityBoardBudgetRequestRepository {
             cbbrType !== null
               ? eq(communityBoardBudgetRequest.requestType, cbbrType)
               : undefined,
-            cbbrAgencyResponseTypeIds !== null
+            cbbrAgencyCategoryResponseIds !== null
               ? inArray(
                   communityBoardBudgetRequest.agencyCategoryResponse,
-                  cbbrAgencyResponseTypeIds,
+                  cbbrAgencyCategoryResponseIds,
                 )
               : undefined,
             isMapped !== null
@@ -511,7 +513,7 @@ export class CommunityBoardBudgetRequestRepository {
     }
   }
 
-  async findAgencyResponseTypes() {
+  async findAgencyCategoryResponses() {
     try {
       return await this.db
         .select({
@@ -521,7 +523,9 @@ export class CommunityBoardBudgetRequestRepository {
         .from(cbbrAgencyCategoryResponse)
         .orderBy(cbbrAgencyCategoryResponse.id);
     } catch {
-      throw new DataRetrievalException("cannot find agency response types");
+      throw new DataRetrievalException(
+        "cannot find agency response categories",
+      );
     }
   }
 

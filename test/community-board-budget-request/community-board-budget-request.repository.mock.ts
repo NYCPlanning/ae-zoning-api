@@ -9,7 +9,7 @@ import {
   FindNeedGroupsRepo,
   FindPolicyAreasRepo,
   FindCountCommunityBoardBudgetRequestRepo,
-  CheckAgencyResponseTypeByIdRepo,
+  CheckAgencyCategoryResponseByIdRepo,
   findManyCommunityBoardBudgetRequestEntitySchema,
   FindManyCommunityBoardBudgetRequestEntity,
   FindTilesRepo,
@@ -46,7 +46,7 @@ export class CommunityBoardBudgetRequestRepositoryMock {
     generateMock(cbbrPolicyAreaEntitySchema, { seed: i + 1 }),
   );
 
-  agencyResponseTypesMocks = Array.from(Array(6), (_, i) =>
+  agencyCategoryResponsesMocks = Array.from(Array(8), (_, i) =>
     generateMock(cbbrAgencyCategoryResponseEntitySchema, { seed: i + 1 }),
   );
 
@@ -152,12 +152,10 @@ export class CommunityBoardBudgetRequestRepositoryMock {
       .map(([_, needGroup]) => needGroup);
   }
 
-  agencyCategoryResponseMocks = Array.from(Array(8), (_, i) =>
-    generateMock(cbbrAgencyCategoryResponseEntitySchema, { seed: i + 1 }),
-  );
-
-  checkAgencyResponseTypeById(id: number): CheckAgencyResponseTypeByIdRepo {
-    return this.agencyCategoryResponseMocks.some(
+  checkAgencyCategoryResponseById(
+    id: number,
+  ): CheckAgencyCategoryResponseByIdRepo {
+    return this.agencyCategoryResponsesMocks.some(
       (categoryResponse) => categoryResponse.id === id,
     );
   }
@@ -211,8 +209,8 @@ export class CommunityBoardBudgetRequestRepositoryMock {
     seed: 1,
   });
 
-  async findAgencyResponseTypes() {
-    return this.agencyResponseTypesMocks;
+  async findAgencyCategoryResponses() {
+    return this.agencyCategoryResponsesMocks;
   }
 
   async findById({
@@ -240,7 +238,7 @@ export class CommunityBoardBudgetRequestRepositoryMock {
         cbbrNeedGroupId: number;
         agencyInitials: string;
         cbbrType: "Capital" | "Expense";
-        cbbrAgencyResponseTypeId: number;
+        cbbrAgencyCategoryResponseId: number;
         isMapped: boolean;
         isContinuedSupport: boolean;
       },
@@ -253,7 +251,7 @@ export class CommunityBoardBudgetRequestRepositoryMock {
     const policyAreas = this.policyAreaMocks;
     const needGroups = this.needGroupMocks;
     const agencies = this.agencyRepoMock.agencies;
-    const categoryResponses = this.agencyCategoryResponseMocks;
+    const categoryResponses = this.agencyCategoryResponsesMocks;
 
     return this.findManyMocks.map((mockBudgetRequestResponse, i) => [
       {
@@ -264,7 +262,7 @@ export class CommunityBoardBudgetRequestRepositoryMock {
         cbbrNeedGroupId: needGroups[i].id,
         agencyInitials: agencies[i % 2].initials,
         cbbrType: i % 2 === 0 ? "Capital" : "Expense",
-        cbbrAgencyResponseTypeId: categoryResponses[i].id,
+        cbbrAgencyCategoryResponseId: categoryResponses[i].id,
         isMapped: i % 3 === 0,
         isContinuedSupport: i % 4 === 0,
       },
@@ -280,7 +278,7 @@ export class CommunityBoardBudgetRequestRepositoryMock {
     cbbrNeedGroupId,
     agencyInitials,
     cbbrType,
-    cbbrAgencyResponseTypeIds,
+    cbbrAgencyCategoryResponseIds,
     isMapped,
     isContinuedSupport,
   }: {
@@ -291,7 +289,7 @@ export class CommunityBoardBudgetRequestRepositoryMock {
     cbbrNeedGroupId: number | null;
     agencyInitials: string | null;
     cbbrType: string | null;
-    cbbrAgencyResponseTypeIds: Array<number> | null;
+    cbbrAgencyCategoryResponseIds: Array<number> | null;
     isMapped: boolean | null;
     isContinuedSupport: boolean | null;
   }): Promise<FindManyCommunityBoardBudgetRequestRepo> {
@@ -334,8 +332,10 @@ export class CommunityBoardBudgetRequestRepositoryMock {
         if (cbbrType !== null && criteria.cbbrType !== cbbrType) return false;
 
         if (
-          cbbrAgencyResponseTypeIds !== null &&
-          !cbbrAgencyResponseTypeIds.includes(criteria.cbbrAgencyResponseTypeId)
+          cbbrAgencyCategoryResponseIds !== null &&
+          !cbbrAgencyCategoryResponseIds.includes(
+            criteria.cbbrAgencyCategoryResponseId,
+          )
         )
           return false;
 
@@ -360,7 +360,7 @@ export class CommunityBoardBudgetRequestRepositoryMock {
     cbbrNeedGroupId: number | null;
     agencyInitials: string | null;
     cbbrType: string | null;
-    cbbrAgencyResponseTypeIds: Array<number> | null;
+    cbbrAgencyCategoryResponseIds: Array<number> | null;
     isMapped: boolean | null;
     isContinuedSupport: boolean | null;
     limit: number;
@@ -377,7 +377,7 @@ export class CommunityBoardBudgetRequestRepositoryMock {
     cbbrNeedGroupId: number | null;
     agencyInitials: string | null;
     cbbrType: string | null;
-    cbbrAgencyResponseTypeIds: Array<number> | null;
+    cbbrAgencyCategoryResponseIds: Array<number> | null;
     isMapped: boolean | null;
     isContinuedSupport: boolean | null;
     limit: number;

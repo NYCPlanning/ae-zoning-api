@@ -53,14 +53,14 @@
       "description": "Whether the budget request is for Continued Support",
       "example": true
     },
-    "cbbrAgencyResponseTypeId": {
+    "cbbrAgencyCategoryResponseId": {
       "type": "number",
-      "description": "The id of the agency's response type",
+      "description": "The id of the agency's response category",
       "example": 1
     },
     "cbbrAgencyResponse": {
       "type": "string",
-      "description": "The agency's written explanation for the response type",
+      "description": "The agency's written explanation for the response category",
       "example": "We have funding in place for capital improvements to Jackie Robinson Playground and just held the community input scope meeting to inform the design for the site."
     }
   },

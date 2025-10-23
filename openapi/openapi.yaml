@@ -94,8 +94,8 @@ paths:
     $ref: paths/community-board-budget-requests_{cbbrId}.yaml
   /community-board-budget-requests/agencies:
     $ref: paths/community-board-budget-requests_agencies.yaml
-  /community-board-budget-requests/agency-response-types:
-    $ref: paths/community-board-budget-requests_agency-response-types.yaml
+  /community-board-budget-requests/agency-category-responses:
+    $ref: paths/community-board-budget-requests_agency-category-responses.yaml
   /community-board-budget-requests/need-groups:
     $ref: paths/community-board-budget-requests_need-groups.yaml
   /community-board-budget-requests/policy-areas:

@@ -51,12 +51,12 @@ export type CommunityBoardBudgetRequest = {
    */
   isContinuedSupport: boolean;
   /**
-   * @description The id of the agency\'s response type
+   * @description The id of the agency\'s response category
    * @type number | undefined
    */
-  cbbrAgencyResponseTypeId?: number;
+  cbbrAgencyCategoryResponseId?: number;
   /**
-   * @description The agency\'s written explanation for the response type
+   * @description The agency\'s written explanation for the response category
    * @type string | undefined
    */
   cbbrAgencyResponse?: string;
