@@ -23,6 +23,10 @@ import { CityCouncilDistrictRepositoryMock } from "test/city-council-district/ci
 import { CityCouncilDistrictRepository } from "src/city-council-district/city-council-district.repository";
 import { CommunityDistrictRepository } from "src/community-district/community-district.repository";
 import { CommunityBoardBudgetRequestModule } from "./community-board-budget-request.module";
+import {
+  communityBoardBudgetRequestCsvRepoSchema,
+  findCsvRepoSchema,
+} from "./community-board-budget-request.repository.schema";
 
 describe("Community Board Budget Request service unit", () => {
   let communityBoardBudgetRequestService: CommunityBoardBudgetRequestService;
@@ -608,6 +612,203 @@ describe("Community Board Budget Request service unit", () => {
       expect(() =>
         findCommunityBoardBudgetRequestTilesQueryResponseSchema.parse(mvt),
       ).not.toThrow();
+    });
+  });
+
+  describe("findCsv", () => {
+    it("should return a list of community board budget requests for download", async () => {
+      const csv = await communityBoardBudgetRequestService.findCsv({});
+      expect(() => findCsvRepoSchema.parse(csv)).not.toThrow();
+      expect(csv.length).toBe(
+        communityBoardBudgetRequestRepositoryMock.findCsvMocks.length,
+      );
+      const firstItem = csv[0];
+      expect(() =>
+        communityBoardBudgetRequestCsvRepoSchema.strict().parse(firstItem),
+      ).not.toThrow();
+    });
+
+    it("should return a list of community board budget requests for download filtered by community district", async () => {
+      const communityDistrict = communityDistrictRepositoryMock.districts[0];
+      const csv = await communityBoardBudgetRequestService.findCsv({
+        communityDistrictCombinedId: `${communityDistrict.boroughId}${communityDistrict.id}`,
+      });
+
+      expect(() => findCsvRepoSchema.parse(csv)).not.toThrow();
+      expect(csv.length).toBe(4);
+      const firstItem = csv[0];
+      expect(() =>
+        communityBoardBudgetRequestCsvRepoSchema.strict().parse(firstItem),
+      ).not.toThrow();
+    });
+
+    it("should return a list of community board budget requests for download filtered by city council district", async () => {
+      const cityCouncilDistrictId =
+        cityCouncilDistrictRepositoryMock.districts[0].id;
+      const csv = await communityBoardBudgetRequestService.findCsv({
+        cityCouncilDistrictId,
+      });
+
+      expect(() => findCsvRepoSchema.parse(csv)).not.toThrow();
+      expect(csv.length).toBe(4);
+      const firstItem = csv[0];
+      expect(() =>
+        communityBoardBudgetRequestCsvRepoSchema.strict().parse(firstItem),
+      ).not.toThrow();
+    });
+
+    it("should return a list of community board budget requests for download filtered by policy area", async () => {
+      const cbbrPolicyAreaId =
+        communityBoardBudgetRequestRepositoryMock.policyAreaMocks[0].id;
+      const csv = await communityBoardBudgetRequestService.findCsv({
+        cbbrPolicyAreaId,
+      });
+
+      expect(() => findCsvRepoSchema.parse(csv)).not.toThrow();
+      expect(csv.length).toBe(1);
+      const firstItem = csv[0];
+      expect(() =>
+        communityBoardBudgetRequestCsvRepoSchema.strict().parse(firstItem),
+      ).not.toThrow();
+    });
+
+    it("should return a list of community board budget requests for download filtered by need group", async () => {
+      const cbbrNeedGroupId =
+        communityBoardBudgetRequestRepositoryMock.needGroupMocks[0].id;
+      const csv = await communityBoardBudgetRequestService.findCsv({
+        cbbrNeedGroupId,
+      });
+
+      expect(() => findCsvRepoSchema.parse(csv)).not.toThrow();
+      expect(csv.length).toBe(1);
+      const firstItem = csv[0];
+      expect(() =>
+        communityBoardBudgetRequestCsvRepoSchema.strict().parse(firstItem),
+      ).not.toThrow();
+    });
+
+    it("should return a list of community board budget requests for download filtered by agency initials", async () => {
+      const agencyInitials = agencyRepositoryMock.agencies[0].initials;
+      const csv = await communityBoardBudgetRequestService.findCsv({
+        agencyInitials,
+      });
+
+      expect(() => findCsvRepoSchema.parse(csv)).not.toThrow();
+      expect(csv.length).toBe(4);
+      const firstItem = csv[0];
+      expect(() =>
+        communityBoardBudgetRequestCsvRepoSchema.strict().parse(firstItem),
+      ).not.toThrow();
+    });
+
+    it("should return a list of community board budget requests for download filtered by request type", async () => {
+      const csv = await communityBoardBudgetRequestService.findCsv({
+        cbbrType: "C",
+      });
+
+      expect(() => findCsvRepoSchema.parse(csv)).not.toThrow();
+      expect(csv.length).toBe(4);
+      const firstItem = csv[0];
+      expect(() =>
+        communityBoardBudgetRequestCsvRepoSchema.strict().parse(firstItem),
+      ).not.toThrow();
+    });
+
+    it("should return a list of community board budget requests for download filtered by agency response types", async () => {
+      const cbbrAgencyCategoryResponseIds = [
+        communityBoardBudgetRequestRepositoryMock
+          .agencyCategoryResponsesMocks[0].id,
+        communityBoardBudgetRequestRepositoryMock
+          .agencyCategoryResponsesMocks[1].id,
+      ];
+      const csv = await communityBoardBudgetRequestService.findCsv({
+        cbbrAgencyCategoryResponseIds,
+      });
+
+      expect(() => findCsvRepoSchema.parse(csv)).not.toThrow();
+      expect(csv.length).toBe(2);
+      const firstItem = csv[0];
+      expect(() =>
+        communityBoardBudgetRequestCsvRepoSchema.strict().parse(firstItem),
+      ).not.toThrow();
+    });
+
+    it("should return a list of mapped community board budget requests for download", async () => {
+      const csv = await communityBoardBudgetRequestService.findCsv({
+        isMapped: true,
+      });
+
+      expect(() => findCsvRepoSchema.parse(csv)).not.toThrow();
+      expect(csv.length).toBe(3);
+      const firstItem = csv[0];
+      expect(() =>
+        communityBoardBudgetRequestCsvRepoSchema.strict().parse(firstItem),
+      ).not.toThrow();
+    });
+
+    it("should return a list of unmapped community board budget requests for download", async () => {
+      const csv = await communityBoardBudgetRequestService.findCsv({
+        isMapped: false,
+      });
+
+      expect(() => findCsvRepoSchema.parse(csv)).not.toThrow();
+      expect(csv.length).toBe(5);
+      const firstItem = csv[0];
+      expect(() =>
+        communityBoardBudgetRequestCsvRepoSchema.strict().parse(firstItem),
+      ).not.toThrow();
+    });
+
+    it("should return lists of mapped and unmapped community board budget requests for download that total all requests", async () => {
+      const mappedCsv = await communityBoardBudgetRequestService.findCsv({
+        isMapped: true,
+      });
+      const unmappedCsv = await communityBoardBudgetRequestService.findCsv({
+        isMapped: false,
+      });
+
+      expect(mappedCsv.length + unmappedCsv.length).toBe(
+        communityBoardBudgetRequestRepositoryMock.findCsvMocks.length,
+      );
+    });
+
+    it("should return a list of community board budget requests for download filtered for continued support", async () => {
+      const csv = await communityBoardBudgetRequestService.findCsv({
+        isContinuedSupport: true,
+      });
+      expect(() => findCsvRepoSchema.parse(csv)).not.toThrow();
+      expect(csv.length).toBe(2);
+      const firstItem = csv[0];
+      expect(() =>
+        communityBoardBudgetRequestCsvRepoSchema.strict().parse(firstItem),
+      ).not.toThrow();
+    });
+
+    it("should return a list of community board budget requests for download filtered for continued support", async () => {
+      const csv = await communityBoardBudgetRequestService.findCsv({
+        isContinuedSupport: false,
+      });
+      expect(() => findCsvRepoSchema.parse(csv)).not.toThrow();
+      expect(csv.length).toBe(6);
+      const firstItem = csv[0];
+      expect(() =>
+        communityBoardBudgetRequestCsvRepoSchema.strict().parse(firstItem),
+      ).not.toThrow();
+    });
+
+    it("should return a lists of community board budget requests for download with sum of all continued support statuses", async () => {
+      const continuedSupportCsv =
+        await communityBoardBudgetRequestService.findCsv({
+          isContinuedSupport: true,
+        });
+      const notContinuedSupportCsv =
+        await communityBoardBudgetRequestService.findCsv({
+          isContinuedSupport: false,
+        });
+
+      expect(continuedSupportCsv.length + notContinuedSupportCsv.length).toBe(
+        communityBoardBudgetRequestRepositoryMock.findCsvMocks.length,
+      );
     });
   });
 });
