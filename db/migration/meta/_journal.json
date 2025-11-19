@@ -197,6 +197,13 @@
       "when": 1758661321923,
       "tag": "0027_lethal_big_bertha",
       "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1763731910731,
+      "tag": "0028_last_sersi",
+      "breakpoints": true
     }
   ]
 }
