@@ -6,6 +6,7 @@ import {
   communityBoardBudgetRequestEntitySchema,
   multiPolygonJsonSchema,
   mvtEntitySchema,
+  cbbrRequestEntitySchema,
 } from "src/schema";
 import { z } from "zod";
 
@@ -150,3 +151,38 @@ export type CheckAgencyCategoryResponseByIdRepo = z.infer<
 export const findTilesRepoSchema = mvtEntitySchema;
 
 export type FindTilesRepo = z.infer<typeof findTilesRepoSchema>;
+
+export const communityBoardBudgetRequestCsvRepoSchema =
+  communityBoardBudgetRequestEntitySchema
+    .pick({
+      id: true,
+      address: true,
+      siteName: true,
+      segmentOnStreet: true,
+      segmentCrossStreetOne: true,
+      segmentCrossStreetTwo: true,
+      intersectionStreetOne: true,
+      intersectionStreetTwo: true,
+      isContinuedSupport: true,
+      explanation: true,
+      agency: true,
+      priority: true,
+      agencyResponse: true,
+    })
+    .extend({
+      requestType: z.string(),
+      communityBoardId: z.string(),
+      request: cbbrRequestEntitySchema.shape.description.nullable(),
+      agencyCategoryResponse:
+        cbbrAgencyCategoryResponseEntitySchema.shape.description.nullable(),
+    });
+
+export type CommunityBoardBudgetRequestCsvRepoSchema = z.infer<
+  typeof communityBoardBudgetRequestCsvRepoSchema
+>;
+
+export const findCsvRepoSchema = z.array(
+  communityBoardBudgetRequestCsvRepoSchema,
+);
+
+export type FindCsvRepo = z.infer<typeof findCsvRepoSchema>;

@@ -16,6 +16,9 @@ import {
   manyCommunityBoardBudgetRequestRepoSchema,
   ManyCommunityBoardBudgetRequestRepo,
   FindCountRepo,
+  FindCsvRepo,
+  communityBoardBudgetRequestCsvRepoSchema,
+  CommunityBoardBudgetRequestCsvRepoSchema,
 } from "src/community-board-budget-request/community-board-budget-request.repository.schema";
 import { FindCommunityBoardBudgetRequestGeoJsonByIdPathParams } from "src/gen/types/FindCommunityBoardBudgetRequestGeoJsonById";
 import {
@@ -420,5 +423,152 @@ export class CommunityBoardBudgetRequestRepositoryMock {
    */
   async findTiles(): Promise<FindTilesRepo> {
     return this.findTilesMock;
+  }
+
+  findCsvMocks = Array.from(Array(8), (_, i) =>
+    generateMock(communityBoardBudgetRequestCsvRepoSchema, {
+      seed: i + 1,
+    }),
+  );
+
+  get findCsvCriteria(): Array<
+    [
+      {
+        boroughId: string;
+        communityDistrictId: string;
+        cityCouncilDistrictId: string;
+        cbbrPolicyAreaId: number;
+        cbbrNeedGroupId: number;
+        agencyInitials: string;
+        cbbrType: "Capital" | "Expense";
+        cbbrAgencyCategoryResponseId: number;
+        isMapped: boolean;
+        isContinuedSupport: boolean;
+      },
+      CommunityBoardBudgetRequestCsvRepoSchema,
+    ]
+  > {
+    const communityDistricts = this.communityDistrictRepoMock.districts;
+    const cityCouncilDistrictRepoMock =
+      this.cityCouncilDistrictRepoMock.districts;
+    const policyAreas = this.policyAreaMocks;
+    const needGroups = this.needGroupMocks;
+    const agencies = this.agencyRepoMock.agencies;
+    const categoryResponses = this.agencyCategoryResponsesMocks;
+
+    return this.findCsvMocks.map((mockBudgetRequestCsvResponse, i) => [
+      {
+        boroughId: communityDistricts[i % 2].boroughId,
+        communityDistrictId: communityDistricts[i % 2].id,
+        cityCouncilDistrictId: cityCouncilDistrictRepoMock[i % 2].id,
+        cbbrPolicyAreaId: policyAreas[i].id,
+        cbbrNeedGroupId: needGroups[i].id,
+        agencyInitials: agencies[i % 2].initials,
+        cbbrType: i % 2 === 0 ? "Capital" : "Expense",
+        cbbrAgencyCategoryResponseId: categoryResponses[i].id,
+        isMapped: i % 3 === 0,
+        isContinuedSupport: i % 4 === 0,
+      },
+      mockBudgetRequestCsvResponse,
+    ]);
+  }
+
+  async filterCommunityBoardBudgetCsvRequests({
+    boroughId,
+    communityDistrictId,
+    cityCouncilDistrictId,
+    cbbrPolicyAreaId,
+    cbbrNeedGroupId,
+    agencyInitials,
+    cbbrType,
+    cbbrAgencyCategoryResponseIds,
+    isMapped,
+    isContinuedSupport,
+  }: {
+    boroughId: string | null;
+    communityDistrictId: string | null;
+    cityCouncilDistrictId: string | null;
+    cbbrPolicyAreaId: number | null;
+    cbbrNeedGroupId: number | null;
+    agencyInitials: string | null;
+    cbbrType: string | null;
+    cbbrAgencyCategoryResponseIds: Array<number> | null;
+    isMapped: boolean | null;
+    isContinuedSupport: boolean | null;
+  }): Promise<FindCsvRepo> {
+    return this.findCsvCriteria
+      .filter(([criteria, _]) => {
+        if (
+          boroughId !== null &&
+          communityDistrictId !== null &&
+          (boroughId !== criteria.boroughId ||
+            communityDistrictId !== criteria.communityDistrictId)
+        )
+          return false;
+
+        if (
+          cityCouncilDistrictId !== null &&
+          criteria.cityCouncilDistrictId !== cityCouncilDistrictId
+        )
+          return false;
+
+        if (
+          cbbrPolicyAreaId !== null &&
+          criteria.cbbrPolicyAreaId !== cbbrPolicyAreaId
+        )
+          return false;
+
+        if (
+          cbbrNeedGroupId !== null &&
+          criteria.cbbrNeedGroupId !== cbbrNeedGroupId
+        )
+          return false;
+
+        if (cbbrType !== null && criteria.cbbrType !== cbbrType) return false;
+
+        if (
+          agencyInitials !== null &&
+          criteria.agencyInitials !== agencyInitials
+        )
+          return false;
+
+        if (cbbrType !== null && criteria.cbbrType !== cbbrType) return false;
+
+        if (
+          cbbrAgencyCategoryResponseIds !== null &&
+          !cbbrAgencyCategoryResponseIds.includes(
+            criteria.cbbrAgencyCategoryResponseId,
+          )
+        )
+          return false;
+
+        if (isMapped !== null && criteria.isMapped !== isMapped) return false;
+
+        if (
+          isContinuedSupport !== null &&
+          criteria.isContinuedSupport !== isContinuedSupport
+        )
+          return false;
+
+        return true;
+      })
+      .map(([_, budgetRequest]) => budgetRequest);
+  }
+
+  async findCsv(params: {
+    boroughId: string | null;
+    communityDistrictId: string | null;
+    cityCouncilDistrictId: string | null;
+    cbbrPolicyAreaId: number | null;
+    cbbrNeedGroupId: number | null;
+    agencyInitials: string | null;
+    cbbrType: string | null;
+    cbbrAgencyCategoryResponseIds: Array<number> | null;
+    isMapped: boolean | null;
+    isContinuedSupport: boolean | null;
+    limit: number;
+    offset: number;
+  }): Promise<FindCsvRepo> {
+    return await this.filterCommunityBoardBudgetCsvRequests(params);
   }
 }
