@@ -9,6 +9,7 @@ import {
   findCommunityBoardBudgetRequestAgencyCategoryResponsesQueryResponseSchema,
   findCommunityBoardBudgetRequestGeoJsonByIdQueryResponseSchema,
   findCommunityBoardBudgetRequestTilesQueryResponseSchema,
+  findCommunityBoardBudgetRequestsCsvQueryResponseSchema,
 } from "src/gen";
 import { CommunityBoardBudgetRequestService } from "./community-board-budget-request.service";
 import { CommunityBoardBudgetRequestRepository } from "./community-board-budget-request.repository";
@@ -607,6 +608,15 @@ describe("Community Board Budget Request service unit", () => {
       });
       expect(() =>
         findCommunityBoardBudgetRequestTilesQueryResponseSchema.parse(mvt),
+      ).not.toThrow();
+    });
+  });
+
+  describe("findCsv", () => {
+    it("should return a list of community board budget requests for download", async () => {
+      const csv = await communityBoardBudgetRequestService.findCsv({});
+      expect(() =>
+        findCommunityBoardBudgetRequestsCsvQueryResponseSchema.parse(csv),
       ).not.toThrow();
     });
   });

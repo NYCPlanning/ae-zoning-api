@@ -1,0 +1,32 @@
+get:
+  summary: Download a CSV of budget reqeusts with the selected filters
+  operationId: findCommunityBoardBudgetRequestsCsv
+  tags:
+    - Community Board Budget Requests
+  parameters:
+    - $ref: ../components/parameters/communityDistrictIdQueryParam.yaml
+    - $ref: ../components/parameters/cityCouncilDistrictIdQueryParam.yaml
+    - $ref: ../components/parameters/cbbrPolicyAreaIdQueryParam.yaml
+    - $ref: ../components/parameters/cbbrNeedGroupIdQueryParam.yaml
+    - $ref: ../components/parameters/agencyInitialsQueryParam.yaml
+    - $ref: ../components/parameters/cbbrTypeQueryParam.yaml
+    - $ref: ../components/parameters/cbbrAgencyCategoryResponseIdsQueryParam.yaml
+    - $ref: ../components/parameters/isMappedQueryParam.yaml
+    - $ref: ../components/parameters/isContinuedSupportQueryParam.yaml
+  responses:
+    '200':
+      description: >-
+        A CSV download of community board budget requests
+      content:
+        text/csv:
+            schema:
+              type: string
+            example: |
+              Tracking Number,Community Board Number,Address,Site or Facility Name,Street Segment - On Street,Street Segment - Cross Street 1,Street Segment - Cross Street 2,Intersection - Street 1,Intersection - Street 2,Type,Is Continued Support,CB Request,CB Explanation,Agency Acronym,Priority,Agency Response,Agency Response Explanation
+              311202601C,MN11,,,,,,,,Capital,false,"Provide more housing for special needs households, such as the formerly homeless","Provide funding for the development of affordable rental and cooperative housing at deeper levels of affordability targeting households living under 30% of AMI, the developmentally disabled, those living with mental illness and homeless veterans.",HPD,1,4,"HPD will continue creating affordable supportive housing for groups with special needs. Our affordable multifamily new construction and preservation term sheets also required formerly homeless set-asides, bringing those in shelter into stable permanent housing. HPD will also continue building affordable housing through its OpenDoor program."
+              311202601E,MN11,,,,,,,,Expense,false,Other community board facilities and staff requests,Provide funding for baseline increases to the Personal Services (PS) and Other Than Personal Services (OTPS) budgets of Community Boards,OMB,1,6,"As of the FY 2026 Preliminary Budget, each Community Board�s budget is being maintained."
+
+    '400':
+      $ref: ../components/responses/BadRequest.yaml
+    '500':
+      $ref: ../components/responses/InternalServerError.yaml

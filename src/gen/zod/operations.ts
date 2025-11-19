@@ -152,6 +152,12 @@ import {
   findCommunityBoardBudgetRequestAgencyCategoryResponses500Schema,
 } from "./findCommunityBoardBudgetRequestAgencyCategoryResponsesSchema";
 import {
+  findCommunityBoardBudgetRequestsCsvQueryResponseSchema,
+  findCommunityBoardBudgetRequestsCsv400Schema,
+  findCommunityBoardBudgetRequestsCsv500Schema,
+  findCommunityBoardBudgetRequestsCsvQueryParamsSchema,
+} from "./findCommunityBoardBudgetRequestsCsvSchema";
+import {
   findCommunityBoardBudgetRequestNeedGroupsQueryResponseSchema,
   findCommunityBoardBudgetRequestNeedGroups400Schema,
   findCommunityBoardBudgetRequestNeedGroups500Schema,
@@ -723,6 +729,24 @@ export const operations = {
       500: findCommunityBoardBudgetRequestAgencyCategoryResponses500Schema,
     },
   },
+  findCommunityBoardBudgetRequestsCsv: {
+    request: undefined,
+    parameters: {
+      path: undefined,
+      query: findCommunityBoardBudgetRequestsCsvQueryParamsSchema,
+      header: undefined,
+    },
+    responses: {
+      200: findCommunityBoardBudgetRequestsCsvQueryResponseSchema,
+      400: findCommunityBoardBudgetRequestsCsv400Schema,
+      500: findCommunityBoardBudgetRequestsCsv500Schema,
+      default: findCommunityBoardBudgetRequestsCsvQueryResponseSchema,
+    },
+    errors: {
+      400: findCommunityBoardBudgetRequestsCsv400Schema,
+      500: findCommunityBoardBudgetRequestsCsv500Schema,
+    },
+  },
   findCommunityBoardBudgetRequestNeedGroups: {
     request: undefined,
     parameters: {
@@ -1092,6 +1116,9 @@ export const paths = {
   },
   "/community-board-budget-requests/agency-category-responses": {
     get: operations["findCommunityBoardBudgetRequestAgencyCategoryResponses"],
+  },
+  "/community-board-budget-requests/csv": {
+    get: operations["findCommunityBoardBudgetRequestsCsv"],
   },
   "/community-board-budget-requests/need-groups": {
     get: operations["findCommunityBoardBudgetRequestNeedGroups"],
