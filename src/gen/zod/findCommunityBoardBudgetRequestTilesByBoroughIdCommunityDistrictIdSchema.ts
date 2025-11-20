@@ -29,7 +29,7 @@ export const findCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdP
  * @description A protobuf file formatted as Mapbox Vector Tile
  */
 export const findCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictId200Schema =
-  z.coerce.string();
+  z.string();
 
 /**
  * @description Invalid client request

@@ -6,11 +6,11 @@
 import { z } from "zod";
 
 export const capitalCommitmentSchema = z.object({
-  id: z.coerce
+  id: z
     .string()
     .uuid()
     .describe("A uuid used to refer to the capital commitment."),
-  type: z.coerce
+  type: z
     .string()
     .regex(/^([A-z]{4})$/)
     .describe("A four character string used to refer to the commitment type."),
@@ -20,25 +20,25 @@ export const capitalCommitmentSchema = z.object({
     .describe(
       "A string used to refer to the date when the commitment is projected to be committed.",
     ),
-  budgetLineCode: z.coerce
+  budgetLineCode: z
     .string()
     .describe("A string used to refer to the budget line."),
-  budgetLineId: z.coerce
+  budgetLineId: z
     .string()
     .describe("A string used to refer to the budget line."),
   sponsoringAgency: z.nullable(
-    z.coerce
+    z
       .string()
       .describe(
         "A string of variable length containing the initials of the sponsoring agency.",
       ),
   ),
   budgetType: z.nullable(
-    z.coerce
+    z
       .string()
       .describe("A string of variable length denoting the type of budget."),
   ),
-  totalValue: z.coerce
+  totalValue: z
     .number()
     .describe(
       "A numeric string used to refer to the amount of total planned commitments.",

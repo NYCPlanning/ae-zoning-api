@@ -9,9 +9,7 @@ import { multiPolygonSchema } from "./multiPolygonSchema.ts";
 import { z } from "zod";
 
 export const communityBoardBudgetRequestGeoJsonSchema = z.object({
-  id: z.coerce
-    .string()
-    .describe("The id for the community board budget request."),
+  id: z.string().describe("The id for the community board budget request."),
   type: z.enum(["Feature"]),
   geometry: z.union([
     z.lazy(() => multiPointSchema),

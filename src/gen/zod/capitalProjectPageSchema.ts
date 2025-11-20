@@ -12,7 +12,7 @@ export const capitalProjectPageSchema = z
   .and(
     z.object({
       capitalProjects: z.array(z.lazy(() => capitalProjectSchema)),
-      totalProjects: z.coerce
+      totalProjects: z
         .number()
         .int()
         .min(0)

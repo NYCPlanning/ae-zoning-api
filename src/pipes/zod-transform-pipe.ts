@@ -7,6 +7,7 @@ import {
   ZodArray,
   ZodBoolean,
   ZodError,
+  ZodNumber,
 } from "zod";
 export class ZodTransformPipe<T extends ZodRawShape> implements PipeTransform {
   constructor(private schema: ZodObject<T> | ZodOptional<ZodObject<T>>) {}
@@ -32,7 +33,30 @@ export class ZodTransformPipe<T extends ZodRawShape> implements PipeTransform {
           : parameterSchema;
 
       if (property instanceof ZodArray) {
-        decodedParams[param] = Array.isArray(value) ? value : value.split(",");
+        const items = Array.isArray(value) ? value : value.split(",");
+        const parsedItems =
+          property.element instanceof ZodNumber
+            ? items.map((item) => {
+                const f = parseFloat(item);
+                if (isNaN(f))
+                  throw new InvalidRequestParameterException(
+                    "invalid value for numeric array schema property",
+                  );
+                return f;
+              })
+            : items;
+        decodedParams[param] = parsedItems;
+        return;
+      }
+
+      if (property instanceof ZodNumber) {
+        const numberError = new InvalidRequestParameterException(
+          "invalid value for numeric schema property",
+        );
+        if (Array.isArray(value)) throw numberError;
+        const f = parseFloat(value);
+        if (isNaN(f)) throw numberError;
+        decodedParams[param] = f;
         return;
       }
 

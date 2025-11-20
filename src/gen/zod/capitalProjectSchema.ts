@@ -7,17 +7,17 @@ import { capitalProjectCategorySchema } from "./capitalProjectCategorySchema.ts"
 import { z } from "zod";
 
 export const capitalProjectSchema = z.object({
-  id: z.coerce
+  id: z
     .string()
     .describe(
       "The id for the project, which combines with the managing code to make a unique id",
     ),
-  description: z.coerce.string().describe("The capital project title."),
-  managingCode: z.coerce
+  description: z.string().describe("The capital project title."),
+  managingCode: z
     .string()
     .regex(/^([0-9]{3})$/)
     .describe("Three character string of numbers representing managing agency"),
-  managingAgency: z.coerce
+  managingAgency: z
     .string()
     .describe("The managing agency name abbreviation or acronym"),
   minDate: z

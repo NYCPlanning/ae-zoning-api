@@ -7,22 +7,20 @@ import { communityBoardBudgetRequestTypeSchema } from "./communityBoardBudgetReq
 import { z } from "zod";
 
 export const communityBoardBudgetRequestSchema = z.object({
-  id: z.coerce
-    .string()
-    .describe("The id for the community board budget request."),
-  cbbrPolicyAreaId: z.coerce
+  id: z.string().describe("The id for the community board budget request."),
+  cbbrPolicyAreaId: z
     .number()
     .int()
     .describe("The id for the policy area of the request."),
-  title: z.coerce.string().describe("The title of the budget request."),
-  description: z.coerce.string().describe("Description of the budget request."),
-  communityBoardId: z.coerce
+  title: z.string().describe("The title of the budget request."),
+  description: z.string().describe("Description of the budget request."),
+  communityBoardId: z
     .string()
     .describe("The id of the community board that made the request."),
-  agencyInitials: z.coerce
+  agencyInitials: z
     .string()
     .describe("Initials of the agency of which the request was made."),
-  priority: z.coerce
+  priority: z
     .number()
     .describe("The board's ranking of the request's priority"),
   cbbrType: z
@@ -35,10 +33,10 @@ export const communityBoardBudgetRequestSchema = z.object({
     .boolean()
     .describe("Whether the budget request is for Continued Support"),
   cbbrAgencyCategoryResponseId: z.optional(
-    z.coerce.number().describe("The id of the agency's response category"),
+    z.number().describe("The id of the agency's response category"),
   ),
   cbbrAgencyResponse: z.optional(
-    z.coerce
+    z
       .string()
       .describe("The agency's written explanation for the response category"),
   ),
