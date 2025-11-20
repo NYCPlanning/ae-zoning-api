@@ -14,13 +14,13 @@ properties:
     description: The block code, without its padding zeros.
     minLength: 1
     maxLength: 5
-    example: 47
+    example: "47"
   lot:
     type: string
     description: The lot code, without its padding zeros.
     minLength: 1
     maxLength: 4
-    example: 7501
+    example: "7501"
   address:
     type: string
     description: The street address.
