@@ -12,7 +12,7 @@ import { z } from "zod";
  */
 export const findCityCouncilDistricts200Schema = z.object({
   cityCouncilDistricts: z.array(z.lazy(() => cityCouncilDistrictSchema)),
-  order: z.coerce
+  order: z
     .string()
     .describe(
       "City council districts ids are sorted as if numbers in ascending order",

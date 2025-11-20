@@ -79,7 +79,7 @@ export const findCommunityBoardBudgetRequestsCsvQueryParamsSchema = z
 /**
  * @description A CSV download of community board budget requests
  */
-export const findCommunityBoardBudgetRequestsCsv200Schema = z.coerce.string();
+export const findCommunityBoardBudgetRequestsCsv200Schema = z.string();
 
 /**
  * @description Invalid client request

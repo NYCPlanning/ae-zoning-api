@@ -9,7 +9,7 @@ import { multiPolygonSchema } from "./multiPolygonSchema.ts";
 import { z } from "zod";
 
 export const capitalProjectBudgetedGeoJsonSchema = z.object({
-  id: z.coerce
+  id: z
     .string()
     .describe("The concatenation of the managing code and capital project id."),
   type: z.enum(["Feature"]),

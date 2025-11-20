@@ -12,7 +12,7 @@ import { z } from "zod";
  */
 export const findAgencyBudgets200Schema = z.object({
   agencyBudgets: z.array(z.lazy(() => agencyBudgetSchema)),
-  order: z.coerce
+  order: z
     .string()
     .describe("Agency Budgets are sorted alphabetically by their codes"),
 });

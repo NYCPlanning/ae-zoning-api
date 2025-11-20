@@ -15,7 +15,7 @@ export const findCommunityBoardBudgetRequestTilesPathParamsSchema = z.object({
 /**
  * @description A protobuf file formatted as Mapbox Vector Tile
  */
-export const findCommunityBoardBudgetRequestTiles200Schema = z.coerce.string();
+export const findCommunityBoardBudgetRequestTiles200Schema = z.string();
 
 /**
  * @description Invalid client request

@@ -23,7 +23,7 @@ export const findCommunityBoardBudgetRequestTilesByCityCouncilDistrictIdPathPara
  * @description A protobuf file formatted as Mapbox Vector Tile
  */
 export const findCommunityBoardBudgetRequestTilesByCityCouncilDistrictId200Schema =
-  z.coerce.string();
+  z.string();
 
 /**
  * @description Invalid client request

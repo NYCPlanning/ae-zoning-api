@@ -16,7 +16,7 @@ export const findCapitalProjectManagingAgencies200Schema = z.object({
     .describe(
       "An list of agencies sorted alphabetically by the agency initials.\n",
     ),
-  order: z.coerce
+  order: z
     .string()
     .describe(
       "The criteria used to sort the results using the agency initials in ascending order.",

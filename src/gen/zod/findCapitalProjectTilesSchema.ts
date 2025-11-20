@@ -15,7 +15,7 @@ export const findCapitalProjectTilesPathParamsSchema = z.object({
 /**
  * @description A protobuf file formatted as Mapbox Vector Tile
  */
-export const findCapitalProjectTiles200Schema = z.coerce.string();
+export const findCapitalProjectTiles200Schema = z.string();
 
 /**
  * @description Invalid client request

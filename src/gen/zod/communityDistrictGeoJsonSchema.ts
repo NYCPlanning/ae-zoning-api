@@ -8,7 +8,7 @@ import { multiPolygonSchema } from "./multiPolygonSchema.ts";
 import { z } from "zod";
 
 export const communityDistrictGeoJsonSchema = z.object({
-  id: z.coerce
+  id: z
     .string()
     .regex(/^([0-9]{3})$/)
     .describe(
