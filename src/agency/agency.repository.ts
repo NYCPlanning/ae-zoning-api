@@ -28,8 +28,8 @@ export class AgencyRepository {
       domain: "agency",
       function: "checkByInitials",
     });
-    const cachedValue: boolean | null = await this.cacheManager.get(key);
-    if (cachedValue !== null) return cachedValue;
+    const cachedValue = await this.cacheManager.get<boolean>(key);
+    if (cachedValue !== undefined) return cachedValue;
     try {
       const result = await this.#checkByInitials.execute({
         initials,
