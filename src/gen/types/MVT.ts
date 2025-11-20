@@ -3,6 +3,4 @@
  * Do not edit manually.
  */
 
-import type { Error } from "./Error.ts";
-
-export type NotFound = Error;
+export type MVT = string;
