@@ -6,6 +6,6 @@
 import { z } from "zod";
 
 export const communityBoardBudgetRequestNeedGroupSchema = z.object({
-  id: z.coerce.number().int().describe("The id for the need group"),
-  description: z.coerce.string().describe("The name of the need group."),
+  id: z.number().int().describe("The id for the need group"),
+  description: z.string().describe("The name of the need group."),
 });

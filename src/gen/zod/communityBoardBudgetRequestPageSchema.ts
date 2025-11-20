@@ -10,15 +10,15 @@ export const communityBoardBudgetRequestPageSchema = pageSchema.and(
   z.object({
     communityBoardBudgetRequests: z.array(
       z.object({
-        id: z.coerce
+        id: z
           .string()
           .describe("The id for the community board budget request."),
-        cbbrPolicyAreaId: z.coerce
+        cbbrPolicyAreaId: z
           .number()
           .int()
           .describe("The id for the policy area of the request."),
-        title: z.coerce.string().describe("The title of the budget request."),
-        communityBoardId: z.coerce
+        title: z.string().describe("The title of the budget request."),
+        communityBoardId: z
           .string()
           .describe("The id of the community board that made the request."),
         isMapped: z
@@ -29,7 +29,7 @@ export const communityBoardBudgetRequestPageSchema = pageSchema.and(
           .describe("Whether the budget request is for Continued Support"),
       }),
     ),
-    totalBudgetRequests: z.coerce
+    totalBudgetRequests: z
       .number()
       .int()
       .min(0)

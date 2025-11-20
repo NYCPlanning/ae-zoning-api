@@ -8,16 +8,16 @@ import { z } from "zod";
 
 export const capitalProjectBudgetedSchema = capitalProjectSchema.and(
   z.object({
-    commitmentsTotal: z.coerce
+    commitmentsTotal: z
       .number()
       .describe("The sum total of commitments for the capital project"),
     sponsoringAgencies: z
-      .array(z.coerce.string())
+      .array(z.string())
       .describe(
         "An array containing string values representing the sponsoring agencies initials.",
       ),
     budgetTypes: z
-      .array(z.coerce.string())
+      .array(z.string())
       .describe(
         "An array containing string values representing the budget types.",
       ),

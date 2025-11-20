@@ -21,7 +21,7 @@ export const findCommunityDistrictsByBoroughIdPathParamsSchema = z.object({
  */
 export const findCommunityDistrictsByBoroughId200Schema = z.object({
   communityDistricts: z.array(z.lazy(() => communityDistrictSchema)),
-  order: z.coerce
+  order: z
     .string()
     .describe("Community district numbers are sorted in ascending order"),
 });

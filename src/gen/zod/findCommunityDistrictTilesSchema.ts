@@ -15,7 +15,7 @@ export const findCommunityDistrictTilesPathParamsSchema = z.object({
 /**
  * @description A protobuf file formatted as Mapbox Vector Tile
  */
-export const findCommunityDistrictTiles200Schema = z.coerce.string();
+export const findCommunityDistrictTiles200Schema = z.string();
 
 /**
  * @description Invalid client request

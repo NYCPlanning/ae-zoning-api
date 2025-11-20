@@ -6,14 +6,14 @@
 import { z } from "zod";
 
 export const boroughSchema = z.object({
-  id: z.coerce
+  id: z
     .string()
     .regex(/^([0-9])$/)
     .describe(
       "A single character numeric string containing the common number used to refer to the borough. Possible values are 1-5.",
     ),
-  title: z.coerce.string().describe("The full name of the borough."),
-  abbr: z.coerce
+  title: z.string().describe("The full name of the borough."),
+  abbr: z
     .string()
     .min(2)
     .max(2)

@@ -8,23 +8,23 @@ import { landUseSchema } from "./landUseSchema.ts";
 import { z } from "zod";
 
 export const taxLotSchema = z.object({
-  bbl: z.coerce
+  bbl: z
     .string()
     .regex(/^([0-9]{10})$/)
     .describe(
       "The ten character code compromised of a one character borough, five character block, and four character lot codes.",
     ),
   borough: z.lazy(() => boroughSchema),
-  block: z.coerce
+  block: z
     .string()
     .min(1)
     .max(5)
     .describe("The block code, without its padding zeros."),
-  lot: z.coerce
+  lot: z
     .string()
     .min(1)
     .max(4)
     .describe("The lot code, without its padding zeros."),
-  address: z.coerce.string().describe("The street address."),
+  address: z.string().describe("The street address."),
   landUse: z.lazy(() => landUseSchema),
 });

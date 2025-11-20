@@ -28,7 +28,7 @@ export const findCapitalCommitmentsByManagingCodeCapitalProjectIdPathParamsSchem
 export const findCapitalCommitmentsByManagingCodeCapitalProjectId200Schema =
   z.object({
     capitalCommitments: z.array(z.lazy(() => capitalCommitmentSchema)),
-    order: z.coerce
+    order: z
       .string()
       .describe("Capital commitment dates are sorted in ascending order"),
   });

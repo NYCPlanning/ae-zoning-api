@@ -6,13 +6,13 @@
 import { z } from "zod";
 
 export const communityDistrictSchema = z.object({
-  id: z.coerce
+  id: z
     .string()
     .regex(/^([0-9]{2})$/)
     .describe(
       "The two character numeric string containing the number used to refer to the community district.",
     ),
-  boroughId: z.coerce
+  boroughId: z
     .string()
     .regex(/^([0-9])$/)
     .describe(

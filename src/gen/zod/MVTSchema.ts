@@ -5,4 +5,4 @@
 
 import { z } from "zod";
 
-export const MVTSchema = z.coerce.string();
+export const MVTSchema = z.string();

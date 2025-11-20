@@ -10,7 +10,7 @@ export const zoningDistrictClassCategoryColorSchema = z.object({
   category: z
     .lazy(() => zoningDistrictClassCategorySchema)
     .describe("The type of zoning district."),
-  color: z.coerce
+  color: z
     .string()
     .regex(/^#([A-Fa-f0-9]{8})$/)
     .describe("The color for the zoning district class category."),
