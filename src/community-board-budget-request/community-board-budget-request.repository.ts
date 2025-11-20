@@ -674,8 +674,7 @@ export class CommunityBoardBudgetRequestRepository {
       x,
       y,
     });
-    const cachedTiles =
-      await this.tileCache.get<Buffer<ArrayBufferLike>>(cacheKey);
+    const cachedTiles = await this.tileCache.get<Buffer<ArrayBuffer>>(cacheKey);
     if (cachedTiles !== undefined) return cachedTiles;
     try {
       const tileFill = this.db

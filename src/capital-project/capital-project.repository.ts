@@ -531,8 +531,7 @@ export class CapitalProjectRepository {
       x,
       y,
     });
-    const cachedTiles =
-      await this.tileCache.get<Buffer<ArrayBufferLike>>(cacheKey);
+    const cachedTiles = await this.tileCache.get<Buffer<ArrayBuffer>>(cacheKey);
     if (cachedTiles !== undefined) return cachedTiles;
     try {
       const tile = this.db
@@ -605,7 +604,9 @@ export class CapitalProjectRepository {
         .as("tile");
       const data = await this.db
         .select({
-          mvt: sql<Buffer>`ST_AsMVT(tile, 'capital-project-fill', 4096, 'geom')`,
+          mvt: sql<
+            Buffer<ArrayBuffer>
+          >`ST_AsMVT(tile, 'capital-project-fill', 4096, 'geom')`,
         })
         .from(tile)
         .where(isNotNull(tile.geom));
