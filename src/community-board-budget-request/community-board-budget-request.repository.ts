@@ -69,9 +69,9 @@ export class CommunityBoardBudgetRequestRepository {
       domain: "communityBoardBudgetRequest",
       function: "checkAgencyCategoryResponseById",
     });
-    const cachedValue: CheckAgencyCategoryResponseByIdRepo | null =
-      await this.cacheManager.get(key);
-    if (cachedValue !== null) return cachedValue;
+    const cachedValue =
+      await this.cacheManager.get<CheckAgencyCategoryResponseByIdRepo>(key);
+    if (cachedValue !== undefined) return cachedValue;
     try {
       const result = await this.#checkAgencyCategoryResponseById.execute({
         id,
@@ -102,9 +102,9 @@ export class CommunityBoardBudgetRequestRepository {
       domain: "communityBoardBudgetRequest",
       function: "checkNeedGroupById",
     });
-    const cachedValue: CheckNeedGroupByIdRepo | null =
-      await this.cacheManager.get(key);
-    if (cachedValue !== null) return cachedValue;
+    const cachedValue =
+      await this.cacheManager.get<CheckNeedGroupByIdRepo>(key);
+    if (cachedValue !== undefined) return cachedValue;
     try {
       const result = await this.#checkNeedGroupById.execute({ id });
       const value = result !== undefined;
@@ -133,9 +133,9 @@ export class CommunityBoardBudgetRequestRepository {
       domain: "communityBoardBudgetRequest",
       function: "checkPolicyAreaById",
     });
-    const cachedValue: CheckPolicyAreaByIdRepo | null =
-      await this.cacheManager.get(key);
-    if (cachedValue !== null) return cachedValue;
+    const cachedValue =
+      await this.cacheManager.get<CheckPolicyAreaByIdRepo>(key);
+    if (cachedValue !== undefined) return cachedValue;
     try {
       const result = await this.#checkPolicyAreaById.execute({ id });
       const value = result !== undefined;
@@ -676,7 +676,7 @@ export class CommunityBoardBudgetRequestRepository {
     });
     const cachedTiles =
       await this.tileCache.get<Buffer<ArrayBufferLike>>(cacheKey);
-    if (cachedTiles !== null) return cachedTiles;
+    if (cachedTiles !== undefined) return cachedTiles;
     try {
       const tileFill = this.db
         .select({

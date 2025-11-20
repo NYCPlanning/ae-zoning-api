@@ -250,8 +250,8 @@ export class CapitalProjectRepository {
       function: "findCount",
     });
 
-    const value: number | null = await this.cacheManager.get(key);
-    if (value !== null) {
+    const value = await this.cacheManager.get<number>(key);
+    if (value !== undefined) {
       return value;
     }
 
@@ -388,9 +388,9 @@ export class CapitalProjectRepository {
       domain: "capitalProject",
       function: "checkByManagingCodeCapitalProjectId",
     });
-    const cachedValue: boolean | null = await this.cacheManager.get(key);
+    const cachedValue = await this.cacheManager.get<boolean>(key);
 
-    if (cachedValue !== null) return cachedValue;
+    if (cachedValue !== undefined) return cachedValue;
 
     const result = await this.#checkByManagingCodeCapitalProjectId.execute({
       managingCode,
@@ -533,7 +533,7 @@ export class CapitalProjectRepository {
     });
     const cachedTiles =
       await this.tileCache.get<Buffer<ArrayBufferLike>>(cacheKey);
-    if (cachedTiles !== null) return cachedTiles;
+    if (cachedTiles !== undefined) return cachedTiles;
     try {
       const tile = this.db
         .select({
