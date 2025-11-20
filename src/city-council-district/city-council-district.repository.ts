@@ -183,7 +183,9 @@ export class CityCouncilDistrictRepository {
         .as("tile");
       const data = await this.db
         .select({
-          mvt: sql<Buffer>`ST_AsMVT(tile, 'capital-project-fill', 4096, 'geom')`,
+          mvt: sql<
+            Buffer<ArrayBuffer>
+          >`ST_AsMVT(tile, 'capital-project-fill', 4096, 'geom')`,
         })
         .from(tile)
         .where(isNotNull(tile.geom));
