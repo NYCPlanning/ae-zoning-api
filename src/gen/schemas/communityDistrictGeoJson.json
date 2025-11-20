@@ -3,9 +3,9 @@
   "properties": {
     "id": {
       "type": "string",
-      "description": "One or two character code to represent city council districts.",
-      "pattern": "^([0-9]{1,2})$",
-      "example": 25
+      "description": "Three character code to represent a borough and community district.",
+      "pattern": "^([0-9]{3})$",
+      "example": "101"
     },
     "type": { "type": "string", "enum": ["Feature"] },
     "properties": {
@@ -13,13 +13,19 @@
       "properties": {
         "id": {
           "type": "string",
-          "description": "One or two character code to represent city council districts.",
-          "pattern": "^([0-9]{1,2})$",
-          "example": "25"
+          "description": "The two character numeric string containing the number used to refer to the community district.",
+          "pattern": "^([0-9]{2})$",
+          "example": "01"
+        },
+        "boroughId": {
+          "type": "string",
+          "description": "A single character numeric string containing the common number used to refer to the borough. Possible values are 1-5.",
+          "pattern": "^([0-9])$",
+          "example": "1"
         }
       },
-      "required": ["id"],
-      "x-readme-ref-name": "CityCouncilDistrict"
+      "required": ["id", "boroughId"],
+      "x-readme-ref-name": "CommunityDistrict"
     },
     "geometry": {
       "type": "object",
@@ -51,5 +57,5 @@
     }
   },
   "required": ["id", "type", "geometry", "properties"],
-  "x-readme-ref-name": "CityCouncilDistrictGeoJson"
+  "x-readme-ref-name": "CommunityDistrictGeoJson"
 }

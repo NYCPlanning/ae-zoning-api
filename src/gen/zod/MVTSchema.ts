@@ -3,6 +3,6 @@
  * Do not edit manually.
  */
 
-import type { Error } from "./Error.ts";
+import { z } from "zod";
 
-export type NotFound = Error;
+export const MVTSchema = z.string();
