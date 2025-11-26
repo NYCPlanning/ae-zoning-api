@@ -10,6 +10,7 @@ import {
   FindAgenciesRepo,
   FindTilesRepo,
   FindManyRepo,
+  FindCsvRepo,
   FindCountRepo,
   FindByIdRepo,
   FindGeoJsonByIdRepo,
@@ -25,6 +26,7 @@ import {
   borough,
   cbbrAgencyCategoryResponse,
   CbbrRequestTypeEntity,
+  cbbrRequest,
 } from "src/schema";
 import { eq, and, or, sql, isNotNull, inArray } from "drizzle-orm";
 import {
@@ -525,6 +527,137 @@ export class CommunityBoardBudgetRequestRepository {
     } catch {
       throw new DataRetrievalException(
         "cannot find agency response categories",
+      );
+    }
+  }
+
+  async findCsv({
+    boroughId,
+    communityDistrictId,
+    cityCouncilDistrictId,
+    cbbrPolicyAreaId,
+    cbbrNeedGroupId,
+    agencyInitials,
+    cbbrType,
+    cbbrAgencyCategoryResponseIds,
+    isMapped,
+    isContinuedSupport,
+  }: {
+    boroughId: string | null;
+    communityDistrictId: string | null;
+    cityCouncilDistrictId: string | null;
+    cbbrPolicyAreaId: number | null;
+    cbbrNeedGroupId: number | null;
+    agencyInitials: string | null;
+    cbbrType: "Capital" | "Expense" | null;
+    cbbrAgencyCategoryResponseIds: Array<number> | null;
+    isMapped: boolean | null;
+    isContinuedSupport: boolean | null;
+  }): Promise<FindCsvRepo> {
+    try {
+      return await this.db
+        .select({
+          id: communityBoardBudgetRequest.id,
+          communityBoardId: sql<string>`${borough.abbr} || ${communityBoardBudgetRequest.communityDistrictId}`,
+          address: communityBoardBudgetRequest.address,
+          siteName: communityBoardBudgetRequest.siteName,
+          segmentOnStreet: communityBoardBudgetRequest.segmentOnStreet,
+          segmentCrossStreetOne:
+            communityBoardBudgetRequest.segmentCrossStreetOne,
+          segmentCrossStreetTwo:
+            communityBoardBudgetRequest.segmentCrossStreetTwo,
+          intersectionStreetOne:
+            communityBoardBudgetRequest.intersectionStreetOne,
+          intersectionStreetTwo:
+            communityBoardBudgetRequest.intersectionStreetTwo,
+          requestType: sql<string>`SUBSTRING(${communityBoardBudgetRequest.requestType}, 1, 1)`,
+          isContinuedSupport: communityBoardBudgetRequest.isContinuedSupport,
+          request: cbbrRequest.description,
+          explanation: communityBoardBudgetRequest.explanation,
+          agency: communityBoardBudgetRequest.agency,
+          priority: communityBoardBudgetRequest.priority,
+          agencyCategoryResponse: cbbrAgencyCategoryResponse.description,
+          agencyResponse: communityBoardBudgetRequest.agencyResponse,
+        })
+        .from(communityBoardBudgetRequest)
+        .leftJoin(
+          borough,
+          eq(borough.id, communityBoardBudgetRequest.boroughId),
+        )
+        .leftJoin(
+          cityCouncilDistrict,
+          and(
+            sql`${cityCouncilDistrictId !== null} IS TRUE`,
+            or(
+              sql`ST_Intersects(${cityCouncilDistrict.liFt}, ${communityBoardBudgetRequest.liFtMPoly})`,
+              sql`ST_Intersects(${cityCouncilDistrict.liFt}, ${communityBoardBudgetRequest.liFtMPnt})`,
+            ),
+          ),
+        )
+        .leftJoin(
+          cbbrRequest,
+          eq(cbbrRequest.id, communityBoardBudgetRequest.request),
+        )
+        .leftJoin(
+          cbbrAgencyCategoryResponse,
+          eq(
+            cbbrAgencyCategoryResponse.id,
+            communityBoardBudgetRequest.agencyCategoryResponse,
+          ),
+        )
+        .where(
+          and(
+            cityCouncilDistrictId !== null
+              ? eq(cityCouncilDistrict.id, cityCouncilDistrictId)
+              : undefined,
+            boroughId !== null && communityDistrictId !== null
+              ? and(
+                  eq(communityBoardBudgetRequest.boroughId, boroughId),
+                  eq(
+                    communityBoardBudgetRequest.communityDistrictId,
+                    communityDistrictId,
+                  ),
+                )
+              : undefined,
+            cbbrPolicyAreaId !== null
+              ? eq(communityBoardBudgetRequest.policyArea, cbbrPolicyAreaId)
+              : undefined,
+            cbbrNeedGroupId !== null
+              ? eq(communityBoardBudgetRequest.needGroup, cbbrNeedGroupId)
+              : undefined,
+            agencyInitials !== null
+              ? eq(communityBoardBudgetRequest.agency, agencyInitials)
+              : undefined,
+            cbbrType !== null
+              ? eq(communityBoardBudgetRequest.requestType, cbbrType)
+              : undefined,
+            cbbrAgencyCategoryResponseIds !== null
+              ? inArray(
+                  communityBoardBudgetRequest.agencyCategoryResponse,
+                  cbbrAgencyCategoryResponseIds,
+                )
+              : undefined,
+            isMapped !== null
+              ? eq(
+                  sql<boolean>`${or(
+                    isNotNull(communityBoardBudgetRequest.liFtMPnt),
+                    isNotNull(communityBoardBudgetRequest.liFtMPoly),
+                  )}`,
+                  isMapped,
+                )
+              : undefined,
+            isContinuedSupport !== null
+              ? eq(
+                  communityBoardBudgetRequest.isContinuedSupport,
+                  isContinuedSupport,
+                )
+              : undefined,
+          ),
+        )
+        .orderBy(communityBoardBudgetRequest.id);
+    } catch {
+      throw new DataRetrievalException(
+        "Cannot find Community Board Budget Requests",
       );
     }
   }

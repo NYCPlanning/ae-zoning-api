@@ -1,0 +1,78 @@
+import type { Error } from "./Error";
+
+export const findCommunityBoardBudgetRequestsCsvQueryParamsCbbrType = {
+  C: "C",
+  E: "E",
+} as const;
+export type FindCommunityBoardBudgetRequestsCsvQueryParamsCbbrType =
+  (typeof findCommunityBoardBudgetRequestsCsvQueryParamsCbbrType)[keyof typeof findCommunityBoardBudgetRequestsCsvQueryParamsCbbrType];
+export type FindCommunityBoardBudgetRequestsCsvQueryParams = {
+  /**
+   * @description The three character numeric string containing the concatenation of the borough and community district ids.
+   * @type string | undefined
+   */
+  communityDistrictId?: string;
+  /**
+   * @description One or two character code to represent city council districts.
+   * @type string | undefined
+   */
+  cityCouncilDistrictId?: string;
+  /**
+   * @description The number used to refer to the policy area.
+   * @type integer | undefined
+   */
+  cbbrPolicyAreaId?: number;
+  /**
+   * @description The number used to refer to the need group.
+   * @type integer | undefined
+   */
+  cbbrNeedGroupId?: number;
+  /**
+   * @description A string of variable length containing the initials of the agency.
+   * @type string | undefined
+   */
+  agencyInitials?: string;
+  /**
+   * @description The type of budget request, C for Capital, or E for Expense.
+   * @type string | undefined
+   */
+  cbbrType?: FindCommunityBoardBudgetRequestsCsvQueryParamsCbbrType;
+  /**
+   * @description An array containing the IDs of the agency response types of the Community Board Budget Requests.
+   * @type array | undefined
+   */
+  cbbrAgencyCategoryResponseIds?: number[];
+  /**
+   * @description Used to filter whether a capital project or community board budget request has associated geographic coordinates.
+   * @type boolean | undefined
+   */
+  isMapped?: boolean;
+  /**
+   * @description Used to filter whether a community board budget request is for Continued Support. Note: All Continued Support requests are of the \"Capital\" cbbrType.
+   * @type boolean | undefined
+   */
+  isContinuedSupport?: boolean;
+};
+/**
+ * @description A CSV download of community board budget requests
+ */
+export type FindCommunityBoardBudgetRequestsCsv200 = string;
+/**
+ * @description Invalid client request
+ */
+export type FindCommunityBoardBudgetRequestsCsv400 = Error;
+/**
+ * @description Server side error
+ */
+export type FindCommunityBoardBudgetRequestsCsv500 = Error;
+/**
+ * @description A CSV download of community board budget requests
+ */
+export type FindCommunityBoardBudgetRequestsCsvQueryResponse = string;
+export type FindCommunityBoardBudgetRequestsCsvQuery = {
+  Response: FindCommunityBoardBudgetRequestsCsvQueryResponse;
+  QueryParams: FindCommunityBoardBudgetRequestsCsvQueryParams;
+  Errors:
+    | FindCommunityBoardBudgetRequestsCsv400
+    | FindCommunityBoardBudgetRequestsCsv500;
+};

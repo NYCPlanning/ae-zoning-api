@@ -150,30 +150,24 @@ export class CommunityBoardBudgetRequestService {
     return communityBoardBudgetRequests[0];
   }
 
-  async findMany({
-    communityDistrictCombinedId = null,
+  async findManyParameterValidation({
+    boroughId = null,
+    communityDistrictId = null,
     cityCouncilDistrictId = null,
     cbbrPolicyAreaId = null,
     cbbrNeedGroupId = null,
     agencyInitials = null,
-    cbbrType = null,
     cbbrAgencyCategoryResponseIds = null,
     isMapped = null,
-    isContinuedSupport = null,
-    limit = 20,
-    offset = 0,
   }: {
-    communityDistrictCombinedId?: string | null;
+    boroughId?: string | null;
+    communityDistrictId?: string | null;
     cityCouncilDistrictId?: string | null;
     cbbrPolicyAreaId?: number | null;
     cbbrNeedGroupId?: number | null;
     agencyInitials?: string | null;
-    cbbrType?: "C" | "E" | null;
     cbbrAgencyCategoryResponseIds?: Array<number> | null;
     isMapped?: boolean | null;
-    isContinuedSupport?: boolean | null;
-    limit?: number;
-    offset?: number;
   }) {
     // Parameter validations
     if (cityCouncilDistrictId !== null && isMapped !== null) {
@@ -214,15 +208,6 @@ export class CommunityBoardBudgetRequestService {
       });
     }
 
-    const boroughId =
-      communityDistrictCombinedId !== null
-        ? communityDistrictCombinedId.slice(0, 1)
-        : null;
-    const communityDistrictId =
-      communityDistrictCombinedId !== null
-        ? communityDistrictCombinedId.slice(1, 3)
-        : null;
-
     if (boroughId !== null && communityDistrictId !== null)
       checklist.push(
         this.communityDistrictRepository.checkByBoroughIdCommunityDistrictId(
@@ -241,6 +226,54 @@ export class CommunityBoardBudgetRequestService {
       throw new InvalidRequestParameterException(
         "one or more values for parameters do not exist",
       );
+
+    return;
+  }
+
+  async findMany({
+    communityDistrictCombinedId = null,
+    cityCouncilDistrictId = null,
+    cbbrPolicyAreaId = null,
+    cbbrNeedGroupId = null,
+    agencyInitials = null,
+    cbbrType = null,
+    cbbrAgencyCategoryResponseIds = null,
+    isMapped = null,
+    isContinuedSupport = null,
+    limit = 20,
+    offset = 0,
+  }: {
+    communityDistrictCombinedId?: string | null;
+    cityCouncilDistrictId?: string | null;
+    cbbrPolicyAreaId?: number | null;
+    cbbrNeedGroupId?: number | null;
+    agencyInitials?: string | null;
+    cbbrType?: "C" | "E" | null;
+    cbbrAgencyCategoryResponseIds?: Array<number> | null;
+    isMapped?: boolean | null;
+    isContinuedSupport?: boolean | null;
+    limit?: number;
+    offset?: number;
+  }) {
+    const boroughId =
+      communityDistrictCombinedId !== null
+        ? communityDistrictCombinedId.slice(0, 1)
+        : null;
+    const communityDistrictId =
+      communityDistrictCombinedId !== null
+        ? communityDistrictCombinedId.slice(1, 3)
+        : null;
+
+    await this.findManyParameterValidation({
+      boroughId,
+      communityDistrictId,
+      cityCouncilDistrictId,
+      cbbrPolicyAreaId,
+      cbbrNeedGroupId,
+      agencyInitials,
+      cbbrAgencyCategoryResponseIds,
+      isMapped,
+    });
 
     const cbbrTypeExpanded: "Capital" | "Expense" | null =
       cbbrType === "C" ? "Capital" : cbbrType === "E" ? "Expense" : null;
@@ -279,6 +312,64 @@ export class CommunityBoardBudgetRequestService {
       totalBudgetRequests,
       order: "id",
     };
+  }
+
+  async findCsv({
+    communityDistrictCombinedId = null,
+    cityCouncilDistrictId = null,
+    cbbrPolicyAreaId = null,
+    cbbrNeedGroupId = null,
+    agencyInitials = null,
+    cbbrType = null,
+    cbbrAgencyCategoryResponseIds = null,
+    isMapped = null,
+    isContinuedSupport = null,
+  }: {
+    communityDistrictCombinedId?: string | null;
+    cityCouncilDistrictId?: string | null;
+    cbbrPolicyAreaId?: number | null;
+    cbbrNeedGroupId?: number | null;
+    agencyInitials?: string | null;
+    cbbrType?: "C" | "E" | null;
+    cbbrAgencyCategoryResponseIds?: Array<number> | null;
+    isMapped?: boolean | null;
+    isContinuedSupport?: boolean | null;
+  }) {
+    const boroughId =
+      communityDistrictCombinedId !== null
+        ? communityDistrictCombinedId.slice(0, 1)
+        : null;
+    const communityDistrictId =
+      communityDistrictCombinedId !== null
+        ? communityDistrictCombinedId.slice(1, 3)
+        : null;
+
+    await this.findManyParameterValidation({
+      boroughId,
+      communityDistrictId,
+      cityCouncilDistrictId,
+      cbbrPolicyAreaId,
+      cbbrNeedGroupId,
+      agencyInitials,
+      cbbrAgencyCategoryResponseIds,
+      isMapped,
+    });
+
+    const cbbrTypeExpanded: "Capital" | "Expense" | null =
+      cbbrType === "C" ? "Capital" : cbbrType === "E" ? "Expense" : null;
+
+    return await this.communityBoardBudgetRequestRepository.findCsv({
+      boroughId,
+      communityDistrictId,
+      cityCouncilDistrictId,
+      cbbrPolicyAreaId,
+      cbbrNeedGroupId,
+      agencyInitials,
+      cbbrType: cbbrTypeExpanded,
+      cbbrAgencyCategoryResponseIds,
+      isMapped,
+      isContinuedSupport,
+    });
   }
 
   async findGeoJsonById(

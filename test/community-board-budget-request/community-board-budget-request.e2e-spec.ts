@@ -1042,6 +1042,335 @@ describe("Community Board Budget Request e2e", () => {
       expect(response.body.message).toBe(dataRetrievalException.message);
     });
   });
+
+  describe("findCsv", () => {
+    it("should 200 and return a csv", async () => {
+      await request(app.getHttpServer())
+        .get(`/community-board-budget-requests/csv`)
+        .expect(200);
+    });
+
+    it("should 200 when finding cbbrs by communityDistrictId", async () => {
+      const communityDistrict = communityDistrictRepositoryMock.districts[0];
+      await request(app.getHttpServer())
+        .get(
+          `/community-board-budget-requests/csv?communityDistrictId=${communityDistrict.boroughId}${communityDistrict.id}`,
+        )
+        .expect(200);
+    });
+
+    it("should 200 when finding cbbrs by cityCouncilDistrictId", async () => {
+      const cityCouncilDistrict = cityCouncilDistrictRepoMock.districts[0];
+      await request(app.getHttpServer())
+        .get(
+          `/community-board-budget-requests/csv?cityCouncilDistrictId=${cityCouncilDistrict.id}`,
+        )
+        .expect(200);
+    });
+
+    it("should 200 when finding cbbrs by cbbrPolicyAreaId", async () => {
+      const cbbrPolicyAreaId =
+        communityBoardBudgetRequestRepositoryMock.policyAreaMocks[0].id;
+      await request(app.getHttpServer())
+        .get(
+          `/community-board-budget-requests/csv?cbbrPolicyAreaId=${cbbrPolicyAreaId}`,
+        )
+        .expect(200);
+    });
+
+    it("should 200 when finding cbbrs by cbbrNeedGroupId", async () => {
+      const cbbrNeedGroupId =
+        communityBoardBudgetRequestRepositoryMock.needGroupMocks[0].id;
+      await request(app.getHttpServer())
+        .get(
+          `/community-board-budget-requests/csv?cbbrNeedGroupId=${cbbrNeedGroupId}`,
+        )
+        .expect(200);
+    });
+
+    it("should 200 when finding cbbrs by agencyInitials", async () => {
+      const agency = agencyRepositoryMock.agencies[0];
+
+      await request(app.getHttpServer())
+        .get(
+          `/community-board-budget-requests/csv?agencyInitials=${agency.initials}`,
+        )
+        .expect(200);
+    });
+
+    it("should 200 when finding cbbrs by cbbrType", async () => {
+      const cbbrType = "C";
+      await request(app.getHttpServer())
+        .get(`/community-board-budget-requests/csv?cbbrType=${cbbrType}`)
+        .expect(200);
+    });
+
+    it("should 200 when finding cbbrs by cbbrAgencyCategoryResponseIds", async () => {
+      const cbbrAgencyCategoryResponseIds = [
+        communityBoardBudgetRequestRepositoryMock
+          .agencyCategoryResponsesMocks[0].id,
+        communityBoardBudgetRequestRepositoryMock
+          .agencyCategoryResponsesMocks[1].id,
+      ];
+
+      await request(app.getHttpServer())
+        .get(
+          `/community-board-budget-requests/csv?cbbrAgencyCategoryResponseIds=${cbbrAgencyCategoryResponseIds.join()}`,
+        )
+        .expect(200);
+    });
+
+    it("should 200 when finding cbbrs by isMapped", async () => {
+      await request(app.getHttpServer())
+        .get(`/community-board-budget-requests/csv?isMapped=true`)
+        .expect(200);
+    });
+
+    it("should 200 when finding cbbrs by isContinuedSupport", async () => {
+      await request(app.getHttpServer())
+        .get(`/community-board-budget-requests/csv?isContinuedSupport=true`)
+        .expect(200);
+    });
+
+    it("should 400 when finding cbbrs by an invalid communityDistrictId", async () => {
+      const communityDistrictId = false;
+
+      const response = await request(app.getHttpServer())
+        .get(
+          `/community-board-budget-requests/csv?communityDistrictId=${communityDistrictId}`,
+        )
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /Invalid request parameter: communityDistrictId: Invalid/,
+      );
+    });
+
+    it("should 400 when finding cbbrs by a missing communityDistrictId", async () => {
+      const communityDistrictId = "909";
+
+      const response = await request(app.getHttpServer())
+        .get(
+          `/community-board-budget-requests/csv?communityDistrictId=${communityDistrictId}`,
+        )
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /one or more values for parameters do not exist/,
+      );
+    });
+
+    it("should 400 when finding cbbrs by an invalid cityCouncilDistrictId", async () => {
+      const cityCouncilDistrictId = false;
+
+      const response = await request(app.getHttpServer())
+        .get(
+          `/community-board-budget-requests/csv?cityCouncilDistrictId=${cityCouncilDistrictId}`,
+        )
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /Invalid request parameter: cityCouncilDistrictId: Invalid/,
+      );
+    });
+
+    it("should 400 when finding cbbrs by a missing cityCouncilDistrictId", async () => {
+      const cityCouncilDistrictId = "90";
+
+      const response = await request(app.getHttpServer())
+        .get(
+          `/community-board-budget-requests/csv?cityCouncilDistrictId=${cityCouncilDistrictId}`,
+        )
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /one or more values for parameters do not exist/,
+      );
+    });
+
+    it("should 400 when finding cbbrs by an invalid cbbrPolicyAreaId", async () => {
+      const cbbrPolicyAreaId = false;
+
+      const response = await request(app.getHttpServer())
+        .get(
+          `/community-board-budget-requests/csv?cbbrPolicyAreaId=${cbbrPolicyAreaId}`,
+        )
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /Invalid request parameter: cbbrPolicyAreaId: Expected number, received nan/,
+      );
+    });
+
+    it("should 400 when finding cbbrs by a missing cbbrPolicyAreaId", async () => {
+      const cbbrPolicyAreaId = 20;
+
+      const response = await request(app.getHttpServer())
+        .get(
+          `/community-board-budget-requests/csv?cbbrPolicyAreaId=${cbbrPolicyAreaId}`,
+        )
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /one or more values for parameters do not exist/,
+      );
+    });
+
+    it("should 400 when finding cbbrs by an invalid cbbrNeedGroupId", async () => {
+      const cbbrNeedGroupId = false;
+
+      const response = await request(app.getHttpServer())
+        .get(
+          `/community-board-budget-requests/csv?cbbrNeedGroupId=${cbbrNeedGroupId}`,
+        )
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /Invalid request parameter: cbbrNeedGroupId: Expected number, received nan/,
+      );
+    });
+
+    it("should 400 when finding cbbrs by a missing cbbrNeedGroupId", async () => {
+      const cbbrNeedGroupId = 20;
+
+      const response = await request(app.getHttpServer())
+        .get(
+          `/community-board-budget-requests/csv?cbbrNeedGroupId=${cbbrNeedGroupId}`,
+        )
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /one or more values for parameters do not exist/,
+      );
+    });
+
+    it("should 400 when finding cbbrs by an invalid/missing agencyInitials", async () => {
+      const agencyInitials = false;
+
+      const response = await request(app.getHttpServer())
+        .get(
+          `/community-board-budget-requests/csv?agencyInitials=${agencyInitials}`,
+        )
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /one or more values for parameters do not exist/,
+      );
+    });
+
+    it("should 400 when finding cbbrs by an invalid cbbrType", async () => {
+      const cbbrType = false;
+
+      const response = await request(app.getHttpServer())
+        .get(`/community-board-budget-requests/csv?cbbrType=${cbbrType}`)
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /Invalid request parameter: cbbrType: Invalid/,
+      );
+    });
+
+    it("should 400 when finding cbbrs by an invalid cbbrAgencyCategoryResponseIds", async () => {
+      const cbbrAgencyCategoryResponseIds = false;
+
+      const response = await request(app.getHttpServer())
+        .get(
+          `/community-board-budget-requests/csv?cbbrAgencyCategoryResponseIds=${cbbrAgencyCategoryResponseIds}`,
+        )
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /Invalid request parameter: cbbrAgencyCategoryResponseIds: Expected number, received nan/,
+      );
+    });
+
+    it("should 400 when finding cbbrs by a missing cbbrAgencyCategoryResponseIds", async () => {
+      const cbbrAgencyCategoryResponseIds = [12, 13];
+
+      const response = await request(app.getHttpServer())
+        .get(
+          `/community-board-budget-requests/csv?cbbrAgencyCategoryResponseIds=${cbbrAgencyCategoryResponseIds.join()}`,
+        )
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /one or more values for parameters do not exist/,
+      );
+    });
+
+    it("should 400 when finding cbbrs by an invalid isMapped", async () => {
+      const isMapped = "maybe";
+
+      const response = await request(app.getHttpServer())
+        .get(`/community-board-budget-requests/csv?isMapped=${isMapped}`)
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /Invalid request parameter: invalid value for boolean schema property/,
+      );
+    });
+
+    it("should 400 when finding cbbrs by isMapped and geographic filters", async () => {
+      const isMapped = false;
+      const cityCouncilDistrict = cityCouncilDistrictRepoMock.districts[0];
+      const response = await request(app.getHttpServer())
+        .get(
+          `/community-board-budget-requests/csv?isMapped=${isMapped}&cityCouncilDistrictId=${cityCouncilDistrict.id}`,
+        )
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /cannot have isMapped filter in conjunction with other geographic filter/,
+      );
+    });
+
+    it("should 400 when finding cbbrs by an invalid isContinuedSupport", async () => {
+      const isContinuedSupport = "maybe";
+
+      const response = await request(app.getHttpServer())
+        .get(
+          `/community-board-budget-requests/csv?isContinuedSupport=${isContinuedSupport}`,
+        )
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /Invalid request parameter: invalid value for boolean schema property/,
+      );
+    });
+
+    it("should 500 when the database errors", async () => {
+      const dataRetrievalException = new DataRetrievalException(
+        "cannot find data",
+      );
+      jest
+        .spyOn(communityBoardBudgetRequestRepositoryMock, "findCsv")
+        .mockImplementationOnce(() => {
+          throw dataRetrievalException;
+        });
+
+      const response = await request(app.getHttpServer())
+        .get(`/community-board-budget-requests/csv`)
+        .expect(500);
+      expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);
+      expect(response.body.message).toBe(dataRetrievalException.message);
+    });
+  });
+
   afterAll(async () => {
     await app.close();
   });

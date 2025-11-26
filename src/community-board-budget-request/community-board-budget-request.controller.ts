@@ -32,6 +32,7 @@ import {
 import { ZodTransformPipe } from "src/pipes/zod-transform-pipe";
 import { findCommunityBoardBudgetRequestGeoJsonByIdPathParamsSchema } from "src/gen/zod/findCommunityBoardBudgetRequestGeoJsonByIdSchema";
 import { FindCommunityBoardBudgetRequestGeoJsonByIdPathParams } from "src/gen/types/FindCommunityBoardBudgetRequestGeoJsonById";
+import { unparse } from "papaparse";
 
 @Injectable()
 @UseFilters(
@@ -77,6 +78,46 @@ export class CommunityBoardBudgetRequestController {
       limit,
       offset,
     });
+  }
+
+  @Get("/csv")
+  async findCsv(
+    @Res() res: Response,
+    @Query(
+      new ZodTransformPipe(findCommunityBoardBudgetRequestsQueryParamsSchema),
+    )
+    {
+      communityDistrictId,
+      cityCouncilDistrictId,
+      cbbrAgencyCategoryResponseIds,
+      cbbrNeedGroupId,
+      cbbrPolicyAreaId,
+      cbbrType,
+      agencyInitials,
+      isContinuedSupport,
+      isMapped,
+    }: FindCommunityBoardBudgetRequestsQueryParams,
+  ) {
+    const data = await this.communityBoardBudgetRequestService.findCsv({
+      communityDistrictCombinedId: communityDistrictId,
+      cityCouncilDistrictId,
+      cbbrAgencyCategoryResponseIds,
+      cbbrNeedGroupId,
+      cbbrPolicyAreaId,
+      cbbrType,
+      agencyInitials,
+      isContinuedSupport,
+      isMapped,
+    });
+
+    const csvData = `Tracking Number,Community Board Number,Address,Site or Facility Name,Street Segment - On Street,Street Segment - Cross Street 1,Street Segment - Cross Street 2,Intersection - Street 1,Intersection - Street 2,Type,Is Continued Support,CB Request,CB Explanation,Agency Acronym,Priority,Agency Response,Agency Response Explanation\n${unparse(data, { header: false })}`;
+
+    res.set("Content-Type", "application/csv");
+    res.set(
+      "Content-Disposition",
+      `attachment; filename=CPP_CBBR_Export_${String(new Date().getDate()).padStart(2, "0")}_${["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][new Date().getMonth()]}_${new Date().getFullYear()}.csv`,
+    );
+    res.send(csvData);
   }
 
   @Get("/agencies")

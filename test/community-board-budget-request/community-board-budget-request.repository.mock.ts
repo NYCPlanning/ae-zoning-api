@@ -421,4 +421,21 @@ export class CommunityBoardBudgetRequestRepositoryMock {
   async findTiles(): Promise<FindTilesRepo> {
     return this.findTilesMock;
   }
+
+  async findCsv(params: {
+    boroughId: string | null;
+    communityDistrictId: string | null;
+    cityCouncilDistrictId: string | null;
+    cbbrPolicyAreaId: number | null;
+    cbbrNeedGroupId: number | null;
+    agencyInitials: string | null;
+    cbbrType: string | null;
+    cbbrAgencyCategoryResponseIds: Array<number> | null;
+    isMapped: boolean | null;
+    isContinuedSupport: boolean | null;
+    limit: number;
+    offset: number;
+  }): Promise<FindManyRepo> {
+    return await this.findMany(params);
+  }
 }
