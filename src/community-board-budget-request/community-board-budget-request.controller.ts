@@ -110,7 +110,6 @@ export class CommunityBoardBudgetRequestController {
       isMapped,
     });
 
-    // const csvData = unparse(data, { header: false });
     const csvData = `Tracking Number,Community Board Number,Address,Site or Facility Name,Street Segment - On Street,Street Segment - Cross Street 1,Street Segment - Cross Street 2,Intersection - Street 1,Intersection - Street 2,Type,Is Continued Support,CB Request,CB Explanation,Agency Acronym,Priority,Agency Response,Agency Response Explanation\n${unparse(data, { header: false })}`;
 
     res.set("Content-Type", "application/csv");
