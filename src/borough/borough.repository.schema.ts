@@ -45,3 +45,11 @@ export const findCapitalProjectTilesByBoroughIdCommunityDistrictIdRepoSchema =
 export type FindCapitalProjectTilesByBoroughIdCommunityDistrictIdRepo = z.infer<
   typeof findCapitalProjectTilesByBoroughIdCommunityDistrictIdRepoSchema
 >;
+
+export const findCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdRepoSchema =
+  mvtEntitySchema;
+
+export type FindCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdRepo =
+  z.infer<
+    typeof findCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdRepoSchema
+  >;

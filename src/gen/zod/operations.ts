@@ -41,6 +41,12 @@ import {
   findCapitalProjectTilesByBoroughIdCommunityDistrictIdPathParamsSchema,
 } from "./findCapitalProjectTilesByBoroughIdCommunityDistrictIdSchema";
 import {
+  findCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdQueryResponseSchema,
+  findCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictId400Schema,
+  findCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictId500Schema,
+  findCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdPathParamsSchema,
+} from "./findCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdSchema";
+import {
   findCapitalCommitmentTypesQueryResponseSchema,
   findCapitalCommitmentTypes400Schema,
   findCapitalCommitmentTypes500Schema,
@@ -384,6 +390,25 @@ export const operations = {
     errors: {
       400: findCapitalProjectTilesByBoroughIdCommunityDistrictId400Schema,
       500: findCapitalProjectTilesByBoroughIdCommunityDistrictId500Schema,
+    },
+  },
+  findCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictId: {
+    request: undefined,
+    parameters: {
+      path: findCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdPathParamsSchema,
+      query: undefined,
+      header: undefined,
+    },
+    responses: {
+      200: findCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdQueryResponseSchema,
+      400: findCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictId400Schema,
+      500: findCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictId500Schema,
+      default:
+        findCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdQueryResponseSchema,
+    },
+    errors: {
+      400: findCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictId400Schema,
+      500: findCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictId500Schema,
     },
   },
   findCapitalCommitmentTypes: {
@@ -1058,6 +1083,12 @@ export const paths = {
   "/boroughs/{boroughId}/community-districts/{communityDistrictId}/capital-projects/{z}/{x}/{y}.pbf":
     {
       get: operations["findCapitalProjectTilesByBoroughIdCommunityDistrictId"],
+    },
+  "/boroughs/{boroughId}/community-districts/{communityDistrictId}/community-board-budget-requests/{z}/{x}/{y}.pbf":
+    {
+      get: operations[
+        "findCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictId"
+      ],
     },
   "/capital-commitment-types": {
     get: operations["findCapitalCommitmentTypes"],

@@ -15,11 +15,13 @@ import {
   FindCapitalProjectTilesByBoroughIdCommunityDistrictIdPathParams,
   FindCapitalProjectsByBoroughIdCommunityDistrictIdPathParams,
   FindCapitalProjectsByBoroughIdCommunityDistrictIdQueryParams,
+  FindCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdPathParams,
   FindCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdPathParams,
   FindCommunityDistrictsByBoroughIdPathParams,
   findCapitalProjectTilesByBoroughIdCommunityDistrictIdPathParamsSchema,
   findCapitalProjectsByBoroughIdCommunityDistrictIdPathParamsSchema,
   findCapitalProjectsByBoroughIdCommunityDistrictIdQueryParamsSchema,
+  findCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdPathParamsSchema,
   findCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdPathParamsSchema,
   findCommunityDistrictsByBoroughIdPathParamsSchema,
 } from "src/gen";
@@ -111,6 +113,27 @@ export class BoroughController {
   ) {
     const tiles =
       await this.boroughService.findCapitalProjectTilesByBoroughIdCommunityDistrictId(
+        params,
+      );
+    res.set("Content-Type", "application/x-protobuf");
+    res.send(tiles);
+  }
+
+  @UsePipes(
+    new ZodTransformPipe(
+      findCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdPathParamsSchema,
+    ),
+  )
+  @Get(
+    "/:boroughId/community-districts/:communityDistrictId/community-board-budget-requests/:z/:x/:y.pbf",
+  )
+  async findCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictId(
+    @Param()
+    params: FindCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdPathParams,
+    @Res() res: Response,
+  ) {
+    const tiles =
+      await this.boroughService.findCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictId(
         params,
       );
     res.set("Content-Type", "application/x-protobuf");
