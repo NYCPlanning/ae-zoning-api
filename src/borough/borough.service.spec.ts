@@ -6,6 +6,7 @@ import { Test } from "@nestjs/testing";
 import {
   findBoroughsQueryResponseSchema,
   findCapitalProjectTilesByBoroughIdCommunityDistrictIdQueryResponseSchema,
+  findCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdQueryResponseSchema,
   findCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdQueryResponseSchema,
   findCommunityDistrictsByBoroughIdQueryResponseSchema,
 } from "src/gen";
@@ -116,6 +117,26 @@ describe("Borough service unit", () => {
         );
       expect(() =>
         findCapitalProjectTilesByBoroughIdCommunityDistrictIdQueryResponseSchema.parse(
+          mvt,
+        ),
+      ).not.toThrow();
+    });
+  });
+
+  describe("findCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictId", () => {
+    it("should return an mvt when requesting coordinates", async () => {
+      const mvt =
+        await boroughService.findCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictId(
+          {
+            boroughId: "1",
+            communityDistrictId: "01",
+            z: 1,
+            x: 1,
+            y: 1,
+          },
+        );
+      expect(() =>
+        findCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdQueryResponseSchema.parse(
           mvt,
         ),
       ).not.toThrow();

@@ -7,16 +7,20 @@ import {
   FindCommunityDistrictsByBoroughIdRepo,
   FindCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdRepo,
   FindCapitalProjectTilesByBoroughIdCommunityDistrictIdRepo,
+  FindCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdRepo,
 } from "./borough.repository.schema";
 import {
+  borough,
   capitalCommitment,
   capitalCommitmentFund,
   capitalProject,
+  communityBoardBudgetRequest,
   communityDistrict,
 } from "src/schema";
 import { eq, sql, and, isNotNull, asc } from "drizzle-orm";
 import {
   FindCapitalProjectTilesByBoroughIdCommunityDistrictIdPathParams,
+  FindCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdPathParams,
   FindCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdPathParams,
 } from "src/gen";
 import { Cache } from "cache-manager";
@@ -207,6 +211,139 @@ export class BoroughRepository {
     } catch {
       throw new DataRetrievalException(
         "cannot find capital project tiles given borough and community district",
+      );
+    }
+  }
+
+  async findCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictId({
+    boroughId,
+    communityDistrictId,
+    z,
+    x,
+    y,
+  }: FindCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdPathParams): Promise<FindCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdRepo> {
+    try {
+      const tileFill = this.db
+        .select({
+          id: sql`${communityBoardBudgetRequest.id}`.as("id"),
+          policyAreaId: sql`${communityBoardBudgetRequest.policyArea}`.as(
+            "policyAreaId",
+          ),
+          needGroupId: sql`${communityBoardBudgetRequest.needGroup}`.as(
+            "needGroupId",
+          ),
+          agencyInitials: sql`${communityBoardBudgetRequest.agency}`.as(
+            "agencyInitials",
+          ),
+          agencyCategoryReponseId:
+            sql`${communityBoardBudgetRequest.agencyCategoryResponse}`.as(
+              "agencyCategoryReponseId",
+            ),
+          communityBoardId:
+            sql`${borough.abbr} || ${communityBoardBudgetRequest.communityDistrictId}`.as(
+              "communityBoardId",
+            ),
+          geomFill: sql<string>`
+                  CASE
+                    WHEN ${communityBoardBudgetRequest.mercatorFillMPoly} && ST_TileEnvelope(${z},${x},${y})
+                      THEN ST_AsMVTGeom(
+                        ${communityBoardBudgetRequest.mercatorFillMPoly},
+                        ST_TileEnvelope(${z},${x},${y}),
+                        4096,
+                        64,
+                        true
+                      )
+                    WHEN ${communityBoardBudgetRequest.mercatorFillMPnt} && ST_TileEnvelope(${z},${x},${y})
+                      THEN ST_AsMVTGeom(
+                        ${communityBoardBudgetRequest.mercatorFillMPnt},
+                        ST_TileEnvelope(${z},${x},${y}),
+                        4096,
+                        64,
+                        true
+                      )
+                  END`.as("geomFill"),
+        })
+        .from(communityBoardBudgetRequest)
+        .leftJoin(
+          borough,
+          eq(communityBoardBudgetRequest.boroughId, borough.id),
+        )
+        .leftJoin(
+          communityDistrict,
+          sql`
+                ST_Intersects(${communityDistrict.mercatorFill}, ${communityBoardBudgetRequest.mercatorFillMPoly})
+                OR ST_Intersects(${communityDistrict.mercatorFill}, ${communityBoardBudgetRequest.mercatorFillMPnt})`,
+        )
+        .where(
+          and(
+            eq(communityDistrict.id, communityDistrictId),
+            eq(communityDistrict.boroughId, boroughId),
+          ),
+        )
+        .as("tile");
+      const dataFill = this.db
+        .select({
+          mvt: sql<Buffer>`ST_AsMVT(tile, 'community-board-budget-request-fill', 4096, 'geomFill')`,
+        })
+        .from(tileFill)
+        .where(isNotNull(tileFill.geomFill));
+
+      const tileLabel = this.db
+        .select({
+          id: sql`${communityBoardBudgetRequest.id}`.as("id"),
+          policyAreaId: sql`${communityBoardBudgetRequest.policyArea}`.as(
+            "policyAreaId",
+          ),
+          needGroupId: sql`${communityBoardBudgetRequest.needGroup}`.as(
+            "needGroupId",
+          ),
+          agencyInitials: sql`${communityBoardBudgetRequest.agency}`.as(
+            "agencyInitials",
+          ),
+          agencyCategoryReponseId:
+            sql`${communityBoardBudgetRequest.agencyCategoryResponse}`.as(
+              "agencyCategoryReponseId",
+            ),
+          communityBoardId:
+            sql`${borough.abbr} || ${communityBoardBudgetRequest.communityDistrictId}`.as(
+              "communityBoardId",
+            ),
+          geomLabel: sql`ST_AsMVTGeom(
+          		  ${communityBoardBudgetRequest.mercatorLabel},
+          		  ST_TileEnvelope(${z}, ${x}, ${y}),
+          		  4096, 64, true)`.as("geomLabel"),
+        })
+        .from(communityBoardBudgetRequest)
+        .leftJoin(
+          borough,
+          eq(communityBoardBudgetRequest.boroughId, borough.id),
+        )
+        .leftJoin(
+          communityDistrict,
+          sql`
+                ST_Intersects(${communityDistrict.mercatorFill}, ${communityBoardBudgetRequest.mercatorFillMPoly})
+                OR ST_Intersects(${communityDistrict.mercatorFill}, ${communityBoardBudgetRequest.mercatorFillMPnt})`,
+        )
+        .where(
+          and(
+            eq(communityDistrict.id, communityDistrictId),
+            eq(communityDistrict.boroughId, boroughId),
+          ),
+        )
+        .as("tile");
+      const dataLabel = this.db
+        .select({
+          mvt: sql<Buffer>`ST_AsMVT(tile, 'community-board-budget-request-label', 4096, 'geomLabel')`,
+        })
+        .from(tileLabel)
+        .where(isNotNull(tileLabel.geomLabel));
+      const [fill, label] = await Promise.all([dataFill, dataLabel]);
+      const mvt = Buffer.concat([fill[0].mvt, label[0].mvt]);
+      return mvt;
+    } catch (e) {
+      console.log("e", e);
+      throw new DataRetrievalException(
+        "cannot find community board budget requst tiles given borough and community district",
       );
     }
   }

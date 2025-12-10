@@ -1,0 +1,58 @@
+import type { Error } from "./Error";
+
+export type FindCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdPathParams =
+  {
+    /**
+     * @description A single character numeric string containing the common number used to refer to the borough. Possible values are 1-5.
+     * @type string
+     */
+    boroughId: string;
+    /**
+     * @description The two character numeric string containing the number used to refer to the community district.
+     * @type string
+     */
+    communityDistrictId: string;
+    /**
+     * @description viewport zoom component
+     * @type integer
+     */
+    z: number;
+    /**
+     * @description viewport x component
+     * @type integer
+     */
+    x: number;
+    /**
+     * @description viewport y component
+     * @type integer
+     */
+    y: number;
+  };
+/**
+ * @description A protobuf file formatted as Mapbox Vector Tile
+ */
+export type FindCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictId200 =
+  string;
+/**
+ * @description Invalid client request
+ */
+export type FindCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictId400 =
+  Error;
+/**
+ * @description Server side error
+ */
+export type FindCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictId500 =
+  Error;
+/**
+ * @description A protobuf file formatted as Mapbox Vector Tile
+ */
+export type FindCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdQueryResponse =
+  string;
+export type FindCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdQuery =
+  {
+    Response: FindCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdQueryResponse;
+    PathParams: FindCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdPathParams;
+    Errors:
+      | FindCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictId400
+      | FindCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictId500;
+  };

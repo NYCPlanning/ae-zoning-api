@@ -3,6 +3,7 @@ import {
   communityDistrictGeoJsonEntitySchema,
   findCapitalProjectTilesByBoroughIdCommunityDistrictIdRepoSchema,
   CheckByIdRepo,
+  findCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdRepoSchema,
 } from "src/borough/borough.repository.schema";
 import { generateMock } from "@anatine/zod-mock";
 import { CommunityDistrictRepositoryMock } from "test/community-district/community-district.repository.mock";
@@ -60,6 +61,11 @@ export class BoroughRepositoryMock {
     findCapitalProjectTilesByBoroughIdCommunityDistrictIdRepoSchema,
   );
 
+  findCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdMock =
+    generateMock(
+      findCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdRepoSchema,
+    );
+
   /**
    * The database will always return tiles,
    * even when the view is outside the extents.
@@ -73,5 +79,10 @@ export class BoroughRepositoryMock {
    */
   async findCapitalProjectTilesByBoroughIdCommunityDistrictId() {
     return this.findCapitalProjectTilesByBoroughIdCommunityDistrictIdMock;
+  }
+
+  async findCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictId() {
+    return this
+      .findCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdMock;
   }
 }
