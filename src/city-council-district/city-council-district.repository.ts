@@ -264,64 +264,14 @@ export class CityCouncilDistrictRepository {
           ),
         )
         .as("tile");
-      const dataFill = this.db
+      const dataFill = await this.db
         .select({
           mvt: sql<Buffer>`ST_AsMVT(tile, 'community-board-budget-request-fill', 4096, 'geomFill')`,
         })
         .from(tileFill)
         .where(isNotNull(tileFill.geomFill));
 
-      const tileLabel = this.db
-        .select({
-          id: sql`${communityBoardBudgetRequest.id}`.as("id"),
-          policyAreaId: sql`${communityBoardBudgetRequest.policyArea}`.as(
-            "policyAreaId",
-          ),
-          needGroupId: sql`${communityBoardBudgetRequest.needGroup}`.as(
-            "needGroupId",
-          ),
-          agencyInitials: sql`${communityBoardBudgetRequest.agency}`.as(
-            "agencyInitials",
-          ),
-          agencyCategoryReponseId:
-            sql`${communityBoardBudgetRequest.agencyCategoryResponse}`.as(
-              "agencyCategoryReponseId",
-            ),
-          communityBoardId:
-            sql`${borough.abbr} || ${communityBoardBudgetRequest.communityDistrictId}`.as(
-              "communityBoardId",
-            ),
-          geomLabel: sql`ST_AsMVTGeom(
-      		  ${communityBoardBudgetRequest.mercatorLabel},
-      		  ST_TileEnvelope(${z}, ${x}, ${y}),
-      		  4096, 64, true)`.as("geomLabel"),
-        })
-        .from(communityBoardBudgetRequest)
-        .leftJoin(
-          borough,
-          eq(communityBoardBudgetRequest.boroughId, borough.id),
-        )
-        .leftJoin(
-          cityCouncilDistrict,
-          sql`
-            ST_Intersects(${cityCouncilDistrict.liFt}, ${communityBoardBudgetRequest.liFtMPnt})
-            OR ST_Intersects(${cityCouncilDistrict.liFt}, ${communityBoardBudgetRequest.liFtMPoly})`,
-        )
-        .where(
-          and(
-            eq(cityCouncilDistrict.id, cityCouncilDistrictId),
-            sql`${communityBoardBudgetRequest.mercatorLabel} && ST_TileEnvelope(${z},${x},${y})`,
-          ),
-        )
-        .as("tile");
-      const dataLabel = this.db
-        .select({
-          mvt: sql<Buffer>`ST_AsMVT(tile, 'community-board-budget-request-label', 4096, 'geomLabel')`,
-        })
-        .from(tileLabel)
-        .where(isNotNull(tileLabel.geomLabel));
-      const [fill, label] = await Promise.all([dataFill, dataLabel]);
-      const mvt = Buffer.concat([fill[0].mvt, label[0].mvt]);
+      const mvt = dataFill[0].mvt;
       return mvt;
     } catch {
       throw new DataRetrievalException(
