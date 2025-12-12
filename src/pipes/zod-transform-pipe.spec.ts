@@ -4,15 +4,17 @@ import { InvalidRequestParameterException } from "src/exception";
 
 describe("zod transform pipe", () => {
   const testSchema = z.object({
-    numeric: z.coerce.number().max(100),
-    textual: z.coerce.string(),
-    numericArray: z.array(z.coerce.number()),
-    textualArray: z.array(z.coerce.string()),
+    numeric: z.number().max(100),
+    integer: z.number().int().max(100),
+    textual: z.string(),
+    numericArray: z.array(z.number()),
+    textualArray: z.array(z.string()),
     boolean: z.boolean(), // boolean coercion relies on undesired JS "Boolean" function
   });
 
   const strictSchema = z.object({
     numeric: z.number().max(100),
+    integer: z.number().int().max(100),
     textual: z.string(),
     numericArray: z.array(z.number()),
     textualArray: z.array(z.string()),
@@ -21,7 +23,8 @@ describe("zod transform pipe", () => {
 
   it("should parse properly formatted parameters defined in the schema", () => {
     const params = {
-      numeric: "42",
+      numeric: "42.5",
+      integer: "42",
       textual: "text",
       numericArray: "1",
       textualArray: "foo",
@@ -38,7 +41,8 @@ describe("zod transform pipe", () => {
 
   it("should handle arrays that were already created upstream", () => {
     const params = {
-      numeric: "42",
+      numeric: "42.5",
+      integer: "42",
       textual: "text",
       numericArray: ["1", "2"],
       textualArray: ["foo", "bar"],
@@ -55,9 +59,10 @@ describe("zod transform pipe", () => {
 
   it("should error when the numeric value cannot be coerced", () => {
     const params = {
-      numeric: "this is text",
+      numeric: "42",
+      integer: "42",
       textual: "text",
-      numericArray: "1",
+      numericArray: "this is text in the array",
       textualArray: "foo",
       boolean: "true",
     };
@@ -72,6 +77,7 @@ describe("zod transform pipe", () => {
   it("should error when the numeric is above the max", () => {
     const params = {
       numeric: "101",
+      integer: "42",
       textual: "text",
       numericArray: "1",
       textualArray: "foo",
@@ -88,6 +94,7 @@ describe("zod transform pipe", () => {
   it("should error when the boolean is not a valid", () => {
     const params = {
       numeric: "42",
+      integer: "42",
       textual: "text",
       numericArray: "1",
       textualArray: "foo",

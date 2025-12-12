@@ -250,8 +250,8 @@ export class CapitalProjectRepository {
       function: "findCount",
     });
 
-    const value: number | null = await this.cacheManager.get(key);
-    if (value !== null) {
+    const value = await this.cacheManager.get<number>(key);
+    if (value !== undefined) {
       return value;
     }
 
@@ -388,9 +388,9 @@ export class CapitalProjectRepository {
       domain: "capitalProject",
       function: "checkByManagingCodeCapitalProjectId",
     });
-    const cachedValue: boolean | null = await this.cacheManager.get(key);
+    const cachedValue = await this.cacheManager.get<boolean>(key);
 
-    if (cachedValue !== null) return cachedValue;
+    if (cachedValue !== undefined) return cachedValue;
 
     const result = await this.#checkByManagingCodeCapitalProjectId.execute({
       managingCode,
@@ -531,9 +531,8 @@ export class CapitalProjectRepository {
       x,
       y,
     });
-    const cachedTiles =
-      await this.tileCache.get<Buffer<ArrayBufferLike>>(cacheKey);
-    if (cachedTiles !== null) return cachedTiles;
+    const cachedTiles = await this.tileCache.get<Buffer<ArrayBuffer>>(cacheKey);
+    if (cachedTiles !== undefined) return cachedTiles;
     try {
       const tile = this.db
         .select({
@@ -605,7 +604,9 @@ export class CapitalProjectRepository {
         .as("tile");
       const data = await this.db
         .select({
-          mvt: sql<Buffer>`ST_AsMVT(tile, 'capital-project-fill', 4096, 'geom')`,
+          mvt: sql<
+            Buffer<ArrayBuffer>
+          >`ST_AsMVT(tile, 'capital-project-fill', 4096, 'geom')`,
         })
         .from(tile)
         .where(isNotNull(tile.geom));
