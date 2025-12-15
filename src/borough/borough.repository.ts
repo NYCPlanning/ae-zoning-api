@@ -17,7 +17,7 @@ import {
   communityBoardBudgetRequest,
   communityDistrict,
 } from "src/schema";
-import { eq, sql, and, isNotNull, asc } from "drizzle-orm";
+import { eq, sql, and, isNotNull, asc, or } from "drizzle-orm";
 import {
   FindCapitalProjectTilesByBoroughIdCommunityDistrictIdPathParams,
   FindCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdPathParams,
@@ -243,6 +243,9 @@ export class BoroughRepository {
             sql`${borough.abbr} || ${communityBoardBudgetRequest.communityDistrictId}`.as(
               "communityBoardId",
             ),
+          requestType: sql`${communityBoardBudgetRequest.requestType}`.as(
+            "requestType",
+          ),
           geomFill: sql<string>`
                   CASE
                     WHEN ${communityBoardBudgetRequest.mercatorFillMPoly} && ST_TileEnvelope(${z},${x},${y})
@@ -278,6 +281,10 @@ export class BoroughRepository {
           and(
             eq(communityDistrict.id, communityDistrictId),
             eq(communityDistrict.boroughId, boroughId),
+            or(
+              sql`${communityBoardBudgetRequest.mercatorFillMPnt} && ST_TileEnvelope(${z},${x},${y})`,
+              sql`${communityBoardBudgetRequest.mercatorFillMPoly} && ST_TileEnvelope(${z},${x},${y})`,
+            ),
           ),
         )
         .as("tile");
@@ -291,7 +298,6 @@ export class BoroughRepository {
       const mvt = dataFill[0].mvt;
       return mvt;
     } catch (e) {
-      console.log("e", e);
       throw new DataRetrievalException(
         "cannot find community board budget requst tiles given borough and community district",
       );
