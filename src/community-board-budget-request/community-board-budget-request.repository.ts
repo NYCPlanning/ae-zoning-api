@@ -698,6 +698,9 @@ export class CommunityBoardBudgetRequestRepository {
             sql`${borough.abbr} || ${communityBoardBudgetRequest.communityDistrictId}`.as(
               "communityBoardId",
             ),
+          requestType: sql`${communityBoardBudgetRequest.requestType}`.as(
+            "requestType",
+          ),
           geomFill: sql<string>`
                 CASE
                   WHEN ${communityBoardBudgetRequest.mercatorFillMPoly} && ST_TileEnvelope(${z},${x},${y})
