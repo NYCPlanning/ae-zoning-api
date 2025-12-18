@@ -271,16 +271,13 @@ export class BoroughRepository {
           borough,
           eq(communityBoardBudgetRequest.boroughId, borough.id),
         )
-        .leftJoin(
-          communityDistrict,
-          sql`
-                ST_Intersects(${communityDistrict.mercatorFill}, ${communityBoardBudgetRequest.mercatorFillMPoly})
-                OR ST_Intersects(${communityDistrict.mercatorFill}, ${communityBoardBudgetRequest.mercatorFillMPnt})`,
-        )
         .where(
           and(
-            eq(communityDistrict.id, communityDistrictId),
-            eq(communityDistrict.boroughId, boroughId),
+            eq(
+              communityBoardBudgetRequest.communityDistrictId,
+              communityDistrictId,
+            ),
+            eq(communityBoardBudgetRequest.boroughId, boroughId),
             or(
               sql`${communityBoardBudgetRequest.mercatorFillMPnt} && ST_TileEnvelope(${z},${x},${y})`,
               sql`${communityBoardBudgetRequest.mercatorFillMPoly} && ST_TileEnvelope(${z},${x},${y})`,

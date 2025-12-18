@@ -1,5 +1,5 @@
 get:
-  summary: Mapbox Vector Tiles for community board budget requests intersecting a community district
+  summary: Mapbox Vector Tiles for community board budget requests from a community district
   operationId: findCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictId
   tags:
     - MVT
