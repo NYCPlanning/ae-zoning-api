@@ -2,7 +2,7 @@ import { CommunityDistrictRepositoryMock } from "test/community-district/communi
 import { CommunityDistrictService } from "./community-district.service";
 import { Test } from "@nestjs/testing";
 import { CommunityDistrictRepository } from "./community-district.repository";
-import { findCommunityDistrictTilesQueryResponseSchema } from "src/gen";
+import { findTilesRepoSchema } from "./community-district.repository.schema";
 
 describe("CommunityDistrictService", () => {
   let communityDistrictService: CommunityDistrictService;
@@ -29,9 +29,7 @@ describe("CommunityDistrictService", () => {
         x: 1,
         y: 1,
       });
-      expect(() =>
-        findCommunityDistrictTilesQueryResponseSchema.parse(mvt),
-      ).not.toThrow();
+      expect(() => findTilesRepoSchema.parse(mvt)).not.toThrow();
     });
   });
 });
