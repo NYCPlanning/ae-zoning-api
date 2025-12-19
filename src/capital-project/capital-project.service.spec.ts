@@ -15,7 +15,6 @@ import {
   findCapitalProjectByManagingCodeCapitalProjectIdQueryResponseSchema,
   findCapitalProjectGeoJsonByManagingCodeCapitalProjectIdQueryResponseSchema,
   findCapitalProjectManagingAgenciesQueryResponseSchema,
-  findCapitalProjectTilesQueryResponseSchema,
   findCapitalProjectsQueryResponseSchema,
 } from "src/gen";
 import { AgencyBudgetRepository } from "src/agency-budget/agency-budget.repository";
@@ -23,6 +22,7 @@ import {
   InvalidRequestParameterException,
   ResourceNotFoundException,
 } from "src/exception";
+import { findTilesRepoSchema } from "./capital-project.repository.schema";
 
 describe("CapitalProjectService", () => {
   let capitalProjectService: CapitalProjectService;
@@ -420,9 +420,7 @@ describe("CapitalProjectService", () => {
         x: 1,
         y: 1,
       });
-      expect(() =>
-        findCapitalProjectTilesQueryResponseSchema.parse(mvt),
-      ).not.toThrow();
+      expect(() => findTilesRepoSchema.parse(mvt)).not.toThrow();
     });
   });
 
