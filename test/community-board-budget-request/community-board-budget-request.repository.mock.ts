@@ -12,7 +12,6 @@ import {
   FindPolicyAreasRepo,
   CheckAgencyCategoryResponseByIdRepo,
   FindTilesRepo,
-  findTilesRepoSchema,
   manyCommunityBoardBudgetRequestRepoSchema,
   ManyCommunityBoardBudgetRequestRepo,
   FindCountRepo,
@@ -32,6 +31,7 @@ import {
 import { AgencyRepositoryMock } from "test/agency/agency.repository.mock";
 import { CityCouncilDistrictRepositoryMock } from "test/city-council-district/city-council-district.repository.mock";
 import { CommunityDistrictRepositoryMock } from "test/community-district/community-district.repository.mock";
+import { generateMockMvt } from "test/utils";
 
 export class CommunityBoardBudgetRequestRepositoryMock {
   agencyRepoMock: AgencyRepositoryMock;
@@ -408,7 +408,7 @@ export class CommunityBoardBudgetRequestRepositoryMock {
     return results === undefined ? [] : results;
   }
 
-  findTilesMock = generateMock(findTilesRepoSchema);
+  findTilesMock = generateMockMvt();
 
   /**
    * The database will always return tiles,

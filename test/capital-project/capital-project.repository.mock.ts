@@ -10,7 +10,6 @@ import {
   findGeoJsonByManagingCodeCapitalProjectIdRepoSchema,
   FindManyRepo,
   FindTilesRepo,
-  findTilesRepoSchema,
 } from "src/capital-project/capital-project.repository.schema";
 import { AgencyBudgetRepositoryMock } from "test/agency-budget/agency-budget.repository.mock";
 import {
@@ -22,6 +21,7 @@ import { AgencyRepositoryMock } from "test/agency/agency.repository.mock";
 import { CityCouncilDistrictRepositoryMock } from "test/city-council-district/city-council-district.repository.mock";
 import { CommunityDistrictRepositoryMock } from "test/community-district/community-district.repository.mock";
 import { agencyEntitySchema, capitalProjectEntitySchema } from "src/schema";
+import { generateMockMvt } from "test/utils";
 
 export class CapitalProjectRepositoryMock {
   agencyRepoMock: AgencyRepositoryMock;
@@ -362,7 +362,7 @@ export class CapitalProjectRepositoryMock {
     return results === undefined ? [] : results;
   }
 
-  findTilesMock = generateMock(findTilesRepoSchema);
+  findTilesMock = generateMockMvt();
 
   /**
    * The database will always return tiles,
