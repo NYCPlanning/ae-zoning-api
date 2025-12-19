@@ -1,9 +1,7 @@
 import {
   findGeoJsonByIdRepoSchema,
-  findCapitalProjectTilesByCityCouncilDistrictIdRepoSchema,
   FindManyRepo,
   CheckByIdRepo,
-  findCommunityBoardBudgetRequestTilesByCityCouncilDistrictIdRepoSchema,
 } from "src/city-council-district/city-council-district.repository.schema";
 import { generateMock } from "@anatine/zod-mock";
 import { FindCityCouncilDistrictGeoJsonByCityCouncilDistrictIdPathParams } from "src/gen";
@@ -19,7 +17,7 @@ export class CityCouncilDistrictRepositoryMock {
     return this.districts;
   }
 
-  findTilesMock = generateMockMvt;
+  findTilesMock = generateMockMvt();
 
   /**
    * The database will always return tiles,
@@ -53,9 +51,7 @@ export class CityCouncilDistrictRepositoryMock {
     return this.districts.some((row) => row.id === id);
   }
 
-  findCapitalProjectTilesByCityCouncilDistrictIdMock = generateMock(
-    findCapitalProjectTilesByCityCouncilDistrictIdRepoSchema,
-  );
+  findCapitalProjectTilesByCityCouncilDistrictIdMock = generateMockMvt();
 
   /**
    * The database will always return tiles,
@@ -73,9 +69,7 @@ export class CityCouncilDistrictRepositoryMock {
   }
 
   findCommunityBoardBudgetRequestTilesByCityCouncilDistrictIdMock =
-    generateMock(
-      findCommunityBoardBudgetRequestTilesByCityCouncilDistrictIdRepoSchema,
-    );
+    generateMockMvt();
 
   /**
    * The database will always return tiles,
