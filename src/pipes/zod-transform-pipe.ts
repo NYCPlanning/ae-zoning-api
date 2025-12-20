@@ -25,6 +25,7 @@ export class ZodTransformPipe<T extends ZodRawShape> implements PipeTransform {
       boolean | string | number | Array<string> | Array<number>
     > = {};
 
+    const parsingExceptionMessages: Array<string> = [];
     Object.entries(params).forEach(([param, value]) => {
       const parameterSchema = schemaProperties[param];
       const property =
@@ -36,26 +37,36 @@ export class ZodTransformPipe<T extends ZodRawShape> implements PipeTransform {
         const items = Array.isArray(value) ? value : value.split(",");
         const parsedItems =
           property.element instanceof ZodNumber
-            ? items.map((item) => {
-                const f = parseFloat(item);
-                if (isNaN(f))
-                  throw new InvalidRequestParameterException(
-                    "invalid value for numeric array schema property",
-                  );
-                return f;
-              })
+            ? items
+                .map((item) => {
+                  const f = parseFloat(item);
+                  if (isNaN(f)) {
+                    parsingExceptionMessages.push(
+                      `${param}: Expected number, received nan`,
+                    );
+                    return null;
+                  }
+                  return f;
+                })
+                .filter((item) => item !== null)
             : items;
+
         decodedParams[param] = parsedItems;
         return;
       }
 
       if (property instanceof ZodNumber) {
-        const numberError = new InvalidRequestParameterException(
-          "invalid value for numeric schema property",
-        );
-        if (Array.isArray(value)) throw numberError;
+        if (Array.isArray(value)) {
+          parsingExceptionMessages.push(`${param}: Expected number`);
+          return;
+        }
         const f = parseFloat(value);
-        if (isNaN(f)) throw numberError;
+        if (isNaN(f)) {
+          parsingExceptionMessages.push(
+            `${param}: Expected number, received nan`,
+          );
+          return;
+        }
         decodedParams[param] = f;
         return;
       }
@@ -69,7 +80,7 @@ export class ZodTransformPipe<T extends ZodRawShape> implements PipeTransform {
           decodedParams[param] = false;
           return;
         }
-        throw new InvalidRequestParameterException(
+        parsingExceptionMessages.push(
           "invalid value for boolean schema property",
         );
       }
@@ -77,6 +88,10 @@ export class ZodTransformPipe<T extends ZodRawShape> implements PipeTransform {
       decodedParams[param] = value;
     });
 
+    if (parsingExceptionMessages.length > 0)
+      throw new InvalidRequestParameterException(
+        parsingExceptionMessages.join("; "),
+      );
     try {
       const parsedParams = this.schema.parse(decodedParams);
       // It is possible for Zod to return `undefined` when optional parameters are provided `undefined` values
@@ -96,7 +111,6 @@ export class ZodTransformPipe<T extends ZodRawShape> implements PipeTransform {
         });
         throw new InvalidRequestParameterException(errorMessages.join("; "));
       }
-
       throw new InvalidRequestParameterException("unable to parse parameters");
     }
   }

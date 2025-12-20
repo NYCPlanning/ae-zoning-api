@@ -3,16 +3,7 @@ import { ZodTransformPipe } from "./zod-transform-pipe";
 import { InvalidRequestParameterException } from "src/exception";
 
 describe("zod transform pipe", () => {
-  const testSchema = z.object({
-    numeric: z.number().max(100),
-    integer: z.number().int().max(100),
-    textual: z.string(),
-    numericArray: z.array(z.number()),
-    textualArray: z.array(z.string()),
-    boolean: z.boolean(), // boolean coercion relies on undesired JS "Boolean" function
-  });
-
-  const strictSchema = z.object({
+  const paramsSchema = z.object({
     numeric: z.number().max(100),
     integer: z.number().int().max(100),
     textual: z.string(),
@@ -30,13 +21,13 @@ describe("zod transform pipe", () => {
       textualArray: "foo",
       boolean: "true",
     };
-    expect(() => strictSchema.parse(params)).toThrow();
+    expect(() => paramsSchema.parse(params)).toThrow();
 
-    const transformedParams = new ZodTransformPipe(testSchema).transform(
+    const transformedParams = new ZodTransformPipe(paramsSchema).transform(
       params,
     );
 
-    expect(() => strictSchema.parse(transformedParams)).not.toThrow();
+    expect(() => paramsSchema.parse(transformedParams)).not.toThrow();
   });
 
   it("should handle arrays that were already created upstream", () => {
@@ -48,16 +39,16 @@ describe("zod transform pipe", () => {
       textualArray: ["foo", "bar"],
       boolean: "true",
     };
-    expect(() => strictSchema.parse(params)).toThrow();
+    expect(() => paramsSchema.parse(params)).toThrow();
 
-    const transformedParams = new ZodTransformPipe(testSchema).transform(
+    const transformedParams = new ZodTransformPipe(paramsSchema).transform(
       params,
     );
 
-    expect(() => strictSchema.parse(transformedParams)).not.toThrow();
+    expect(() => paramsSchema.parse(transformedParams)).not.toThrow();
   });
 
-  it("should error when the numeric value cannot be coerced", () => {
+  it("should error when the numeric array cannot be coerced", () => {
     const params = {
       numeric: "42",
       integer: "42",
@@ -67,9 +58,9 @@ describe("zod transform pipe", () => {
       boolean: "true",
     };
 
-    expect(() => strictSchema.parse(params)).toThrow();
+    expect(() => paramsSchema.parse(params)).toThrow();
 
-    expect(() => new ZodTransformPipe(testSchema).transform(params)).toThrow(
+    expect(() => new ZodTransformPipe(paramsSchema).transform(params)).toThrow(
       InvalidRequestParameterException,
     );
   });
@@ -84,9 +75,9 @@ describe("zod transform pipe", () => {
       boolean: "true",
     };
 
-    expect(() => strictSchema.parse(params)).toThrow();
+    expect(() => paramsSchema.parse(params)).toThrow();
 
-    expect(() => new ZodTransformPipe(testSchema).transform(params)).toThrow(
+    expect(() => new ZodTransformPipe(paramsSchema).transform(params)).toThrow(
       InvalidRequestParameterException,
     );
   });
@@ -101,9 +92,9 @@ describe("zod transform pipe", () => {
       boolean: "f",
     };
 
-    expect(() => strictSchema.parse(params)).toThrow();
+    expect(() => paramsSchema.parse(params)).toThrow();
 
-    expect(() => new ZodTransformPipe(testSchema).transform(params)).toThrow(
+    expect(() => new ZodTransformPipe(paramsSchema).transform(params)).toThrow(
       InvalidRequestParameterException,
     );
   });
