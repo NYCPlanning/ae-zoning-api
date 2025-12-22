@@ -37,17 +37,20 @@ export class ZodTransformPipe<T extends ZodRawShape> implements PipeTransform {
         const items = Array.isArray(value) ? value : value.split(",");
         const parsedItems =
           property.element instanceof ZodNumber
-            ? items.map((item) => {
-                const f = parseFloat(item);
-                if (isNaN(f)) {
-                  parsingExceptionMessages.push(
-                    `${param}: Expected number, received nan`,
-                  );
-                  return 0;
-                }
-                return f;
-              })
+            ? items
+                .map((item) => {
+                  const f = parseFloat(item);
+                  if (isNaN(f)) {
+                    parsingExceptionMessages.push(
+                      `${param}: Expected number, received nan`,
+                    );
+                    return null;
+                  }
+                  return f;
+                })
+                .filter((item) => item !== null)
             : items;
+
         decodedParams[param] = parsedItems;
         return;
       }
@@ -85,16 +88,17 @@ export class ZodTransformPipe<T extends ZodRawShape> implements PipeTransform {
       decodedParams[param] = value;
     });
 
+    if (parsingExceptionMessages.length > 0)
+      throw new InvalidRequestParameterException(
+        parsingExceptionMessages.join("; "),
+      );
     try {
-      if (parsingExceptionMessages.length > 0)
-        throw new Error(parsingExceptionMessages.join("; "));
       const parsedParams = this.schema.parse(decodedParams);
       // It is possible for Zod to return `undefined` when optional parameters are provided `undefined` values
       // Though, this should not be possible within this transform pipe because all values are passed through urls, which are strings
       // However, the type definition doesn't know that the values come from a url.
       // We account for undefined and satisify the type defintion by throwing an error, even though we should never encounter `undefined`
-      if (parsedParams === undefined)
-        throw new Error("unable to parse parameters");
+      if (parsedParams === undefined) throw new Error();
       return parsedParams;
     } catch (e) {
       if (e instanceof ZodError) {
@@ -106,12 +110,8 @@ export class ZodTransformPipe<T extends ZodRawShape> implements PipeTransform {
           errorMessages.push(`${parameter}: ${message}`);
         });
         throw new InvalidRequestParameterException(errorMessages.join("; "));
-      } else if (e instanceof Error) {
-        throw new InvalidRequestParameterException(e.message);
       }
-      throw new InvalidRequestParameterException(
-        "unknown error parsing parameters",
-      );
+      throw new InvalidRequestParameterException("unable to parse parameters");
     }
   }
 }
