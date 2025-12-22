@@ -4,7 +4,7 @@ properties:
     type: string
     description: Three character code to represent a borough and community district.
     pattern: ^([0-9]{3})$
-    example: 101
+    example: '101'
   type:
     type: string
     enum:

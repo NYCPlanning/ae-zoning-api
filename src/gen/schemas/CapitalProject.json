@@ -15,7 +15,7 @@
       "type": "string",
       "description": "Three character string of numbers representing managing agency",
       "pattern": "^([0-9]{3})$",
-      "example": 850
+      "example": "850"
     },
     "managingAgency": {
       "type": "string",
