@@ -138,21 +138,23 @@ export class TaxLotRepositoryMock {
      * based on "centers" instead of the feature itself.
      */
     const orderGeomMock: GeomMock = JSON.parse(orderGeom);
-    orderGeomMock.pattern === "feature"
-      ? taxLots.sort((a, b) => {
-          if (a.bbl < b.bbl) {
-            return 1;
-          } else {
-            return -1;
-          }
-        })
-      : taxLots.sort((a, b) => {
-          if (a.bbl > b.bbl) {
-            return 1;
-          } else {
-            return -1;
-          }
-        });
+    if (orderGeomMock.pattern === "feature") {
+      taxLots.sort((a, b) => {
+        if (a.bbl < b.bbl) {
+          return 1;
+        } else {
+          return -1;
+        }
+      });
+    } else {
+      taxLots.sort((a, b) => {
+        if (a.bbl > b.bbl) {
+          return 1;
+        } else {
+          return -1;
+        }
+      });
+    }
     return taxLots.slice(offset, limit + offset);
   }
 
