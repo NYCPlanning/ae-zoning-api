@@ -294,7 +294,7 @@ export class BoroughRepository {
 
       const mvt = dataFill[0].mvt;
       return mvt;
-    } catch (e) {
+    } catch {
       throw new DataRetrievalException(
         "cannot find community board budget requst tiles given borough and community district",
       );
