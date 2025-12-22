@@ -31,9 +31,9 @@ export class AgencyBudgetRepository {
       function: "checkByCode",
     });
 
-    const cachedValue: boolean | null = await this.cacheManager.get(key);
+    const cachedValue = await this.cacheManager.get<boolean>(key);
+    if (cachedValue !== undefined) return cachedValue;
 
-    if (cachedValue !== null) return cachedValue;
     try {
       const result = await this.#checkByCode.execute({ code });
       const value = result !== undefined;
