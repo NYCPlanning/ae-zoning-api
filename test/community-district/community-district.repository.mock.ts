@@ -1,9 +1,7 @@
 import { generateMock } from "@anatine/zod-mock";
-import {
-  findTilesRepoSchema,
-  CheckByBoroughIdCommunityDistrictIdRepo,
-} from "src/community-district/community-district.repository.schema";
+import { CheckByBoroughIdCommunityDistrictIdRepo } from "src/community-district/community-district.repository.schema";
 import { communityDistrictEntitySchema } from "src/schema";
+import { generateMockMvt } from "test/utils";
 
 export class CommunityDistrictRepositoryMock {
   districts = Array.from(Array(2), (_, index) =>
@@ -19,7 +17,7 @@ export class CommunityDistrictRepositoryMock {
     );
   }
 
-  findTilesMock = generateMock(findTilesRepoSchema);
+  findTilesMock = generateMockMvt();
 
   /**
    * The database will always return tiles,

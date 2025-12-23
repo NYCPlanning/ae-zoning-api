@@ -3,6 +3,4 @@
  * Do not edit manually.
  */
 
-import type { Error } from "./Error";
-
-export type BadRequest = Error;
+export type MVT = string;
