@@ -2,14 +2,16 @@ import { CityCouncilDistrictRepositoryMock } from "test/city-council-district/ci
 import { Test } from "@nestjs/testing";
 import { CityCouncilDistrictRepository } from "./city-council-district.repository";
 import {
-  findCityCouncilDistrictTilesQueryResponseSchema,
   findCityCouncilDistrictsQueryResponseSchema,
   findCityCouncilDistrictGeoJsonByCityCouncilDistrictIdQueryResponseSchema,
-  findCapitalProjectTilesByCityCouncilDistrictIdQueryResponseSchema,
-  findCommunityBoardBudgetRequestTilesByCityCouncilDistrictIdQueryResponseSchema,
 } from "src/gen";
 import { CityCouncilDistrictService } from "./city-council-district.service";
 import { ResourceNotFoundException } from "src/exception";
+import {
+  findCapitalProjectTilesByCityCouncilDistrictIdRepoSchema,
+  findCommunityBoardBudgetRequestTilesByCityCouncilDistrictIdRepoSchema,
+  findTilesRepoSchema,
+} from "./city-council-district.repository.schema";
 
 describe("City Council District service unit", () => {
   let cityCouncilDistrictService: CityCouncilDistrictService;
@@ -49,9 +51,7 @@ describe("City Council District service unit", () => {
         x: 1,
         y: 1,
       });
-      expect(() =>
-        findCityCouncilDistrictTilesQueryResponseSchema.parse(mvt),
-      ).not.toThrow();
+      expect(() => findTilesRepoSchema.parse(mvt)).not.toThrow();
     });
   });
 
@@ -91,9 +91,7 @@ describe("City Council District service unit", () => {
           },
         );
       expect(() =>
-        findCapitalProjectTilesByCityCouncilDistrictIdQueryResponseSchema.parse(
-          mvt,
-        ),
+        findCapitalProjectTilesByCityCouncilDistrictIdRepoSchema.parse(mvt),
       ).not.toThrow();
     });
   });
@@ -110,7 +108,7 @@ describe("City Council District service unit", () => {
           },
         );
       expect(() =>
-        findCommunityBoardBudgetRequestTilesByCityCouncilDistrictIdQueryResponseSchema.parse(
+        findCommunityBoardBudgetRequestTilesByCityCouncilDistrictIdRepoSchema.parse(
           mvt,
         ),
       ).not.toThrow();

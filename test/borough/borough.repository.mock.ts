@@ -1,14 +1,13 @@
 import {
   findCommunityDistrictsByBoroughIdRepoSchema,
   communityDistrictGeoJsonEntitySchema,
-  findCapitalProjectTilesByBoroughIdCommunityDistrictIdRepoSchema,
   CheckByIdRepo,
-  findCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdRepoSchema,
 } from "src/borough/borough.repository.schema";
 import { generateMock } from "@anatine/zod-mock";
 import { CommunityDistrictRepositoryMock } from "test/community-district/community-district.repository.mock";
 import { FindCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdPathParams } from "src/gen";
 import { boroughEntitySchema } from "src/schema";
+import { generateMockMvt } from "test/utils";
 
 export class BoroughRepositoryMock {
   communityDistrictRepoMock: CommunityDistrictRepositoryMock;
@@ -57,14 +56,9 @@ export class BoroughRepositoryMock {
     );
   }
 
-  findCapitalProjectTilesByBoroughIdCommunityDistrictIdMock = generateMock(
-    findCapitalProjectTilesByBoroughIdCommunityDistrictIdRepoSchema,
-  );
-
+  findCapitalProjectTilesByBoroughIdCommunityDistrictIdMock = generateMockMvt();
   findCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdMock =
-    generateMock(
-      findCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdRepoSchema,
-    );
+    generateMockMvt();
 
   /**
    * The database will always return tiles,
