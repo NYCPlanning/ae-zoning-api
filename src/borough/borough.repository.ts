@@ -49,8 +49,8 @@ export class BoroughRepository {
       function: "checkById",
     });
 
-    const cachedValue: boolean | null = await this.cacheManager.get(key);
-    if (cachedValue !== null) return cachedValue;
+    const cachedValue = await this.cacheManager.get<boolean>(key);
+    if (cachedValue !== undefined) return cachedValue;
 
     try {
       const result = await this.#checkById.execute({
@@ -203,7 +203,9 @@ export class BoroughRepository {
         .as("tile");
       const data = await this.db
         .select({
-          mvt: sql<Buffer>`ST_AsMVT(tile, 'capital-project-fill', 4096, 'geom')`,
+          mvt: sql<
+            Buffer<ArrayBuffer>
+          >`ST_AsMVT(tile, 'capital-project-fill', 4096, 'geom')`,
         })
         .from(tile)
         .where(isNotNull(tile.geom));
@@ -294,7 +296,7 @@ export class BoroughRepository {
 
       const mvt = dataFill[0].mvt;
       return mvt;
-    } catch (e) {
+    } catch {
       throw new DataRetrievalException(
         "cannot find community board budget requst tiles given borough and community district",
       );
