@@ -8,7 +8,6 @@ import {
   findCommunityBoardBudgetRequestsQueryResponseSchema,
   findCommunityBoardBudgetRequestAgencyCategoryResponsesQueryResponseSchema,
   findCommunityBoardBudgetRequestGeoJsonByIdQueryResponseSchema,
-  findCommunityBoardBudgetRequestTilesQueryResponseSchema,
 } from "src/gen";
 import { CommunityBoardBudgetRequestService } from "./community-board-budget-request.service";
 import { CommunityBoardBudgetRequestRepository } from "./community-board-budget-request.repository";
@@ -26,6 +25,7 @@ import { CommunityBoardBudgetRequestModule } from "./community-board-budget-requ
 import {
   communityBoardBudgetRequestCsvRepoSchema,
   findCsvRepoSchema,
+  findTilesRepoSchema,
 } from "./community-board-budget-request.repository.schema";
 
 describe("Community Board Budget Request service unit", () => {
@@ -609,9 +609,7 @@ describe("Community Board Budget Request service unit", () => {
         x: 1,
         y: 1,
       });
-      expect(() =>
-        findCommunityBoardBudgetRequestTilesQueryResponseSchema.parse(mvt),
-      ).not.toThrow();
+      expect(() => findTilesRepoSchema.parse(mvt)).not.toThrow();
     });
   });
 
