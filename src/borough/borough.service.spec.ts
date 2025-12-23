@@ -5,13 +5,15 @@ import { BoroughRepositoryMock } from "../../test/borough/borough.repository.moc
 import { Test } from "@nestjs/testing";
 import {
   findBoroughsQueryResponseSchema,
-  findCapitalProjectTilesByBoroughIdCommunityDistrictIdQueryResponseSchema,
-  findCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdQueryResponseSchema,
   findCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdQueryResponseSchema,
   findCommunityDistrictsByBoroughIdQueryResponseSchema,
 } from "src/gen";
 import { ResourceNotFoundException } from "src/exception";
 import { CommunityDistrictRepositoryMock } from "test/community-district/community-district.repository.mock";
+import {
+  findCapitalProjectTilesByBoroughIdCommunityDistrictIdRepoSchema,
+  findCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdRepoSchema,
+} from "./borough.repository.schema";
 
 describe("Borough service unit", () => {
   let boroughService: BoroughService;
@@ -116,7 +118,7 @@ describe("Borough service unit", () => {
           },
         );
       expect(() =>
-        findCapitalProjectTilesByBoroughIdCommunityDistrictIdQueryResponseSchema.parse(
+        findCapitalProjectTilesByBoroughIdCommunityDistrictIdRepoSchema.parse(
           mvt,
         ),
       ).not.toThrow();
@@ -135,8 +137,9 @@ describe("Borough service unit", () => {
             y: 1,
           },
         );
+
       expect(() =>
-        findCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdQueryResponseSchema.parse(
+        findCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdRepoSchema.parse(
           mvt,
         ),
       ).not.toThrow();

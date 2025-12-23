@@ -3,6 +3,6 @@
  * Do not edit manually.
  */
 
-import type { Error } from "./Error";
+import { z } from "zod";
 
-export type BadRequest = Error;
+export const MVTSchema = z.string();
