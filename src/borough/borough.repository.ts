@@ -66,7 +66,13 @@ export class BoroughRepository {
 
   async findMany(): Promise<FindManyRepo> {
     try {
-      return await this.db.query.borough.findMany();
+      return await this.db.query.borough.findMany({
+        columns: {
+          id: true,
+          title: true,
+          abbr: true,
+        },
+      });
     } catch {
       throw new DataRetrievalException("cannot find boroughs");
     }
