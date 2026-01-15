@@ -192,9 +192,9 @@ describe("Capital Projects", () => {
 
     it("should 200 and return capital projects from a specified community district", async () => {
       const { boroughId, id: communityDistrictId } =
-        capitalProjectRepositoryMock.communityDistrictRepoMock.districts[1];
+        capitalProjectRepositoryMock.communityDistrictRepoMock.districts[0];
       const response = await request(app.getHttpServer()).get(
-        `/capital-projects?communityDistrictId=${boroughId}${communityDistrictId}`,
+        `/capital-projects?boroughId=${boroughId}&communityDistrictId=${communityDistrictId}`,
       );
 
       expect(() =>
@@ -206,7 +206,7 @@ describe("Capital Projects", () => {
       expect(parsedBody.limit).toBe(20);
       expect(parsedBody.offset).toBe(0);
       expect(parsedBody.order).toBe("managingCode, capitalProjectId");
-      expect(parsedBody.total).toBe(7);
+      expect(parsedBody.total).toBe(2);
     });
 
     it("should 400 when finding by invalid community district id", async () => {
@@ -405,7 +405,7 @@ describe("Capital Projects", () => {
 
     it("should 400 when when both a community district id and isMapped are provided", async () => {
       const response = await request(app.getHttpServer()).get(
-        `/capital-projects?communityDistrictId=101&isMapped=true`,
+        `/capital-projects?boroughId=1&communityDistrictId=01&isMapped=true`,
       );
       expect(response.body.message).toMatch(
         /cannot have isMapped filter in conjunction/,

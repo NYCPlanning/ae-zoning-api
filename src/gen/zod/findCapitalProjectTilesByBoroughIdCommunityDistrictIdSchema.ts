@@ -12,7 +12,7 @@ export const findCapitalProjectTilesByBoroughIdCommunityDistrictIdPathParamsSche
       .string()
       .regex(/^([0-9]{1})$/)
       .describe(
-        "A single character numeric string containing the common number used to refer to the borough. Possible values are 1-5.",
+        "A single character numeric string containing the common number used to refer to the borough.",
       ),
     communityDistrictId: z
       .string()

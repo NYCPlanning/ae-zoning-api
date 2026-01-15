@@ -8,7 +8,7 @@ import type { Error } from "./Error";
 export type FindCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdPathParams =
   {
     /**
-     * @description A single character numeric string containing the common number used to refer to the borough. Possible values are 1-5.
+     * @description A single character numeric string containing the common number used to refer to the borough.
      * @pattern ^([0-9]{1})$
      * @type string
      */

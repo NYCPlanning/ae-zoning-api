@@ -122,11 +122,35 @@ describe("CapitalProjectService", () => {
       ).rejects.toThrow(InvalidRequestParameterException);
     });
 
-    it("should return a list of capital projects by community district id, using the user specified limit and offset", async () => {
+    it("should return a list of capital projects by borough id, using the user specified limit and offset", async () => {
+      const { boroughId } =
+        capitalProjectRepository.communityDistrictRepoMock.districts[0];
+      const capitalProjects = await capitalProjectService.findMany({
+        boroughId,
+        limit: 10,
+        offset: 3,
+      });
+
+      expect(() =>
+        findCapitalProjectsQueryResponseSchema.parse(capitalProjects),
+      ).not.toThrow();
+
+      const parsedBody =
+        findCapitalProjectsQueryResponseSchema.parse(capitalProjects);
+      expect(parsedBody.limit).toBe(10);
+      expect(parsedBody.offset).toBe(3);
+      expect(parsedBody.total).toBe(parsedBody.capitalProjects.length);
+      expect(parsedBody.capitalProjects.length).toBe(0);
+      expect(parsedBody.totalProjects).toBe(2);
+      expect(parsedBody.order).toBe("managingCode, capitalProjectId");
+    });
+
+    it("should return a list of capital projects by borough id and community district id, using the user specified limit and offset", async () => {
       const { boroughId, id: communityDistrictId } =
         capitalProjectRepository.communityDistrictRepoMock.districts[0];
       const capitalProjects = await capitalProjectService.findMany({
-        communityDistrictCombinedId: `${boroughId}${communityDistrictId}`,
+        boroughId,
+        communityDistrictId,
         limit: 10,
         offset: 3,
       });
@@ -165,12 +189,22 @@ describe("CapitalProjectService", () => {
       expect(parsedBody.order).toBe("managingCode, capitalProjectId");
     });
 
+    it("should return a InvalidRequestParameterException error when a borough with the given id cannot be found", async () => {
+      const boroughId = "99";
+
+      expect(capitalProjectService.findMany({ boroughId })).rejects.toThrow(
+        InvalidRequestParameterException,
+      );
+    });
+
     it("should return a InvalidRequestParameterException error when a community district with the given id cannot be found", async () => {
-      const id = "999";
+      const boroughId = "1";
+      const communityDistrictId = "99";
 
       expect(
         capitalProjectService.findMany({
-          communityDistrictCombinedId: id,
+          boroughId,
+          communityDistrictId,
         }),
       ).rejects.toThrow(InvalidRequestParameterException);
     });
@@ -337,7 +371,8 @@ describe("CapitalProjectService", () => {
     it("should return a InvalidRequestParameterException error when a borough id, a community district id, and isMapped are provided", async () => {
       expect(
         capitalProjectService.findMany({
-          communityDistrictCombinedId: "101",
+          boroughId: "1",
+          communityDistrictId: "01",
           isMapped: true,
         }),
       ).rejects.toThrow(InvalidRequestParameterException);

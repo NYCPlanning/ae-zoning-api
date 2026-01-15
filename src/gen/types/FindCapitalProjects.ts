@@ -8,8 +8,14 @@ import type { Error } from "./Error";
 
 export type FindCapitalProjectsQueryParams = {
   /**
-   * @description The three character numeric string containing the concatenation of the borough and community district ids.
-   * @pattern ^([0-9]{3})$
+   * @description A single character numeric string containing the common number used to refer to the borough.
+   * @pattern ^([0-9]{1})$
+   * @type string | undefined
+   */
+  boroughId?: string;
+  /**
+   * @description The two character numeric string containing the community district id.
+   * @pattern ^([0-9]{2})$
    * @type string | undefined
    */
   communityDistrictId?: string;
