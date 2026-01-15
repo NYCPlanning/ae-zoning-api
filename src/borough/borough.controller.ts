@@ -94,7 +94,8 @@ export class BoroughController {
   ) {
     return this.capitalProjectService.findMany({
       ...queryParams,
-      communityDistrictCombinedId: `${pathParams.boroughId}${pathParams.communityDistrictId}`,
+      boroughId: pathParams.boroughId,
+      communityDistrictId: pathParams.communityDistrictId,
     });
   }
 
