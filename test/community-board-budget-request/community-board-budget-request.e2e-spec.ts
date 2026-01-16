@@ -447,11 +447,40 @@ describe("Community Board Budget Request e2e", () => {
       );
     });
 
+    it("should 200 when finding cbbrs by boroughId", async () => {
+      const communityDistrict = communityDistrictRepositoryMock.districts[0];
+      const response = await request(app.getHttpServer())
+        .get(
+          `/community-board-budget-requests?boroughId=${communityDistrict.boroughId}`,
+        )
+        .expect(200);
+
+      expect(() =>
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(
+          response.body,
+        ),
+      ).not.toThrow();
+
+      const parsedBody =
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(
+          response.body,
+        );
+      expect(parsedBody.limit).toBe(20);
+      expect(parsedBody.offset).toBe(0);
+      expect(parsedBody.communityBoardBudgetRequests.length).toBeGreaterThan(0);
+      expect(parsedBody.total).toBe(
+        parsedBody.communityBoardBudgetRequests.length,
+      );
+      expect(parsedBody.totalBudgetRequests).toBe(
+        parsedBody.communityBoardBudgetRequests.length,
+      );
+    });
+
     it("should 200 when finding cbbrs by communityDistrictId", async () => {
       const communityDistrict = communityDistrictRepositoryMock.districts[0];
       const response = await request(app.getHttpServer())
         .get(
-          `/community-board-budget-requests?communityDistrictId=${communityDistrict.boroughId}${communityDistrict.id}`,
+          `/community-board-budget-requests?boroughId=${communityDistrict.boroughId}&communityDistrictId=${communityDistrict.id}`,
         )
         .expect(200);
 
@@ -706,6 +735,32 @@ describe("Community Board Budget Request e2e", () => {
       );
     });
 
+    it("should 400 when finding cbbrs by an invalid boroughId", async () => {
+      const boroughId = false;
+
+      const response = await request(app.getHttpServer())
+        .get(`/community-board-budget-requests?boroughId=${boroughId}`)
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /Invalid request parameter: boroughId: Invalid/,
+      );
+    });
+
+    it("should 400 when finding cbbrs by a missing boroughId", async () => {
+      const boroughId = "9";
+
+      const response = await request(app.getHttpServer())
+        .get(`/community-board-budget-requests?boroughId=${boroughId}`)
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /Invalid request parameter: invalid borough id/,
+      );
+    });
+
     it("should 400 when finding cbbrs by an invalid communityDistrictId", async () => {
       const communityDistrictId = false;
 
@@ -722,11 +777,12 @@ describe("Community Board Budget Request e2e", () => {
     });
 
     it("should 400 when finding cbbrs by a missing communityDistrictId", async () => {
-      const communityDistrictId = "909";
+      const boroughId = "1";
+      const communityDistrictId = "99";
 
       const response = await request(app.getHttpServer())
         .get(
-          `/community-board-budget-requests?communityDistrictId=${communityDistrictId}`,
+          `/community-board-budget-requests?boroughId=${boroughId}&communityDistrictId=${communityDistrictId}`,
         )
         .expect(400);
 
@@ -1049,12 +1105,20 @@ describe("Community Board Budget Request e2e", () => {
         .get(`/community-board-budget-requests/csv`)
         .expect(200);
     });
+    it("should 200 when finding cbbrs by boroughId", async () => {
+      const communityDistrict = communityDistrictRepositoryMock.districts[0];
+      await request(app.getHttpServer())
+        .get(
+          `/community-board-budget-requests/csv?boroughId=${communityDistrict.boroughId}`,
+        )
+        .expect(200);
+    });
 
     it("should 200 when finding cbbrs by communityDistrictId", async () => {
       const communityDistrict = communityDistrictRepositoryMock.districts[0];
       await request(app.getHttpServer())
         .get(
-          `/community-board-budget-requests/csv?communityDistrictId=${communityDistrict.boroughId}${communityDistrict.id}`,
+          `/community-board-budget-requests/csv?boroughId=${communityDistrict.boroughId}&communityDistrictId=${communityDistrict.id}`,
         )
         .expect(200);
     });
@@ -1132,6 +1196,32 @@ describe("Community Board Budget Request e2e", () => {
         .expect(200);
     });
 
+    it("should 400 when finding cbbrs by an invalid boroughId", async () => {
+      const boroughId = false;
+
+      const response = await request(app.getHttpServer())
+        .get(`/community-board-budget-requests/csv?boroughId=${boroughId}`)
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /Invalid request parameter: boroughId: Invalid/,
+      );
+    });
+
+    it("should 400 when finding cbbrs by a missing boroughId", async () => {
+      const boroughId = "9";
+
+      const response = await request(app.getHttpServer())
+        .get(`/community-board-budget-requests/csv?boroughId=${boroughId}`)
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /Invalid request parameter: invalid borough id/,
+      );
+    });
+
     it("should 400 when finding cbbrs by an invalid communityDistrictId", async () => {
       const communityDistrictId = false;
 
@@ -1148,11 +1238,12 @@ describe("Community Board Budget Request e2e", () => {
     });
 
     it("should 400 when finding cbbrs by a missing communityDistrictId", async () => {
-      const communityDistrictId = "909";
+      const boroughId = "1";
+      const communityDistrictId = "99";
 
       const response = await request(app.getHttpServer())
         .get(
-          `/community-board-budget-requests/csv?communityDistrictId=${communityDistrictId}`,
+          `/community-board-budget-requests/csv?boroughId=${boroughId}&communityDistrictId=${communityDistrictId}`,
         )
         .expect(400);
 

@@ -280,10 +280,34 @@ describe("Community Board Budget Request service unit", () => {
       );
     });
 
+    it("should return a list of community board budget requests filtered by borough", async () => {
+      const communityDistrict = communityDistrictRepositoryMock.districts[0];
+      const cbbrs = await communityBoardBudgetRequestService.findMany({
+        boroughId: communityDistrict.boroughId,
+      });
+
+      expect(() =>
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(cbbrs),
+      ).not.toThrow();
+
+      const parsedBody =
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(cbbrs);
+      expect(parsedBody.limit).toBe(20);
+      expect(parsedBody.offset).toBe(0);
+      expect(parsedBody.communityBoardBudgetRequests.length).toBeGreaterThan(0);
+      expect(parsedBody.total).toBe(
+        parsedBody.communityBoardBudgetRequests.length,
+      );
+      expect(parsedBody.totalBudgetRequests).toBe(
+        parsedBody.communityBoardBudgetRequests.length,
+      );
+    });
+
     it("should return a list of community board budget requests filtered by community district", async () => {
       const communityDistrict = communityDistrictRepositoryMock.districts[0];
       const cbbrs = await communityBoardBudgetRequestService.findMany({
-        communityDistrictCombinedId: `${communityDistrict.boroughId}${communityDistrict.id}`,
+        boroughId: communityDistrict.boroughId,
+        communityDistrictId: communityDistrict.id,
       });
 
       expect(() =>
@@ -626,10 +650,25 @@ describe("Community Board Budget Request service unit", () => {
       ).not.toThrow();
     });
 
+    it("should return a list of community board budget requests for download filtered by borough", async () => {
+      const communityDistrict = communityDistrictRepositoryMock.districts[0];
+      const csv = await communityBoardBudgetRequestService.findCsv({
+        boroughId: communityDistrict.boroughId,
+      });
+
+      expect(() => findCsvRepoSchema.parse(csv)).not.toThrow();
+      expect(csv.length).toBe(4);
+      const firstItem = csv[0];
+      expect(() =>
+        communityBoardBudgetRequestCsvRepoSchema.strict().parse(firstItem),
+      ).not.toThrow();
+    });
+
     it("should return a list of community board budget requests for download filtered by community district", async () => {
       const communityDistrict = communityDistrictRepositoryMock.districts[0];
       const csv = await communityBoardBudgetRequestService.findCsv({
-        communityDistrictCombinedId: `${communityDistrict.boroughId}${communityDistrict.id}`,
+        boroughId: communityDistrict.boroughId,
+        communityDistrictId: communityDistrict.id,
       });
 
       expect(() => findCsvRepoSchema.parse(csv)).not.toThrow();

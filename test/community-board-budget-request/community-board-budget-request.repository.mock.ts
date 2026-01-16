@@ -500,6 +500,13 @@ export class CommunityBoardBudgetRequestRepositoryMock {
       .filter(([criteria, _]) => {
         if (
           boroughId !== null &&
+          communityDistrictId === null &&
+          boroughId !== criteria.boroughId
+        )
+          return false;
+
+        if (
+          boroughId !== null &&
           communityDistrictId !== null &&
           (boroughId !== criteria.boroughId ||
             communityDistrictId !== criteria.communityDistrictId)
