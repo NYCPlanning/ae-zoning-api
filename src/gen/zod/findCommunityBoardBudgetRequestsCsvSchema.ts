@@ -8,12 +8,20 @@ import { z } from "zod";
 
 export const findCommunityBoardBudgetRequestsCsvQueryParamsSchema = z
   .object({
+    boroughId: z.optional(
+      z
+        .string()
+        .regex(/^([0-9]{1})$/)
+        .describe(
+          "A single character numeric string containing the common number used to refer to the borough.",
+        ),
+    ),
     communityDistrictId: z.optional(
       z
         .string()
-        .regex(/^([0-9]{3})$/)
+        .regex(/^([0-9]{2})$/)
         .describe(
-          "The three character numeric string containing the concatenation of the borough and community district ids.",
+          "The two character numeric string containing the community district id.",
         ),
     ),
     cityCouncilDistrictId: z.optional(

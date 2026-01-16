@@ -13,6 +13,8 @@ import { CommunityBoardBudgetRequestService } from "./community-board-budget-req
 import { CommunityBoardBudgetRequestRepository } from "./community-board-budget-request.repository";
 import { AgencyRepositoryMock } from "test/agency/agency.repository.mock";
 import { AgencyRepository } from "src/agency/agency.repository";
+import { BoroughRepositoryMock } from "test/borough/borough.repository.mock";
+import { BoroughRepository } from "src/borough/borough.repository";
 import {
   InvalidRequestParameterException,
   ResourceNotFoundException,
@@ -29,8 +31,6 @@ import {
 } from "./community-board-budget-request.repository.schema";
 import { AgencyBudgetRepositoryMock } from "test/agency-budget/agency-budget.repository.mock";
 import { AgencyBudgetRepository } from "src/agency-budget/agency-budget.repository";
-import { BoroughRepositoryMock } from "test/borough/borough.repository.mock";
-import { BoroughRepository } from "src/borough/borough.repository";
 import { CapitalProjectRepositoryMock } from "test/capital-project/capital-project.repository.mock";
 import { CapitalProjectRepository } from "src/capital-project/capital-project.repository";
 
@@ -74,6 +74,8 @@ describe("Community Board Budget Request service unit", () => {
       .useValue(cityCouncilDistrictRepositoryMock)
       .overrideProvider(CommunityDistrictRepository)
       .useValue(communityDistrictRepositoryMock)
+      .overrideProvider(BoroughRepository)
+      .useValue(boroughRepositoryMock)
       .compile();
 
     communityBoardBudgetRequestService =
@@ -301,10 +303,34 @@ describe("Community Board Budget Request service unit", () => {
       );
     });
 
+    it("should return a list of community board budget requests filtered by borough", async () => {
+      const communityDistrict = communityDistrictRepositoryMock.districts[0];
+      const cbbrs = await communityBoardBudgetRequestService.findMany({
+        boroughId: communityDistrict.boroughId,
+      });
+
+      expect(() =>
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(cbbrs),
+      ).not.toThrow();
+
+      const parsedBody =
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(cbbrs);
+      expect(parsedBody.limit).toBe(20);
+      expect(parsedBody.offset).toBe(0);
+      expect(parsedBody.communityBoardBudgetRequests.length).toBeGreaterThan(0);
+      expect(parsedBody.total).toBe(
+        parsedBody.communityBoardBudgetRequests.length,
+      );
+      expect(parsedBody.totalBudgetRequests).toBe(
+        parsedBody.communityBoardBudgetRequests.length,
+      );
+    });
+
     it("should return a list of community board budget requests filtered by community district", async () => {
       const communityDistrict = communityDistrictRepositoryMock.districts[0];
       const cbbrs = await communityBoardBudgetRequestService.findMany({
-        communityDistrictCombinedId: `${communityDistrict.boroughId}${communityDistrict.id}`,
+        boroughId: communityDistrict.boroughId,
+        communityDistrictId: communityDistrict.id,
       });
 
       expect(() =>
@@ -647,10 +673,25 @@ describe("Community Board Budget Request service unit", () => {
       ).not.toThrow();
     });
 
+    it("should return a list of community board budget requests for download filtered by borough", async () => {
+      const communityDistrict = communityDistrictRepositoryMock.districts[0];
+      const csv = await communityBoardBudgetRequestService.findCsv({
+        boroughId: communityDistrict.boroughId,
+      });
+
+      expect(() => findCsvRepoSchema.parse(csv)).not.toThrow();
+      expect(csv.length).toBe(4);
+      const firstItem = csv[0];
+      expect(() =>
+        communityBoardBudgetRequestCsvRepoSchema.strict().parse(firstItem),
+      ).not.toThrow();
+    });
+
     it("should return a list of community board budget requests for download filtered by community district", async () => {
       const communityDistrict = communityDistrictRepositoryMock.districts[0];
       const csv = await communityBoardBudgetRequestService.findCsv({
-        communityDistrictCombinedId: `${communityDistrict.boroughId}${communityDistrict.id}`,
+        boroughId: communityDistrict.boroughId,
+        communityDistrictId: communityDistrict.id,
       });
 
       expect(() => findCsvRepoSchema.parse(csv)).not.toThrow();

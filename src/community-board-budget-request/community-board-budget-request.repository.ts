@@ -351,6 +351,9 @@ export class CommunityBoardBudgetRequestRepository {
                   ),
                 )
               : undefined,
+            boroughId !== null && communityDistrictId === null
+              ? eq(borough.id, boroughId)
+              : undefined,
             cbbrPolicyAreaId !== null
               ? eq(communityBoardBudgetRequest.policyArea, cbbrPolicyAreaId)
               : undefined,
@@ -469,6 +472,9 @@ export class CommunityBoardBudgetRequestRepository {
                     communityDistrictId,
                   ),
                 )
+              : undefined,
+            boroughId !== null && communityDistrictId === null
+              ? eq(borough.id, boroughId)
               : undefined,
             cbbrPolicyAreaId !== null
               ? eq(communityBoardBudgetRequest.policyArea, cbbrPolicyAreaId)
@@ -618,6 +624,9 @@ export class CommunityBoardBudgetRequestRepository {
                     communityDistrictId,
                   ),
                 )
+              : undefined,
+            boroughId !== null && communityDistrictId === null
+              ? eq(borough.id, boroughId)
               : undefined,
             cbbrPolicyAreaId !== null
               ? eq(communityBoardBudgetRequest.policyArea, cbbrPolicyAreaId)
