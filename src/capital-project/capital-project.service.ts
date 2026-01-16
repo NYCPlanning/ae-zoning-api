@@ -34,7 +34,8 @@ export class CapitalProjectService {
     limit = 20,
     offset = 0,
     cityCouncilDistrictId = null,
-    communityDistrictCombinedId = null,
+    boroughId = null,
+    communityDistrictId = null,
     managingAgency = null,
     agencyBudget = null,
     commitmentsTotalMin = null,
@@ -44,7 +45,8 @@ export class CapitalProjectService {
     limit?: number;
     offset?: number;
     cityCouncilDistrictId?: string | null;
-    communityDistrictCombinedId?: string | null;
+    boroughId?: string | null;
+    communityDistrictId?: string | null;
     managingAgency?: string | null;
     agencyBudget?: string | null;
     commitmentsTotalMin?: string | null;
@@ -59,13 +61,22 @@ export class CapitalProjectService {
       : null;
 
     if (
-      (cityCouncilDistrictId !== null ||
-        communityDistrictCombinedId !== null) &&
+      (cityCouncilDistrictId !== null || boroughId !== null) &&
       isMapped !== null
     ) {
       throw new InvalidRequestParameterException(
         "cannot have isMapped filter in conjunction with other geographic filter",
       );
+    }
+
+    if (communityDistrictId !== null && boroughId === null) {
+      throw new InvalidRequestParameterException(
+        "cannot filter by community district id without borough id",
+      );
+    }
+
+    if (boroughId !== null && !["1", "2", "3", "4", "5"].includes(boroughId)) {
+      throw new InvalidRequestParameterException("invalid borough id");
     }
 
     if (min !== null && max !== null && min > max) {
@@ -79,15 +90,6 @@ export class CapitalProjectService {
       checklist.push(
         this.cityCouncilDistrictRepository.checkById(cityCouncilDistrictId),
       );
-
-    const boroughId =
-      communityDistrictCombinedId !== null
-        ? communityDistrictCombinedId.slice(0, 1)
-        : null;
-    const communityDistrictId =
-      communityDistrictCombinedId !== null
-        ? communityDistrictCombinedId.slice(1, 3)
-        : null;
 
     if (boroughId !== null && communityDistrictId !== null)
       checklist.push(

@@ -262,7 +262,7 @@ describe("Borough e2e", () => {
           `/boroughs/${missingId}/community-districts/${communityDistrict.id}/capital-projects`,
         )
         .expect(400);
-      expect(response.body.message).toMatch(/could not check/);
+      expect(response.body.message).toMatch(/invalid borough id/);
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
 
