@@ -1,4 +1,5 @@
 import { Inject, Injectable } from "@nestjs/common";
+import { BoroughRepository } from "src/borough/borough.repository";
 import { CityCouncilDistrictRepository } from "src/city-council-district/city-council-district.repository";
 import { CommunityBoardBudgetRequestRepository } from "./community-board-budget-request.repository";
 import {
@@ -27,6 +28,7 @@ export class CommunityBoardBudgetRequestService {
     @Inject(CommunityBoardBudgetRequestRepository)
     private readonly communityBoardBudgetRequestRepository: CommunityBoardBudgetRequestRepository,
     private readonly agencyRepository: AgencyRepository,
+    private readonly boroughRepository: BoroughRepository,
     private readonly communityDistrictRepository: CommunityDistrictRepository,
     private readonly cityCouncilDistrictRepository: CityCouncilDistrictRepository,
   ) {}
@@ -182,11 +184,11 @@ export class CommunityBoardBudgetRequestService {
       );
     }
 
-    if (boroughId !== null && !["1", "2", "3", "4", "5"].includes(boroughId)) {
-      throw new InvalidRequestParameterException("invalid borough id");
-    }
-
     const checklist: Array<Promise<unknown | undefined>> = [];
+
+    if (boroughId !== null) {
+      checklist.push(this.boroughRepository.checkById(boroughId));
+    }
 
     if (cbbrPolicyAreaId !== null) {
       checklist.push(

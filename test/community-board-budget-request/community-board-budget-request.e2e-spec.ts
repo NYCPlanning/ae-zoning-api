@@ -16,6 +16,8 @@ import {
 } from "src/gen";
 import { AgencyRepositoryMock } from "test/agency/agency.repository.mock";
 import { AgencyRepository } from "src/agency/agency.repository";
+import { BoroughRepositoryMock } from "test/borough/borough.repository.mock";
+import { BoroughRepository } from "src/borough/borough.repository";
 import { CommunityDistrictRepositoryMock } from "test/community-district/community-district.repository.mock";
 import { CityCouncilDistrictRepositoryMock } from "test/city-council-district/city-council-district.repository.mock";
 import { CityCouncilDistrictRepository } from "src/city-council-district/city-council-district.repository";
@@ -27,6 +29,9 @@ describe("Community Board Budget Request e2e", () => {
   const agencyRepositoryMock = new AgencyRepositoryMock();
   const cityCouncilDistrictRepoMock = new CityCouncilDistrictRepositoryMock();
   const communityDistrictRepositoryMock = new CommunityDistrictRepositoryMock();
+  const boroughRepositoryMock = new BoroughRepositoryMock(
+    communityDistrictRepositoryMock,
+  );
 
   const communityBoardBudgetRequestRepositoryMock =
     new CommunityBoardBudgetRequestRepositoryMock(
@@ -47,6 +52,8 @@ describe("Community Board Budget Request e2e", () => {
       .useValue(cityCouncilDistrictRepoMock)
       .overrideProvider(CommunityDistrictRepository)
       .useValue(communityDistrictRepositoryMock)
+      .overrideProvider(BoroughRepository)
+      .useValue(boroughRepositoryMock)
       .compile();
     app = moduleRef.createNestApplication();
     await app.init();
@@ -757,7 +764,7 @@ describe("Community Board Budget Request e2e", () => {
 
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
       expect(response.body.message).toMatch(
-        /Invalid request parameter: invalid borough id/,
+        /Invalid request parameter: one or more values for parameters do not exist/,
       );
     });
 
@@ -1218,7 +1225,7 @@ describe("Community Board Budget Request e2e", () => {
 
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
       expect(response.body.message).toMatch(
-        /Invalid request parameter: invalid borough id/,
+        /Invalid request parameter: one or more values for parameters do not exist/,
       );
     });
 

@@ -11,7 +11,7 @@ export const borough = pgTable("borough", {
   mercatorLabel: pointGeom("mercator_label", 3857),
 });
 
-export const boroughIdEntitySchema = z.string().regex(/^[1-9]$/);
+export const boroughIdEntitySchema = z.string().regex(/^[1-5]$/);
 
 export const boroughEntitySchema = z.object({
   id: boroughIdEntitySchema,

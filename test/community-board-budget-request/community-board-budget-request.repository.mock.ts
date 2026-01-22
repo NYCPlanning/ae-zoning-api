@@ -27,6 +27,7 @@ import {
   cbbrPolicyAreaEntitySchema,
   AgencyEntitySchema,
   cbbrAgencyCategoryResponseEntitySchema,
+  boroughEntitySchema,
 } from "src/schema";
 import { AgencyRepositoryMock } from "test/agency/agency.repository.mock";
 import { CityCouncilDistrictRepositoryMock } from "test/city-council-district/city-council-district.repository.mock";
@@ -47,6 +48,10 @@ export class CommunityBoardBudgetRequestRepositoryMock {
     this.cityCouncilDistrictRepoMock = cityCouncilDistrictRepoMock;
     this.communityDistrictRepoMock = communityDistrictRepoMock;
   }
+
+  boroughResponsesMocks = Array.from(Array(8), (_, i) =>
+    generateMock(boroughEntitySchema, { seed: i + 1 }),
+  );
 
   agencyCategoryResponsesMocks = Array.from(Array(8), (_, i) =>
     generateMock(cbbrAgencyCategoryResponseEntitySchema, { seed: i + 1 }),
@@ -254,10 +259,11 @@ export class CommunityBoardBudgetRequestRepositoryMock {
     const needGroups = this.needGroupMocks;
     const agencies = this.agencyRepoMock.agencies;
     const categoryResponses = this.agencyCategoryResponsesMocks;
+    const boroughs = this.boroughResponsesMocks;
 
     return this.findManyMocks.map((mockBudgetRequestResponse, i) => [
       {
-        boroughId: communityDistricts[i % 2].boroughId,
+        boroughId: boroughs[i % 2].id,
         communityDistrictId: communityDistricts[i % 2].id,
         cityCouncilDistrictId: cityCouncilDistrictRepoMock[i % 2].id,
         cbbrPolicyAreaId: policyAreas[i].id,

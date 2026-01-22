@@ -13,6 +13,8 @@ import { CommunityBoardBudgetRequestService } from "./community-board-budget-req
 import { CommunityBoardBudgetRequestRepository } from "./community-board-budget-request.repository";
 import { AgencyRepositoryMock } from "test/agency/agency.repository.mock";
 import { AgencyRepository } from "src/agency/agency.repository";
+import { BoroughRepositoryMock } from "test/borough/borough.repository.mock";
+import { BoroughRepository } from "src/borough/borough.repository";
 import {
   InvalidRequestParameterException,
   ResourceNotFoundException,
@@ -34,6 +36,9 @@ describe("Community Board Budget Request service unit", () => {
   const cityCouncilDistrictRepositoryMock =
     new CityCouncilDistrictRepositoryMock();
   const communityDistrictRepositoryMock = new CommunityDistrictRepositoryMock();
+  const boroughRepositoryMock = new BoroughRepositoryMock(
+    communityDistrictRepositoryMock,
+  );
   const communityBoardBudgetRequestRepositoryMock =
     new CommunityBoardBudgetRequestRepositoryMock(
       agencyRepositoryMock,
@@ -53,6 +58,8 @@ describe("Community Board Budget Request service unit", () => {
       .useValue(cityCouncilDistrictRepositoryMock)
       .overrideProvider(CommunityDistrictRepository)
       .useValue(communityDistrictRepositoryMock)
+      .overrideProvider(BoroughRepository)
+      .useValue(boroughRepositoryMock)
       .compile();
 
     communityBoardBudgetRequestService =
