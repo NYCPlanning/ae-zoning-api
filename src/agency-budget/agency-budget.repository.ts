@@ -1,4 +1,4 @@
-import { Inject } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { DataRetrievalException } from "src/exception";
 import { DB, DbType } from "src/global/providers/db.provider";
 import {
@@ -9,6 +9,7 @@ import { agencyBudget } from "src/schema";
 import { Cache } from "cache-manager";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
 
+@Injectable()
 export class AgencyBudgetRepository {
   constructor(
     @Inject(DB)

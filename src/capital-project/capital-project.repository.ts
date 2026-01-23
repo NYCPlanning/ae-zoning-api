@@ -1,4 +1,4 @@
-import { Inject } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import {
   isNotNull,
   isNull,
@@ -48,6 +48,7 @@ import {
   TileCacheService,
 } from "src/global/providers/tile-cache.provider";
 
+@Injectable()
 export class CapitalProjectRepository {
   constructor(
     @Inject(DB)

@@ -27,10 +27,18 @@ import {
   findCsvRepoSchema,
   findTilesRepoSchema,
 } from "./community-board-budget-request.repository.schema";
+import { AgencyBudgetRepositoryMock } from "test/agency-budget/agency-budget.repository.mock";
+import { AgencyBudgetRepository } from "src/agency-budget/agency-budget.repository";
+import { BoroughRepositoryMock } from "test/borough/borough.repository.mock";
+import { BoroughRepository } from "src/borough/borough.repository";
+import { CapitalProjectRepositoryMock } from "test/capital-project/capital-project.repository.mock";
+import { CapitalProjectRepository } from "src/capital-project/capital-project.repository";
 
 describe("Community Board Budget Request service unit", () => {
   let communityBoardBudgetRequestService: CommunityBoardBudgetRequestService;
   const agencyRepositoryMock = new AgencyRepositoryMock();
+  const agencyBudgetRepositoryMock = new AgencyBudgetRepositoryMock();
+  const boroughRepositoryMock = new BoroughRepositoryMock();
   const cityCouncilDistrictRepositoryMock =
     new CityCouncilDistrictRepositoryMock();
   const communityDistrictRepositoryMock = new CommunityDistrictRepositoryMock();
@@ -40,6 +48,12 @@ describe("Community Board Budget Request service unit", () => {
       cityCouncilDistrictRepositoryMock,
       communityDistrictRepositoryMock,
     );
+  const capitalProjectRepositoryMock = new CapitalProjectRepositoryMock(
+    agencyRepositoryMock,
+    cityCouncilDistrictRepositoryMock,
+    communityDistrictRepositoryMock,
+    agencyBudgetRepositoryMock,
+  );
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -49,6 +63,12 @@ describe("Community Board Budget Request service unit", () => {
       .useValue(communityBoardBudgetRequestRepositoryMock)
       .overrideProvider(AgencyRepository)
       .useValue(agencyRepositoryMock)
+      .overrideProvider(AgencyBudgetRepository)
+      .useValue(agencyBudgetRepositoryMock)
+      .overrideProvider(BoroughRepository)
+      .useValue(boroughRepositoryMock)
+      .overrideProvider(CapitalProjectRepository)
+      .useValue(capitalProjectRepositoryMock)
       .overrideProvider(CityCouncilDistrictRepository)
       .useValue(cityCouncilDistrictRepositoryMock)
       .overrideProvider(CommunityDistrictRepository)

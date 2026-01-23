@@ -1,22 +1,21 @@
-import { Module } from "@nestjs/common";
+import { forwardRef, Module } from "@nestjs/common";
 import { CapitalProjectController } from "./capital-project.controller";
 import { CapitalProjectService } from "./capital-project.service";
 import { CapitalProjectRepository } from "./capital-project.repository";
-import { CityCouncilDistrictRepository } from "src/city-council-district/city-council-district.repository";
-import { CommunityDistrictRepository } from "src/community-district/community-district.repository";
-import { AgencyBudgetRepository } from "../agency-budget/agency-budget.repository";
-import { AgencyRepository } from "src/agency/agency.repository";
+import { AgencyModule } from "src/agency/agency.module";
+import { AgencyBudgetModule } from "src/agency-budget/agency-budget.module";
+import { CityCouncilDistrictModule } from "src/city-council-district/city-council-district.module";
+import { CommunityDistrictModule } from "src/community-district/community-district.module";
 
 @Module({
-  exports: [CapitalProjectService],
-  providers: [
-    CapitalProjectService,
-    CapitalProjectRepository,
-    CityCouncilDistrictRepository,
-    CommunityDistrictRepository,
-    AgencyRepository,
-    AgencyBudgetRepository,
+  imports: [
+    AgencyModule,
+    AgencyBudgetModule,
+    forwardRef(() => CityCouncilDistrictModule),
+    CommunityDistrictModule,
   ],
+  exports: [CapitalProjectService],
+  providers: [CapitalProjectService, CapitalProjectRepository],
   controllers: [CapitalProjectController],
 })
 export class CapitalProjectModule {}

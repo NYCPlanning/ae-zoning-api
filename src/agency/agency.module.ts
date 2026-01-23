@@ -4,7 +4,7 @@ import { AgencyController } from "./agency.controller";
 import { AgencyRepository } from "./agency.repository";
 
 @Module({
-  exports: [AgencyService],
+  exports: [AgencyService, AgencyRepository],
   providers: [AgencyService, AgencyRepository],
   controllers: [AgencyController],
 })
