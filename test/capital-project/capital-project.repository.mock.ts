@@ -28,6 +28,7 @@ export class CapitalProjectRepositoryMock {
   cityCouncilDistrictRepoMock: CityCouncilDistrictRepositoryMock;
   communityDistrictRepoMock: CommunityDistrictRepositoryMock;
   agencyBudgetRepositoryMock: AgencyBudgetRepositoryMock;
+
   constructor(
     agencyRepoMock: AgencyRepositoryMock,
     cityCouncilDistrictRepoMock: CityCouncilDistrictRepositoryMock,

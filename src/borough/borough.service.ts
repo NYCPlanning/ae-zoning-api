@@ -1,6 +1,5 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { BoroughRepository } from "./borough.repository";
-import { CommunityDistrictRepository } from "src/community-district/community-district.repository";
 import { ResourceNotFoundException } from "src/exception";
 import {
   FindCapitalProjectsByBoroughIdCommunityDistrictIdPathParams,
@@ -13,12 +12,7 @@ import { CommunityDistrictEntity } from "src/schema";
 
 @Injectable()
 export class BoroughService {
-  constructor(
-    @Inject(BoroughRepository)
-    private readonly boroughRepository: BoroughRepository,
-    @Inject(CommunityDistrictRepository)
-    private readonly communityDistrictRepository: CommunityDistrictRepository,
-  ) {}
+  constructor(private readonly boroughRepository: BoroughRepository) {}
 
   async findMany() {
     const boroughs = await this.boroughRepository.findMany();

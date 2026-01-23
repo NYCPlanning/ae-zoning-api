@@ -31,9 +31,7 @@ describe("Borough e2e", () => {
   const cityCouncilDistrictRepositoryMock =
     new CityCouncilDistrictRepositoryMock();
   const communityDistrictRepositoryMock = new CommunityDistrictRepositoryMock();
-  const boroughRepositoryMock = new BoroughRepositoryMock(
-    communityDistrictRepositoryMock,
-  );
+  const boroughRepositoryMock = new BoroughRepositoryMock();
   const capitalProjectRepositoryMock = new CapitalProjectRepositoryMock(
     agencyRepositoryMock,
     cityCouncilDistrictRepositoryMock,
@@ -344,7 +342,7 @@ describe("Borough e2e", () => {
       );
       jest
         .spyOn(
-          boroughRepositoryMock.communityDistrictRepoMock,
+          communityDistrictRepositoryMock,
           "checkByBoroughIdCommunityDistrictId",
         )
         .mockImplementationOnce(() => {

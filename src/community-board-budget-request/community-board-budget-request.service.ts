@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { CityCouncilDistrictRepository } from "src/city-council-district/city-council-district.repository";
 import { CommunityBoardBudgetRequestRepository } from "./community-board-budget-request.repository";
 import {
@@ -24,7 +24,6 @@ import { produce } from "immer";
 @Injectable()
 export class CommunityBoardBudgetRequestService {
   constructor(
-    @Inject(CommunityBoardBudgetRequestRepository)
     private readonly communityBoardBudgetRequestRepository: CommunityBoardBudgetRequestRepository,
     private readonly agencyRepository: AgencyRepository,
     private readonly communityDistrictRepository: CommunityDistrictRepository,
