@@ -19,9 +19,7 @@ describe("Borough service unit", () => {
   let boroughService: BoroughService;
 
   const communityDistrictRepositoryMock = new CommunityDistrictRepositoryMock();
-  const boroughRepositoryMock = new BoroughRepositoryMock(
-    communityDistrictRepositoryMock,
-  );
+  const boroughRepositoryMock = new BoroughRepositoryMock();
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({

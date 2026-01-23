@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { TaxLotRepository } from "./tax-lot.repository";
 import { ResourceNotFoundException } from "src/exception";
 import { Geometry, MultiPolygon } from "geojson";
@@ -18,10 +18,7 @@ export type SpatialFilter = z.infer<typeof spatialFilterSchema>;
 
 @Injectable()
 export class TaxLotService {
-  constructor(
-    @Inject(TaxLotRepository)
-    private readonly taxLotRepository: TaxLotRepository,
-  ) {}
+  constructor(private readonly taxLotRepository: TaxLotRepository) {}
 
   /**
    *

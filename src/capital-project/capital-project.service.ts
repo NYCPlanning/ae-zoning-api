@@ -6,7 +6,7 @@ import {
   FindCapitalProjectTilesPathParams,
 } from "src/gen";
 import { CapitalProjectRepository } from "./capital-project.repository";
-import { Inject } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import {
   InvalidRequestParameterException,
   ResourceNotFoundException,
@@ -19,15 +19,17 @@ import { CityCouncilDistrictRepository } from "src/city-council-district/city-co
 import { CommunityDistrictRepository } from "src/community-district/community-district.repository";
 import { AgencyRepository } from "src/agency/agency.repository";
 import { AgencyBudgetRepository } from "src/agency-budget/agency-budget.repository";
+import { BoroughRepository } from "src/borough/borough.repository";
 
+@Injectable()
 export class CapitalProjectService {
   constructor(
-    @Inject(CapitalProjectRepository)
     private readonly capitalProjectRepository: CapitalProjectRepository,
     private readonly cityCouncilDistrictRepository: CityCouncilDistrictRepository,
     private readonly communityDistrictRepository: CommunityDistrictRepository,
     private readonly agencyRepository: AgencyRepository,
     private readonly agencyBudgetRepository: AgencyBudgetRepository,
+    private readonly boroughRepository: BoroughRepository,
   ) {}
 
   async findMany({

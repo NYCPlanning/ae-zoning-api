@@ -23,6 +23,7 @@ import {
   ResourceNotFoundException,
 } from "src/exception";
 import { findTilesRepoSchema } from "./capital-project.repository.schema";
+import { BoroughRepository } from "src/borough/borough.repository";
 
 describe("CapitalProjectService", () => {
   let capitalProjectService: CapitalProjectService;
@@ -32,14 +33,13 @@ describe("CapitalProjectService", () => {
   const cityCouncilDistrictRepositoryMock =
     new CityCouncilDistrictRepositoryMock();
   const communityDistrictRepositoryMock = new CommunityDistrictRepositoryMock();
-  const boroughRepositoryMock = new BoroughRepositoryMock(
-    communityDistrictRepositoryMock,
-  );
+  const boroughRepositoryMock = new BoroughRepositoryMock();
   const capitalProjectRepository = new CapitalProjectRepositoryMock(
     agencyRepositoryMock,
     cityCouncilDistrictRepositoryMock,
     communityDistrictRepositoryMock,
     agencyBudgetRepositoryMock,
+    boroughRepositoryMock,
   );
 
   beforeEach(async () => {
@@ -51,6 +51,7 @@ describe("CapitalProjectService", () => {
         CommunityDistrictRepository,
         AgencyRepository,
         AgencyBudgetRepository,
+        BoroughRepository,
       ],
     })
       .overrideProvider(CapitalProjectRepository)
@@ -63,6 +64,8 @@ describe("CapitalProjectService", () => {
       .useValue(agencyRepositoryMock)
       .overrideProvider(AgencyBudgetRepository)
       .useValue(agencyBudgetRepositoryMock)
+      .overrideProvider(BoroughRepository)
+      .useValue(boroughRepositoryMock)
       .compile();
 
     capitalProjectService = moduleRef.get<CapitalProjectService>(
@@ -121,7 +124,7 @@ describe("CapitalProjectService", () => {
 
     it("should return a list of capital projects by community district id, using the user specified limit and offset", async () => {
       const { boroughId, id: communityDistrictId } =
-        boroughRepositoryMock.communityDistrictRepoMock.districts[0];
+        capitalProjectRepository.communityDistrictRepoMock.districts[0];
       const capitalProjects = await capitalProjectService.findMany({
         communityDistrictCombinedId: `${boroughId}${communityDistrictId}`,
         limit: 10,
@@ -331,7 +334,7 @@ describe("CapitalProjectService", () => {
       ).rejects.toThrow(InvalidRequestParameterException);
     });
 
-    it("should return a InvalidRequestParameterException error when both a community district id and isMapped are provided", async () => {
+    it("should return a InvalidRequestParameterException error when a borough id, a community district id, and isMapped are provided", async () => {
       expect(
         capitalProjectService.findMany({
           communityDistrictCombinedId: "101",

@@ -19,12 +19,15 @@ import { AgencyBudgetRepository } from "src/agency-budget/agency-budget.reposito
 import { AgencyRepository } from "src/agency/agency.repository";
 import { CapitalProjectRepository } from "src/capital-project/capital-project.repository";
 import { CommunityDistrictRepository } from "src/community-district/community-district.repository";
+import { BoroughRepositoryMock } from "test/borough/borough.repository.mock";
+import { BoroughRepository } from "src/borough/borough.repository";
 
 describe("City Council District e2e", () => {
   let app: INestApplication;
 
   const agencyRepositoryMock = new AgencyRepositoryMock();
   const agencyBudgetRepositoryMock = new AgencyBudgetRepositoryMock();
+  const boroughRepositoryMock = new BoroughRepositoryMock();
   const cityCouncilDistrictRepositoryMock =
     new CityCouncilDistrictRepositoryMock();
   const communityDistrictRepositoryMock = new CommunityDistrictRepositoryMock();
@@ -33,6 +36,7 @@ describe("City Council District e2e", () => {
     cityCouncilDistrictRepositoryMock,
     communityDistrictRepositoryMock,
     agencyBudgetRepositoryMock,
+    boroughRepositoryMock,
   );
 
   beforeAll(async () => {
@@ -49,6 +53,8 @@ describe("City Council District e2e", () => {
       .useValue(agencyRepositoryMock)
       .overrideProvider(AgencyBudgetRepository)
       .useValue(agencyBudgetRepositoryMock)
+      .overrideProvider(BoroughRepository)
+      .useValue(boroughRepositoryMock)
       .compile();
     app = moduleRef.createNestApplication();
     await app.init();

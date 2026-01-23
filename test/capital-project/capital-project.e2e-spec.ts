@@ -21,6 +21,8 @@ import {
   findCapitalProjectsQueryResponseSchema,
 } from "src/gen";
 import { AgencyBudgetRepository } from "src/agency-budget/agency-budget.repository";
+import { BoroughRepositoryMock } from "test/borough/borough.repository.mock";
+import { BoroughRepository } from "src/borough/borough.repository";
 
 describe("Capital Projects", () => {
   let app: INestApplication;
@@ -30,11 +32,13 @@ describe("Capital Projects", () => {
   const cityCouncilDistrictRepositoryMock =
     new CityCouncilDistrictRepositoryMock();
   const communityDistrictRepositoryMock = new CommunityDistrictRepositoryMock();
+  const boroughRepositoryMock = new BoroughRepositoryMock();
   const capitalProjectRepositoryMock = new CapitalProjectRepositoryMock(
     agencyRepositoryMock,
     cityCouncilDistrictRepositoryMock,
     communityDistrictRepositoryMock,
     agencyBudgetRepositoryMock,
+    boroughRepositoryMock,
   );
 
   beforeAll(async () => {
@@ -51,6 +55,8 @@ describe("Capital Projects", () => {
       .useValue(agencyRepositoryMock)
       .overrideProvider(AgencyBudgetRepository)
       .useValue(agencyBudgetRepositoryMock)
+      .overrideProvider(BoroughRepository)
+      .useValue(boroughRepositoryMock)
       .compile();
 
     app = moduleRef.createNestApplication();

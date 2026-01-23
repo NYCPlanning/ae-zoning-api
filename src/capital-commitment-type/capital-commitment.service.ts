@@ -1,9 +1,9 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { CapitalCommitmentTypeRepository } from "./capital-commitment-type.repository";
+
 @Injectable()
 export class CapitalCommitmentTypeService {
   constructor(
-    @Inject(CapitalCommitmentTypeRepository)
     private readonly capitalCommitmentRepository: CapitalCommitmentTypeRepository,
   ) {}
 
