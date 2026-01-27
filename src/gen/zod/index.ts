@@ -106,6 +106,13 @@ export {
   findCapitalProjectTilesByBoroughIdCommunityDistrictIdQueryResponseSchema,
 } from "./findCapitalProjectTilesByBoroughIdCommunityDistrictIdSchema";
 export {
+  findCapitalProjectTilesByBoroughIdPathParamsSchema,
+  findCapitalProjectTilesByBoroughId200Schema,
+  findCapitalProjectTilesByBoroughId400Schema,
+  findCapitalProjectTilesByBoroughId500Schema,
+  findCapitalProjectTilesByBoroughIdQueryResponseSchema,
+} from "./findCapitalProjectTilesByBoroughIdSchema";
+export {
   findCapitalProjectTilesByCityCouncilDistrictIdPathParamsSchema,
   findCapitalProjectTilesByCityCouncilDistrictId200Schema,
   findCapitalProjectTilesByCityCouncilDistrictId400Schema,

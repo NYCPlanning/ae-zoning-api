@@ -136,6 +136,14 @@ export type {
   FindCapitalProjectTilesQuery,
 } from "./FindCapitalProjectTiles";
 export type {
+  FindCapitalProjectTilesByBoroughIdPathParams,
+  FindCapitalProjectTilesByBoroughId200,
+  FindCapitalProjectTilesByBoroughId400,
+  FindCapitalProjectTilesByBoroughId500,
+  FindCapitalProjectTilesByBoroughIdQueryResponse,
+  FindCapitalProjectTilesByBoroughIdQuery,
+} from "./FindCapitalProjectTilesByBoroughId";
+export type {
   FindCapitalProjectTilesByBoroughIdCommunityDistrictIdPathParams,
   FindCapitalProjectTilesByBoroughIdCommunityDistrictId200,
   FindCapitalProjectTilesByBoroughIdCommunityDistrictId400,

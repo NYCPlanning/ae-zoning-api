@@ -136,6 +136,14 @@ export type {
   FindCapitalProjectTilesQuery,
 } from "./types/FindCapitalProjectTiles";
 export type {
+  FindCapitalProjectTilesByBoroughIdPathParams,
+  FindCapitalProjectTilesByBoroughId200,
+  FindCapitalProjectTilesByBoroughId400,
+  FindCapitalProjectTilesByBoroughId500,
+  FindCapitalProjectTilesByBoroughIdQueryResponse,
+  FindCapitalProjectTilesByBoroughIdQuery,
+} from "./types/FindCapitalProjectTilesByBoroughId";
+export type {
   FindCapitalProjectTilesByBoroughIdCommunityDistrictIdPathParams,
   FindCapitalProjectTilesByBoroughIdCommunityDistrictId200,
   FindCapitalProjectTilesByBoroughIdCommunityDistrictId400,
@@ -530,6 +538,13 @@ export {
   findCapitalProjectTilesByBoroughIdCommunityDistrictId500Schema,
   findCapitalProjectTilesByBoroughIdCommunityDistrictIdQueryResponseSchema,
 } from "./zod/findCapitalProjectTilesByBoroughIdCommunityDistrictIdSchema";
+export {
+  findCapitalProjectTilesByBoroughIdPathParamsSchema,
+  findCapitalProjectTilesByBoroughId200Schema,
+  findCapitalProjectTilesByBoroughId400Schema,
+  findCapitalProjectTilesByBoroughId500Schema,
+  findCapitalProjectTilesByBoroughIdQueryResponseSchema,
+} from "./zod/findCapitalProjectTilesByBoroughIdSchema";
 export {
   findCapitalProjectTilesByCityCouncilDistrictIdPathParamsSchema,
   findCapitalProjectTilesByCityCouncilDistrictId200Schema,

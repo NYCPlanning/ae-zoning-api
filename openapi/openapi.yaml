@@ -48,6 +48,9 @@ paths:
     $ref: paths/agency-budgets.yaml
   /boroughs:
     $ref: paths/boroughs.yaml
+  /boroughs/{boroughId/capital-projects/{z}/{x}/{y}.pbf:
+    $ref: >-
+      paths/boroughs_{boroughId}_capital-projects_{z}_{x}_{y}.pbf.yaml
   /boroughs/{boroughId}/community-districts:
     $ref: paths/boroughs_{boroughId}_community-districts.yaml
   /boroughs/{boroughId}/community-districts/{communityDistrictId}/geojson:
