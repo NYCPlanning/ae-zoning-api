@@ -8,6 +8,7 @@ import {
   FindCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdRepo,
   FindCapitalProjectTilesByBoroughIdCommunityDistrictIdRepo,
   FindCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdRepo,
+  FindCapitalProjectTilesByBoroughIdRepo,
 } from "./borough.repository.schema";
 import {
   borough,
@@ -20,6 +21,7 @@ import {
 import { eq, sql, and, isNotNull, asc, or } from "drizzle-orm";
 import {
   FindCapitalProjectTilesByBoroughIdCommunityDistrictIdPathParams,
+  FindCapitalProjectTilesByBoroughIdPathParams,
   FindCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdPathParams,
   FindCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdPathParams,
 } from "src/gen";
@@ -124,6 +126,99 @@ export class BoroughRepository {
     } catch {
       throw new DataRetrievalException(
         "cannot find community district geojson",
+      );
+    }
+  }
+
+  async findCapitalProjectTilesByBoroughId({
+    boroughId,
+    z,
+    x,
+    y,
+  }: FindCapitalProjectTilesByBoroughIdPathParams): Promise<FindCapitalProjectTilesByBoroughIdRepo> {
+    try {
+      const tile = this.db
+        .select({
+          managingCodeCapitalProjectId:
+            sql<string>`${capitalProject.managingCode} || ${capitalProject.id}`.as(
+              `managingCodeCapitalProjectId`,
+            ),
+          managingAgency: sql`${capitalProject.managingAgency}`.as(
+            `managingAgency`,
+          ),
+          commitmentsTotal:
+            sql`SUM(${capitalCommitmentFund.value})::double precision`
+              .mapWith(Number)
+              .as("commitmentsTotal"),
+          agencyBudgets: sql<
+            Array<string>
+          >`ARRAY_TO_JSON(ARRAY_AGG(DISTINCT ${capitalCommitment.budgetLineCode}))`.as(
+            "agencyBudgets",
+          ),
+          geom: sql<string>`
+            CASE
+              WHEN ${capitalProject.mercatorFillMPoly} && ST_TileEnvelope(${z},${x},${y})
+                THEN ST_AsMVTGeom(
+                  ${capitalProject.mercatorFillMPoly},
+                  ST_TileEnvelope(${z},${x},${y}),
+                  4096,
+                  64,
+                  true
+                )
+              WHEN ${capitalProject.mercatorFillMPnt} && ST_TileEnvelope(${z},${x},${y})
+                THEN ST_AsMVTGeom(
+                  ${capitalProject.mercatorFillMPnt},
+                  ST_TileEnvelope(${z},${x},${y}),
+                  4096,
+                  64,
+                  true
+                )
+            END`.as("geom"),
+        })
+        .from(capitalProject)
+        .leftJoin(
+          borough,
+          sql`
+            ST_Intersects(${borough.liFt}, ${capitalProject.liFtMPnt})
+            OR ST_Intersects(${borough.liFt}, ${capitalProject.liFtMPoly})`,
+        )
+        .leftJoin(
+          capitalCommitment,
+          and(
+            eq(capitalCommitment.capitalProjectId, capitalProject.id),
+            eq(capitalCommitment.managingCode, capitalProject.managingCode),
+          ),
+        )
+        .leftJoin(
+          capitalCommitmentFund,
+          eq(capitalCommitmentFund.capitalCommitmentId, capitalCommitment.id),
+        )
+        .where(
+          and(
+            eq(communityDistrict.boroughId, boroughId),
+            eq(capitalCommitmentFund.category, "total"),
+          ),
+        )
+        .groupBy(
+          capitalProject.id,
+          capitalProject.managingCode,
+          capitalProject.managingAgency,
+          capitalProject.mercatorFillMPnt,
+          capitalProject.mercatorFillMPoly,
+        )
+        .as("tile");
+      const data = await this.db
+        .select({
+          mvt: sql<
+            Buffer<ArrayBuffer>
+          >`ST_AsMVT(tile, 'capital-project-fill', 4096, 'geom')`,
+        })
+        .from(tile)
+        .where(isNotNull(tile.geom));
+      return data[0].mvt;
+    } catch {
+      throw new DataRetrievalException(
+        "cannot find capital project tiles given borough",
       );
     }
   }

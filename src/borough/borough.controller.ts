@@ -13,12 +13,14 @@ import { CapitalProjectService } from "src/capital-project/capital-project.servi
 import { Response } from "express";
 import {
   FindCapitalProjectTilesByBoroughIdCommunityDistrictIdPathParams,
+  FindCapitalProjectTilesByBoroughIdPathParams,
   FindCapitalProjectsByBoroughIdCommunityDistrictIdPathParams,
   FindCapitalProjectsByBoroughIdCommunityDistrictIdQueryParams,
   FindCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdPathParams,
   FindCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdPathParams,
   FindCommunityDistrictsByBoroughIdPathParams,
   findCapitalProjectTilesByBoroughIdCommunityDistrictIdPathParamsSchema,
+  findCapitalProjectTilesByBoroughIdPathParamsSchema,
   findCapitalProjectsByBoroughIdCommunityDistrictIdPathParamsSchema,
   findCapitalProjectsByBoroughIdCommunityDistrictIdQueryParamsSchema,
   findCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdPathParamsSchema,
@@ -96,6 +98,21 @@ export class BoroughController {
       ...queryParams,
       communityDistrictCombinedId: `${pathParams.boroughId}${pathParams.communityDistrictId}`,
     });
+  }
+
+  @UsePipes(
+    new ZodTransformPipe(findCapitalProjectTilesByBoroughIdPathParamsSchema),
+  )
+  @Get("/:boroughId/capital-projects/:z/:x/:y.pbf")
+  async findCapitalProjectTilesByBoroughId(
+    @Param()
+    params: FindCapitalProjectTilesByBoroughIdPathParams,
+    @Res() res: Response,
+  ) {
+    const tiles =
+      await this.boroughService.findCapitalProjectTilesByBoroughId(params);
+    res.set("Content-Type", "application/x-protobuf");
+    res.send(tiles);
   }
 
   @UsePipes(

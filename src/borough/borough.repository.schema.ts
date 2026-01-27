@@ -39,6 +39,12 @@ export type FindCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdRepo =
     typeof findCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdRepoSchema
   >;
 
+export const findCapitalProjectTilesByBoroughIdRepoSchema = mvtEntitySchema;
+
+export type FindCapitalProjectTilesByBoroughIdRepo = z.infer<
+  typeof findCapitalProjectTilesByBoroughIdCommunityDistrictIdRepoSchema
+>;
+
 export const findCapitalProjectTilesByBoroughIdCommunityDistrictIdRepoSchema =
   mvtEntitySchema;
 
