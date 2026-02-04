@@ -217,7 +217,7 @@ export const communityBoardBudgetRequestPageItemEntitySchema = z.object({
   id: z.string(),
   cbbrPolicyAreaId: z.number(),
   title: z.string(),
-  boroughId: z.string(),
+  boroughId: boroughEntitySchema.shape.id,
   communityDistrictId: z.string(),
   isMapped: z.boolean(),
   isContinuedSupport: z.boolean(),

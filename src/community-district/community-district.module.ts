@@ -4,7 +4,7 @@ import { CommunityDistrictService } from "./community-district.service";
 import { CommunityDistrictRepository } from "./community-district.repository";
 
 @Module({
-  exports: [CommunityDistrictService],
+  exports: [CommunityDistrictService, CommunityDistrictRepository],
   providers: [CommunityDistrictService, CommunityDistrictRepository],
   controllers: [CommunityDistrictController],
 })

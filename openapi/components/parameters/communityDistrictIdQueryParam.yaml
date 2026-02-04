@@ -3,7 +3,7 @@ required: false
 in: query
 schema:
   type: string
-  pattern: ^([0-9]{3})$
-  example: '101'
+  pattern: ^([0-9]{2})$
+  example: '01'
 description: >-
-  The three character numeric string containing the concatenation of the borough and community district ids.
+  The two character numeric string containing the community district id.

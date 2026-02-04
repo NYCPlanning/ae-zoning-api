@@ -4,17 +4,11 @@ import {
   CheckByIdRepo,
 } from "src/borough/borough.repository.schema";
 import { generateMock } from "@anatine/zod-mock";
-import { CommunityDistrictRepositoryMock } from "test/community-district/community-district.repository.mock";
 import { FindCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdPathParams } from "src/gen";
 import { boroughEntitySchema } from "src/schema";
 import { generateMockMvt } from "test/utils";
 
 export class BoroughRepositoryMock {
-  communityDistrictRepoMock: CommunityDistrictRepositoryMock;
-  constructor(communityDistrictRepoMock: CommunityDistrictRepositoryMock) {
-    this.communityDistrictRepoMock = communityDistrictRepoMock;
-  }
-
   boroughs = Array.from(Array(1), (_, index) =>
     generateMock(boroughEntitySchema, { seed: index + 1 }),
   );

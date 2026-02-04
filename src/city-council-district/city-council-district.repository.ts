@@ -1,4 +1,4 @@
-import { Inject } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { DB, DbType } from "src/global/providers/db.provider";
 import { DataRetrievalException } from "src/exception";
 import {
@@ -26,6 +26,8 @@ import {
 import { eq, sql, isNotNull, and, or } from "drizzle-orm";
 import { Cache } from "cache-manager";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
+
+@Injectable()
 export class CityCouncilDistrictRepository {
   constructor(
     @Inject(DB)

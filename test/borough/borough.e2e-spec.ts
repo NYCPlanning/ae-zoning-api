@@ -31,14 +31,13 @@ describe("Borough e2e", () => {
   const cityCouncilDistrictRepositoryMock =
     new CityCouncilDistrictRepositoryMock();
   const communityDistrictRepositoryMock = new CommunityDistrictRepositoryMock();
-  const boroughRepositoryMock = new BoroughRepositoryMock(
-    communityDistrictRepositoryMock,
-  );
+  const boroughRepositoryMock = new BoroughRepositoryMock();
   const capitalProjectRepositoryMock = new CapitalProjectRepositoryMock(
     agencyRepositoryMock,
     cityCouncilDistrictRepositoryMock,
     communityDistrictRepositoryMock,
     agencyBudgetRepositoryMock,
+    boroughRepositoryMock,
   );
 
   beforeAll(async () => {
@@ -262,7 +261,9 @@ describe("Borough e2e", () => {
           `/boroughs/${missingId}/community-districts/${communityDistrict.id}/capital-projects`,
         )
         .expect(400);
-      expect(response.body.message).toMatch(/could not check/);
+      expect(response.body.message).toMatch(
+        /could not check one or more of the parameters/,
+      );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
 
@@ -344,7 +345,7 @@ describe("Borough e2e", () => {
       );
       jest
         .spyOn(
-          boroughRepositoryMock.communityDistrictRepoMock,
+          communityDistrictRepositoryMock,
           "checkByBoroughIdCommunityDistrictId",
         )
         .mockImplementationOnce(() => {

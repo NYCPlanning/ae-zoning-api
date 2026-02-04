@@ -1,4 +1,4 @@
-import { Inject } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import {
   isNotNull,
   isNull,
@@ -23,6 +23,7 @@ import { DB, DbType } from "src/global/providers/db.provider";
 import {
   agency,
   agencyBudget,
+  borough,
   budgetLine,
   capitalCommitment,
   capitalCommitmentFund,
@@ -48,6 +49,7 @@ import {
   TileCacheService,
 } from "src/global/providers/tile-cache.provider";
 
+@Injectable()
 export class CapitalProjectRepository {
   constructor(
     @Inject(DB)
@@ -118,6 +120,16 @@ export class CapitalProjectRepository {
         })
         .from(capitalProject)
         .leftJoin(
+          borough,
+          and(
+            sql`${communityDistrictId === null && boroughId !== null} IS TRUE`,
+            or(
+              sql`ST_Intersects(${borough.liFt}, ${capitalProject.liFtMPoly})`,
+              sql`ST_Intersects(${borough.liFt}, ${capitalProject.liFtMPnt})`,
+            ),
+          ),
+        )
+        .leftJoin(
           cityCouncilDistrict,
           and(
             sql`${cityCouncilDistrictId !== null} IS TRUE`,
@@ -169,6 +181,9 @@ export class CapitalProjectRepository {
                   eq(communityDistrict.boroughId, boroughId),
                   eq(communityDistrict.id, communityDistrictId),
                 )
+              : undefined,
+            communityDistrictId === null && boroughId !== null
+              ? eq(borough.id, boroughId)
               : undefined,
             managingAgency !== null
               ? eq(capitalProject.managingAgency, managingAgency)
@@ -278,6 +293,16 @@ export class CapitalProjectRepository {
         })
         .from(capitalProject)
         .leftJoin(
+          borough,
+          and(
+            sql`${communityDistrictId === null && boroughId !== null} IS TRUE`,
+            or(
+              sql`ST_Intersects(${borough.liFt}, ${capitalProject.liFtMPoly})`,
+              sql`ST_Intersects(${borough.liFt}, ${capitalProject.liFtMPnt})`,
+            ),
+          ),
+        )
+        .leftJoin(
           cityCouncilDistrict,
           and(
             sql`${cityCouncilDistrictId !== null} IS TRUE`,
@@ -329,6 +354,9 @@ export class CapitalProjectRepository {
                   eq(communityDistrict.boroughId, boroughId),
                   eq(communityDistrict.id, communityDistrictId),
                 )
+              : undefined,
+            communityDistrictId === null && boroughId !== null
+              ? eq(borough.id, boroughId)
               : undefined,
             managingAgency !== null
               ? eq(capitalProject.managingAgency, managingAgency)

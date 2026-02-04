@@ -1,4 +1,4 @@
-import { Inject } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { DB, DbType } from "src/global/providers/db.provider";
 import { FindCommunityDistrictTilesPathParams } from "src/gen";
 import {
@@ -11,6 +11,7 @@ import { DataRetrievalException } from "src/exception";
 import { Cache } from "cache-manager";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
 
+@Injectable()
 export class CommunityDistrictRepository {
   constructor(
     @Inject(DB)

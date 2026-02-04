@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { CityCouncilDistrictRepository } from "./city-council-district.repository";
 import { ResourceNotFoundException } from "src/exception";
 import {
@@ -15,7 +15,6 @@ import { MultiPolygon } from "geojson";
 @Injectable()
 export class CityCouncilDistrictService {
   constructor(
-    @Inject(CityCouncilDistrictRepository)
     private readonly cityCouncilDistrictRepository: CityCouncilDistrictRepository,
   ) {}
 

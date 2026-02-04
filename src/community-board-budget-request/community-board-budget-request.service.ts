@@ -1,4 +1,5 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
+import { BoroughRepository } from "src/borough/borough.repository";
 import { CityCouncilDistrictRepository } from "src/city-council-district/city-council-district.repository";
 import { CommunityBoardBudgetRequestRepository } from "./community-board-budget-request.repository";
 import {
@@ -24,9 +25,9 @@ import { produce } from "immer";
 @Injectable()
 export class CommunityBoardBudgetRequestService {
   constructor(
-    @Inject(CommunityBoardBudgetRequestRepository)
     private readonly communityBoardBudgetRequestRepository: CommunityBoardBudgetRequestRepository,
     private readonly agencyRepository: AgencyRepository,
+    private readonly boroughRepository: BoroughRepository,
     private readonly communityDistrictRepository: CommunityDistrictRepository,
     private readonly cityCouncilDistrictRepository: CityCouncilDistrictRepository,
   ) {}
@@ -176,7 +177,17 @@ export class CommunityBoardBudgetRequestService {
       );
     }
 
+    if (communityDistrictId !== null && boroughId === null) {
+      throw new InvalidRequestParameterException(
+        "cannot filter by community district id without borough id",
+      );
+    }
+
     const checklist: Array<Promise<unknown | undefined>> = [];
+
+    if (boroughId !== null) {
+      checklist.push(this.boroughRepository.checkById(boroughId));
+    }
 
     if (cbbrPolicyAreaId !== null) {
       checklist.push(
@@ -231,7 +242,8 @@ export class CommunityBoardBudgetRequestService {
   }
 
   async findMany({
-    communityDistrictCombinedId = null,
+    boroughId = null,
+    communityDistrictId = null,
     cityCouncilDistrictId = null,
     cbbrPolicyAreaId = null,
     cbbrNeedGroupId = null,
@@ -243,7 +255,8 @@ export class CommunityBoardBudgetRequestService {
     limit = 20,
     offset = 0,
   }: {
-    communityDistrictCombinedId?: string | null;
+    boroughId?: string | null;
+    communityDistrictId?: string | null;
     cityCouncilDistrictId?: string | null;
     cbbrPolicyAreaId?: number | null;
     cbbrNeedGroupId?: number | null;
@@ -255,15 +268,6 @@ export class CommunityBoardBudgetRequestService {
     limit?: number;
     offset?: number;
   }) {
-    const boroughId =
-      communityDistrictCombinedId !== null
-        ? communityDistrictCombinedId.slice(0, 1)
-        : null;
-    const communityDistrictId =
-      communityDistrictCombinedId !== null
-        ? communityDistrictCombinedId.slice(1, 3)
-        : null;
-
     await this.findManyParameterValidation({
       boroughId,
       communityDistrictId,
@@ -315,7 +319,8 @@ export class CommunityBoardBudgetRequestService {
   }
 
   async findCsv({
-    communityDistrictCombinedId = null,
+    boroughId = null,
+    communityDistrictId = null,
     cityCouncilDistrictId = null,
     cbbrPolicyAreaId = null,
     cbbrNeedGroupId = null,
@@ -325,7 +330,8 @@ export class CommunityBoardBudgetRequestService {
     isMapped = null,
     isContinuedSupport = null,
   }: {
-    communityDistrictCombinedId?: string | null;
+    boroughId?: string | null;
+    communityDistrictId?: string | null;
     cityCouncilDistrictId?: string | null;
     cbbrPolicyAreaId?: number | null;
     cbbrNeedGroupId?: number | null;
@@ -335,15 +341,6 @@ export class CommunityBoardBudgetRequestService {
     isMapped?: boolean | null;
     isContinuedSupport?: boolean | null;
   }) {
-    const boroughId =
-      communityDistrictCombinedId !== null
-        ? communityDistrictCombinedId.slice(0, 1)
-        : null;
-    const communityDistrictId =
-      communityDistrictCombinedId !== null
-        ? communityDistrictCombinedId.slice(1, 3)
-        : null;
-
     await this.findManyParameterValidation({
       boroughId,
       communityDistrictId,

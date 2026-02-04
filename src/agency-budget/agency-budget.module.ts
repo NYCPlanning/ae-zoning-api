@@ -4,7 +4,7 @@ import { AgencyBudgetService } from "./agency-budget.service";
 import { AgencyBudgetRepository } from "./agency-budget.repository";
 
 @Module({
-  exports: [AgencyBudgetService],
+  exports: [AgencyBudgetService, AgencyBudgetRepository],
   providers: [AgencyBudgetService, AgencyBudgetRepository],
   controllers: [AgencyBudgetController],
 })

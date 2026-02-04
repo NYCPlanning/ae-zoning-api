@@ -41,17 +41,7 @@ export class CapitalProjectController {
     @Query(new ZodTransformPipe(findCapitalProjectsQueryParamsSchema))
     queryParams: FindCapitalProjectsQueryParams,
   ) {
-    return await this.capitalProjectService.findMany({
-      limit: queryParams.limit,
-      offset: queryParams.offset,
-      cityCouncilDistrictId: queryParams.cityCouncilDistrictId,
-      communityDistrictCombinedId: queryParams.communityDistrictId,
-      managingAgency: queryParams.managingAgency,
-      agencyBudget: queryParams.agencyBudget,
-      isMapped: queryParams.isMapped,
-      commitmentsTotalMin: queryParams.commitmentsTotalMin,
-      commitmentsTotalMax: queryParams.commitmentsTotalMax,
-    });
+    return await this.capitalProjectService.findMany(queryParams);
   }
 
   @Get("/managing-agencies")

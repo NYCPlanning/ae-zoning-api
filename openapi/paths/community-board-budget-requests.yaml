@@ -4,6 +4,7 @@ get:
   tags:
     - Community Board Budget Requests
   parameters:
+    - $ref: ../components/parameters/boroughIdQueryParam.yaml
     - $ref: ../components/parameters/communityDistrictIdQueryParam.yaml
     - $ref: ../components/parameters/cityCouncilDistrictIdQueryParam.yaml
     - $ref: ../components/parameters/cbbrPolicyAreaIdQueryParam.yaml

@@ -1,9 +1,9 @@
-import { Inject } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { AgencyBudgetRepository } from "./agency-budget.repository";
 
+@Injectable()
 export class AgencyBudgetService {
   constructor(
-    @Inject(AgencyBudgetRepository)
     private readonly agencyBudgetRepository: AgencyBudgetRepository,
   ) {}
 

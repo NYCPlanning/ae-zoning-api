@@ -1,5 +1,5 @@
 import { char, pgTable, text } from "drizzle-orm/pg-core";
-import { borough, boroughIdEntitySchema, landUse } from "../schema";
+import { borough, boroughEntitySchema, landUse } from "../schema";
 import { multiPolygonGeog, multiPolygonGeom } from "../drizzle-pgis";
 import { relations } from "drizzle-orm";
 import { z } from "zod";
@@ -30,7 +30,7 @@ export const taxLotRelations = relations(taxLot, ({ one }) => ({
 
 export const taxLotEntitySchema = z.object({
   bbl: z.string().regex(RegExp("^([0-9]{10})$")),
-  boroughId: boroughIdEntitySchema,
+  boroughId: boroughEntitySchema.shape.id,
   block: z.string().regex(RegExp("^([0-9]{1,5})$")),
   lot: z.string().regex(RegExp("^([0-9]{1,4})$")),
   address: z.string().nullable(),

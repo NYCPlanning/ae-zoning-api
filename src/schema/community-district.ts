@@ -1,5 +1,5 @@
 import { char, index, pgTable, primaryKey } from "drizzle-orm/pg-core";
-import { borough } from "./borough";
+import { borough, boroughEntitySchema } from "./borough";
 import { multiPolygonGeom, pointGeom } from "src/drizzle-pgis";
 import { z } from "zod";
 
@@ -23,7 +23,7 @@ export const communityDistrict = pgTable(
 );
 
 export const communityDistrictEntitySchema = z.object({
-  boroughId: z.string().length(1).regex(new RegExp("[0-9]")),
+  boroughId: boroughEntitySchema.shape.id,
   id: z.string().length(2).regex(new RegExp("^([0-9]{2})$")),
 });
 

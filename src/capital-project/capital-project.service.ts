@@ -6,7 +6,7 @@ import {
   FindCapitalProjectTilesPathParams,
 } from "src/gen";
 import { CapitalProjectRepository } from "./capital-project.repository";
-import { Inject } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import {
   InvalidRequestParameterException,
   ResourceNotFoundException,
@@ -19,22 +19,25 @@ import { CityCouncilDistrictRepository } from "src/city-council-district/city-co
 import { CommunityDistrictRepository } from "src/community-district/community-district.repository";
 import { AgencyRepository } from "src/agency/agency.repository";
 import { AgencyBudgetRepository } from "src/agency-budget/agency-budget.repository";
+import { BoroughRepository } from "src/borough/borough.repository";
 
+@Injectable()
 export class CapitalProjectService {
   constructor(
-    @Inject(CapitalProjectRepository)
     private readonly capitalProjectRepository: CapitalProjectRepository,
     private readonly cityCouncilDistrictRepository: CityCouncilDistrictRepository,
     private readonly communityDistrictRepository: CommunityDistrictRepository,
     private readonly agencyRepository: AgencyRepository,
     private readonly agencyBudgetRepository: AgencyBudgetRepository,
+    private readonly boroughRepository: BoroughRepository,
   ) {}
 
   async findMany({
     limit = 20,
     offset = 0,
     cityCouncilDistrictId = null,
-    communityDistrictCombinedId = null,
+    boroughId = null,
+    communityDistrictId = null,
     managingAgency = null,
     agencyBudget = null,
     commitmentsTotalMin = null,
@@ -44,7 +47,8 @@ export class CapitalProjectService {
     limit?: number;
     offset?: number;
     cityCouncilDistrictId?: string | null;
-    communityDistrictCombinedId?: string | null;
+    boroughId?: string | null;
+    communityDistrictId?: string | null;
     managingAgency?: string | null;
     agencyBudget?: string | null;
     commitmentsTotalMin?: string | null;
@@ -59,12 +63,17 @@ export class CapitalProjectService {
       : null;
 
     if (
-      (cityCouncilDistrictId !== null ||
-        communityDistrictCombinedId !== null) &&
+      (cityCouncilDistrictId !== null || boroughId !== null) &&
       isMapped !== null
     ) {
       throw new InvalidRequestParameterException(
         "cannot have isMapped filter in conjunction with other geographic filter",
+      );
+    }
+
+    if (communityDistrictId !== null && boroughId === null) {
+      throw new InvalidRequestParameterException(
+        "cannot filter by community district id without borough id",
       );
     }
 
@@ -80,14 +89,8 @@ export class CapitalProjectService {
         this.cityCouncilDistrictRepository.checkById(cityCouncilDistrictId),
       );
 
-    const boroughId =
-      communityDistrictCombinedId !== null
-        ? communityDistrictCombinedId.slice(0, 1)
-        : null;
-    const communityDistrictId =
-      communityDistrictCombinedId !== null
-        ? communityDistrictCombinedId.slice(1, 3)
-        : null;
+    if (boroughId !== null && communityDistrictId === null)
+      checklist.push(this.boroughRepository.checkById(boroughId));
 
     if (boroughId !== null && communityDistrictId !== null)
       checklist.push(

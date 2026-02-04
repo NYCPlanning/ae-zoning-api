@@ -22,22 +22,27 @@ import { CityCouncilDistrictRepositoryMock } from "test/city-council-district/ci
 import { CommunityDistrictRepositoryMock } from "test/community-district/community-district.repository.mock";
 import { agencyEntitySchema, capitalProjectEntitySchema } from "src/schema";
 import { generateMockMvt } from "test/utils";
+import { BoroughRepositoryMock } from "test/borough/borough.repository.mock";
 
 export class CapitalProjectRepositoryMock {
   agencyRepoMock: AgencyRepositoryMock;
   cityCouncilDistrictRepoMock: CityCouncilDistrictRepositoryMock;
   communityDistrictRepoMock: CommunityDistrictRepositoryMock;
   agencyBudgetRepositoryMock: AgencyBudgetRepositoryMock;
+  boroughRepositoryMock: BoroughRepositoryMock;
+
   constructor(
     agencyRepoMock: AgencyRepositoryMock,
     cityCouncilDistrictRepoMock: CityCouncilDistrictRepositoryMock,
     communityDistrictRepoMock: CommunityDistrictRepositoryMock,
     agencyBudgetRepositoryMock: AgencyBudgetRepositoryMock,
+    boroughRepositoryMock: BoroughRepositoryMock,
   ) {
     this.agencyRepoMock = agencyRepoMock;
     this.cityCouncilDistrictRepoMock = cityCouncilDistrictRepoMock;
     this.communityDistrictRepoMock = communityDistrictRepoMock;
     this.agencyBudgetRepositoryMock = agencyBudgetRepositoryMock;
+    this.boroughRepositoryMock = boroughRepositoryMock;
   }
 
   capitalProjectGroups = Array.from(Array(3), (_, i) =>
