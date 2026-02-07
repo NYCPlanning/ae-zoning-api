@@ -55,7 +55,7 @@
     "@kubb/plugin-oas": "^4.5.11",
     "@kubb/plugin-ts": "^4.5.11",
     "@kubb/plugin-zod": "^4.5.11",
-    "@nestjs/cli": "^11.0.12",
+    "@nestjs/cli": "^11.0.16",
     "@nestjs/schematics": "^11.0.9",
     "@nestjs/testing": "^11.1.9",
     "@redocly/cli": "^2.11.1",
