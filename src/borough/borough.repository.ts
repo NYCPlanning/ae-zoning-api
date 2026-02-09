@@ -8,6 +8,7 @@ import {
   FindCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdRepo,
   FindCapitalProjectTilesByBoroughIdCommunityDistrictIdRepo,
   FindCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdRepo,
+  FindTilesRepo,
 } from "./borough.repository.schema";
 import {
   borough,
@@ -19,6 +20,7 @@ import {
 } from "src/schema";
 import { eq, sql, and, isNotNull, asc, or } from "drizzle-orm";
 import {
+  FindBoroughTilesPathParams,
   FindCapitalProjectTilesByBoroughIdCommunityDistrictIdPathParams,
   FindCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdPathParams,
   FindCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdPathParams,
@@ -307,6 +309,60 @@ export class BoroughRepository {
       throw new DataRetrievalException(
         "cannot find community board budget requst tiles given borough and community district",
       );
+    }
+  }
+
+  async findTiles(params: FindBoroughTilesPathParams): Promise<FindTilesRepo> {
+    const { z, x, y } = params;
+
+    try {
+      const tileFill = this.db
+        .select({
+          id: borough.id,
+          abbr: borough.abbr,
+          title: borough.title,
+          geomFill: sql`ST_AsMVTGeom(
+            ${borough.mercatorFill},
+            ST_TileEnvelope(${z}, ${x}, ${y}),
+            4096, 64, true)`.as("geomFill"),
+        })
+        .from(borough)
+        .where(sql`${borough.mercatorFill} && ST_TileEnvelope(${z},${x},${y})`)
+        .as("tile");
+
+      const dataFill = this.db
+        .select({
+          mvt: sql`ST_AsMVT(tile, 'borough-fill', 4096, 'geomFill')`,
+        })
+        .from(tileFill)
+        .where(isNotNull(tileFill.geomFill));
+
+      const tileLabel = this.db
+        .select({
+          id: borough.id,
+          abbr: borough.abbr,
+          title: borough.title,
+          geomLabel: sql`ST_AsMVTGeom(
+            ${borough.mercatorLabel},
+            ST_TileEnvelope(${z}, ${x}, ${y}),
+            4096, 64, true)`.as("geomLabel"),
+        })
+        .from(borough)
+        .where(sql`${borough.mercatorLabel} && ST_TileEnvelope(${z},${x},${y})`)
+        .as("tile");
+
+      const dataLabel = this.db
+        .select({
+          mvt: sql`ST_AsMVT(tile, 'borough-label', 4096, 'geomLabel')`,
+        })
+        .from(tileLabel)
+        .where(isNotNull(tileLabel.geomLabel));
+
+      const [fill, label] = await Promise.all([dataFill, dataLabel]);
+
+      return Buffer.concat([fill[0].mvt, label[0].mvt] as Uint8Array[]);
+    } catch {
+      throw new DataRetrievalException("cannot find borough tiles");
     }
   }
 }

@@ -12,12 +12,14 @@ import { BoroughService } from "./borough.service";
 import { CapitalProjectService } from "src/capital-project/capital-project.service";
 import { Response } from "express";
 import {
+  FindBoroughTilesPathParams,
   FindCapitalProjectTilesByBoroughIdCommunityDistrictIdPathParams,
   FindCapitalProjectsByBoroughIdCommunityDistrictIdPathParams,
   FindCapitalProjectsByBoroughIdCommunityDistrictIdQueryParams,
   FindCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdPathParams,
   FindCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdPathParams,
   FindCommunityDistrictsByBoroughIdPathParams,
+  findBoroughTilesPathParamsSchema,
   findCapitalProjectTilesByBoroughIdCommunityDistrictIdPathParamsSchema,
   findCapitalProjectsByBoroughIdCommunityDistrictIdPathParamsSchema,
   findCapitalProjectsByBoroughIdCommunityDistrictIdQueryParamsSchema,
@@ -48,6 +50,17 @@ export class BoroughController {
   @Get()
   async findMany() {
     return this.boroughService.findMany();
+  }
+
+  @Get("/:z/:x/:y.pbf")
+  @UsePipes(new ZodTransformPipe(findBoroughTilesPathParamsSchema))
+  async findTiles(
+    @Param() params: FindBoroughTilesPathParams,
+    @Res() res: Response,
+  ) {
+    const tile = await this.boroughService.findTiles(params);
+    res.set("Content-Type", "application/x-protobuf");
+    res.send(tile);
   }
 
   @Get("/:boroughId/community-districts")
