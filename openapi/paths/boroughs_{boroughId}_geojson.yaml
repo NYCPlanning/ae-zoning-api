@@ -1,0 +1,21 @@
+get:
+  summary: Find GeoJson for a specific borough
+  operationId: findBoroughGeoJsonByBoroughId
+  tags:
+    - Boroughs
+    - GeoJSON
+  parameters:
+    - $ref: ../components/parameters/boroughIdParam.yaml
+  responses:
+    '200':
+      description: a borough geojson object
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/BoroughGeoJson.yaml
+    '400':
+      $ref: ../components/responses/BadRequest.yaml
+    '404':
+      $ref: ../components/responses/NotFound.yaml
+    '500':
+      $ref: ../components/responses/InternalServerError.yaml

@@ -2,6 +2,10 @@ export type { Agency } from "./Agency";
 export type { AgencyBudget } from "./AgencyBudget";
 export type { BadRequest } from "./BadRequest";
 export type { Borough } from "./Borough";
+export type {
+  BoroughGeoJsonTypeEnumKey,
+  BoroughGeoJson,
+} from "./BoroughGeoJson";
 export type { CapitalCommitment } from "./CapitalCommitment";
 export type { CapitalCommitmentType } from "./CapitalCommitmentType";
 export type { CapitalProject } from "./CapitalProject";
@@ -53,6 +57,15 @@ export type {
   FindAgencyBudgetsQueryResponse,
   FindAgencyBudgetsQuery,
 } from "./FindAgencyBudgets";
+export type {
+  FindBoroughGeoJsonByBoroughIdPathParams,
+  FindBoroughGeoJsonByBoroughId200,
+  FindBoroughGeoJsonByBoroughId400,
+  FindBoroughGeoJsonByBoroughId404,
+  FindBoroughGeoJsonByBoroughId500,
+  FindBoroughGeoJsonByBoroughIdQueryResponse,
+  FindBoroughGeoJsonByBoroughIdQuery,
+} from "./FindBoroughGeoJsonByBoroughId";
 export type {
   FindBoroughs200,
   FindBoroughs400,
@@ -412,6 +425,7 @@ export type {
   ZoningDistrictClassCategory,
 } from "./ZoningDistrictClassCategory";
 export type { ZoningDistrictClassCategoryColor } from "./ZoningDistrictClassCategoryColor";
+export { boroughGeoJsonTypeEnum } from "./BoroughGeoJson";
 export { capitalProjectBudgetedGeoJsonTypeEnum } from "./CapitalProjectBudgetedGeoJson";
 export { capitalProjectCategoryEnum } from "./CapitalProjectCategory";
 export { cityCouncilDistrictGeoJsonTypeEnum } from "./CityCouncilDistrictGeoJson";

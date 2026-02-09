@@ -9,6 +9,7 @@ import {
   FindCapitalProjectTilesByBoroughIdCommunityDistrictIdRepo,
   FindCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdRepo,
   FindTilesRepo,
+  FindGeoJsonByIdRepo,
 } from "./borough.repository.schema";
 import {
   borough,
@@ -21,6 +22,7 @@ import {
 import { eq, sql, and, isNotNull, asc, or } from "drizzle-orm";
 import {
   FindBoroughTilesPathParams,
+  FindBoroughGeoJsonByBoroughIdPathParams,
   FindCapitalProjectTilesByBoroughIdCommunityDistrictIdPathParams,
   FindCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdPathParams,
   FindCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdPathParams,
@@ -78,6 +80,31 @@ export class BoroughRepository {
       });
     } catch {
       throw new DataRetrievalException("cannot find boroughs");
+    }
+  }
+
+  async findGeoJsonById({
+    boroughId,
+  }: FindBoroughGeoJsonByBoroughIdPathParams): Promise<
+    FindGeoJsonByIdRepo | undefined
+  > {
+    try {
+      return await this.db.query.borough.findFirst({
+        columns: {
+          id: true,
+          title: true,
+          abbr: true,
+        },
+        extras: {
+          geometry:
+            sql<string>`ST_AsGeoJSON(ST_Transform(${borough.liFt}, 4326), 6)`.as(
+              "geometry",
+            ),
+        },
+        where: (borough, { eq }) => eq(borough.id, boroughId),
+      });
+    } catch {
+      throw new DataRetrievalException("cannot find borough geojson");
     }
   }
 
