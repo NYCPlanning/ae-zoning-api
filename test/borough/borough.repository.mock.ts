@@ -2,9 +2,13 @@ import {
   findCommunityDistrictsByBoroughIdRepoSchema,
   communityDistrictGeoJsonEntitySchema,
   CheckByIdRepo,
+  findGeoJsonByIdRepoSchema,
 } from "src/borough/borough.repository.schema";
 import { generateMock } from "@anatine/zod-mock";
-import { FindCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdPathParams } from "src/gen";
+import {
+  FindBoroughGeoJsonByBoroughIdPathParams,
+  FindCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdPathParams,
+} from "src/gen";
 import { boroughEntitySchema } from "src/schema";
 import { generateMockMvt } from "test/utils";
 
@@ -37,6 +41,16 @@ export class BoroughRepositoryMock {
 
   async findTiles() {
     return this.findTilesMock;
+  }
+
+  findGeoJsonByIdMocks = Array.from(Array(2), (_, seed) =>
+    generateMock(findGeoJsonByIdRepoSchema, { seed: seed + 1 }),
+  );
+
+  async findGeoJsonById({
+    boroughId,
+  }: FindBoroughGeoJsonByBoroughIdPathParams) {
+    return this.findGeoJsonByIdMocks.find((row) => row.id === boroughId);
   }
 
   findCommunityDistrictsByBoroughIdMocks = this.boroughs.map((borough) => {

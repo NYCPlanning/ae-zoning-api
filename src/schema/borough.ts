@@ -19,6 +19,8 @@ export const borough = pgTable(
   ],
 );
 
+export const boroughIdEntitySchema = z.string().regex(/^[1-9]$/);
+
 export const boroughEntitySchema = z.object({
   id: z.string().regex(/^[0-9]$/),
   title: z.string(),
