@@ -4,6 +4,7 @@ import { BoroughService } from "./borough.service";
 import { BoroughRepositoryMock } from "../../test/borough/borough.repository.mock";
 import { Test } from "@nestjs/testing";
 import {
+  findBoroughGeoJsonByBoroughIdQueryResponseSchema,
   findBoroughsQueryResponseSchema,
   findCommunityDistrictGeoJsonByBoroughIdCommunityDistrictIdQueryResponseSchema,
   findCommunityDistrictsByBoroughIdQueryResponseSchema,
@@ -56,6 +57,27 @@ describe("Borough service unit", () => {
         y: 1,
       });
       expect(() => findTilesRepoSchema.parse(mvt)).not.toThrow();
+    });
+  });
+
+  describe("findGeoJsonById", () => {
+    it("should return a borough geojson when requesting a valid id", async () => {
+      const { id } = boroughRepositoryMock.findGeoJsonByIdMocks[0];
+      const boroughGeoJson = await boroughService.findGeoJsonById({
+        boroughId: id,
+      });
+      expect(() =>
+        findBoroughGeoJsonByBoroughIdQueryResponseSchema.parse(boroughGeoJson),
+      ).not.toThrow();
+    });
+
+    it("should throw a resource error when requesting a missing id", async () => {
+      const missingId = "00";
+      expect(
+        boroughService.findGeoJsonById({
+          boroughId: missingId,
+        }),
+      ).rejects.toThrow(ResourceNotFoundException);
     });
   });
 
