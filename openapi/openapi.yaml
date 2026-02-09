@@ -62,6 +62,8 @@ paths:
   /boroughs/{boroughId}/community-districts/{communityDistrictId}/community-board-budget-requests/{z}/{x}/{y}.pbf:
     $ref: >-
       paths/boroughs_{boroughId}_community-districts_{communityDistrictId}_community-board-budget-requests_{z}_{x}_{y}.pbf.yaml
+  /boroughs/{z}/{x}/{y}.pbf:
+    $ref: paths/boroughs_{z}_{x}_{y}.pbf.yaml
   /capital-commitment-types:
     $ref: paths/capital-commitment-types.yaml
   /capital-projects:

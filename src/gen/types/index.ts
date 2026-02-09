@@ -61,6 +61,14 @@ export type {
   FindBoroughsQuery,
 } from "./FindBoroughs";
 export type {
+  FindBoroughTilesPathParams,
+  FindBoroughTiles200,
+  FindBoroughTiles400,
+  FindBoroughTiles500,
+  FindBoroughTilesQueryResponse,
+  FindBoroughTilesQuery,
+} from "./FindBoroughTiles";
+export type {
   FindCapitalCommitmentsByManagingCodeCapitalProjectIdPathParams,
   FindCapitalCommitmentsByManagingCodeCapitalProjectId200,
   FindCapitalCommitmentsByManagingCodeCapitalProjectId400,

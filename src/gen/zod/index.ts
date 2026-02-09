@@ -40,6 +40,13 @@ export {
   findBoroughsQueryResponseSchema,
 } from "./findBoroughsSchema";
 export {
+  findBoroughTilesPathParamsSchema,
+  findBoroughTiles200Schema,
+  findBoroughTiles400Schema,
+  findBoroughTiles500Schema,
+  findBoroughTilesQueryResponseSchema,
+} from "./findBoroughTilesSchema";
+export {
   findCapitalCommitmentsByManagingCodeCapitalProjectIdPathParamsSchema,
   findCapitalCommitmentsByManagingCodeCapitalProjectId200Schema,
   findCapitalCommitmentsByManagingCodeCapitalProjectId400Schema,

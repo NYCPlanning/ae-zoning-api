@@ -1,0 +1,22 @@
+type: object
+properties:
+  id:
+    type: string
+    description: >-
+      A single character numeric string containing the common number used to
+      refer to the borough. Possible values are 1-5.
+    pattern: ^([0-9])$
+    example: '1'
+  type:
+    type: string
+    enum:
+      - Feature
+  properties:
+    $ref: ./Borough.yaml
+  geometry:
+    $ref: ./MultiPolygon.yaml
+required:
+  - id
+  - type
+  - geometry
+  - properties
