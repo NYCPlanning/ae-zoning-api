@@ -13,6 +13,7 @@ import { CommunityDistrictRepositoryMock } from "test/community-district/communi
 import {
   findCapitalProjectTilesByBoroughIdCommunityDistrictIdRepoSchema,
   findCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdRepoSchema,
+  findTilesRepoSchema,
 } from "./borough.repository.schema";
 
 describe("Borough service unit", () => {
@@ -46,6 +47,17 @@ describe("Borough service unit", () => {
       expect(() =>
         findBoroughsQueryResponseSchema.parse(boroughs),
       ).not.toThrow();
+    });
+  });
+
+  describe("findTiles", () => {
+    it("should return an mvt when requesting coordinates", async () => {
+      const mvt = await boroughService.findTiles({
+        z: 1,
+        x: 1,
+        y: 1,
+      });
+      expect(() => findTilesRepoSchema.parse(mvt)).not.toThrow();
     });
   });
 

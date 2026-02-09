@@ -53,3 +53,7 @@ export type FindCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdRe
   z.infer<
     typeof findCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdRepoSchema
   >;
+
+export const findTilesRepoSchema = mvtEntitySchema;
+
+export type FindTilesRepo = z.infer<typeof findTilesRepoSchema>;

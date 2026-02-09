@@ -3,6 +3,7 @@ import { BoroughRepository } from "./borough.repository";
 import { CommunityDistrictRepository } from "src/community-district/community-district.repository";
 import { ResourceNotFoundException } from "src/exception";
 import {
+  FindBoroughTilesPathParams,
   FindCapitalProjectsByBoroughIdCommunityDistrictIdPathParams,
   FindCapitalProjectTilesByBoroughIdCommunityDistrictIdPathParams,
   FindCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdPathParams,
@@ -25,6 +26,10 @@ export class BoroughService {
     return {
       boroughs,
     };
+  }
+
+  async findTiles(params: FindBoroughTilesPathParams) {
+    return await this.boroughRepository.findTiles(params);
   }
 
   async findCommunityDistrictsByBoroughId(id: string) {

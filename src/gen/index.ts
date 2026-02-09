@@ -61,6 +61,14 @@ export type {
   FindBoroughsQuery,
 } from "./types/FindBoroughs";
 export type {
+  FindBoroughTilesPathParams,
+  FindBoroughTiles200,
+  FindBoroughTiles400,
+  FindBoroughTiles500,
+  FindBoroughTilesQueryResponse,
+  FindBoroughTilesQuery,
+} from "./types/FindBoroughTiles";
+export type {
   FindCapitalCommitmentsByManagingCodeCapitalProjectIdPathParams,
   FindCapitalCommitmentsByManagingCodeCapitalProjectId200,
   FindCapitalCommitmentsByManagingCodeCapitalProjectId400,
@@ -464,6 +472,13 @@ export {
   findBoroughs500Schema,
   findBoroughsQueryResponseSchema,
 } from "./zod/findBoroughsSchema";
+export {
+  findBoroughTilesPathParamsSchema,
+  findBoroughTiles200Schema,
+  findBoroughTiles400Schema,
+  findBoroughTiles500Schema,
+  findBoroughTilesQueryResponseSchema,
+} from "./zod/findBoroughTilesSchema";
 export {
   findCapitalCommitmentsByManagingCodeCapitalProjectIdPathParamsSchema,
   findCapitalCommitmentsByManagingCodeCapitalProjectId200Schema,

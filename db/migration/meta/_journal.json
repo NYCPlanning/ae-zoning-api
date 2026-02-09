@@ -211,6 +211,13 @@
       "when": 1768248921775,
       "tag": "0029_new_morlocks",
       "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1770669620358,
+      "tag": "0030_yellow_hedge_knight",
+      "breakpoints": true
     }
   ]
 }
