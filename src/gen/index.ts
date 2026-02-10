@@ -2,6 +2,10 @@ export type { Agency } from "./types/Agency";
 export type { AgencyBudget } from "./types/AgencyBudget";
 export type { BadRequest } from "./types/BadRequest";
 export type { Borough } from "./types/Borough";
+export type {
+  BoroughGeoJsonTypeEnumKey,
+  BoroughGeoJson,
+} from "./types/BoroughGeoJson";
 export type { CapitalCommitment } from "./types/CapitalCommitment";
 export type { CapitalCommitmentType } from "./types/CapitalCommitmentType";
 export type { CapitalProject } from "./types/CapitalProject";
@@ -53,6 +57,15 @@ export type {
   FindAgencyBudgetsQueryResponse,
   FindAgencyBudgetsQuery,
 } from "./types/FindAgencyBudgets";
+export type {
+  FindBoroughGeoJsonByBoroughIdPathParams,
+  FindBoroughGeoJsonByBoroughId200,
+  FindBoroughGeoJsonByBoroughId400,
+  FindBoroughGeoJsonByBoroughId404,
+  FindBoroughGeoJsonByBoroughId500,
+  FindBoroughGeoJsonByBoroughIdQueryResponse,
+  FindBoroughGeoJsonByBoroughIdQuery,
+} from "./types/FindBoroughGeoJsonByBoroughId";
 export type {
   FindBoroughs200,
   FindBoroughs400,
@@ -418,6 +431,7 @@ export type {
   ZoningDistrictClassCategory,
 } from "./types/ZoningDistrictClassCategory";
 export type { ZoningDistrictClassCategoryColor } from "./types/ZoningDistrictClassCategoryColor";
+export { boroughGeoJsonTypeEnum } from "./types/BoroughGeoJson";
 export { capitalProjectBudgetedGeoJsonTypeEnum } from "./types/CapitalProjectBudgetedGeoJson";
 export { capitalProjectCategoryEnum } from "./types/CapitalProjectCategory";
 export { cityCouncilDistrictGeoJsonTypeEnum } from "./types/CityCouncilDistrictGeoJson";
@@ -434,6 +448,7 @@ export { zoningDistrictClassCategoryEnum } from "./types/ZoningDistrictClassCate
 export { agencyBudgetSchema } from "./zod/agencyBudgetSchema";
 export { agencySchema } from "./zod/agencySchema";
 export { badRequestSchema } from "./zod/badRequestSchema";
+export { boroughGeoJsonSchema } from "./zod/boroughGeoJsonSchema";
 export { boroughSchema } from "./zod/boroughSchema";
 export { capitalCommitmentSchema } from "./zod/capitalCommitmentSchema";
 export { capitalCommitmentTypeSchema } from "./zod/capitalCommitmentTypeSchema";
@@ -466,6 +481,14 @@ export {
   findAgencyBudgets500Schema,
   findAgencyBudgetsQueryResponseSchema,
 } from "./zod/findAgencyBudgetsSchema";
+export {
+  findBoroughGeoJsonByBoroughIdPathParamsSchema,
+  findBoroughGeoJsonByBoroughId200Schema,
+  findBoroughGeoJsonByBoroughId400Schema,
+  findBoroughGeoJsonByBoroughId404Schema,
+  findBoroughGeoJsonByBoroughId500Schema,
+  findBoroughGeoJsonByBoroughIdQueryResponseSchema,
+} from "./zod/findBoroughGeoJsonByBoroughIdSchema";
 export {
   findBoroughs200Schema,
   findBoroughs400Schema,
