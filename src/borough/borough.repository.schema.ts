@@ -53,3 +53,13 @@ export type FindCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdRe
   z.infer<
     typeof findCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdRepoSchema
   >;
+
+export const boroughGeoJsonEntitySchema = boroughEntitySchema.extend({
+  geometry: multiPolygonJsonSchema,
+});
+
+export type BoroughGeoJsonEntity = z.infer<typeof boroughGeoJsonEntitySchema>;
+
+export const findGeoJsonByIdRepoSchema = boroughGeoJsonEntitySchema;
+
+export type FindGeoJsonByIdRepo = z.infer<typeof findGeoJsonByIdRepoSchema>;
