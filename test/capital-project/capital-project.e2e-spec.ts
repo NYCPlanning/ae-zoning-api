@@ -23,6 +23,8 @@ import {
 import { AgencyBudgetRepository } from "src/agency-budget/agency-budget.repository";
 import { BoroughRepositoryMock } from "test/borough/borough.repository.mock";
 import { BoroughRepository } from "src/borough/borough.repository";
+import { SpatialRepositoryMock } from "test/spatial/spatial.repository.mock";
+import { SpatialRepository } from "src/spatial/spatial.repository";
 
 describe("Capital Projects", () => {
   let app: INestApplication;
@@ -39,6 +41,7 @@ describe("Capital Projects", () => {
     communityDistrictRepositoryMock,
     agencyBudgetRepositoryMock,
   );
+  const spatialRepositoryMock = new SpatialRepositoryMock();
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -56,6 +59,8 @@ describe("Capital Projects", () => {
       .useValue(agencyBudgetRepositoryMock)
       .overrideProvider(BoroughRepository)
       .useValue(boroughRepositoryMock)
+      .overrideProvider(SpatialRepository)
+      .useValue(spatialRepositoryMock)
       .compile();
 
     app = moduleRef.createNestApplication();
@@ -366,6 +371,110 @@ describe("Capital Projects", () => {
       expect(parsedBody.order).toBe("managingCode, capitalProjectId");
     });
 
+    it("should 200 and return only capital projects in a geometry when a valid point is provided", async () => {
+      const geometry = "Point";
+      const lons = -74.010521;
+      const lats = 40.708219;
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects?geometry=${geometry}&lons=${lons}&lats=${lats}`,
+      );
+      expect(() =>
+        findCapitalProjectsQueryResponseSchema.parse(response.body),
+      ).not.toThrow();
+
+      const parsedBody = findCapitalProjectsQueryResponseSchema.parse(
+        response.body,
+      );
+      expect(parsedBody.limit).toBe(20);
+      expect(parsedBody.offset).toBe(0);
+      expect(parsedBody.capitalProjects.length).toBe(0);
+      expect(parsedBody.total).toBe(parsedBody.capitalProjects.length);
+      expect(parsedBody.order).toBe("distance, managingCode, capitalProjectId");
+    });
+
+    it("should 200 and return only capital projects in a geometry when a valid point and buffer are provided", async () => {
+      const geometry = "Point";
+      const lons = -74.010521;
+      const lats = 40.708219;
+      const buffer = 1e6;
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects?geometry=${geometry}&lons=${lons}&lats=${lats}&buffer=${buffer}`,
+      );
+      expect(() =>
+        findCapitalProjectsQueryResponseSchema.parse(response.body),
+      ).not.toThrow();
+
+      const parsedBody = findCapitalProjectsQueryResponseSchema.parse(
+        response.body,
+      );
+      expect(parsedBody.limit).toBe(20);
+      expect(parsedBody.offset).toBe(0);
+      expect(parsedBody.capitalProjects.length).toBe(3);
+      expect(parsedBody.total).toBe(parsedBody.capitalProjects.length);
+      expect(parsedBody.order).toBe("distance, managingCode, capitalProjectId");
+    });
+
+    it("should 400 when an invalid geometry type is provided", async () => {
+      const geometry = "Pretzel";
+      const lons = -74.010521;
+      const lats = 40.708219;
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects?geometry=${geometry}&lons=${lons}&lats=${lats}`,
+      );
+      expect(response.body.message).toMatch(/geometry: Invalid enum value/);
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 when a geometry is provided without coordinates", async () => {
+      const geometry = "Point";
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects?geometry=${geometry}`,
+      );
+      expect(response.body.message).toMatch(
+        /must provide latitude and longitude with geometry/,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 when coordinates are provided without a geometry", async () => {
+      const lons = -74.010521;
+      const lats = 40.708219;
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects?lons=${lons}&lats=${lats}`,
+      );
+      expect(response.body.message).toMatch(
+        /must provide with geometry with lons, lats, and buffer parameters/,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 when a buffer is provided without a geometry", async () => {
+      const buffer = 1e6;
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects?buffer=${buffer}`,
+      );
+      expect(response.body.message).toMatch(
+        /must provide with geometry with lons, lats, and buffer parameters/,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 when a point is provided with more than one coordinate", async () => {
+      const geometry = "Point";
+      const lons = "-74.010521,-74.010521";
+      const lats = "40.708219,40.708219";
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects?geometry=${geometry}&lons=${lons}&lats=${lats}`,
+      );
+      expect(response.body.message).toMatch(
+        /lons: Array must contain at most 1 element/,
+      );
+      expect(response.body.message).toMatch(
+        /lats: Array must contain at most 1 element/,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
     it("should 200 and return only capital projects with null geometries when isMapped is false", async () => {
       const response = await request(app.getHttpServer()).get(
         `/capital-projects?isMapped=false`,
@@ -392,7 +501,7 @@ describe("Capital Projects", () => {
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
 
-    it("should 400 when when both a city council district id and isMapped are provided", async () => {
+    it("should 400 when both a city council district id and isMapped are provided", async () => {
       const response = await request(app.getHttpServer()).get(
         `/capital-projects?cityCouncilDistrictId=50&isMapped=true`,
       );
@@ -402,12 +511,25 @@ describe("Capital Projects", () => {
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
 
-    it("should 400 when when both a community district id and isMapped are provided", async () => {
+    it("should 400 when both a community district id and isMapped are provided", async () => {
       const response = await request(app.getHttpServer()).get(
         `/capital-projects?communityDistrictId=101&isMapped=true`,
       );
       expect(response.body.message).toMatch(
         /cannot have isMapped filter in conjunction/,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 when both a geometry and isMapped are provided", async () => {
+      const geometry = "Point";
+      const lons = "-74.010521";
+      const lats = "40.708219";
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects?geometry=${geometry}&lons=${lons}&lats=${lats}&isMapped=false`,
+      );
+      expect(response.body.message).toMatch(
+        /cannot have isMapped filter in conjunction with other geographic filter/,
       );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });

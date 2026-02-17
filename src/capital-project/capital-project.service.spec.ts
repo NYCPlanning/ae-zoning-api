@@ -24,6 +24,8 @@ import {
 } from "src/exception";
 import { findTilesRepoSchema } from "./capital-project.repository.schema";
 import { BoroughRepository } from "src/borough/borough.repository";
+import { SpatialRepositoryMock } from "test/spatial/spatial.repository.mock";
+import { SpatialRepository } from "src/spatial/spatial.repository";
 
 describe("CapitalProjectService", () => {
   let capitalProjectService: CapitalProjectService;
@@ -40,6 +42,7 @@ describe("CapitalProjectService", () => {
     communityDistrictRepositoryMock,
     agencyBudgetRepositoryMock,
   );
+  const spatialRepositoryMock = new SpatialRepositoryMock();
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -51,6 +54,7 @@ describe("CapitalProjectService", () => {
         AgencyRepository,
         AgencyBudgetRepository,
         BoroughRepository,
+        SpatialRepository,
       ],
     })
       .overrideProvider(CapitalProjectRepository)
@@ -65,6 +69,8 @@ describe("CapitalProjectService", () => {
       .useValue(agencyBudgetRepositoryMock)
       .overrideProvider(BoroughRepository)
       .useValue(boroughRepositoryMock)
+      .overrideProvider(SpatialRepository)
+      .useValue(spatialRepositoryMock)
       .compile();
 
     capitalProjectService = moduleRef.get<CapitalProjectService>(
@@ -162,6 +168,104 @@ describe("CapitalProjectService", () => {
       expect(parsedBody.total).toBe(parsedBody.capitalProjects.length);
       expect(parsedBody.totalProjects).toBe(parsedBody.capitalProjects.length);
       expect(parsedBody.order).toBe("managingCode, capitalProjectId");
+    });
+
+    it("should filter by geometry", async () => {
+      const geometry = "Point";
+      const lons = [-74.010521];
+      const lats = [40.708219];
+
+      const capitalProjectsResponse = await capitalProjectService.findMany({
+        geometry,
+        lons,
+        lats,
+      });
+      expect(() =>
+        findCapitalProjectsQueryResponseSchema.parse(capitalProjectsResponse),
+      ).not.toThrow();
+
+      const parsedBody = findCapitalProjectsQueryResponseSchema.parse(
+        capitalProjectsResponse,
+      );
+
+      expect(parsedBody.limit).toBe(20);
+      expect(parsedBody.offset).toBe(0);
+      expect(parsedBody.capitalProjects.length).toBe(0);
+      expect(parsedBody.total).toBe(parsedBody.capitalProjects.length);
+      expect(parsedBody.order).toBe("distance, managingCode, capitalProjectId");
+    });
+
+    it("should filter by geometry and buffer", async () => {
+      const geometry = "Point";
+      const lons = [-74.010521];
+      const lats = [40.708219];
+      const buffer = 1e6;
+
+      const capitalProjectsResponse = await capitalProjectService.findMany({
+        geometry,
+        lons,
+        lats,
+        buffer,
+      });
+      expect(() =>
+        findCapitalProjectsQueryResponseSchema.parse(capitalProjectsResponse),
+      ).not.toThrow();
+
+      const parsedBody = findCapitalProjectsQueryResponseSchema.parse(
+        capitalProjectsResponse,
+      );
+
+      expect(parsedBody.limit).toBe(20);
+      expect(parsedBody.offset).toBe(0);
+      expect(parsedBody.capitalProjects.length).toBe(3);
+      expect(parsedBody.total).toBe(parsedBody.capitalProjects.length);
+      expect(parsedBody.order).toBe("distance, managingCode, capitalProjectId");
+    });
+
+    it("should return an InvalidRequestParameterException a geometry is provided without coordinates", async () => {
+      const geometry = "Point";
+
+      expect(
+        capitalProjectService.findMany({
+          geometry,
+        }),
+      ).rejects.toThrow(InvalidRequestParameterException);
+    });
+
+    it("should return an InvalidRequestParameterException when coordinates are provided without a geometry", async () => {
+      const lons = [-74.010521];
+      const lats = [40.708219];
+
+      expect(
+        capitalProjectService.findMany({
+          lons,
+          lats,
+        }),
+      ).rejects.toThrow(InvalidRequestParameterException);
+    });
+
+    it("should return an InvalidRequestParameterException when a buffer is provided without a geometry", async () => {
+      const buffer = 1e6;
+
+      expect(
+        capitalProjectService.findMany({
+          buffer,
+        }),
+      ).rejects.toThrow(InvalidRequestParameterException);
+    });
+
+    it("should return an InvalidRequestParameterException when the lon and lat lengths differ", async () => {
+      const geometry = "Point";
+      const lons = [-74.010521, -74.010521];
+      const lats = [40.708219];
+
+      expect(
+        capitalProjectService.findMany({
+          geometry,
+          lons,
+          lats,
+        }),
+      ).rejects.toThrow(InvalidRequestParameterException);
     });
 
     it("should return a InvalidRequestParameterException error when a community district with the given id cannot be found", async () => {

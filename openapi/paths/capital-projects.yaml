@@ -13,6 +13,10 @@ get:
     - $ref: ../components/parameters/isMappedQueryParam.yaml
     - $ref: ../components/parameters/limitParam.yaml
     - $ref: ../components/parameters/offsetParam.yaml
+    - $ref: ../components/parameters/geometryPointParam.yaml
+    - $ref: ../components/parameters/lonsPointParam.yaml
+    - $ref: ../components/parameters/latsPointParam.yaml
+    - $ref: ../components/parameters/bufferParam.yaml
   responses:
     '200':
       description: >-

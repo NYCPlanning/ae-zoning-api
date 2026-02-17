@@ -56,6 +56,7 @@ export const findTaxLotsQueryParamsSchema = z
     buffer: z.optional(
       z.coerce
         .number()
+        .min(0)
         .describe(
           "A buffer around the spatial feature. Units are feet. It is optional when applying a spatial filter.",
         ),
