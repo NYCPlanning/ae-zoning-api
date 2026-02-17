@@ -51,6 +51,10 @@ export class CapitalProjectController {
       isMapped: queryParams.isMapped,
       commitmentsTotalMin: queryParams.commitmentsTotalMin,
       commitmentsTotalMax: queryParams.commitmentsTotalMax,
+      geometry: queryParams.geometry,
+      lats: queryParams.lats,
+      lons: queryParams.lons,
+      buffer: queryParams.buffer,
     });
   }
 

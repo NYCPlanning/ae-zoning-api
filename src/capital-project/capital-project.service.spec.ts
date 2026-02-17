@@ -24,6 +24,8 @@ import {
 } from "src/exception";
 import { findTilesRepoSchema } from "./capital-project.repository.schema";
 import { BoroughRepository } from "src/borough/borough.repository";
+import { SpatialRepositoryMock } from "test/spatial/spatial.repository.mock";
+import { SpatialRepository } from "src/spatial/spatial.repository";
 
 describe("CapitalProjectService", () => {
   let capitalProjectService: CapitalProjectService;
@@ -40,6 +42,7 @@ describe("CapitalProjectService", () => {
     communityDistrictRepositoryMock,
     agencyBudgetRepositoryMock,
   );
+  const spatialRepositoryMock = new SpatialRepositoryMock();
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -51,6 +54,7 @@ describe("CapitalProjectService", () => {
         AgencyRepository,
         AgencyBudgetRepository,
         BoroughRepository,
+        SpatialRepository,
       ],
     })
       .overrideProvider(CapitalProjectRepository)
@@ -65,6 +69,8 @@ describe("CapitalProjectService", () => {
       .useValue(agencyBudgetRepositoryMock)
       .overrideProvider(BoroughRepository)
       .useValue(boroughRepositoryMock)
+      .overrideProvider(SpatialRepository)
+      .useValue(spatialRepositoryMock)
       .compile();
 
     capitalProjectService = moduleRef.get<CapitalProjectService>(

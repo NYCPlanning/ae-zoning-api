@@ -1,0 +1,11 @@
+name: geometry
+required: false
+in: query
+schema:
+  type: string
+  enum:
+    - Point
+  example: Point
+description: >-
+  The type of geometry used for a spatial filter. It must be provided when
+  applying a spatial filter

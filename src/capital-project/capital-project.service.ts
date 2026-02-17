@@ -19,6 +19,9 @@ import { CityCouncilDistrictRepository } from "src/city-council-district/city-co
 import { CommunityDistrictRepository } from "src/community-district/community-district.repository";
 import { AgencyRepository } from "src/agency/agency.repository";
 import { AgencyBudgetRepository } from "src/agency-budget/agency-budget.repository";
+import { Geom } from "src/types";
+import { SpatialRepository } from "src/spatial/spatial.repository";
+import { Geometry, Position } from "geojson";
 
 @Injectable()
 export class CapitalProjectService {
@@ -28,6 +31,7 @@ export class CapitalProjectService {
     private readonly communityDistrictRepository: CommunityDistrictRepository,
     private readonly agencyRepository: AgencyRepository,
     private readonly agencyBudgetRepository: AgencyBudgetRepository,
+    private readonly spatialRepository: SpatialRepository,
   ) {}
 
   async findMany({
@@ -40,6 +44,10 @@ export class CapitalProjectService {
     commitmentsTotalMin = null,
     commitmentsTotalMax = null,
     isMapped = null,
+    geometry = null,
+    lats = null,
+    lons = null,
+    buffer = 0,
   }: {
     limit?: number;
     offset?: number;
@@ -50,6 +58,10 @@ export class CapitalProjectService {
     commitmentsTotalMin?: string | null;
     commitmentsTotalMax?: string | null;
     isMapped?: boolean | null;
+    geometry?: "Point" | null;
+    lats?: Array<number> | null;
+    lons?: Array<number> | null;
+    buffer?: number;
   }) {
     const min = commitmentsTotalMin
       ? parseFloat(commitmentsTotalMin.replaceAll(",", ""))
@@ -60,7 +72,8 @@ export class CapitalProjectService {
 
     if (
       (cityCouncilDistrictId !== null ||
-        communityDistrictCombinedId !== null) &&
+        communityDistrictCombinedId !== null ||
+        geometry !== null) &&
       isMapped !== null
     ) {
       throw new InvalidRequestParameterException(
@@ -74,7 +87,31 @@ export class CapitalProjectService {
       );
     }
 
-    const checklist: Array<Promise<unknown | undefined>> = [];
+    let geom: Geom | null = null;
+    if (geometry !== null) {
+      if (lons == null || lats == null) {
+        throw new InvalidRequestParameterException(
+          "must provide latitude and longitude with geometry",
+        );
+      }
+      if (lons.length !== lats.length) {
+        throw new InvalidRequestParameterException(
+          "latitude and longitude must be same length",
+        );
+      }
+
+      const coordinates: Position = [lons[0], lats[0]];
+      const feature: Geometry = {
+        type: geometry,
+        coordinates,
+      };
+      geom = await this.spatialRepository.findGeomFromGeoJson(feature, 2263);
+    }
+
+    const checklist: Array<Promise<boolean>> = [];
+    if (geom !== null) {
+      checklist.push(this.spatialRepository.checkGeomIsValid(geom));
+    }
     if (cityCouncilDistrictId !== null)
       checklist.push(
         this.cityCouncilDistrictRepository.checkById(cityCouncilDistrictId),
@@ -123,6 +160,8 @@ export class CapitalProjectService {
       isMapped,
       limit,
       offset,
+      geom,
+      buffer,
     });
 
     const totalProjectsPromise = this.capitalProjectRepository.findCount({
@@ -134,6 +173,8 @@ export class CapitalProjectService {
       commitmentsTotalMin: min,
       commitmentsTotalMax: max,
       isMapped,
+      geom,
+      buffer,
     });
 
     const [capitalProjects, totalProjects] = await Promise.all([
@@ -147,7 +188,7 @@ export class CapitalProjectService {
       offset,
       total: capitalProjects.length,
       totalProjects,
-      order: "managingCode, capitalProjectId",
+      order: `${geometry !== null ? "distance, " : ""}managingCode, capitalProjectId`,
     };
   }
 

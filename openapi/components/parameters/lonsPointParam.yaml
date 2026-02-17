@@ -1,0 +1,17 @@
+name: lons
+required: false
+in: query
+schema:
+  type: array
+  items:
+    type: number
+  minItems: 1
+  maxItems: 1
+  example: -74.010776
+style: form
+explode: false
+description: >-
+  The longitude portion of coordinates. It must be provided when applying a
+  spatial filter and have the same length as the latitudes. (If using a tool
+  like axios, serializing the array with brackets is also supported. ex;
+  lons[]=-74.010776&lons[]=-74.010776)

@@ -47,6 +47,7 @@ import {
   TILE_CACHE,
   TileCacheService,
 } from "src/global/providers/tile-cache.provider";
+import { Geom } from "src/types";
 
 @Injectable()
 export class CapitalProjectRepository {
@@ -91,6 +92,8 @@ export class CapitalProjectRepository {
     isMapped,
     limit,
     offset,
+    geom,
+    buffer,
   }: {
     cityCouncilDistrictId: string | null;
     communityDistrictId: string | null;
@@ -102,6 +105,8 @@ export class CapitalProjectRepository {
     isMapped: boolean | null;
     limit: number;
     offset: number;
+    geom: Geom | null;
+    buffer: number;
   }): Promise<FindManyRepo> {
     try {
       const commitmentsTotalByCapitalProject =
@@ -195,11 +200,24 @@ export class CapitalProjectRepository {
                   isNull(capitalProject.liFtMPnt),
                 )
               : undefined,
+            geom !== null
+              ? or(
+                  sql`ST_DWithin(${geom}, ${capitalProject.liFtMPnt}, ${buffer})`,
+                  sql`ST_DWithin(${geom}, ${capitalProject.liFtMPoly}, ${buffer})`,
+                )
+              : undefined,
           ),
         )
         .limit(limit)
         .offset(offset)
-        .orderBy(capitalProject.managingCode, capitalProject.id)
+        .orderBy(
+          sql`CASE
+                WHEN ${geom !== null && isNotNull(capitalProject.liFtMPnt)} THEN ${geom} <-> ${capitalProject.liFtMPnt}
+                WHEN ${geom !== null && isNotNull(capitalProject.liFtMPoly)} THEN ${geom} <-> ${capitalProject.liFtMPoly}
+              END`,
+          capitalProject.managingCode,
+          capitalProject.id,
+        )
         .groupBy(
           capitalProject.id,
           capitalProject.description,
@@ -244,6 +262,8 @@ export class CapitalProjectRepository {
     commitmentsTotalMin: number | null;
     commitmentsTotalMax: number | null;
     isMapped: boolean | null;
+    geom: Geom | null;
+    buffer: number;
   }): Promise<FindCountRepo> {
     const key = JSON.stringify({
       ...params,
@@ -265,6 +285,8 @@ export class CapitalProjectRepository {
       commitmentsTotalMin,
       commitmentsTotalMax,
       isMapped,
+      geom,
+      buffer,
     } = params;
     try {
       const commitmentsTotalByCapitalProject =
@@ -353,6 +375,12 @@ export class CapitalProjectRepository {
               ? and(
                   isNull(capitalProject.liFtMPoly),
                   isNull(capitalProject.liFtMPnt),
+                )
+              : undefined,
+            geom !== null
+              ? or(
+                  sql`ST_DWithin(${geom}, ${capitalProject.liFtMPnt}, ${buffer})`,
+                  sql`ST_DWithin(${geom}, ${capitalProject.liFtMPoly}, ${buffer})`,
                 )
               : undefined,
           ),

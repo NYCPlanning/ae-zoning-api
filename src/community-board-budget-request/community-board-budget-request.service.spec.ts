@@ -33,6 +33,8 @@ import { BoroughRepositoryMock } from "test/borough/borough.repository.mock";
 import { BoroughRepository } from "src/borough/borough.repository";
 import { CapitalProjectRepositoryMock } from "test/capital-project/capital-project.repository.mock";
 import { CapitalProjectRepository } from "src/capital-project/capital-project.repository";
+import { SpatialRepositoryMock } from "test/spatial/spatial.repository.mock";
+import { SpatialRepository } from "src/spatial/spatial.repository";
 
 describe("Community Board Budget Request service unit", () => {
   let communityBoardBudgetRequestService: CommunityBoardBudgetRequestService;
@@ -54,6 +56,7 @@ describe("Community Board Budget Request service unit", () => {
     communityDistrictRepositoryMock,
     agencyBudgetRepositoryMock,
   );
+  const spatialRepositoryMock = new SpatialRepositoryMock();
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -73,6 +76,8 @@ describe("Community Board Budget Request service unit", () => {
       .useValue(cityCouncilDistrictRepositoryMock)
       .overrideProvider(CommunityDistrictRepository)
       .useValue(communityDistrictRepositoryMock)
+      .overrideProvider(SpatialRepository)
+      .useValue(spatialRepositoryMock)
       .compile();
 
     communityBoardBudgetRequestService =

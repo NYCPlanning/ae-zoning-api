@@ -21,6 +21,8 @@ import { CapitalProjectRepository } from "src/capital-project/capital-project.re
 import { CommunityDistrictRepository } from "src/community-district/community-district.repository";
 import { BoroughRepositoryMock } from "test/borough/borough.repository.mock";
 import { BoroughRepository } from "src/borough/borough.repository";
+import { SpatialRepositoryMock } from "test/spatial/spatial.repository.mock";
+import { SpatialRepository } from "src/spatial/spatial.repository";
 
 describe("City Council District e2e", () => {
   let app: INestApplication;
@@ -37,6 +39,7 @@ describe("City Council District e2e", () => {
     communityDistrictRepositoryMock,
     agencyBudgetRepositoryMock,
   );
+  const spatialRepositoryMock = new SpatialRepositoryMock();
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -54,6 +57,8 @@ describe("City Council District e2e", () => {
       .useValue(agencyBudgetRepositoryMock)
       .overrideProvider(BoroughRepository)
       .useValue(boroughRepositoryMock)
+      .overrideProvider(SpatialRepository)
+      .useValue(spatialRepositoryMock)
       .compile();
     app = moduleRef.createNestApplication();
     await app.init();

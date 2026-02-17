@@ -6,6 +6,7 @@ import { z } from "zod";
 import { FindTaxLotsQueryParams } from "src/gen";
 import { InvalidSpatialFilterRequestParametersException } from "src/exception/invalid-spatial-filter";
 import { Geom } from "src/types";
+import { SpatialRepository } from "src/spatial/spatial.repository";
 
 export const spatialFilterSchema = z.object({
   geometry: z.enum(["Point", "LineString", "Polygon"]),
@@ -18,7 +19,10 @@ export type SpatialFilter = z.infer<typeof spatialFilterSchema>;
 
 @Injectable()
 export class TaxLotService {
-  constructor(private readonly taxLotRepository: TaxLotRepository) {}
+  constructor(
+    private readonly taxLotRepository: TaxLotRepository,
+    private readonly spatialRepository: SpatialRepository,
+  ) {}
 
   /**
    *
@@ -85,7 +89,7 @@ export class TaxLotService {
           coordinates: [lons[0], lats[0]],
         };
 
-        geom = await this.taxLotRepository.findGeomFromGeoJson(shape, 2263);
+        geom = await this.spatialRepository.findGeomFromGeoJson(shape, 2263);
 
         orderGeom = geom;
       }
@@ -102,12 +106,12 @@ export class TaxLotService {
           coordinates: lons.map((lon, index) => [lon, lats[index]]),
         };
 
-        geom = await this.taxLotRepository.findGeomFromGeoJson(shape, 2263);
+        geom = await this.spatialRepository.findGeomFromGeoJson(shape, 2263);
 
         orderGeom = geom;
 
         // LineString geom validity check
-        const valid = await this.taxLotRepository.checkGeomIsValid(geom);
+        const valid = await this.spatialRepository.checkGeomIsValid(geom);
         if (!valid)
           throw new InvalidSpatialFilterRequestParametersException(
             "geometry is invalid",
@@ -126,10 +130,10 @@ export class TaxLotService {
           coordinates: [lons.map((lon, index) => [lon, lats[index]])],
         };
 
-        geom = await this.taxLotRepository.findGeomFromGeoJson(shape, 2263);
+        geom = await this.spatialRepository.findGeomFromGeoJson(shape, 2263);
 
         // Polygon geom validity check
-        const valid = await this.taxLotRepository.checkGeomIsValid(geom);
+        const valid = await this.spatialRepository.checkGeomIsValid(geom);
         if (!valid)
           throw new InvalidSpatialFilterRequestParametersException(
             "geometry is invalid",
@@ -137,7 +141,7 @@ export class TaxLotService {
 
         // Find the center of the maximum inscribed circle for distance ordering
         const center =
-          await this.taxLotRepository.findMaximumInscribedCircleCenter(geom);
+          await this.spatialRepository.findMaximumInscribedCircleCenter(geom);
 
         orderGeom = center;
       }
@@ -145,7 +149,7 @@ export class TaxLotService {
       let intersectGeom: string;
       // If a buffer was provided, then it will be used as the spatial filter
       if (buffer !== undefined) {
-        const geomBuffer = await this.taxLotRepository.findGeomBuffer(
+        const geomBuffer = await this.spatialRepository.findGeomBuffer(
           geom,
           buffer,
         );

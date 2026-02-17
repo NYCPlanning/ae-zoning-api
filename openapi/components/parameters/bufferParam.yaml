@@ -2,6 +2,7 @@ name: buffer
 in: query
 schema:
   type: number
+  minimum: 0
   example: 600
 description: >-
   A buffer around the spatial feature. Units are feet. It is optional when
