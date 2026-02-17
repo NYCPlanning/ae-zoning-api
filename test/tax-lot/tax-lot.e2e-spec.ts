@@ -1,7 +1,6 @@
 import * as request from "supertest";
 import { INestApplication } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
-import { TaxLotModule } from "src/tax-lot/tax-lot.module";
 import { TaxLotRepository } from "src/tax-lot/tax-lot.repository";
 import {
   findTaxLotByBblQueryResponseSchema,
@@ -14,16 +13,22 @@ import { TaxLotRepositoryMock } from "./tax-lot.repository.mock";
 import { DataRetrievalException } from "src/exception";
 import { HttpName } from "src/filter";
 import { NestExpressApplication } from "@nestjs/platform-express";
+import { SpatialRepository } from "src/spatial/spatial.repository";
+import { SpatialRepositoryMock } from "test/spatial/spatial.repository.mock";
+import { TaxLotModule } from "src/tax-lot/tax-lot.module";
 
 describe("TaxLots", () => {
   let app: INestApplication;
 
   const taxLotRepository = new TaxLotRepositoryMock();
+  const spatialRepository = new SpatialRepositoryMock();
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [TaxLotModule],
     })
+      .overrideProvider(SpatialRepository)
+      .useValue(spatialRepository)
       .overrideProvider(TaxLotRepository)
       .useValue(taxLotRepository)
       .compile();

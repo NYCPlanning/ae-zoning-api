@@ -7,7 +7,6 @@ import {
   zoningDistrictEntitySchema,
 } from "src/schema";
 import { taxLotEntitySchema } from "src/schema/tax-lot";
-import { geomSchema } from "src/types";
 
 export const checkByBblRepoSchema = z.boolean();
 
@@ -21,26 +20,6 @@ export const findManyBySpatialFilterRepoSchema = findManyRepoSchema;
 
 export type FindManyBySpatialFilterRepo = z.infer<
   typeof findManyBySpatialFilterRepoSchema
->;
-
-export const findGeomFromGeoJsonRepoSchema = z.string(geomSchema);
-
-export type FindGeomFromGeoJsonRepo = z.infer<
-  typeof findGeomFromGeoJsonRepoSchema
->;
-
-export const findGeomBufferRepoSchema = z.string(geomSchema);
-
-export type FindGeomBufferRepo = z.infer<typeof findGeomBufferRepoSchema>;
-
-export const checkGeomIsValidRepoSchema = z.boolean();
-
-export type CheckGeomIsValidRepo = z.infer<typeof checkGeomIsValidRepoSchema>;
-
-export const findMaximumInscribedCircleCenterRepoSchema = z.string(geomSchema);
-
-export type FindMaximumInscribedCircleCenterRepo = z.infer<
-  typeof findMaximumInscribedCircleCenterRepoSchema
 >;
 
 export const findByBblRepoSchema = taxLotEntitySchema

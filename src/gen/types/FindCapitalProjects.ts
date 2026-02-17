@@ -6,6 +6,13 @@
 import type { CapitalProjectPage } from "./CapitalProjectPage";
 import type { Error } from "./Error";
 
+export const findCapitalProjectsQueryParamsGeometryEnum = {
+  Point: "Point",
+} as const;
+
+export type FindCapitalProjectsQueryParamsGeometryEnumKey =
+  (typeof findCapitalProjectsQueryParamsGeometryEnum)[keyof typeof findCapitalProjectsQueryParamsGeometryEnum];
+
 export type FindCapitalProjectsQueryParams = {
   /**
    * @description The three character numeric string containing the concatenation of the borough and community district ids.
@@ -59,6 +66,27 @@ export type FindCapitalProjectsQueryParams = {
    * @type integer | undefined
    */
   offset?: number;
+  /**
+   * @description The type of geometry used for a spatial filter. It must be provided when applying a spatial filter
+   * @type string | undefined
+   */
+  geometry?: FindCapitalProjectsQueryParamsGeometryEnumKey;
+  /**
+   * @description The longitude portion of coordinates. It must be provided when applying a spatial filter and have the same length as the latitudes. (If using a tool like axios, serializing the array with brackets is also supported. ex; lons[]=-74.010776&lons[]=-74.010776)
+   * @type array | undefined
+   */
+  lons?: number[];
+  /**
+   * @description The latitude portion of coordinates. It must be provided when applying a spatial filter and have the same length as the longitudes. (If using a tool like axios, serializing the array with brackets is also supported. ex; lats[]=40.708649&lats[]=40.707800)
+   * @type array | undefined
+   */
+  lats?: number[];
+  /**
+   * @description A buffer around the spatial feature. Units are feet. It is optional when applying a spatial filter.
+   * @minLength 0
+   * @type number | undefined
+   */
+  buffer?: number;
 };
 
 /**

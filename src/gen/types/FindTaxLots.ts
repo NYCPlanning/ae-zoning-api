@@ -46,6 +46,7 @@ export type FindTaxLotsQueryParams = {
   lats?: number[];
   /**
    * @description A buffer around the spatial feature. Units are feet. It is optional when applying a spatial filter.
+   * @minLength 0
    * @type number | undefined
    */
   buffer?: number;

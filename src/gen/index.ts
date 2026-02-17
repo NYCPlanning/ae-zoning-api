@@ -110,6 +110,7 @@ export type {
   FindCapitalProjectManagingAgenciesQuery,
 } from "./types/FindCapitalProjectManagingAgencies";
 export type {
+  FindCapitalProjectsQueryParamsGeometryEnumKey,
   FindCapitalProjectsQueryParams,
   FindCapitalProjects200,
   FindCapitalProjects400,
@@ -424,6 +425,7 @@ export { cityCouncilDistrictGeoJsonTypeEnum } from "./types/CityCouncilDistrictG
 export { communityBoardBudgetRequestGeoJsonTypeEnum } from "./types/CommunityBoardBudgetRequestGeoJson";
 export { communityBoardBudgetRequestTypeEnum } from "./types/CommunityBoardBudgetRequestType";
 export { communityDistrictGeoJsonTypeEnum } from "./types/CommunityDistrictGeoJson";
+export { findCapitalProjectsQueryParamsGeometryEnum } from "./types/FindCapitalProjects";
 export { findCommunityBoardBudgetRequestsQueryParamsCbbrTypeEnum } from "./types/FindCommunityBoardBudgetRequests";
 export { findCommunityBoardBudgetRequestsCsvQueryParamsCbbrTypeEnum } from "./types/FindCommunityBoardBudgetRequestsCsv";
 export { findTaxLotsQueryParamsGeometryEnum } from "./types/FindTaxLots";

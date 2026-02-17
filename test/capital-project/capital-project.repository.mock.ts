@@ -22,6 +22,7 @@ import { CityCouncilDistrictRepositoryMock } from "test/city-council-district/ci
 import { CommunityDistrictRepositoryMock } from "test/community-district/community-district.repository.mock";
 import { agencyEntitySchema, capitalProjectEntitySchema } from "src/schema";
 import { generateMockMvt } from "test/utils";
+import { GeomMock } from "test/spatial/spatial.repository.mock";
 
 export class CapitalProjectRepositoryMock {
   agencyRepoMock: AgencyRepositoryMock;
@@ -62,8 +63,8 @@ export class CapitalProjectRepositoryMock {
         communityDistrictId: string;
         agencyBudget: string;
         commitmentsTotal: number;
-        liFtMPoly: string | null;
-        liFtMPnt: string | null;
+        liFtMPoly: GeomMock | null;
+        liFtMPnt: GeomMock | null;
       },
       FindManyRepo,
     ]
@@ -82,7 +83,14 @@ export class CapitalProjectRepositoryMock {
           communityDistrictId: communityDistrictIdMocks[0].id,
           agencyBudget: agencyBudgetMocks[0].code,
           commitmentsTotal: 100,
-          liFtMPnt: "EXISTS",
+          liFtMPnt: {
+            shape: {
+              type: "MultiPoint",
+              coordinates: [[1002498.935363667, 248080.477954167]],
+            },
+            pattern: "feature",
+            srid: 2263,
+          },
           liFtMPoly: null,
         },
         this.capitalProjectGroups[0],
@@ -96,7 +104,24 @@ export class CapitalProjectRepositoryMock {
           agencyBudget: agencyBudgetMocks[1].code,
           commitmentsTotal: 200,
           liFtMPnt: null,
-          liFtMPoly: "EXISTS",
+          liFtMPoly: {
+            shape: {
+              type: "MultiPolygon",
+              coordinates: [
+                [
+                  [
+                    [989061.185599992, 214004.513999928],
+                    [988842.069599996, 213608.409799921],
+                    [988455.415199992, 213822.003799943],
+                    [988674.530799997, 214218.108399932],
+                    [989061.185599992, 214004.513999928],
+                  ],
+                ],
+              ],
+            },
+            pattern: "feature",
+            srid: 2263,
+          },
         },
         this.capitalProjectGroups[1],
       ],
@@ -125,6 +150,8 @@ export class CapitalProjectRepositoryMock {
     commitmentsTotalMin,
     commitmentsTotalMax,
     isMapped,
+    geom,
+    buffer,
   }: {
     managingAgency: string | null;
     cityCouncilDistrictId: string | null;
@@ -134,6 +161,8 @@ export class CapitalProjectRepositoryMock {
     commitmentsTotalMin: number | null;
     commitmentsTotalMax: number | null;
     isMapped: boolean | null;
+    geom: string | null;
+    buffer: number;
   }) {
     return this.capitalProjectsCriteria.reduce(
       (acc: FindManyRepo, [criteria, capitalProjects]) => {
@@ -178,6 +207,28 @@ export class CapitalProjectRepositoryMock {
             criteria.liFtMPnt === null)
         )
           return acc;
+        if (geom !== null) {
+          const { shape } = JSON.parse(geom) as GeomMock;
+          if (shape.type !== "Point") throw new Error("invalid geometry type");
+          const geomLon = shape.coordinates[0];
+          let singleLon: number | null = null;
+          if (criteria.liFtMPnt?.shape.type === "MultiPoint") {
+            singleLon = criteria.liFtMPnt.shape.coordinates[0][0];
+          }
+          if (criteria.liFtMPoly?.shape.type === "MultiPolygon") {
+            singleLon = criteria.liFtMPoly.shape.coordinates[0][0][0][0];
+          }
+          // unmapped projects never match
+          if (singleLon === null) return acc;
+          // The mock is helpful for creating a test environment for the services and controllers
+          // It helps test that the correct parameters are sent to the repository
+          // However, it does not test the repository and doesn't need to reproduce the full logic.
+          // Consequently, the mock distance check only does a naive check of a single value.
+          if (Math.abs(geomLon - singleLon) > buffer) {
+            return acc;
+          }
+        }
+
         return acc.concat(capitalProjects);
       },
       [],
@@ -195,6 +246,8 @@ export class CapitalProjectRepositoryMock {
     isMapped,
     limit,
     offset,
+    geom,
+    buffer,
   }: {
     managingAgency: string | null;
     cityCouncilDistrictId: string | null;
@@ -206,6 +259,8 @@ export class CapitalProjectRepositoryMock {
     isMapped: boolean | null;
     limit: number;
     offset: number;
+    geom: string | null;
+    buffer: number;
   }): Promise<FindManyRepo> {
     const results = await this.filterCapitalProjects({
       managingAgency,
@@ -216,6 +271,8 @@ export class CapitalProjectRepositoryMock {
       commitmentsTotalMin,
       commitmentsTotalMax,
       isMapped,
+      geom,
+      buffer,
     });
     return results.slice(offset, limit + offset);
   }
@@ -237,6 +294,8 @@ export class CapitalProjectRepositoryMock {
     commitmentsTotalMin,
     commitmentsTotalMax,
     isMapped,
+    geom,
+    buffer,
   }: {
     managingAgency: string | null;
     cityCouncilDistrictId: string | null;
@@ -246,6 +305,8 @@ export class CapitalProjectRepositoryMock {
     commitmentsTotalMin: number | null;
     commitmentsTotalMax: number | null;
     isMapped: boolean | null;
+    geom: string | null;
+    buffer: number;
   }): Promise<FindCountRepo> {
     const results = await this.filterCapitalProjects({
       managingAgency,
@@ -256,6 +317,8 @@ export class CapitalProjectRepositoryMock {
       commitmentsTotalMin,
       commitmentsTotalMax,
       isMapped,
+      geom,
+      buffer,
     });
     return results.length;
   }

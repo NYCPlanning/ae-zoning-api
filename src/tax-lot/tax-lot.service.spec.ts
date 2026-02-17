@@ -10,16 +10,21 @@ import {
   findZoningDistrictClassesByTaxLotBblQueryResponseSchema,
   findZoningDistrictsByTaxLotBblQueryResponseSchema,
 } from "src/gen";
+import { SpatialRepositoryMock } from "test/spatial/spatial.repository.mock";
+import { SpatialRepository } from "src/spatial/spatial.repository";
 
 describe("TaxLotController", () => {
   let taxLotService: TaxLotService;
 
+  const spatialRepository = new SpatialRepositoryMock();
   const taxLotRepository = new TaxLotRepositoryMock();
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
-      providers: [TaxLotService, TaxLotRepository],
+      providers: [TaxLotService, TaxLotRepository, SpatialRepository],
     })
+      .overrideProvider(SpatialRepository)
+      .useValue(spatialRepository)
       .overrideProvider(TaxLotRepository)
       .useValue(taxLotRepository)
       .compile();

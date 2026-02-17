@@ -6,6 +6,7 @@ import { AgencyModule } from "src/agency/agency.module";
 import { AgencyBudgetModule } from "src/agency-budget/agency-budget.module";
 import { CityCouncilDistrictModule } from "src/city-council-district/city-council-district.module";
 import { CommunityDistrictModule } from "src/community-district/community-district.module";
+import { SpatialModule } from "src/spatial/spatial.module";
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { CommunityDistrictModule } from "src/community-district/community-distri
     AgencyBudgetModule,
     forwardRef(() => CityCouncilDistrictModule),
     CommunityDistrictModule,
+    SpatialModule,
   ],
   exports: [CapitalProjectService],
   providers: [CapitalProjectService, CapitalProjectRepository],
