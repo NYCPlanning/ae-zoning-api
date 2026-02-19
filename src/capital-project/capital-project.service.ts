@@ -22,6 +22,7 @@ import { AgencyBudgetRepository } from "src/agency-budget/agency-budget.reposito
 import { Geom } from "src/types";
 import { SpatialRepository } from "src/spatial/spatial.repository";
 import { Geometry, Position } from "geojson";
+import { SIX_DECIMAL_RESOLUTION_FT } from "src/constants";
 
 @Injectable()
 export class CapitalProjectService {
@@ -47,7 +48,7 @@ export class CapitalProjectService {
     geometry = null,
     lats = null,
     lons = null,
-    buffer = 0,
+    buffer = SIX_DECIMAL_RESOLUTION_FT,
   }: {
     limit?: number;
     offset?: number;
