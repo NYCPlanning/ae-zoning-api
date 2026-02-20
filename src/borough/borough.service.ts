@@ -3,13 +3,18 @@ import { BoroughRepository } from "./borough.repository";
 import { ResourceNotFoundException } from "src/exception";
 import {
   FindBoroughTilesPathParams,
+  FindBoroughGeoJsonByBoroughIdPathParams,
   FindCapitalProjectsByBoroughIdCommunityDistrictIdPathParams,
   FindCapitalProjectTilesByBoroughIdCommunityDistrictIdPathParams,
   FindCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdPathParams,
 } from "src/gen";
 import { produce } from "immer";
-import { CommunityDistrictGeoJsonEntity } from "./borough.repository.schema";
-import { CommunityDistrictEntity } from "src/schema";
+import {
+  BoroughGeoJsonEntity,
+  CommunityDistrictGeoJsonEntity,
+} from "./borough.repository.schema";
+import { BoroughEntity, CommunityDistrictEntity } from "src/schema";
+import { MultiPolygon } from "geojson";
 
 @Injectable()
 export class BoroughService {
@@ -24,6 +29,31 @@ export class BoroughService {
 
   async findTiles(params: FindBoroughTilesPathParams) {
     return await this.boroughRepository.findTiles(params);
+  }
+
+  async findGeoJsonById({
+    boroughId,
+  }: FindBoroughGeoJsonByBoroughIdPathParams) {
+    const boroughGeoJson = await this.boroughRepository.findGeoJsonById({
+      boroughId,
+    });
+    if (boroughGeoJson === undefined)
+      throw new ResourceNotFoundException("cannot find borough geojson");
+
+    const geometry = JSON.parse(boroughGeoJson.geometry) as MultiPolygon;
+    const properties = produce(
+      boroughGeoJson as Partial<BoroughGeoJsonEntity>,
+      (draft) => {
+        delete draft["geometry"];
+      },
+    ) as BoroughEntity;
+
+    return {
+      type: "Feature",
+      id: boroughGeoJson.id,
+      properties,
+      geometry,
+    };
   }
 
   async findCommunityDistrictsByBoroughId(id: string) {
