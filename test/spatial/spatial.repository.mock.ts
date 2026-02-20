@@ -50,6 +50,7 @@ export class SpatialRepositoryMock {
   async checkGeomIsValid(geom: Geom): Promise<CheckGeomIsValidRepo> {
     // LineStrings are invalid when they have fewer than two unique points
     const checkGeom: GeomMock = JSON.parse(geom);
+    if (checkGeom.shape.type === "Point") return true;
     if (checkGeom.shape.type === "LineString") {
       const uniqueCoordinates = new Set(
         checkGeom.shape.coordinates.map((position) => position.join()),
