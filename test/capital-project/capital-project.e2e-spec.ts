@@ -40,6 +40,7 @@ describe("Capital Projects", () => {
     cityCouncilDistrictRepositoryMock,
     communityDistrictRepositoryMock,
     agencyBudgetRepositoryMock,
+    boroughRepositoryMock,
   );
   const spatialRepositoryMock = new SpatialRepositoryMock();
 
@@ -163,6 +164,55 @@ describe("Capital Projects", () => {
         "/capital-projects?offset=b4d",
       );
       expect(response.body.message).toMatch(/offset: Expected number/);
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 200 and return capital projects from specified boroughs", async () => {
+      const { id } = boroughRepositoryMock.boroughs[0];
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects?boroughIds=${id}`,
+      );
+
+      expect(() =>
+        findCapitalProjectsQueryResponseSchema.parse(response.body),
+      ).not.toThrow();
+      const parsedBody = findCapitalProjectsQueryResponseSchema.parse(
+        response.body,
+      );
+      expect(parsedBody.limit).toBe(20);
+      expect(parsedBody.offset).toBe(0);
+      expect(parsedBody.total).toBe(5);
+      expect(parsedBody.order).toBe("managingCode, capitalProjectId");
+    });
+
+    it("should 400 when finding by an invalid borough id", async () => {
+      const id = "123";
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects?boroughIds=${id}`,
+      );
+      expect(response.body.message).toMatch(/boroughIds: Invalid/);
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 when finding by too many borough ids", async () => {
+      const ids = "1,2,3,4,5";
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects?boroughIds=${ids}`,
+      );
+      expect(response.body.message).toMatch(
+        /boroughIds: Array must contain at most 4 element/,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 when finding by a missing borough id", async () => {
+      const ids = "1,9";
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects?boroughIds=${ids}`,
+      );
+      expect(response.body.message).toMatch(
+        /could not check one or more of the parameters/,
+      );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
 
@@ -498,6 +548,16 @@ describe("Capital Projects", () => {
         `/capital-projects?isMapped=123`,
       );
       expect(response.body.message).toMatch(/invalid value for boolean/);
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 when both borough ids and isMapped are provided", async () => {
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects?boroughIds=1&isMapped=true`,
+      );
+      expect(response.body.message).toMatch(
+        /cannot have isMapped filter in conjunction/,
+      );
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
 

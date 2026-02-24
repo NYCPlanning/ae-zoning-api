@@ -38,6 +38,7 @@ describe("City Council District e2e", () => {
     cityCouncilDistrictRepositoryMock,
     communityDistrictRepositoryMock,
     agencyBudgetRepositoryMock,
+    boroughRepositoryMock,
   );
   const spatialRepositoryMock = new SpatialRepositoryMock();
 

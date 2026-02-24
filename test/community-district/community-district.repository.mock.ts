@@ -4,6 +4,9 @@ import { communityDistrictEntitySchema } from "src/schema";
 import { generateMockMvt } from "test/utils";
 
 export class CommunityDistrictRepositoryMock {
+  // community districts would preferably share their borough ids with the borough repository mock
+  // the way the mock classes are initialized, it is not able to reference the borough repository
+  // later in the capital project filtering criteria, we have separate boroughId and boroughIds criteria each relying on a different repository
   districts = Array.from(Array(2), (_, index) =>
     generateMock(communityDistrictEntitySchema, { seed: index + 1 }),
   );
