@@ -41,6 +41,7 @@ describe("CapitalProjectService", () => {
     cityCouncilDistrictRepositoryMock,
     communityDistrictRepositoryMock,
     agencyBudgetRepositoryMock,
+    boroughRepositoryMock,
   );
   const spatialRepositoryMock = new SpatialRepositoryMock();
 
@@ -94,6 +95,58 @@ describe("CapitalProjectService", () => {
       expect(parsedBody.total).toBe(parsedBody.capitalProjects.length);
       expect(parsedBody.totalProjects).toBe(parsedBody.capitalProjects.length);
       expect(parsedBody.order).toBe("managingCode, capitalProjectId");
+    });
+
+    it("should return a list of capital projects by borough ids", async () => {
+      const { id } = boroughRepositoryMock.boroughs[0];
+
+      const resource = await capitalProjectService.findMany({
+        boroughIds: [id],
+      });
+
+      expect(() =>
+        findCapitalProjectsQueryResponseSchema.parse(resource),
+      ).not.toThrow();
+      const parsedResource =
+        findCapitalProjectsQueryResponseSchema.parse(resource);
+      expect(parsedResource.limit).toBe(20);
+      expect(parsedResource.offset).toBe(0);
+      expect(parsedResource.total).toBe(5);
+      expect(parsedResource.totalProjects).toBe(
+        parsedResource.capitalProjects.length,
+      );
+      expect(parsedResource.order).toBe("managingCode, capitalProjectId");
+    });
+
+    it("should still return a list of capital projects when passing borough duplicate ids", async () => {
+      const { id } = boroughRepositoryMock.boroughs[0];
+
+      const resource = await capitalProjectService.findMany({
+        boroughIds: [id, id],
+      });
+
+      expect(() =>
+        findCapitalProjectsQueryResponseSchema.parse(resource),
+      ).not.toThrow();
+      const parsedResource =
+        findCapitalProjectsQueryResponseSchema.parse(resource);
+      expect(parsedResource.limit).toBe(20);
+      expect(parsedResource.offset).toBe(0);
+      expect(parsedResource.total).toBe(5);
+      expect(parsedResource.totalProjects).toBe(
+        parsedResource.capitalProjects.length,
+      );
+      expect(parsedResource.order).toBe("managingCode, capitalProjectId");
+    });
+
+    it("should return an InvalidRequestParameterException when a provided borough id cannot be found", async () => {
+      const id = "6";
+
+      expect(
+        capitalProjectService.findMany({
+          boroughIds: [id],
+        }),
+      ).rejects.toThrow(InvalidRequestParameterException);
     });
 
     it("should return a list of capital projects by city council district id, using the default limit and offset", async () => {
@@ -426,6 +479,16 @@ describe("CapitalProjectService", () => {
       expect(parsedBody.total).toBe(parsedBody.capitalProjects.length);
       expect(parsedBody.totalProjects).toBe(parsedBody.capitalProjects.length);
       expect(parsedBody.order).toBe("managingCode, capitalProjectId");
+    });
+
+    it("should return an InvalidRequestParameterException when both boroughIds and isMapped are provided", async () => {
+      const { id } = boroughRepositoryMock.boroughs[0];
+      expect(
+        capitalProjectService.findMany({
+          boroughIds: [id],
+          isMapped: true,
+        }),
+      ).rejects.toThrow(InvalidRequestParameterException);
     });
 
     it("should return a InvalidRequestParameterException error when both a city council district id and isMapped are provided", async () => {

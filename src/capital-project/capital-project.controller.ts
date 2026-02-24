@@ -51,6 +51,7 @@ export class CapitalProjectController {
       isMapped: queryParams.isMapped,
       commitmentsTotalMin: queryParams.commitmentsTotalMin,
       commitmentsTotalMax: queryParams.commitmentsTotalMax,
+      boroughIds: queryParams.boroughIds,
       geometry: queryParams.geometry,
       lats: queryParams.lats,
       lons: queryParams.lons,

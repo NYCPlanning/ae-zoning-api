@@ -14,6 +14,10 @@ export const checkByIdRepoSchema = z.boolean();
 
 export type CheckByIdRepo = z.infer<typeof checkByIdRepoSchema>;
 
+export const checkByIdsRepoSchema = z.boolean();
+
+export type CheckByIdsRepo = z.infer<typeof checkByIdsRepoSchema>;
+
 export const findCommunityDistrictsByBoroughIdRepoSchema = z.array(
   communityDistrictEntitySchema,
 );
