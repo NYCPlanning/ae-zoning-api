@@ -3,6 +3,7 @@ import {
   communityDistrictGeoJsonEntitySchema,
   CheckByIdRepo,
   findGeoJsonByIdRepoSchema,
+  CheckByIdsRepo,
 } from "src/borough/borough.repository.schema";
 import { generateMock } from "@anatine/zod-mock";
 import {
@@ -19,6 +20,11 @@ export class BoroughRepositoryMock {
 
   async checkById(id: string): Promise<CheckByIdRepo> {
     return this.boroughs.some((row) => row.id === id);
+  }
+
+  async checkByIds(ids: Array<string>): Promise<CheckByIdsRepo> {
+    const boroughIds = this.boroughs.map((borough) => borough.id);
+    return ids.every((id) => boroughIds.includes(id));
   }
 
   async findMany() {

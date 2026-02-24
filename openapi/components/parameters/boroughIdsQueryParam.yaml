@@ -1,0 +1,14 @@
+name: boroughIds
+required: false
+in: query
+schema:
+  type: array
+  items:
+    type: string
+    pattern: ^([0-9]{1})$
+  minItems: 1
+  maxItems: 4
+  example: '1,2'
+description: >-
+  A list of single character numeric strings containing the common number used to refer
+  to the borough.
