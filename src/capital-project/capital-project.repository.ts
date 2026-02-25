@@ -10,6 +10,7 @@ import {
   gte,
   lte,
   or,
+  inArray,
 } from "drizzle-orm";
 import { DataRetrievalException } from "src/exception";
 import {
@@ -23,6 +24,7 @@ import { DB, DbType } from "src/global/providers/db.provider";
 import {
   agency,
   agencyBudget,
+  borough,
   budgetLine,
   capitalCommitment,
   capitalCommitmentFund,
@@ -85,6 +87,7 @@ export class CapitalProjectRepository {
     cityCouncilDistrictId,
     communityDistrictId,
     boroughId,
+    boroughIds,
     managingAgency,
     agencyBudget,
     commitmentsTotalMin,
@@ -98,6 +101,7 @@ export class CapitalProjectRepository {
     cityCouncilDistrictId: string | null;
     communityDistrictId: string | null;
     boroughId: string | null;
+    boroughIds: Array<string> | null;
     managingAgency: string | null;
     agencyBudget: string | null;
     commitmentsTotalMin: number | null;
@@ -123,6 +127,16 @@ export class CapitalProjectRepository {
           category: sql<CapitalProjectCategory>`${capitalProject.category}`,
         })
         .from(capitalProject)
+        .leftJoin(
+          borough,
+          and(
+            sql`${boroughIds !== null} IS TRUE`,
+            or(
+              sql`ST_Intersects(${borough.liFt}, ${capitalProject.liFtMPoly})`,
+              sql`ST_Intersects(${borough.liFt}, ${capitalProject.liFtMPnt})`,
+            ),
+          ),
+        )
         .leftJoin(
           cityCouncilDistrict,
           and(
@@ -167,6 +181,7 @@ export class CapitalProjectRepository {
         )
         .where(
           and(
+            boroughIds !== null ? inArray(borough.id, boroughIds) : undefined,
             cityCouncilDistrictId !== null
               ? eq(cityCouncilDistrict.id, cityCouncilDistrictId)
               : undefined,
@@ -257,6 +272,7 @@ export class CapitalProjectRepository {
     cityCouncilDistrictId: string | null;
     communityDistrictId: string | null;
     boroughId: string | null;
+    boroughIds: Array<string> | null;
     managingAgency: string | null;
     agencyBudget: string | null;
     commitmentsTotalMin: number | null;
@@ -280,6 +296,7 @@ export class CapitalProjectRepository {
       cityCouncilDistrictId,
       communityDistrictId,
       boroughId,
+      boroughIds,
       managingAgency,
       agencyBudget,
       commitmentsTotalMin,
@@ -300,6 +317,16 @@ export class CapitalProjectRepository {
             ),
         })
         .from(capitalProject)
+        .leftJoin(
+          borough,
+          and(
+            sql`${boroughIds !== null} IS TRUE`,
+            or(
+              sql`ST_Intersects(${borough.liFt}, ${capitalProject.liFtMPoly})`,
+              sql`ST_Intersects(${borough.liFt}, ${capitalProject.liFtMPnt})`,
+            ),
+          ),
+        )
         .leftJoin(
           cityCouncilDistrict,
           and(
@@ -344,6 +371,7 @@ export class CapitalProjectRepository {
         )
         .where(
           and(
+            boroughIds !== null ? inArray(borough.id, boroughIds) : undefined,
             cityCouncilDistrictId !== null
               ? eq(cityCouncilDistrict.id, cityCouncilDistrictId)
               : undefined,

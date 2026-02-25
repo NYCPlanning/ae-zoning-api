@@ -23,23 +23,27 @@ import { CommunityDistrictRepositoryMock } from "test/community-district/communi
 import { agencyEntitySchema, capitalProjectEntitySchema } from "src/schema";
 import { generateMockMvt } from "test/utils";
 import { GeomMock } from "test/spatial/spatial.repository.mock";
+import { BoroughRepositoryMock } from "test/borough/borough.repository.mock";
 
 export class CapitalProjectRepositoryMock {
   agencyRepoMock: AgencyRepositoryMock;
   cityCouncilDistrictRepoMock: CityCouncilDistrictRepositoryMock;
   communityDistrictRepoMock: CommunityDistrictRepositoryMock;
   agencyBudgetRepositoryMock: AgencyBudgetRepositoryMock;
+  boroughRepositoryMock: BoroughRepositoryMock;
 
   constructor(
     agencyRepoMock: AgencyRepositoryMock,
     cityCouncilDistrictRepoMock: CityCouncilDistrictRepositoryMock,
     communityDistrictRepoMock: CommunityDistrictRepositoryMock,
     agencyBudgetRepositoryMock: AgencyBudgetRepositoryMock,
+    boroughRepositoryMock: BoroughRepositoryMock,
   ) {
     this.agencyRepoMock = agencyRepoMock;
     this.cityCouncilDistrictRepoMock = cityCouncilDistrictRepoMock;
     this.communityDistrictRepoMock = communityDistrictRepoMock;
     this.agencyBudgetRepositoryMock = agencyBudgetRepositoryMock;
+    this.boroughRepositoryMock = boroughRepositoryMock;
   }
 
   capitalProjectGroups = Array.from(Array(3), (_, i) =>
@@ -60,6 +64,7 @@ export class CapitalProjectRepositoryMock {
         managingAgency: string;
         cityCouncilDistrictId: string;
         boroughId: string;
+        boroughIds: Array<string>;
         communityDistrictId: string;
         agencyBudget: string;
         commitmentsTotal: number;
@@ -74,12 +79,14 @@ export class CapitalProjectRepositoryMock {
       this.cityCouncilDistrictRepoMock.districts;
     const communityDistrictIdMocks = this.communityDistrictRepoMock.districts;
     const agencyBudgetMocks = this.agencyBudgetRepositoryMock.agencyBudgets;
+    const boroughMocks = this.boroughRepositoryMock.boroughs;
     return [
       [
         {
           managingAgency: agencyMocks[0].initials,
           cityCouncilDistrictId: cityCouncilDistrictIdMocks[0].id,
           boroughId: communityDistrictIdMocks[0].boroughId,
+          boroughIds: [boroughMocks[0].id],
           communityDistrictId: communityDistrictIdMocks[0].id,
           agencyBudget: agencyBudgetMocks[0].code,
           commitmentsTotal: 100,
@@ -100,6 +107,7 @@ export class CapitalProjectRepositoryMock {
           managingAgency: agencyMocks[1].initials,
           cityCouncilDistrictId: cityCouncilDistrictIdMocks[0].id,
           boroughId: communityDistrictIdMocks[1].boroughId,
+          boroughIds: [boroughMocks[0].id],
           communityDistrictId: communityDistrictIdMocks[1].id,
           agencyBudget: agencyBudgetMocks[1].code,
           commitmentsTotal: 200,
@@ -130,6 +138,7 @@ export class CapitalProjectRepositoryMock {
           managingAgency: agencyMocks[1].initials,
           cityCouncilDistrictId: cityCouncilDistrictIdMocks[1].id,
           boroughId: communityDistrictIdMocks[1].boroughId,
+          boroughIds: [],
           communityDistrictId: communityDistrictIdMocks[1].id,
           agencyBudget: agencyBudgetMocks[1].code,
           commitmentsTotal: 300,
@@ -144,6 +153,7 @@ export class CapitalProjectRepositoryMock {
   async filterCapitalProjects({
     managingAgency,
     boroughId,
+    boroughIds,
     communityDistrictId,
     cityCouncilDistrictId,
     agencyBudget,
@@ -157,6 +167,7 @@ export class CapitalProjectRepositoryMock {
     cityCouncilDistrictId: string | null;
     communityDistrictId: string | null;
     boroughId: string | null;
+    boroughIds: Array<string> | null;
     agencyBudget: string | null;
     commitmentsTotalMin: number | null;
     commitmentsTotalMax: number | null;
@@ -179,6 +190,11 @@ export class CapitalProjectRepositoryMock {
           return acc;
 
         if (boroughId !== null && criteria.boroughId !== boroughId) return acc;
+        if (
+          boroughIds !== null &&
+          !boroughIds.some((id) => criteria.boroughIds.includes(id))
+        )
+          return acc;
 
         if (
           communityDistrictId !== null &&
@@ -238,6 +254,7 @@ export class CapitalProjectRepositoryMock {
   async findMany({
     managingAgency,
     boroughId,
+    boroughIds,
     communityDistrictId,
     cityCouncilDistrictId,
     agencyBudget,
@@ -253,6 +270,7 @@ export class CapitalProjectRepositoryMock {
     cityCouncilDistrictId: string | null;
     communityDistrictId: string | null;
     boroughId: string | null;
+    boroughIds: Array<string> | null;
     agencyBudget: string | null;
     commitmentsTotalMin: number | null;
     commitmentsTotalMax: number | null;
@@ -265,6 +283,7 @@ export class CapitalProjectRepositoryMock {
     const results = await this.filterCapitalProjects({
       managingAgency,
       boroughId,
+      boroughIds,
       communityDistrictId,
       cityCouncilDistrictId,
       agencyBudget,
@@ -288,6 +307,7 @@ export class CapitalProjectRepositoryMock {
   async findCount({
     managingAgency,
     boroughId,
+    boroughIds,
     communityDistrictId,
     cityCouncilDistrictId,
     agencyBudget,
@@ -301,6 +321,7 @@ export class CapitalProjectRepositoryMock {
     cityCouncilDistrictId: string | null;
     communityDistrictId: string | null;
     boroughId: string | null;
+    boroughIds: Array<string> | null;
     agencyBudget: string | null;
     commitmentsTotalMin: number | null;
     commitmentsTotalMax: number | null;
@@ -311,6 +332,7 @@ export class CapitalProjectRepositoryMock {
     const results = await this.filterCapitalProjects({
       managingAgency,
       boroughId,
+      boroughIds,
       communityDistrictId,
       cityCouncilDistrictId,
       agencyBudget,

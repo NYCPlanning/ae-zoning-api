@@ -49,6 +49,7 @@ describe("Community Board Budget Request e2e", () => {
     cityCouncilDistrictRepositoryMock,
     communityDistrictRepositoryMock,
     agencyBudgetRepositoryMock,
+    boroughRepositoryMock,
   );
   const spatialRepositoryMock = new SpatialRepositoryMock();
 

@@ -19,6 +19,7 @@ import { CityCouncilDistrictRepository } from "src/city-council-district/city-co
 import { CommunityDistrictRepository } from "src/community-district/community-district.repository";
 import { AgencyRepository } from "src/agency/agency.repository";
 import { AgencyBudgetRepository } from "src/agency-budget/agency-budget.repository";
+import { BoroughRepository } from "src/borough/borough.repository";
 import { Geom } from "src/types";
 import { SpatialRepository } from "src/spatial/spatial.repository";
 import { Geometry, Position } from "geojson";
@@ -27,6 +28,7 @@ import { SIX_DECIMAL_RESOLUTION_FT } from "src/constants";
 @Injectable()
 export class CapitalProjectService {
   constructor(
+    private readonly boroughRepository: BoroughRepository,
     private readonly capitalProjectRepository: CapitalProjectRepository,
     private readonly cityCouncilDistrictRepository: CityCouncilDistrictRepository,
     private readonly communityDistrictRepository: CommunityDistrictRepository,
@@ -39,6 +41,7 @@ export class CapitalProjectService {
     limit = 20,
     offset = 0,
     cityCouncilDistrictId = null,
+    boroughIds = null,
     communityDistrictCombinedId = null,
     managingAgency = null,
     agencyBudget = null,
@@ -52,6 +55,7 @@ export class CapitalProjectService {
   }: {
     limit?: number;
     offset?: number;
+    boroughIds?: Array<string> | null;
     cityCouncilDistrictId?: string | null;
     communityDistrictCombinedId?: string | null;
     managingAgency?: string | null;
@@ -74,7 +78,8 @@ export class CapitalProjectService {
     if (
       (cityCouncilDistrictId !== null ||
         communityDistrictCombinedId !== null ||
-        geometry !== null) &&
+        geometry !== null ||
+        boroughIds !== null) &&
       isMapped !== null
     ) {
       throw new InvalidRequestParameterException(
@@ -142,6 +147,12 @@ export class CapitalProjectService {
         ),
       );
 
+    const uniqueBoroughIds =
+      boroughIds === null ? null : [...new Set(boroughIds)];
+    if (uniqueBoroughIds !== null) {
+      checklist.push(this.boroughRepository.checkByIds(uniqueBoroughIds));
+    }
+
     if (managingAgency !== null) {
       checklist.push(this.agencyRepository.checkByInitials(managingAgency));
     }
@@ -161,6 +172,7 @@ export class CapitalProjectService {
     const capitalProjectsPromise = this.capitalProjectRepository.findMany({
       cityCouncilDistrictId,
       boroughId,
+      boroughIds: uniqueBoroughIds,
       communityDistrictId,
       managingAgency,
       agencyBudget,
@@ -176,6 +188,7 @@ export class CapitalProjectService {
     const totalProjectsPromise = this.capitalProjectRepository.findCount({
       cityCouncilDistrictId,
       boroughId,
+      boroughIds: uniqueBoroughIds,
       communityDistrictId,
       managingAgency,
       agencyBudget,

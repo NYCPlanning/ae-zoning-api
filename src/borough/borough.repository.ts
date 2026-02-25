@@ -9,6 +9,7 @@ import {
   FindCapitalProjectTilesByBoroughIdCommunityDistrictIdRepo,
   FindCommunityBoardBudgetRequestTilesByBoroughIdCommunityDistrictIdRepo,
   FindTilesRepo,
+  CheckByIdsRepo,
 } from "./borough.repository.schema";
 import {
   borough,
@@ -18,7 +19,7 @@ import {
   communityBoardBudgetRequest,
   communityDistrict,
 } from "src/schema";
-import { eq, sql, and, isNotNull, asc, or } from "drizzle-orm";
+import { eq, sql, and, isNotNull, asc, or, inArray } from "drizzle-orm";
 import {
   FindBoroughTilesPathParams,
   FindCapitalProjectTilesByBoroughIdCommunityDistrictIdPathParams,
@@ -64,6 +65,35 @@ export class BoroughRepository {
       return value;
     } catch {
       throw new DataRetrievalException("cannot find borough");
+    }
+  }
+
+  // the ids must be deduplicated before passing them to this function
+  // the count & length comparisons assume that every id is unique
+  async checkByIds(ids: Array<string>): Promise<CheckByIdsRepo> {
+    const orderedIds = [...ids].sort(); // sort a copy to avoid side effects on the original
+
+    const key = JSON.stringify({
+      orderedIds,
+      domain: "borough",
+      function: "checkByIds",
+    });
+
+    const cachedValue = await this.cacheManager.get<boolean>(key);
+    if (cachedValue !== undefined) return cachedValue;
+
+    try {
+      const boroughs = await this.db
+        .select({ count: sql<number>`count(${borough.id})::int` })
+        .from(borough)
+        .where(inArray(borough.id, ids));
+      const value = boroughs[0].count == ids.length;
+      this.cacheManager.set(key, value);
+      return value;
+    } catch {
+      throw new DataRetrievalException(
+        "cannot check for boroughs based on multiple ids",
+      );
     }
   }
 
