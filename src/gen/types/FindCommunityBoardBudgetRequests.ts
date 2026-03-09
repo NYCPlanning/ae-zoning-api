@@ -23,6 +23,11 @@ export type FindCommunityBoardBudgetRequestsQueryParamsGeometryEnumKey =
 
 export type FindCommunityBoardBudgetRequestsQueryParams = {
   /**
+   * @description A list of single character numeric strings containing the common number used to refer to the borough.
+   * @type array | undefined
+   */
+  boroughIds?: string[];
+  /**
    * @description The three character numeric string containing the concatenation of the borough and community district ids.
    * @pattern ^([0-9]{3})$
    * @type string | undefined

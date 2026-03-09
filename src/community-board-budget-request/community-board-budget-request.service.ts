@@ -9,6 +9,7 @@ import {
   FindCommunityBoardBudgetRequestTilesPathParams,
 } from "src/gen";
 import { AgencyRepository } from "src/agency/agency.repository";
+import { BoroughRepository } from "src/borough/borough.repository";
 import {
   InvalidRequestParameterException,
   ResourceNotFoundException,
@@ -28,12 +29,13 @@ import { SIX_DECIMAL_RESOLUTION_FT } from "src/constants";
 @Injectable()
 export class CommunityBoardBudgetRequestService {
   constructor(
+    private readonly boroughRepository: BoroughRepository,
     private readonly communityBoardBudgetRequestRepository: CommunityBoardBudgetRequestRepository,
     private readonly agencyRepository: AgencyRepository,
     private readonly communityDistrictRepository: CommunityDistrictRepository,
     private readonly cityCouncilDistrictRepository: CityCouncilDistrictRepository,
     private readonly spatialRepository: SpatialRepository,
-  ) {}
+  ) { }
 
   async findAgencies({
     cbbrPolicyAreaId,
@@ -197,6 +199,7 @@ export class CommunityBoardBudgetRequestService {
   }
 
   async findManyParameterValidation({
+    boroughIds = null,
     boroughId = null,
     communityDistrictId = null,
     cityCouncilDistrictId = null,
@@ -207,6 +210,7 @@ export class CommunityBoardBudgetRequestService {
     isMapped = null,
     geom = null,
   }: {
+    boroughIds?: Array<string> | null;
     boroughId?: string | null;
     communityDistrictId?: string | null;
     cityCouncilDistrictId?: string | null;
@@ -228,6 +232,10 @@ export class CommunityBoardBudgetRequestService {
 
     if (geom !== null) {
       checklist.push(this.spatialRepository.checkGeomIsValid(geom));
+    }
+
+    if (boroughIds !== null) {
+      checklist.push(this.boroughRepository.checkByIds(boroughIds));
     }
 
     if (cbbrPolicyAreaId !== null) {
@@ -283,6 +291,7 @@ export class CommunityBoardBudgetRequestService {
   }
 
   async findMany({
+    boroughIds = null,
     communityDistrictCombinedId = null,
     cityCouncilDistrictId = null,
     cbbrPolicyAreaId = null,
@@ -299,6 +308,7 @@ export class CommunityBoardBudgetRequestService {
     lons = null,
     buffer = null,
   }: {
+    boroughIds?: Array<string> | null;
     communityDistrictCombinedId?: string | null;
     cityCouncilDistrictId?: string | null;
     cbbrPolicyAreaId?: number | null;
@@ -329,7 +339,11 @@ export class CommunityBoardBudgetRequestService {
         ? await this.createGeometryFromParams({ geometry, lats, lons, buffer })
         : null;
 
+    const uniqueBoroughIds =
+      boroughIds === null ? null : [...new Set(boroughIds)];
+
     await this.findManyParameterValidation({
+      boroughIds: uniqueBoroughIds,
       boroughId,
       communityDistrictId,
       cityCouncilDistrictId,
@@ -348,6 +362,7 @@ export class CommunityBoardBudgetRequestService {
 
     // Data queries
     const totalCountParams = {
+      boroughIds: uniqueBoroughIds,
       boroughId,
       communityDistrictId,
       cityCouncilDistrictId,
@@ -385,6 +400,7 @@ export class CommunityBoardBudgetRequestService {
   }
 
   async findCsv({
+    boroughIds = null,
     communityDistrictCombinedId = null,
     cityCouncilDistrictId = null,
     cbbrPolicyAreaId = null,
@@ -399,6 +415,7 @@ export class CommunityBoardBudgetRequestService {
     lons = null,
     buffer = null,
   }: {
+    boroughIds?: Array<string> | null;
     communityDistrictCombinedId?: string | null;
     cityCouncilDistrictId?: string | null;
     cbbrPolicyAreaId?: number | null;
@@ -427,7 +444,11 @@ export class CommunityBoardBudgetRequestService {
         ? await this.createGeometryFromParams({ geometry, lats, lons, buffer })
         : null;
 
+    const uniqueBoroughIds =
+      boroughIds === null ? null : [...new Set(boroughIds)];
+
     await this.findManyParameterValidation({
+      boroughIds: uniqueBoroughIds,
       boroughId,
       communityDistrictId,
       cityCouncilDistrictId,
@@ -445,6 +466,7 @@ export class CommunityBoardBudgetRequestService {
     const bufferFloor = buffer === null ? SIX_DECIMAL_RESOLUTION_FT : buffer;
 
     return await this.communityBoardBudgetRequestRepository.findCsv({
+      boroughIds: uniqueBoroughIds,
       boroughId,
       communityDistrictId,
       cityCouncilDistrictId,

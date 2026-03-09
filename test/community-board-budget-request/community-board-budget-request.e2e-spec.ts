@@ -473,6 +473,33 @@ describe("Community Board Budget Request e2e", () => {
       );
     });
 
+    it("should 200 when finding cbbrs by boroughIds", async () => {
+      const borough = boroughRepositoryMock.boroughs[0];
+      const response = await request(app.getHttpServer())
+        .get(`/community-board-budget-requests?boroughIds=${borough.id}`)
+        .expect(200);
+
+      expect(() =>
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(
+          response.body,
+        ),
+      ).not.toThrow();
+
+      const parsedBody =
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(
+          response.body,
+        );
+      expect(parsedBody.limit).toBe(20);
+      expect(parsedBody.offset).toBe(0);
+      expect(parsedBody.communityBoardBudgetRequests.length).toBeGreaterThan(0);
+      expect(parsedBody.total).toBe(
+        parsedBody.communityBoardBudgetRequests.length,
+      );
+      expect(parsedBody.totalBudgetRequests).toBe(
+        parsedBody.communityBoardBudgetRequests.length,
+      );
+    });
+
     it("should 200 when finding cbbrs by communityDistrictId", async () => {
       const communityDistrict = communityDistrictRepositoryMock.districts[0];
       const response = await request(app.getHttpServer())
@@ -730,6 +757,32 @@ describe("Community Board Budget Request e2e", () => {
       );
       expect(parsedBody.totalBudgetRequests).toBe(
         parsedBody.communityBoardBudgetRequests.length,
+      );
+    });
+
+    it("should 400 when finding cbbrs by an invalid boroughId", async () => {
+      const boroughId = false;
+
+      const response = await request(app.getHttpServer())
+        .get(`/community-board-budget-requests?boroughIds=${boroughId}`)
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /Invalid request parameter: boroughIds: Invalid/,
+      );
+    });
+
+    it("should 400 when finding cbbrs by a missing boroughId", async () => {
+      const boroughId = "6";
+
+      const response = await request(app.getHttpServer())
+        .get(`/community-board-budget-requests?boroughIds=${boroughId}`)
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /one or more values for parameters do not exist/,
       );
     });
 
@@ -1190,6 +1243,13 @@ describe("Community Board Budget Request e2e", () => {
         .expect(200);
     });
 
+    it("should 200 when finding cbbrs by boroughIds", async () => {
+      const borough = boroughRepositoryMock.boroughs[0];
+      await request(app.getHttpServer())
+        .get(`/community-board-budget-requests/csv?boroughIds=${borough.id}`)
+        .expect(200);
+    });
+
     it("should 200 when finding cbbrs by communityDistrictId", async () => {
       const communityDistrict = communityDistrictRepositoryMock.districts[0];
       await request(app.getHttpServer())
@@ -1271,6 +1331,32 @@ describe("Community Board Budget Request e2e", () => {
       await request(app.getHttpServer())
         .get(`/community-board-budget-requests/csv?isContinuedSupport=true`)
         .expect(200);
+    });
+
+    it("should 400 when finding cbbrs by an invalid boroughId", async () => {
+      const boroughId = false;
+
+      const response = await request(app.getHttpServer())
+        .get(`/community-board-budget-requests/csv?boroughIds=${boroughId}`)
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /Invalid request parameter: boroughIds: Invalid/,
+      );
+    });
+
+    it("should 400 when finding cbbrs by a missing boroughId", async () => {
+      const boroughId = "6";
+
+      const response = await request(app.getHttpServer())
+        .get(`/community-board-budget-requests/csv?boroughIds=${boroughId}`)
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /one or more values for parameters do not exist/,
+      );
     });
 
     it("should 400 when finding cbbrs by an invalid communityDistrictId", async () => {

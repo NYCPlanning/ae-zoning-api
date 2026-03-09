@@ -306,6 +306,40 @@ describe("Community Board Budget Request service unit", () => {
       );
     });
 
+    it("should return a list of community board budget requests filtered by borough ids", async () => {
+      const { id } = boroughRepositoryMock.boroughs[0];
+
+      const cbbrs = await communityBoardBudgetRequestService.findMany({
+        boroughIds: [id],
+      });
+
+      expect(() =>
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(cbbrs),
+      ).not.toThrow();
+
+      const parsedBody =
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(cbbrs);
+      expect(parsedBody.limit).toBe(20);
+      expect(parsedBody.offset).toBe(0);
+      expect(parsedBody.communityBoardBudgetRequests.length).toBeGreaterThan(0);
+      expect(parsedBody.total).toBe(
+        parsedBody.communityBoardBudgetRequests.length,
+      );
+      expect(parsedBody.totalBudgetRequests).toBe(
+        parsedBody.communityBoardBudgetRequests.length,
+      );
+    });
+
+    it("should return an InvalidRequestParameterException when a provided borough id cannot be found", async () => {
+      const id = "6";
+
+      expect(
+        communityBoardBudgetRequestService.findMany({
+          boroughIds: [id],
+        }),
+      ).rejects.toThrow(InvalidRequestParameterException);
+    });
+
     it("should return a list of community board budget requests filtered by community district", async () => {
       const communityDistrict = communityDistrictRepositoryMock.districts[0];
       const cbbrs = await communityBoardBudgetRequestService.findMany({
@@ -754,6 +788,21 @@ describe("Community Board Budget Request service unit", () => {
       expect(csv.length).toBe(
         communityBoardBudgetRequestRepositoryMock.findCsvMocks.length,
       );
+      const firstItem = csv[0];
+      expect(() =>
+        communityBoardBudgetRequestCsvRepoSchema.strict().parse(firstItem),
+      ).not.toThrow();
+    });
+
+    it("should return a list of community board budget requests filtered by borough ids", async () => {
+      const { id } = boroughRepositoryMock.boroughs[0];
+
+      const csv = await communityBoardBudgetRequestService.findCsv({
+        boroughIds: [id],
+      });
+
+      expect(() => findCsvRepoSchema.parse(csv)).not.toThrow();
+      expect(csv.length).toBe(8);
       const firstItem = csv[0];
       expect(() =>
         communityBoardBudgetRequestCsvRepoSchema.strict().parse(firstItem),
