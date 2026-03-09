@@ -5,9 +5,15 @@ import { CommunityBoardBudgetRequestRepository } from "./community-board-budget-
 import { CommunityDistrictModule } from "src/community-district/community-district.module";
 import { CityCouncilDistrictModule } from "src/city-council-district/city-council-district.module";
 import { AgencyModule } from "src/agency/agency.module";
+import { SpatialModule } from "src/spatial/spatial.module";
 
 @Module({
-  imports: [AgencyModule, CommunityDistrictModule, CityCouncilDistrictModule],
+  imports: [
+    AgencyModule,
+    CommunityDistrictModule,
+    CityCouncilDistrictModule,
+    SpatialModule,
+  ],
   exports: [
     CommunityBoardBudgetRequestService,
     CommunityBoardBudgetRequestRepository,

@@ -14,6 +14,13 @@ export const findCommunityBoardBudgetRequestsQueryParamsCbbrTypeEnum = {
 export type FindCommunityBoardBudgetRequestsQueryParamsCbbrTypeEnumKey =
   (typeof findCommunityBoardBudgetRequestsQueryParamsCbbrTypeEnum)[keyof typeof findCommunityBoardBudgetRequestsQueryParamsCbbrTypeEnum];
 
+export const findCommunityBoardBudgetRequestsQueryParamsGeometryEnum = {
+  Point: "Point",
+} as const;
+
+export type FindCommunityBoardBudgetRequestsQueryParamsGeometryEnumKey =
+  (typeof findCommunityBoardBudgetRequestsQueryParamsGeometryEnum)[keyof typeof findCommunityBoardBudgetRequestsQueryParamsGeometryEnum];
+
 export type FindCommunityBoardBudgetRequestsQueryParams = {
   /**
    * @description The three character numeric string containing the concatenation of the borough and community district ids.
@@ -75,6 +82,27 @@ export type FindCommunityBoardBudgetRequestsQueryParams = {
    * @type integer | undefined
    */
   offset?: number;
+  /**
+   * @description The type of geometry used for a spatial filter. It must be provided when applying a spatial filter
+   * @type string | undefined
+   */
+  geometry?: FindCommunityBoardBudgetRequestsQueryParamsGeometryEnumKey;
+  /**
+   * @description The longitude portion of coordinates. It must be provided when applying a spatial filter and have the same length as the latitudes. (If using a tool like axios, serializing the array with brackets is also supported. ex; lons[]=-74.010776&lons[]=-74.010776)
+   * @type array | undefined
+   */
+  lons?: number[];
+  /**
+   * @description The latitude portion of coordinates. It must be provided when applying a spatial filter and have the same length as the longitudes. (If using a tool like axios, serializing the array with brackets is also supported. ex; lats[]=40.708649&lats[]=40.707800)
+   * @type array | undefined
+   */
+  lats?: number[];
+  /**
+   * @description A buffer around the spatial feature. Units are feet. It is optional when applying a spatial filter.
+   * @minLength 0
+   * @type number | undefined
+   */
+  buffer?: number;
 };
 
 /**

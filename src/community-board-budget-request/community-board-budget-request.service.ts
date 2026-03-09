@@ -20,6 +20,10 @@ import {
   CommunityBoardBudgetRequestRepo,
 } from "./community-board-budget-request.repository.schema";
 import { produce } from "immer";
+import { Geom } from "src/types";
+import { SpatialRepository } from "src/spatial/spatial.repository";
+import { Geometry, Position } from "geojson";
+import { SIX_DECIMAL_RESOLUTION_FT } from "src/constants";
 
 @Injectable()
 export class CommunityBoardBudgetRequestService {
@@ -28,6 +32,7 @@ export class CommunityBoardBudgetRequestService {
     private readonly agencyRepository: AgencyRepository,
     private readonly communityDistrictRepository: CommunityDistrictRepository,
     private readonly cityCouncilDistrictRepository: CityCouncilDistrictRepository,
+    private readonly spatialRepository: SpatialRepository,
   ) {}
 
   async findAgencies({
@@ -149,6 +154,48 @@ export class CommunityBoardBudgetRequestService {
     return communityBoardBudgetRequests[0];
   }
 
+  async createGeometryFromParams({
+    geometry = null,
+    lats = null,
+    lons = null,
+    buffer = null,
+  }: {
+    geometry?: "Point" | null;
+    lats?: Array<number> | null;
+    lons?: Array<number> | null;
+    buffer?: number | null;
+  }) {
+    let geom: Geom | null = null;
+    if (
+      (lons !== null || lats !== null || buffer !== null) &&
+      geometry === null
+    )
+      throw new InvalidRequestParameterException(
+        "must provide with geometry with lons, lats, and buffer parameters",
+      );
+    if (geometry !== null) {
+      if (lons == null || lats == null) {
+        throw new InvalidRequestParameterException(
+          "must provide latitude and longitude with geometry",
+        );
+      }
+      if (lons.length !== lats.length) {
+        throw new InvalidRequestParameterException(
+          "latitude and longitude must be same length",
+        );
+      }
+
+      const coordinates: Position = [lons[0], lats[0]];
+      const feature: Geometry = {
+        type: geometry,
+        coordinates,
+      };
+      geom = await this.spatialRepository.findGeomFromGeoJson(feature, 2263);
+    }
+
+    return geom;
+  }
+
   async findManyParameterValidation({
     boroughId = null,
     communityDistrictId = null,
@@ -158,6 +205,7 @@ export class CommunityBoardBudgetRequestService {
     agencyInitials = null,
     cbbrAgencyCategoryResponseIds = null,
     isMapped = null,
+    geom = null,
   }: {
     boroughId?: string | null;
     communityDistrictId?: string | null;
@@ -167,6 +215,7 @@ export class CommunityBoardBudgetRequestService {
     agencyInitials?: string | null;
     cbbrAgencyCategoryResponseIds?: Array<number> | null;
     isMapped?: boolean | null;
+    geom?: string | null;
   }) {
     // Parameter validations
     if (cityCouncilDistrictId !== null && isMapped !== null) {
@@ -175,7 +224,11 @@ export class CommunityBoardBudgetRequestService {
       );
     }
 
-    const checklist: Array<Promise<unknown | undefined>> = [];
+    const checklist: Array<Promise<boolean>> = [];
+
+    if (geom !== null) {
+      checklist.push(this.spatialRepository.checkGeomIsValid(geom));
+    }
 
     if (cbbrPolicyAreaId !== null) {
       checklist.push(
@@ -241,6 +294,10 @@ export class CommunityBoardBudgetRequestService {
     isContinuedSupport = null,
     limit = 20,
     offset = 0,
+    geometry = null,
+    lats = null,
+    lons = null,
+    buffer = null,
   }: {
     communityDistrictCombinedId?: string | null;
     cityCouncilDistrictId?: string | null;
@@ -253,6 +310,10 @@ export class CommunityBoardBudgetRequestService {
     isContinuedSupport?: boolean | null;
     limit?: number;
     offset?: number;
+    geometry?: "Point" | null;
+    lats?: Array<number> | null;
+    lons?: Array<number> | null;
+    buffer?: number | null;
   }) {
     const boroughId =
       communityDistrictCombinedId !== null
@@ -261,6 +322,11 @@ export class CommunityBoardBudgetRequestService {
     const communityDistrictId =
       communityDistrictCombinedId !== null
         ? communityDistrictCombinedId.slice(1, 3)
+        : null;
+
+    const geom: string | null =
+      lons !== null || lats !== null || buffer !== null || geometry !== null
+        ? await this.createGeometryFromParams({ geometry, lats, lons, buffer })
         : null;
 
     await this.findManyParameterValidation({
@@ -272,10 +338,13 @@ export class CommunityBoardBudgetRequestService {
       agencyInitials,
       cbbrAgencyCategoryResponseIds,
       isMapped,
+      geom,
     });
 
     const cbbrTypeExpanded: "Capital" | "Expense" | null =
       cbbrType === "C" ? "Capital" : cbbrType === "E" ? "Expense" : null;
+
+    const bufferFloor = buffer === null ? SIX_DECIMAL_RESOLUTION_FT : buffer;
 
     // Data queries
     const totalCountParams = {
@@ -289,6 +358,8 @@ export class CommunityBoardBudgetRequestService {
       cbbrAgencyCategoryResponseIds,
       isMapped,
       isContinuedSupport,
+      geom,
+      buffer: bufferFloor,
     };
 
     const cbbrsPromise = this.communityBoardBudgetRequestRepository.findMany({
@@ -309,7 +380,7 @@ export class CommunityBoardBudgetRequestService {
       offset,
       total: communityBoardBudgetRequests.length,
       totalBudgetRequests,
-      order: "id",
+      order: `${geometry !== null ? "distance, " : ""}id`,
     };
   }
 
@@ -323,6 +394,10 @@ export class CommunityBoardBudgetRequestService {
     cbbrAgencyCategoryResponseIds = null,
     isMapped = null,
     isContinuedSupport = null,
+    geometry = null,
+    lats = null,
+    lons = null,
+    buffer = null,
   }: {
     communityDistrictCombinedId?: string | null;
     cityCouncilDistrictId?: string | null;
@@ -333,6 +408,10 @@ export class CommunityBoardBudgetRequestService {
     cbbrAgencyCategoryResponseIds?: Array<number> | null;
     isMapped?: boolean | null;
     isContinuedSupport?: boolean | null;
+    geometry?: "Point" | null;
+    lats?: Array<number> | null;
+    lons?: Array<number> | null;
+    buffer?: number | null;
   }) {
     const boroughId =
       communityDistrictCombinedId !== null
@@ -341,6 +420,11 @@ export class CommunityBoardBudgetRequestService {
     const communityDistrictId =
       communityDistrictCombinedId !== null
         ? communityDistrictCombinedId.slice(1, 3)
+        : null;
+
+    const geom: string | null =
+      lons !== null || lats !== null || buffer !== null || geometry !== null
+        ? await this.createGeometryFromParams({ geometry, lats, lons, buffer })
         : null;
 
     await this.findManyParameterValidation({
@@ -352,10 +436,13 @@ export class CommunityBoardBudgetRequestService {
       agencyInitials,
       cbbrAgencyCategoryResponseIds,
       isMapped,
+      geom,
     });
 
     const cbbrTypeExpanded: "Capital" | "Expense" | null =
       cbbrType === "C" ? "Capital" : cbbrType === "E" ? "Expense" : null;
+
+    const bufferFloor = buffer === null ? SIX_DECIMAL_RESOLUTION_FT : buffer;
 
     return await this.communityBoardBudgetRequestRepository.findCsv({
       boroughId,
@@ -368,6 +455,8 @@ export class CommunityBoardBudgetRequestService {
       cbbrAgencyCategoryResponseIds,
       isMapped,
       isContinuedSupport,
+      geom,
+      buffer: bufferFloor,
     });
   }
 

@@ -248,6 +248,7 @@ export type {
 } from "./types/FindCommunityBoardBudgetRequestPolicyAreas";
 export type {
   FindCommunityBoardBudgetRequestsQueryParamsCbbrTypeEnumKey,
+  FindCommunityBoardBudgetRequestsQueryParamsGeometryEnumKey,
   FindCommunityBoardBudgetRequestsQueryParams,
   FindCommunityBoardBudgetRequests200,
   FindCommunityBoardBudgetRequests400,
@@ -257,6 +258,7 @@ export type {
 } from "./types/FindCommunityBoardBudgetRequests";
 export type {
   FindCommunityBoardBudgetRequestsCsvQueryParamsCbbrTypeEnumKey,
+  FindCommunityBoardBudgetRequestsCsvQueryParamsGeometryEnumKey,
   FindCommunityBoardBudgetRequestsCsvQueryParams,
   FindCommunityBoardBudgetRequestsCsv200,
   FindCommunityBoardBudgetRequestsCsv400,
@@ -441,7 +443,9 @@ export { communityBoardBudgetRequestTypeEnum } from "./types/CommunityBoardBudge
 export { communityDistrictGeoJsonTypeEnum } from "./types/CommunityDistrictGeoJson";
 export { findCapitalProjectsQueryParamsGeometryEnum } from "./types/FindCapitalProjects";
 export { findCommunityBoardBudgetRequestsQueryParamsCbbrTypeEnum } from "./types/FindCommunityBoardBudgetRequests";
+export { findCommunityBoardBudgetRequestsQueryParamsGeometryEnum } from "./types/FindCommunityBoardBudgetRequests";
 export { findCommunityBoardBudgetRequestsCsvQueryParamsCbbrTypeEnum } from "./types/FindCommunityBoardBudgetRequestsCsv";
+export { findCommunityBoardBudgetRequestsCsvQueryParamsGeometryEnum } from "./types/FindCommunityBoardBudgetRequestsCsv";
 export { findTaxLotsQueryParamsGeometryEnum } from "./types/FindTaxLots";
 export { multiPointTypeEnum } from "./types/MultiPoint";
 export { multiPolygonTypeEnum } from "./types/MultiPolygon";

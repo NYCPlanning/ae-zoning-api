@@ -32,6 +32,7 @@ import { AgencyRepositoryMock } from "test/agency/agency.repository.mock";
 import { CityCouncilDistrictRepositoryMock } from "test/city-council-district/city-council-district.repository.mock";
 import { CommunityDistrictRepositoryMock } from "test/community-district/community-district.repository.mock";
 import { generateMockMvt } from "test/utils";
+import { GeomMock } from "test/spatial/spatial.repository.mock";
 
 export class CommunityBoardBudgetRequestRepositoryMock {
   agencyRepoMock: AgencyRepositoryMock;
@@ -243,6 +244,8 @@ export class CommunityBoardBudgetRequestRepositoryMock {
         cbbrAgencyCategoryResponseId: number;
         isMapped: boolean;
         isContinuedSupport: boolean;
+        liFtMPoly: GeomMock | null;
+        liFtMPnt: GeomMock | null;
       },
       ManyCommunityBoardBudgetRequestRepo,
     ]
@@ -267,6 +270,18 @@ export class CommunityBoardBudgetRequestRepositoryMock {
         cbbrAgencyCategoryResponseId: categoryResponses[i].id,
         isMapped: i % 3 === 0,
         isContinuedSupport: i % 4 === 0,
+        liFtMPnt:
+          i > 1
+            ? {
+                shape: {
+                  type: "MultiPoint",
+                  coordinates: [[-74.01052, 40.70821]],
+                },
+                pattern: "feature",
+                srid: 2263,
+              }
+            : null,
+        liFtMPoly: null,
       },
       mockBudgetRequestResponse,
     ]);
@@ -283,6 +298,8 @@ export class CommunityBoardBudgetRequestRepositoryMock {
     cbbrAgencyCategoryResponseIds,
     isMapped,
     isContinuedSupport,
+    geom,
+    buffer,
   }: {
     boroughId: string | null;
     communityDistrictId: string | null;
@@ -294,6 +311,8 @@ export class CommunityBoardBudgetRequestRepositoryMock {
     cbbrAgencyCategoryResponseIds: Array<number> | null;
     isMapped: boolean | null;
     isContinuedSupport: boolean | null;
+    geom: string | null;
+    buffer: number;
   }): Promise<FindManyRepo> {
     return this.findManyCriteria
       .filter(([criteria, _]) => {
@@ -349,6 +368,28 @@ export class CommunityBoardBudgetRequestRepositoryMock {
         )
           return false;
 
+        if (geom !== null) {
+          const { shape } = JSON.parse(geom) as GeomMock;
+          if (shape.type !== "Point") throw new Error("invalid geometry type");
+          const geomLon = shape.coordinates[0];
+          let singleLon: number | null = null;
+          if (criteria.liFtMPnt?.shape.type === "MultiPoint") {
+            singleLon = criteria.liFtMPnt.shape.coordinates[0][0];
+          }
+          if (criteria.liFtMPoly?.shape.type === "MultiPolygon") {
+            singleLon = criteria.liFtMPoly.shape.coordinates[0][0][0][0];
+          }
+          // unmapped projects never match
+          if (singleLon === null) return false;
+          // The mock is helpful for creating a test environment for the services and controllers
+          // It helps test that the correct parameters are sent to the repository
+          // However, it does not test the repository and doesn't need to reproduce the full logic.
+          // Consequently, the mock distance check only does a naive check of a single value.
+          if (Math.abs(geomLon - singleLon) > buffer) {
+            return false;
+          }
+        }
+
         return true;
       })
       .map(([_, budgetRequest]) => budgetRequest);
@@ -367,6 +408,8 @@ export class CommunityBoardBudgetRequestRepositoryMock {
     isContinuedSupport: boolean | null;
     limit: number;
     offset: number;
+    geom: string | null;
+    buffer: number;
   }): Promise<FindManyRepo> {
     return await this.filterCommunityBoardBudgetRequests(params);
   }
@@ -384,6 +427,8 @@ export class CommunityBoardBudgetRequestRepositoryMock {
     isContinuedSupport: boolean | null;
     limit: number;
     offset: number;
+    geom: string | null;
+    buffer: number;
   }): Promise<FindCountRepo> {
     const cbbrs = await this.filterCommunityBoardBudgetRequests(params);
 

@@ -578,6 +578,114 @@ describe("Community Board Budget Request service unit", () => {
           nonContinuedSupport.totalBudgetRequests,
       ).toBe(all.totalBudgetRequests);
     });
+
+    it("should filter by geometry", async () => {
+      const geometry = "Point";
+      const lons = [-73.0];
+      const lats = [40.708219];
+
+      const communityBoardBudgetRequestsResponse =
+        await communityBoardBudgetRequestService.findMany({
+          geometry,
+          lons,
+          lats,
+        });
+      expect(() =>
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(
+          communityBoardBudgetRequestsResponse,
+        ),
+      ).not.toThrow();
+
+      const parsedBody =
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(
+          communityBoardBudgetRequestsResponse,
+        );
+
+      expect(parsedBody.limit).toBe(20);
+      expect(parsedBody.offset).toBe(0);
+      expect(parsedBody.communityBoardBudgetRequests.length).toBe(0);
+      expect(parsedBody.total).toBe(
+        parsedBody.communityBoardBudgetRequests.length,
+      );
+    });
+
+    it("should filter by geometry and buffer", async () => {
+      const geometry = "Point";
+      const lons = [-74.010521];
+      const lats = [40.708219];
+      const buffer = 0.26;
+
+      const communityBoardBudgetRequestsResponse =
+        await communityBoardBudgetRequestService.findMany({
+          geometry,
+          lons,
+          lats,
+          buffer,
+        });
+      expect(() =>
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(
+          communityBoardBudgetRequestsResponse,
+        ),
+      ).not.toThrow();
+
+      const parsedBody =
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(
+          communityBoardBudgetRequestsResponse,
+        );
+
+      expect(parsedBody.limit).toBe(20);
+      expect(parsedBody.offset).toBe(0);
+      expect(parsedBody.communityBoardBudgetRequests.length).toBe(6);
+      expect(parsedBody.total).toBe(
+        parsedBody.communityBoardBudgetRequests.length,
+      );
+    });
+
+    it("should return an InvalidRequestParameterException a geometry is provided without coordinates", async () => {
+      const geometry = "Point";
+
+      expect(
+        communityBoardBudgetRequestService.findMany({
+          geometry,
+        }),
+      ).rejects.toThrow(InvalidRequestParameterException);
+    });
+
+    it("should return an InvalidRequestParameterException when coordinates are provided without a geometry", async () => {
+      const lons = [-74.01];
+      const lats = [40.7];
+
+      expect(
+        communityBoardBudgetRequestService.findMany({
+          lons,
+          lats,
+        }),
+      ).rejects.toThrow(InvalidRequestParameterException);
+    });
+
+    it("should return an InvalidRequestParameterException when a buffer is provided without a geometry", async () => {
+      const buffer = 1e6;
+
+      expect(
+        communityBoardBudgetRequestService.findMany({
+          buffer,
+        }),
+      ).rejects.toThrow(InvalidRequestParameterException);
+    });
+
+    it("should return an InvalidRequestParameterException when the lon and lat lengths differ", async () => {
+      const geometry = "Point";
+      const lons = [-74.010521, -74.010521];
+      const lats = [40.708219];
+
+      expect(
+        communityBoardBudgetRequestService.findMany({
+          geometry,
+          lons,
+          lats,
+        }),
+      ).rejects.toThrow(InvalidRequestParameterException);
+    });
   });
 
   describe("findAgencyCategoryResponses", () => {
