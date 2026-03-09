@@ -4,6 +4,7 @@ import { CommunityBoardBudgetRequestController } from "./community-board-budget-
 import { CommunityBoardBudgetRequestRepository } from "./community-board-budget-request.repository";
 import { CommunityDistrictModule } from "src/community-district/community-district.module";
 import { CityCouncilDistrictModule } from "src/city-council-district/city-council-district.module";
+import { BoroughModule } from "src/borough/borough.module";
 import { AgencyModule } from "src/agency/agency.module";
 import { SpatialModule } from "src/spatial/spatial.module";
 
@@ -13,6 +14,7 @@ import { SpatialModule } from "src/spatial/spatial.module";
     CommunityDistrictModule,
     CityCouncilDistrictModule,
     SpatialModule,
+    BoroughModule,
   ],
   exports: [
     CommunityBoardBudgetRequestService,
@@ -24,4 +26,4 @@ import { SpatialModule } from "src/spatial/spatial.module";
   ],
   controllers: [CommunityBoardBudgetRequestController],
 })
-export class CommunityBoardBudgetRequestModule {}
+export class CommunityBoardBudgetRequestModule { }

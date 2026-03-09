@@ -284,6 +284,7 @@ export class CommunityBoardBudgetRequestRepository {
   }
 
   async findMany({
+    boroughIds,
     boroughId,
     communityDistrictId,
     cityCouncilDistrictId,
@@ -299,6 +300,7 @@ export class CommunityBoardBudgetRequestRepository {
     geom,
     buffer,
   }: {
+    boroughIds: Array<string> | null;
     boroughId: string | null;
     communityDistrictId: string | null;
     cityCouncilDistrictId: string | null;
@@ -344,6 +346,7 @@ export class CommunityBoardBudgetRequestRepository {
         )
         .where(
           and(
+            boroughIds !== null ? inArray(borough.id, boroughIds) : undefined,
             cityCouncilDistrictId !== null
               ? eq(cityCouncilDistrict.id, cityCouncilDistrictId)
               : undefined,
@@ -414,6 +417,7 @@ export class CommunityBoardBudgetRequestRepository {
   }
 
   async findCount({
+    boroughIds,
     boroughId,
     communityDistrictId,
     cityCouncilDistrictId,
@@ -427,6 +431,7 @@ export class CommunityBoardBudgetRequestRepository {
     geom,
     buffer,
   }: {
+    boroughIds: Array<string> | null;
     boroughId: string | null;
     communityDistrictId: string | null;
     cityCouncilDistrictId: string | null;
@@ -479,6 +484,7 @@ export class CommunityBoardBudgetRequestRepository {
         )
         .where(
           and(
+            boroughIds !== null ? inArray(borough.id, boroughIds) : undefined,
             cityCouncilDistrictId !== null
               ? eq(cityCouncilDistrict.id, cityCouncilDistrictId)
               : undefined,
@@ -559,6 +565,7 @@ export class CommunityBoardBudgetRequestRepository {
   }
 
   async findCsv({
+    boroughIds,
     boroughId,
     communityDistrictId,
     cityCouncilDistrictId,
@@ -572,6 +579,7 @@ export class CommunityBoardBudgetRequestRepository {
     geom,
     buffer,
   }: {
+    boroughIds: Array<string> | null;
     boroughId: string | null;
     communityDistrictId: string | null;
     cityCouncilDistrictId: string | null;
@@ -638,6 +646,7 @@ export class CommunityBoardBudgetRequestRepository {
         )
         .where(
           and(
+            boroughIds !== null ? inArray(borough.id, boroughIds) : undefined,
             cityCouncilDistrictId !== null
               ? eq(cityCouncilDistrict.id, cityCouncilDistrictId)
               : undefined,

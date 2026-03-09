@@ -7,7 +7,7 @@ schema:
     type: string
     pattern: ^([0-9]{1})$
   minItems: 1
-  maxItems: 4
+  maxItems: 5
   example: '1,2'
 description: >-
   A list of single character numeric strings containing the common number used to refer

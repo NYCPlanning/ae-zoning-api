@@ -52,6 +52,7 @@ export class CommunityBoardBudgetRequestController {
       new ZodTransformPipe(findCommunityBoardBudgetRequestsQueryParamsSchema),
     )
     {
+      boroughIds,
       communityDistrictId,
       cityCouncilDistrictId,
       cbbrAgencyCategoryResponseIds,
@@ -70,6 +71,7 @@ export class CommunityBoardBudgetRequestController {
     }: FindCommunityBoardBudgetRequestsQueryParams,
   ) {
     return await this.communityBoardBudgetRequestService.findMany({
+      boroughIds,
       communityDistrictCombinedId: communityDistrictId,
       cityCouncilDistrictId,
       cbbrAgencyCategoryResponseIds,
@@ -95,6 +97,7 @@ export class CommunityBoardBudgetRequestController {
       new ZodTransformPipe(findCommunityBoardBudgetRequestsQueryParamsSchema),
     )
     {
+      boroughIds,
       communityDistrictId,
       cityCouncilDistrictId,
       cbbrAgencyCategoryResponseIds,
@@ -111,6 +114,7 @@ export class CommunityBoardBudgetRequestController {
     }: FindCommunityBoardBudgetRequestsQueryParams,
   ) {
     const data = await this.communityBoardBudgetRequestService.findCsv({
+      boroughIds,
       communityDistrictCombinedId: communityDistrictId,
       cityCouncilDistrictId,
       cbbrAgencyCategoryResponseIds,

@@ -13,7 +13,7 @@ export const findCapitalProjectsQueryParamsSchema = z
       z
         .array(z.string().regex(/^([0-9]{1})$/))
         .min(1)
-        .max(4)
+        .max(5)
         .describe(
           "A list of single character numeric strings containing the common number used to refer to the borough.",
         ),
