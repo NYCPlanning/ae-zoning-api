@@ -362,7 +362,10 @@ export class CommunityBoardBudgetRequestService {
 
     // Data queries
     const totalCountParams = {
-      boroughIds: uniqueBoroughIds,
+      boroughIds:
+        uniqueBoroughIds !== null && uniqueBoroughIds.length < 5
+          ? uniqueBoroughIds
+          : null,
       boroughId,
       communityDistrictId,
       cityCouncilDistrictId,
@@ -466,7 +469,10 @@ export class CommunityBoardBudgetRequestService {
     const bufferFloor = buffer === null ? SIX_DECIMAL_RESOLUTION_FT : buffer;
 
     return await this.communityBoardBudgetRequestRepository.findCsv({
-      boroughIds: uniqueBoroughIds,
+      boroughIds:
+        uniqueBoroughIds !== null && uniqueBoroughIds.length < 5
+          ? uniqueBoroughIds
+          : null,
       boroughId,
       communityDistrictId,
       cityCouncilDistrictId,
