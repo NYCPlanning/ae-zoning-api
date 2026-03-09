@@ -172,7 +172,10 @@ export class CapitalProjectService {
     const capitalProjectsPromise = this.capitalProjectRepository.findMany({
       cityCouncilDistrictId,
       boroughId,
-      boroughIds: uniqueBoroughIds,
+      boroughIds:
+        uniqueBoroughIds !== null && uniqueBoroughIds.length < 5
+          ? uniqueBoroughIds
+          : null,
       communityDistrictId,
       managingAgency,
       agencyBudget,
@@ -188,7 +191,10 @@ export class CapitalProjectService {
     const totalProjectsPromise = this.capitalProjectRepository.findCount({
       cityCouncilDistrictId,
       boroughId,
-      boroughIds: uniqueBoroughIds,
+      boroughIds:
+        uniqueBoroughIds !== null && uniqueBoroughIds.length < 5
+          ? uniqueBoroughIds
+          : null,
       communityDistrictId,
       managingAgency,
       agencyBudget,
