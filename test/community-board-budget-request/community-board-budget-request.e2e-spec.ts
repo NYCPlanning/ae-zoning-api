@@ -955,6 +955,118 @@ describe("Community Board Budget Request e2e", () => {
       );
     });
 
+    it("should 200 and return only community board budget requests in a geometry when a valid point is provided", async () => {
+      const geometry = "Point";
+      const lons = -73.0;
+      const lats = 40.708219;
+      const response = await request(app.getHttpServer()).get(
+        `/community-board-budget-requests?geometry=${geometry}&lons=${lons}&lats=${lats}`,
+      );
+      expect(() =>
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(
+          response.body,
+        ),
+      ).not.toThrow();
+
+      const parsedBody =
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(
+          response.body,
+        );
+      expect(parsedBody.limit).toBe(20);
+      expect(parsedBody.offset).toBe(0);
+      expect(parsedBody.communityBoardBudgetRequests.length).toBe(0);
+      expect(parsedBody.total).toBe(
+        parsedBody.communityBoardBudgetRequests.length,
+      );
+    });
+
+    it("should 200 and return only community board budget requests in a geometry when a valid point and buffer are provided", async () => {
+      const geometry = "Point";
+      const lons = -74.010521;
+      const lats = 40.708219;
+      const buffer = 0.26;
+      const response = await request(app.getHttpServer()).get(
+        `/community-board-budget-requests?geometry=${geometry}&lons=${lons}&lats=${lats}&buffer=${buffer}`,
+      );
+      expect(() =>
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(
+          response.body,
+        ),
+      ).not.toThrow();
+
+      const parsedBody =
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(
+          response.body,
+        );
+      expect(parsedBody.limit).toBe(20);
+      expect(parsedBody.offset).toBe(0);
+      expect(parsedBody.communityBoardBudgetRequests.length).toBe(6);
+      expect(parsedBody.total).toBe(
+        parsedBody.communityBoardBudgetRequests.length,
+      );
+    });
+
+    it("should 400 when an invalid geometry type is provided", async () => {
+      const geometry = "Pretzel";
+      const lons = -74.010521;
+      const lats = 40.708219;
+      const response = await request(app.getHttpServer()).get(
+        `/community-board-budget-requests?geometry=${geometry}&lons=${lons}&lats=${lats}`,
+      );
+      expect(response.body.message).toMatch(/geometry: Invalid enum value/);
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 when a geometry is provided without coordinates", async () => {
+      const geometry = "Point";
+      const response = await request(app.getHttpServer()).get(
+        `/community-board-budget-requests?geometry=${geometry}`,
+      );
+      expect(response.body.message).toMatch(
+        /must provide latitude and longitude with geometry/,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 when coordinates are provided without a geometry", async () => {
+      const lons = -74.010521;
+      const lats = 40.708219;
+      const response = await request(app.getHttpServer()).get(
+        `/community-board-budget-requests?lons=${lons}&lats=${lats}`,
+      );
+      expect(response.body.message).toMatch(
+        /must provide with geometry with lons, lats, and buffer parameters/,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 when a buffer is provided without a geometry", async () => {
+      const buffer = 1e6;
+      const response = await request(app.getHttpServer()).get(
+        `/community-board-budget-requests?buffer=${buffer}`,
+      );
+      expect(response.body.message).toMatch(
+        /must provide with geometry with lons, lats, and buffer parameters/,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 when a point is provided with more than one coordinate", async () => {
+      const geometry = "Point";
+      const lons = "-74.010521,-74.010521";
+      const lats = "40.708219,40.708219";
+      const response = await request(app.getHttpServer()).get(
+        `/community-board-budget-requests?geometry=${geometry}&lons=${lons}&lats=${lats}`,
+      );
+      expect(response.body.message).toMatch(
+        /lons: Array must contain at most 1 element/,
+      );
+      expect(response.body.message).toMatch(
+        /lats: Array must contain at most 1 element/,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
     it("should 500 when the database errors", async () => {
       const dataRetrievalException = new DataRetrievalException(
         "cannot find data",

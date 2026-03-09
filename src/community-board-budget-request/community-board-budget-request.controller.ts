@@ -61,6 +61,10 @@ export class CommunityBoardBudgetRequestController {
       agencyInitials,
       isContinuedSupport,
       isMapped,
+      geometry,
+      lats,
+      lons,
+      buffer,
       limit,
       offset,
     }: FindCommunityBoardBudgetRequestsQueryParams,
@@ -75,6 +79,10 @@ export class CommunityBoardBudgetRequestController {
       agencyInitials,
       isContinuedSupport,
       isMapped,
+      geometry,
+      lats,
+      lons,
+      buffer,
       limit,
       offset,
     });
@@ -96,6 +104,10 @@ export class CommunityBoardBudgetRequestController {
       agencyInitials,
       isContinuedSupport,
       isMapped,
+      geometry,
+      lats,
+      lons,
+      buffer,
     }: FindCommunityBoardBudgetRequestsQueryParams,
   ) {
     const data = await this.communityBoardBudgetRequestService.findCsv({
@@ -108,6 +120,10 @@ export class CommunityBoardBudgetRequestController {
       agencyInitials,
       isContinuedSupport,
       isMapped,
+      geometry,
+      lats,
+      lons,
+      buffer,
     });
 
     const csvData = `Tracking Number,Community Board Number,Address,Site or Facility Name,Street Segment - On Street,Street Segment - Cross Street 1,Street Segment - Cross Street 2,Intersection - Street 1,Intersection - Street 2,Type,Is Continued Support,CB Request,CB Explanation,Agency Acronym,Priority,Agency Response,Agency Response Explanation\n${unparse(data, { header: false })}`;

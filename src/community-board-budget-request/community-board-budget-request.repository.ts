@@ -42,6 +42,7 @@ import {
   TILE_CACHE,
   TileCacheService,
 } from "src/global/providers/tile-cache.provider";
+import { Geom } from "src/types";
 
 export class CommunityBoardBudgetRequestRepository {
   constructor(
@@ -295,6 +296,8 @@ export class CommunityBoardBudgetRequestRepository {
     isContinuedSupport,
     limit,
     offset,
+    geom,
+    buffer,
   }: {
     boroughId: string | null;
     communityDistrictId: string | null;
@@ -308,6 +311,8 @@ export class CommunityBoardBudgetRequestRepository {
     isContinuedSupport: boolean | null;
     limit: number;
     offset: number;
+    geom: Geom | null;
+    buffer: number;
   }): Promise<FindManyRepo> {
     try {
       return await this.db
@@ -384,11 +389,23 @@ export class CommunityBoardBudgetRequestRepository {
                   isContinuedSupport,
                 )
               : undefined,
+            geom !== null
+              ? or(
+                  sql`ST_DWithin(${geom}, ${communityBoardBudgetRequest.liFtMPnt}, ${buffer})`,
+                  sql`ST_DWithin(${geom}, ${communityBoardBudgetRequest.liFtMPoly}, ${buffer})`,
+                )
+              : undefined,
           ),
         )
         .limit(limit)
         .offset(offset)
-        .orderBy(communityBoardBudgetRequest.id);
+        .orderBy(
+          sql`CASE
+                WHEN ${geom !== null && isNotNull(communityBoardBudgetRequest.liFtMPnt)} THEN ${geom} <-> ${communityBoardBudgetRequest.liFtMPnt}
+                WHEN ${geom !== null && isNotNull(communityBoardBudgetRequest.liFtMPoly)} THEN ${geom} <-> ${communityBoardBudgetRequest.liFtMPoly}
+              END`,
+          communityBoardBudgetRequest.id,
+        );
     } catch {
       throw new DataRetrievalException(
         "Cannot find Community Board Budget Requests",
@@ -407,6 +424,8 @@ export class CommunityBoardBudgetRequestRepository {
     cbbrAgencyCategoryResponseIds,
     isMapped,
     isContinuedSupport,
+    geom,
+    buffer,
   }: {
     boroughId: string | null;
     communityDistrictId: string | null;
@@ -418,6 +437,8 @@ export class CommunityBoardBudgetRequestRepository {
     cbbrAgencyCategoryResponseIds: Array<number> | null;
     isMapped: boolean | null;
     isContinuedSupport: boolean | null;
+    geom: Geom | null;
+    buffer: number;
   }): Promise<FindCountRepo> {
     const key = JSON.stringify({
       boroughId,
@@ -430,7 +451,7 @@ export class CommunityBoardBudgetRequestRepository {
       cbbrAgencyCategoryResponseIds,
       isMapped,
       isContinuedSupport,
-      domain: "capitalProject",
+      domain: "communityBoardBudgetRequest",
       function: "findCount",
     });
     try {
@@ -503,6 +524,12 @@ export class CommunityBoardBudgetRequestRepository {
                   isContinuedSupport,
                 )
               : undefined,
+            geom !== null
+              ? or(
+                  sql`ST_DWithin(${geom}, ${communityBoardBudgetRequest.liFtMPnt}, ${buffer})`,
+                  sql`ST_DWithin(${geom}, ${communityBoardBudgetRequest.liFtMPoly}, ${buffer})`,
+                )
+              : undefined,
           ),
         );
       const { total } = results[0];
@@ -542,6 +569,8 @@ export class CommunityBoardBudgetRequestRepository {
     cbbrAgencyCategoryResponseIds,
     isMapped,
     isContinuedSupport,
+    geom,
+    buffer,
   }: {
     boroughId: string | null;
     communityDistrictId: string | null;
@@ -553,6 +582,8 @@ export class CommunityBoardBudgetRequestRepository {
     cbbrAgencyCategoryResponseIds: Array<number> | null;
     isMapped: boolean | null;
     isContinuedSupport: boolean | null;
+    geom: Geom | null;
+    buffer: number;
   }): Promise<FindCsvRepo> {
     try {
       return await this.db
@@ -652,9 +683,21 @@ export class CommunityBoardBudgetRequestRepository {
                   isContinuedSupport,
                 )
               : undefined,
+            geom !== null
+              ? or(
+                  sql`ST_DWithin(${geom}, ${communityBoardBudgetRequest.liFtMPnt}, ${buffer})`,
+                  sql`ST_DWithin(${geom}, ${communityBoardBudgetRequest.liFtMPoly}, ${buffer})`,
+                )
+              : undefined,
           ),
         )
-        .orderBy(communityBoardBudgetRequest.id);
+        .orderBy(
+          sql`CASE
+                WHEN ${geom !== null && isNotNull(communityBoardBudgetRequest.liFtMPnt)} THEN ${geom} <-> ${communityBoardBudgetRequest.liFtMPnt}
+                WHEN ${geom !== null && isNotNull(communityBoardBudgetRequest.liFtMPoly)} THEN ${geom} <-> ${communityBoardBudgetRequest.liFtMPoly}
+              END`,
+          communityBoardBudgetRequest.id,
+        );
     } catch {
       throw new DataRetrievalException(
         "Cannot find Community Board Budget Requests",
