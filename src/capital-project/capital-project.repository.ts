@@ -86,6 +86,7 @@ export class CapitalProjectRepository {
   async findMany({
     cityCouncilDistrictId,
     communityDistrictId,
+    communityDistrictCombinedIds,
     boroughId,
     boroughIds,
     managingAgency,
@@ -100,6 +101,7 @@ export class CapitalProjectRepository {
   }: {
     cityCouncilDistrictId: string | null;
     communityDistrictId: string | null;
+    communityDistrictCombinedIds: Array<string> | null;
     boroughId: string | null;
     boroughIds: Array<string> | null;
     managingAgency: string | null;
@@ -150,7 +152,10 @@ export class CapitalProjectRepository {
         .leftJoin(
           communityDistrict,
           and(
-            sql`${communityDistrictId !== null && boroughId !== null} IS TRUE`,
+            or(
+              sql`${communityDistrictId !== null && boroughId !== null} IS TRUE`,
+              sql`${communityDistrictCombinedIds !== null} IS TRUE`,
+            ),
             or(
               sql`ST_Intersects(${communityDistrict.liFt}, ${capitalProject.liFtMPoly})`,
               sql`ST_Intersects(${communityDistrict.liFt}, ${capitalProject.liFtMPnt})`,
@@ -182,6 +187,12 @@ export class CapitalProjectRepository {
         .where(
           and(
             boroughIds !== null ? inArray(borough.id, boroughIds) : undefined,
+            communityDistrictCombinedIds !== null
+              ? inArray(
+                  sql<string>`${communityDistrict.boroughId}||${communityDistrict.id}`,
+                  communityDistrictCombinedIds,
+                )
+              : undefined,
             cityCouncilDistrictId !== null
               ? eq(cityCouncilDistrict.id, cityCouncilDistrictId)
               : undefined,
@@ -271,6 +282,7 @@ export class CapitalProjectRepository {
   async findCount(params: {
     cityCouncilDistrictId: string | null;
     communityDistrictId: string | null;
+    communityDistrictCombinedIds: Array<string> | null;
     boroughId: string | null;
     boroughIds: Array<string> | null;
     managingAgency: string | null;
@@ -295,6 +307,7 @@ export class CapitalProjectRepository {
     const {
       cityCouncilDistrictId,
       communityDistrictId,
+      communityDistrictCombinedIds,
       boroughId,
       boroughIds,
       managingAgency,
@@ -340,7 +353,10 @@ export class CapitalProjectRepository {
         .leftJoin(
           communityDistrict,
           and(
-            sql`${communityDistrictId !== null && boroughId !== null} IS TRUE`,
+            or(
+              sql`${communityDistrictId !== null && boroughId !== null} IS TRUE`,
+              sql`${communityDistrictCombinedIds !== null} IS TRUE`,
+            ),
             or(
               sql`ST_Intersects(${communityDistrict.liFt}, ${capitalProject.liFtMPoly})`,
               sql`ST_Intersects(${communityDistrict.liFt}, ${capitalProject.liFtMPnt})`,
@@ -372,6 +388,12 @@ export class CapitalProjectRepository {
         .where(
           and(
             boroughIds !== null ? inArray(borough.id, boroughIds) : undefined,
+            communityDistrictCombinedIds !== null
+              ? inArray(
+                  sql<string>`${communityDistrict.boroughId}||${communityDistrict.id}`,
+                  communityDistrictCombinedIds,
+                )
+              : undefined,
             cityCouncilDistrictId !== null
               ? eq(cityCouncilDistrict.id, cityCouncilDistrictId)
               : undefined,

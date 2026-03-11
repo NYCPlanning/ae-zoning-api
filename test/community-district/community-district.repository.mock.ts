@@ -1,5 +1,8 @@
 import { generateMock } from "@anatine/zod-mock";
-import { CheckByBoroughIdCommunityDistrictIdRepo } from "src/community-district/community-district.repository.schema";
+import {
+  CheckByBoroughIdCommunityDistrictIdRepo,
+  CheckByBoroughIdCommunityDistrictIdsRepo,
+} from "src/community-district/community-district.repository.schema";
 import { communityDistrictEntitySchema } from "src/schema";
 import { generateMockMvt } from "test/utils";
 
@@ -18,6 +21,21 @@ export class CommunityDistrictRepositoryMock {
     return this.districts.some(
       (row) => row.boroughId === boroughId && row.id === id,
     );
+  }
+
+  async checkByBoroughIdCommunityDistrictIds(
+    combinedIds: string[],
+  ): Promise<CheckByBoroughIdCommunityDistrictIdsRepo> {
+    for (const cid of combinedIds) {
+      if (
+        !this.districts.some(
+          (row) => row.boroughId === cid[0] && row.id === `${cid[1]}${cid[2]}`,
+        )
+      ) {
+        return false;
+      }
+    }
+    return true;
   }
 
   findTilesMock = generateMockMvt();

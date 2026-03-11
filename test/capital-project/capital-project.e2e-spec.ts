@@ -261,6 +261,34 @@ describe("Capital Projects", () => {
       expect(response.body.error).toBe(HttpName.BAD_REQUEST);
     });
 
+    it("should 200 and return capital projects from a set of specified community districts", async () => {
+      const mockCDs =
+        capitalProjectRepositoryMock.communityDistrictRepoMock.districts;
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects?communityDistrictIds=${mockCDs[0].boroughId}${mockCDs[0].id},${mockCDs[1].boroughId}${mockCDs[1].id}`,
+      );
+
+      expect(() =>
+        findCapitalProjectsQueryResponseSchema.parse(response.body),
+      ).not.toThrow();
+      const parsedBody = findCapitalProjectsQueryResponseSchema.parse(
+        response.body,
+      );
+      expect(parsedBody.limit).toBe(20);
+      expect(parsedBody.offset).toBe(0);
+      expect(parsedBody.order).toBe("managingCode, capitalProjectId");
+      expect(parsedBody.total).toBe(9);
+    });
+
+    it("should 400 when finding by a set of community district ids which contains an invalid community district id", async () => {
+      const id = "1234";
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects?communityDistrictIds=${id}`,
+      );
+      expect(response.body.message).toMatch(/communityDistrictIds: Invalid/);
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
     it("should 200 and return capital projects from a specified managing agency", async () => {
       const managingAgency =
         capitalProjectRepositoryMock.agencyRepoMock.agencies[0];

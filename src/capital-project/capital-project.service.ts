@@ -43,6 +43,7 @@ export class CapitalProjectService {
     cityCouncilDistrictId = null,
     boroughIds = null,
     communityDistrictCombinedId = null,
+    communityDistrictCombinedIds = null,
     managingAgency = null,
     agencyBudget = null,
     commitmentsTotalMin = null,
@@ -58,6 +59,7 @@ export class CapitalProjectService {
     boroughIds?: Array<string> | null;
     cityCouncilDistrictId?: string | null;
     communityDistrictCombinedId?: string | null;
+    communityDistrictCombinedIds?: Array<string> | null;
     managingAgency?: string | null;
     agencyBudget?: string | null;
     commitmentsTotalMin?: string | null;
@@ -78,6 +80,7 @@ export class CapitalProjectService {
     if (
       (cityCouncilDistrictId !== null ||
         communityDistrictCombinedId !== null ||
+        communityDistrictCombinedIds !== null ||
         geometry !== null ||
         boroughIds !== null) &&
       isMapped !== null
@@ -153,6 +156,18 @@ export class CapitalProjectService {
       checklist.push(this.boroughRepository.checkByIds(uniqueBoroughIds));
     }
 
+    const uniqueCommunityDistrictCombinedIds =
+      communityDistrictCombinedIds === null
+        ? null
+        : [...new Set(communityDistrictCombinedIds)];
+    if (uniqueCommunityDistrictCombinedIds !== null) {
+      checklist.push(
+        this.communityDistrictRepository.checkByBoroughIdCommunityDistrictIds(
+          uniqueCommunityDistrictCombinedIds,
+        ),
+      );
+    }
+
     if (managingAgency !== null) {
       checklist.push(this.agencyRepository.checkByInitials(managingAgency));
     }
@@ -177,6 +192,7 @@ export class CapitalProjectService {
           ? uniqueBoroughIds
           : null,
       communityDistrictId,
+      communityDistrictCombinedIds,
       managingAgency,
       agencyBudget,
       commitmentsTotalMin: min,
@@ -196,6 +212,7 @@ export class CapitalProjectService {
           ? uniqueBoroughIds
           : null,
       communityDistrictId,
+      communityDistrictCombinedIds: uniqueCommunityDistrictCombinedIds,
       managingAgency,
       agencyBudget,
       commitmentsTotalMin: min,

@@ -26,6 +26,15 @@ export const findCapitalProjectsQueryParamsSchema = z
           "The three character numeric string containing the concatenation of the borough and community district ids.",
         ),
     ),
+    communityDistrictIds: z.optional(
+      z
+        .array(z.string().regex(/^([0-9]{3})$/))
+        .min(1)
+        .max(10)
+        .describe(
+          "A list of three character numeric strings containing the concatenation of the borough and community district ids.",
+        ),
+    ),
     cityCouncilDistrictId: z.optional(
       z
         .string()
