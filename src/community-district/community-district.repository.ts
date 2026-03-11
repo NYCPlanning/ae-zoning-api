@@ -4,9 +4,10 @@ import { FindCommunityDistrictTilesPathParams } from "src/gen";
 import {
   FindTilesRepo,
   CheckByBoroughIdCommunityDistrictIdRepo,
+  CheckByBoroughIdCommunityDistrictIdsRepo,
 } from "./community-district.repository.schema";
 import { borough, communityDistrict } from "src/schema";
-import { sql, isNotNull, eq, and } from "drizzle-orm";
+import { sql, isNotNull, eq, and, inArray } from "drizzle-orm";
 import { DataRetrievalException } from "src/exception";
 import { Cache } from "cache-manager";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
@@ -56,6 +57,44 @@ export class CommunityDistrictRepository {
     } catch {
       throw new DataRetrievalException(
         "cannot find community district given borough id and community district id",
+      );
+    }
+  }
+
+  // the ids must be deduplicated before passing them to this function
+  // the count & length comparisons assume that every id is unique
+  async checkByBoroughIdCommunityDistrictIds(
+    ids: Array<string>,
+  ): Promise<CheckByBoroughIdCommunityDistrictIdsRepo> {
+    const orderedIds = [...ids].sort(); // sort a copy to avoid side effects on the original
+
+    const key = JSON.stringify({
+      orderedIds,
+      domain: "communityDistrict",
+      function: "checkByBoroughIdCommunityDistrictIds",
+    });
+
+    const cachedValue = await this.cacheManager.get<boolean>(key);
+    if (cachedValue !== undefined) return cachedValue;
+
+    try {
+      const cds = await this.db
+        .select({
+          count: sql<number>`count(${communityDistrict.boroughId}||${communityDistrict.id})::int`,
+        })
+        .from(communityDistrict)
+        .where(
+          inArray(
+            sql<string>`${communityDistrict.boroughId}||${communityDistrict.id}`,
+            ids,
+          ),
+        );
+      const value = cds[0].count == ids.length;
+      this.cacheManager.set(key, value);
+      return value;
+    } catch {
+      throw new DataRetrievalException(
+        "cannot check for community districts based on multiple ids",
       );
     }
   }
