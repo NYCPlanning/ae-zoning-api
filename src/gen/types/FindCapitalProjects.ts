@@ -26,6 +26,11 @@ export type FindCapitalProjectsQueryParams = {
    */
   communityDistrictId?: string;
   /**
+   * @description A list of three character numeric strings containing the concatenation of the borough and community district ids.
+   * @type array | undefined
+   */
+  communityDistrictIds?: string[];
+  /**
    * @description One or two character code to represent city council districts.
    * @pattern ^([0-9]{1,2})$
    * @type string | undefined

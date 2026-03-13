@@ -203,6 +203,29 @@ describe("CapitalProjectService", () => {
       expect(parsedBody.order).toBe("managingCode, capitalProjectId");
     });
 
+    it("should return a list of capital projects filtered by a set of community district ids", async () => {
+      const mockCDs =
+        capitalProjectRepository.communityDistrictRepoMock.districts;
+      const capitalProjects = await capitalProjectService.findMany({
+        communityDistrictCombinedIds: [
+          `${mockCDs[0].boroughId}${mockCDs[0].id}`,
+          `${mockCDs[1].boroughId}${mockCDs[1].id}`,
+        ],
+      });
+
+      expect(() =>
+        findCapitalProjectsQueryResponseSchema.parse(capitalProjects),
+      ).not.toThrow();
+
+      const parsedBody =
+        findCapitalProjectsQueryResponseSchema.parse(capitalProjects);
+      expect(parsedBody.limit).toBe(20);
+      expect(parsedBody.total).toBe(parsedBody.capitalProjects.length);
+      expect(parsedBody.capitalProjects.length).toBe(9);
+      expect(parsedBody.totalProjects).toBe(9);
+      expect(parsedBody.order).toBe("managingCode, capitalProjectId");
+    });
+
     it("should filter by an agency budget code", async () => {
       const agencyBudget =
         capitalProjectRepository.agencyBudgetRepositoryMock.agencyBudgets[1]
