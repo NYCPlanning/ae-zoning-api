@@ -32,6 +32,11 @@ export type FindCapitalProjectsQueryParams = {
    */
   cityCouncilDistrictId?: string;
   /**
+   * @description A list of one or two character codes representing city council districts.
+   * @type array | undefined
+   */
+  cityCouncilDistrictIds?: string[];
+  /**
    * @description The acronym of the managing agency to filter the projects by.
    * @type string | undefined
    */

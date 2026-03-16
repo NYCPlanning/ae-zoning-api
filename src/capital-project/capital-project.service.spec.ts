@@ -170,6 +170,25 @@ describe("CapitalProjectService", () => {
       expect(parsedResource.order).toBe("managingCode, capitalProjectId");
     });
 
+    it("should return a list of capital projects filtered by a set of city council district ids", async () => {
+      const mockCCDs = cityCouncilDistrictRepositoryMock.districts;
+      const capitalProjects = await capitalProjectService.findMany({
+        cityCouncilDistrictIds: [mockCCDs[0].id, mockCCDs[1].id],
+      });
+
+      expect(() =>
+        findCapitalProjectsQueryResponseSchema.parse(capitalProjects),
+      ).not.toThrow();
+
+      const parsedBody =
+        findCapitalProjectsQueryResponseSchema.parse(capitalProjects);
+      expect(parsedBody.limit).toBe(20);
+      expect(parsedBody.total).toBe(parsedBody.capitalProjects.length);
+      expect(parsedBody.capitalProjects.length).toBe(9);
+      expect(parsedBody.totalProjects).toBe(9);
+      expect(parsedBody.order).toBe("managingCode, capitalProjectId");
+    });
+
     it("should return a InvalidRequestParameterException error when a city council district with the given id cannot be found", async () => {
       const id = "60";
 

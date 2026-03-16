@@ -2,6 +2,7 @@ import {
   findGeoJsonByIdRepoSchema,
   FindManyRepo,
   CheckByIdRepo,
+  CheckByIdsRepo,
 } from "src/city-council-district/city-council-district.repository.schema";
 import { generateMock } from "@anatine/zod-mock";
 import { FindCityCouncilDistrictGeoJsonByCityCouncilDistrictIdPathParams } from "src/gen";
@@ -49,6 +50,15 @@ export class CityCouncilDistrictRepositoryMock {
 
   async checkById(id: string): Promise<CheckByIdRepo> {
     return this.districts.some((row) => row.id === id);
+  }
+
+  async checkByIds(ids: string[]): Promise<CheckByIdsRepo> {
+    for (const ccdid of ids) {
+      if (!this.districts.some((row) => row.id === ccdid)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   findCapitalProjectTilesByCityCouncilDistrictIdMock = generateMockMvt();
