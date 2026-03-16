@@ -3,6 +3,7 @@ import { DB, DbType } from "src/global/providers/db.provider";
 import { DataRetrievalException } from "src/exception";
 import {
   CheckByIdRepo,
+  CheckByIdsRepo,
   FindManyRepo,
   FindTilesRepo,
   FindGeoJsonByIdRepo,
@@ -23,7 +24,7 @@ import {
   cityCouncilDistrict,
   communityBoardBudgetRequest,
 } from "src/schema";
-import { eq, sql, isNotNull, and, or } from "drizzle-orm";
+import { eq, sql, isNotNull, and, or, inArray } from "drizzle-orm";
 import { Cache } from "cache-manager";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
 
@@ -63,6 +64,35 @@ export class CityCouncilDistrictRepository {
     } catch {
       throw new DataRetrievalException(
         "cannot find city council district by id",
+      );
+    }
+  }
+
+  // the ids must be deduplicated before passing them to this function
+  // the count & length comparisons assume that every id is unique
+  async checkByIds(ids: Array<string>): Promise<CheckByIdsRepo> {
+    const orderedIds = [...ids].sort(); // sort a copy to avoid side effects on the original
+
+    const key = JSON.stringify({
+      orderedIds,
+      domain: "cityCouncilDistrict",
+      function: "checkByIds",
+    });
+
+    const cachedValue = await this.cacheManager.get<boolean>(key);
+    if (cachedValue !== undefined) return cachedValue;
+
+    try {
+      const ccds = await this.db
+        .select({ count: sql<number>`count(${cityCouncilDistrict.id})::int` })
+        .from(cityCouncilDistrict)
+        .where(inArray(cityCouncilDistrict.id, ids));
+      const value = ccds[0].count == ids.length;
+      this.cacheManager.set(key, value);
+      return value;
+    } catch {
+      throw new DataRetrievalException(
+        "cannot check for city council districts based on multiple ids",
       );
     }
   }

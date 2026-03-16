@@ -157,6 +157,7 @@ export class CapitalProjectRepositoryMock {
     communityDistrictId,
     communityDistrictCombinedIds,
     cityCouncilDistrictId,
+    cityCouncilDistrictIds,
     agencyBudget,
     commitmentsTotalMin,
     commitmentsTotalMax,
@@ -166,6 +167,7 @@ export class CapitalProjectRepositoryMock {
   }: {
     managingAgency: string | null;
     cityCouncilDistrictId: string | null;
+    cityCouncilDistrictIds: Array<string> | null;
     communityDistrictId: string | null;
     communityDistrictCombinedIds: Array<string> | null;
     boroughId: string | null;
@@ -188,6 +190,12 @@ export class CapitalProjectRepositoryMock {
         if (
           cityCouncilDistrictId !== null &&
           criteria.cityCouncilDistrictId !== cityCouncilDistrictId
+        )
+          return acc;
+
+        if (
+          cityCouncilDistrictIds !== null &&
+          !cityCouncilDistrictIds.includes(criteria.cityCouncilDistrictId)
         )
           return acc;
 
@@ -268,6 +276,7 @@ export class CapitalProjectRepositoryMock {
     communityDistrictId,
     communityDistrictCombinedIds,
     cityCouncilDistrictId,
+    cityCouncilDistrictIds,
     agencyBudget,
     commitmentsTotalMin,
     commitmentsTotalMax,
@@ -279,6 +288,7 @@ export class CapitalProjectRepositoryMock {
   }: {
     managingAgency: string | null;
     cityCouncilDistrictId: string | null;
+    cityCouncilDistrictIds: Array<string> | null;
     communityDistrictId: string | null;
     communityDistrictCombinedIds: Array<string> | null;
     boroughId: string | null;
@@ -299,6 +309,7 @@ export class CapitalProjectRepositoryMock {
       communityDistrictId,
       communityDistrictCombinedIds,
       cityCouncilDistrictId,
+      cityCouncilDistrictIds,
       agencyBudget,
       commitmentsTotalMin,
       commitmentsTotalMax,
@@ -324,6 +335,7 @@ export class CapitalProjectRepositoryMock {
     communityDistrictId,
     communityDistrictCombinedIds,
     cityCouncilDistrictId,
+    cityCouncilDistrictIds,
     agencyBudget,
     commitmentsTotalMin,
     commitmentsTotalMax,
@@ -333,6 +345,7 @@ export class CapitalProjectRepositoryMock {
   }: {
     managingAgency: string | null;
     cityCouncilDistrictId: string | null;
+    cityCouncilDistrictIds: Array<string> | null;
     communityDistrictId: string | null;
     communityDistrictCombinedIds: Array<string> | null;
     boroughId: string | null;
@@ -351,6 +364,7 @@ export class CapitalProjectRepositoryMock {
       communityDistrictId,
       communityDistrictCombinedIds,
       cityCouncilDistrictId,
+      cityCouncilDistrictIds,
       agencyBudget,
       commitmentsTotalMin,
       commitmentsTotalMax,

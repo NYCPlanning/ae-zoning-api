@@ -45,6 +45,7 @@ export class CapitalProjectController {
       limit: queryParams.limit,
       offset: queryParams.offset,
       cityCouncilDistrictId: queryParams.cityCouncilDistrictId,
+      cityCouncilDistrictIds: queryParams.cityCouncilDistrictIds,
       communityDistrictCombinedId: queryParams.communityDistrictId,
       communityDistrictCombinedIds: queryParams.communityDistrictIds,
       managingAgency: queryParams.managingAgency,

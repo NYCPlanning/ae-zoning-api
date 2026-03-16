@@ -41,6 +41,7 @@ export class CapitalProjectService {
     limit = 20,
     offset = 0,
     cityCouncilDistrictId = null,
+    cityCouncilDistrictIds = null,
     boroughIds = null,
     communityDistrictCombinedId = null,
     communityDistrictCombinedIds = null,
@@ -58,6 +59,7 @@ export class CapitalProjectService {
     offset?: number;
     boroughIds?: Array<string> | null;
     cityCouncilDistrictId?: string | null;
+    cityCouncilDistrictIds?: Array<string> | null;
     communityDistrictCombinedId?: string | null;
     communityDistrictCombinedIds?: Array<string> | null;
     managingAgency?: string | null;
@@ -79,6 +81,7 @@ export class CapitalProjectService {
 
     if (
       (cityCouncilDistrictId !== null ||
+        cityCouncilDistrictIds !== null ||
         communityDistrictCombinedId !== null ||
         communityDistrictCombinedIds !== null ||
         geometry !== null ||
@@ -150,6 +153,18 @@ export class CapitalProjectService {
         ),
       );
 
+    const uniqueCityCouncilDistrictIds =
+      cityCouncilDistrictIds === null
+        ? null
+        : [...new Set(cityCouncilDistrictIds)];
+    if (uniqueCityCouncilDistrictIds !== null) {
+      checklist.push(
+        this.cityCouncilDistrictRepository.checkByIds(
+          uniqueCityCouncilDistrictIds,
+        ),
+      );
+    }
+
     const uniqueBoroughIds =
       boroughIds === null ? null : [...new Set(boroughIds)];
     if (uniqueBoroughIds !== null) {
@@ -186,6 +201,7 @@ export class CapitalProjectService {
     const bufferFloor = buffer === null ? SIX_DECIMAL_RESOLUTION_FT : buffer;
     const capitalProjectsPromise = this.capitalProjectRepository.findMany({
       cityCouncilDistrictId,
+      cityCouncilDistrictIds: uniqueCityCouncilDistrictIds,
       boroughId,
       boroughIds:
         uniqueBoroughIds !== null && uniqueBoroughIds.length < 5
@@ -206,6 +222,7 @@ export class CapitalProjectService {
 
     const totalProjectsPromise = this.capitalProjectRepository.findCount({
       cityCouncilDistrictId,
+      cityCouncilDistrictIds: uniqueCityCouncilDistrictIds,
       boroughId,
       boroughIds:
         uniqueBoroughIds !== null && uniqueBoroughIds.length < 5

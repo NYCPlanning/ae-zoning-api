@@ -1,0 +1,12 @@
+name: cityCouncilDistrictIds
+required: false
+in: query
+schema:
+  type: array
+  items:
+    type: string
+    pattern: ^([0-9]{1,2})$
+  minItems: 1
+  maxItems: 10
+  example: '25,26'
+description: A list of one or two character codes representing city council districts.

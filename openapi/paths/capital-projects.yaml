@@ -8,6 +8,7 @@ get:
     - $ref: ../components/parameters/communityDistrictIdQueryParam.yaml
     - $ref: ../components/parameters/communityDistrictIdsQueryParam.yaml
     - $ref: ../components/parameters/cityCouncilDistrictIdQueryParam.yaml
+    - $ref: ../components/parameters/cityCouncilDistrictIdsQueryParam.yaml
     - $ref: ../components/parameters/managingAgencyQueryParam.yaml
     - $ref: ../components/parameters/agencyBudgetParam.yaml
     - $ref: ../components/parameters/commitmentsTotalMinQueryParam.yaml
