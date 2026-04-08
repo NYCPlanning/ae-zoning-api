@@ -37,7 +37,7 @@
     "@nestjs/serve-static": "^5.0.4",
     "cache-manager": "^7.2.5",
     "cacheable": "^2.2.0",
-    "drizzle-orm": "^0.44.7",
+    "drizzle-orm": "^0.45.2",
     "immer": "^10.2.0",
     "joi": "^18.0.2",
     "papaparse": "^5.5.3",
