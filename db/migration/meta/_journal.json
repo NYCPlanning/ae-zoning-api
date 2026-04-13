@@ -225,6 +225,13 @@
       "when": 1775063753948,
       "tag": "0031_smart_human_torch",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1776347957906,
+      "tag": "0032_panoramic_marvex",
+      "breakpoints": true
     }
   ]
 }
