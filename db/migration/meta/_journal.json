@@ -267,6 +267,13 @@
       "when": 1779907646249,
       "tag": "0037_open_wendigo",
       "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "7",
+      "when": 1779912716637,
+      "tag": "0038_legal_karen_page",
+      "breakpoints": true
     }
   ]
 }
