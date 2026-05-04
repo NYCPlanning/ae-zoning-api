@@ -1,0 +1,1 @@
+ALTER TABLE "census_tract" ADD COLUMN "borough" text NOT NULL;

@@ -232,6 +232,20 @@
       "when": 1776347957906,
       "tag": "0032_panoramic_marvex",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1777663478368,
+      "tag": "0033_ambitious_veda",
+      "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1777663527742,
+      "tag": "0034_heavy_old_lace",
+      "breakpoints": true
     }
   ]
 }

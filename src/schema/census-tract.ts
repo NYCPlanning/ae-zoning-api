@@ -12,12 +12,13 @@ export const censusTract = pgTable(
   "census_tract",
   {
     label: text("label").notNull(),
+    borough: text("borough").notNull(),
     year: smallint("year").notNull(),
     liFt: multiPolygonGeom("li_ft", 2263),
     mercatorFill: multiPolygonGeom("mercator_fill", 3857),
   },
   (table) => [
-    primaryKey({ columns: [table.label, table.year] }),
+    primaryKey({ columns: [table.label, table.borough, table.year] }),
     index().using("GIST", table.liFt),
     index().using("GIST", table.mercatorFill),
   ],
