@@ -35,7 +35,7 @@ export class CommunityBoardBudgetRequestService {
     private readonly communityDistrictRepository: CommunityDistrictRepository,
     private readonly cityCouncilDistrictRepository: CityCouncilDistrictRepository,
     private readonly spatialRepository: SpatialRepository,
-  ) { }
+  ) {}
 
   async findAgencies({
     cbbrPolicyAreaId,
