@@ -232,6 +232,20 @@
       "when": 1776347957906,
       "tag": "0032_panoramic_marvex",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1777990092805,
+      "tag": "0033_many_elektra",
+      "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1777990120474,
+      "tag": "0034_glorious_the_captain",
+      "breakpoints": true
     }
   ]
 }

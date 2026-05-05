@@ -1,0 +1,2 @@
+ALTER TABLE "census_tract" DROP CONSTRAINT "census_tract_label_year_pk";--> statement-breakpoint
+ALTER TABLE "census_tract" ADD CONSTRAINT "census_tract_borough_id_label_year_pk" PRIMARY KEY("borough_id","label","year");

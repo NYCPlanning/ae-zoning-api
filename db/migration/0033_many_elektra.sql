@@ -1,0 +1,2 @@
+ALTER TABLE "census_tract" ADD COLUMN "borough_id" char(1) NOT NULL;--> statement-breakpoint
+ALTER TABLE "census_tract" ADD CONSTRAINT "census_tract_borough_id_borough_id_fk" FOREIGN KEY ("borough_id") REFERENCES "public"."borough"("id") ON DELETE no action ON UPDATE no action;
