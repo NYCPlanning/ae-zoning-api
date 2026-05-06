@@ -246,6 +246,13 @@
       "when": 1777990120474,
       "tag": "0034_glorious_the_captain",
       "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "7",
+      "when": 1778090798915,
+      "tag": "0035_steep_susan_delgado",
+      "breakpoints": true
     }
   ]
 }

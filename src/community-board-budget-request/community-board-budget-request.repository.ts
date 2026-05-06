@@ -158,6 +158,7 @@ export class CommunityBoardBudgetRequestRepository {
         .selectDistinct({
           initials: agency.initials,
           name: agency.name,
+          oversightLevel: agency.oversightLevel,
         })
         .from(agency)
         .leftJoin(
