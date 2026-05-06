@@ -30,6 +30,7 @@ import {
 } from "src/schema";
 import { eq, and, or, sql, isNotNull, inArray } from "drizzle-orm";
 import {
+  AgencyOversightLevel,
   FindCommunityBoardBudgetRequestAgenciesQueryParams,
   FindCommunityBoardBudgetRequestByIdPathParams,
   FindCommunityBoardBudgetRequestNeedGroupsQueryParams,
@@ -158,7 +159,7 @@ export class CommunityBoardBudgetRequestRepository {
         .selectDistinct({
           initials: agency.initials,
           name: agency.name,
-          oversightLevel: agency.oversightLevel,
+          oversightLevel: sql<AgencyOversightLevel>`${agency.oversightLevel}`,
         })
         .from(agency)
         .leftJoin(

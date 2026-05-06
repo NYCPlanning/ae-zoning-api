@@ -3,6 +3,7 @@
  * Do not edit manually.
  */
 
+import { agencyOversightLevelSchema } from "./agencyOversightLevelSchema";
 import { z } from "zod";
 
 export const agencySchema = z.object({
@@ -12,4 +13,8 @@ export const agencySchema = z.object({
       "A string of variable length containing the initials of the agency.",
     ),
   name: z.string().describe("The full name of the agency."),
+  oversightLevel: z
+    .lazy(() => agencyOversightLevelSchema)
+    .describe("The level of oversight of an agency")
+    .nullish(),
 });

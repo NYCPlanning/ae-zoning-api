@@ -3,6 +3,8 @@
  * Do not edit manually.
  */
 
+import type { AgencyOversightLevel } from "./AgencyOversightLevel";
+
 export type Agency = {
   /**
    * @description A string of variable length containing the initials of the agency.
@@ -14,4 +16,9 @@ export type Agency = {
    * @type string
    */
   name: string;
+  /**
+   * @description The level of oversight of an agency
+   * @type string
+   */
+  oversightLevel?: AgencyOversightLevel | null;
 };

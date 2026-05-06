@@ -1,6 +1,7 @@
 import { pgTable, text, check } from "drizzle-orm/pg-core";
 import { z } from "zod";
 import { sql } from "drizzle-orm";
+import { agencyOversightLevelSchema } from "src/gen";
 
 export const agency = pgTable(
   "agency",
@@ -25,7 +26,7 @@ export const agency = pgTable(
 export const agencyEntitySchema = z.object({
   initials: z.string(),
   name: z.string(),
-  oversightLevel: z.string().nullable(),
+  oversightLevel: agencyOversightLevelSchema,
 });
 
 export type AgencyEntitySchema = z.infer<typeof agencyEntitySchema>;

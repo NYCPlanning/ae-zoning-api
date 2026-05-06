@@ -14,6 +14,7 @@ import {
 } from "drizzle-orm";
 import { DataRetrievalException } from "src/exception";
 import {
+  AgencyOversightLevel,
   CapitalProjectCategory,
   FindCapitalCommitmentsByManagingCodeCapitalProjectIdPathParams,
   FindCapitalProjectByManagingCodeCapitalProjectIdPathParams,
@@ -272,7 +273,7 @@ export class CapitalProjectRepository {
         .selectDistinct({
           initials: agency.initials,
           name: agency.name,
-          oversightLevel: agency.oversightLevel,
+          oversightLevel: sql<AgencyOversightLevel>`${agency.oversightLevel}`,
         })
         .from(agency)
         .leftJoin(

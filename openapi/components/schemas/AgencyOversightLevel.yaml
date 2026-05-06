@@ -1,0 +1,9 @@
+type: string
+nullable: true
+enum:
+  - Federal 
+  - State
+  - County
+  - City
+  - null
+description: The level of oversight of an agency

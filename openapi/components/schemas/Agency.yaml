@@ -8,6 +8,9 @@ properties:
     type: string
     description: The full name of the agency.
     example: Department of Transportation
+  oversightLevel:
+    $ref: ./AgencyOversightLevel.yaml
+    nullable: true
 required:
   - initials
   - name

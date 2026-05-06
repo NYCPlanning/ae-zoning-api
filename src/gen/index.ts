@@ -1,5 +1,9 @@
 export type { Agency } from "./types/Agency";
 export type { AgencyBudget } from "./types/AgencyBudget";
+export type {
+  AgencyOversightLevelEnumKey,
+  AgencyOversightLevel,
+} from "./types/AgencyOversightLevel";
 export type { BadRequest } from "./types/BadRequest";
 export type { Borough } from "./types/Borough";
 export type {
@@ -434,6 +438,7 @@ export type {
   ZoningDistrictClassCategory,
 } from "./types/ZoningDistrictClassCategory";
 export type { ZoningDistrictClassCategoryColor } from "./types/ZoningDistrictClassCategoryColor";
+export { agencyOversightLevelEnum } from "./types/AgencyOversightLevel";
 export { boroughGeoJsonTypeEnum } from "./types/BoroughGeoJson";
 export { capitalProjectBudgetedGeoJsonTypeEnum } from "./types/CapitalProjectBudgetedGeoJson";
 export { capitalProjectCategoryEnum } from "./types/CapitalProjectCategory";
@@ -452,6 +457,7 @@ export { multiPolygonTypeEnum } from "./types/MultiPolygon";
 export { taxLotGeoJsonTypeEnum } from "./types/TaxLotGeoJson";
 export { zoningDistrictClassCategoryEnum } from "./types/ZoningDistrictClassCategory";
 export { agencyBudgetSchema } from "./zod/agencyBudgetSchema";
+export { agencyOversightLevelSchema } from "./zod/agencyOversightLevelSchema";
 export { agencySchema } from "./zod/agencySchema";
 export { badRequestSchema } from "./zod/badRequestSchema";
 export { boroughGeoJsonSchema } from "./zod/boroughGeoJsonSchema";

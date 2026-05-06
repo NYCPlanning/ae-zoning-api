@@ -45,9 +45,7 @@ export class AgencyRepository {
 
   async findMany(): Promise<FindManyRepo> {
     try {
-      return await this.db.query.agency.findMany({
-        orderBy: (agency, { asc }) => [asc(agency.initials)],
-      });
+      return await this.db.query.agency.findMany();
     } catch {
       throw new DataRetrievalException("cannot find agencies");
     }

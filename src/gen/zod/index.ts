@@ -1,4 +1,5 @@
 export { agencyBudgetSchema } from "./agencyBudgetSchema";
+export { agencyOversightLevelSchema } from "./agencyOversightLevelSchema";
 export { agencySchema } from "./agencySchema";
 export { badRequestSchema } from "./badRequestSchema";
 export { boroughGeoJsonSchema } from "./boroughGeoJsonSchema";
