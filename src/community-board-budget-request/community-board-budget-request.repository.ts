@@ -287,6 +287,7 @@ export class CommunityBoardBudgetRequestRepository {
     boroughIds,
     boroughId,
     communityDistrictId,
+    communityDistrictIds,
     cityCouncilDistrictId,
     cbbrPolicyAreaId,
     cbbrNeedGroupId,
@@ -303,6 +304,7 @@ export class CommunityBoardBudgetRequestRepository {
     boroughIds: Array<string> | null;
     boroughId: string | null;
     communityDistrictId: string | null;
+    communityDistrictIds: Array<string> | null;
     cityCouncilDistrictId: string | null;
     cbbrPolicyAreaId: number | null;
     cbbrNeedGroupId: number | null;
@@ -357,6 +359,12 @@ export class CommunityBoardBudgetRequestRepository {
                     communityBoardBudgetRequest.communityDistrictId,
                     communityDistrictId,
                   ),
+                )
+              : undefined,
+            communityDistrictIds !== null
+              ? inArray(
+                  sql`concat(${communityBoardBudgetRequest.boroughId},${communityBoardBudgetRequest.communityDistrictId})`,
+                  communityDistrictIds,
                 )
               : undefined,
             cbbrPolicyAreaId !== null
@@ -420,6 +428,7 @@ export class CommunityBoardBudgetRequestRepository {
     boroughIds,
     boroughId,
     communityDistrictId,
+    communityDistrictIds,
     cityCouncilDistrictId,
     cbbrPolicyAreaId,
     cbbrNeedGroupId,
@@ -434,6 +443,7 @@ export class CommunityBoardBudgetRequestRepository {
     boroughIds: Array<string> | null;
     boroughId: string | null;
     communityDistrictId: string | null;
+    communityDistrictIds: Array<string> | null;
     cityCouncilDistrictId: string | null;
     cbbrPolicyAreaId: number | null;
     cbbrNeedGroupId: number | null;
@@ -448,6 +458,7 @@ export class CommunityBoardBudgetRequestRepository {
     const key = JSON.stringify({
       boroughId,
       communityDistrictId,
+      communityDistrictIds,
       cityCouncilDistrictId,
       cbbrPolicyAreaId,
       cbbrNeedGroupId,
@@ -495,6 +506,12 @@ export class CommunityBoardBudgetRequestRepository {
                     communityBoardBudgetRequest.communityDistrictId,
                     communityDistrictId,
                   ),
+                )
+              : undefined,
+            communityDistrictIds !== null
+              ? inArray(
+                  sql`concat(${communityBoardBudgetRequest.boroughId},${communityBoardBudgetRequest.communityDistrictId})`,
+                  communityDistrictIds,
                 )
               : undefined,
             cbbrPolicyAreaId !== null
@@ -568,6 +585,7 @@ export class CommunityBoardBudgetRequestRepository {
     boroughIds,
     boroughId,
     communityDistrictId,
+    communityDistrictIds,
     cityCouncilDistrictId,
     cbbrPolicyAreaId,
     cbbrNeedGroupId,
@@ -582,6 +600,7 @@ export class CommunityBoardBudgetRequestRepository {
     boroughIds: Array<string> | null;
     boroughId: string | null;
     communityDistrictId: string | null;
+    communityDistrictIds: Array<string> | null;
     cityCouncilDistrictId: string | null;
     cbbrPolicyAreaId: number | null;
     cbbrNeedGroupId: number | null;
@@ -657,6 +676,12 @@ export class CommunityBoardBudgetRequestRepository {
                     communityBoardBudgetRequest.communityDistrictId,
                     communityDistrictId,
                   ),
+                )
+              : undefined,
+            communityDistrictIds !== null
+              ? inArray(
+                  sql`concat(${communityBoardBudgetRequest.boroughId},${communityBoardBudgetRequest.communityDistrictId})`,
+                  communityDistrictIds,
                 )
               : undefined,
             cbbrPolicyAreaId !== null
