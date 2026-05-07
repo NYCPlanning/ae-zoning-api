@@ -42,6 +42,15 @@ export const findCommunityBoardBudgetRequestsCsvQueryParamsSchema = z
           "One or two character code to represent city council districts.",
         ),
     ),
+    cityCouncilDistrictIds: z.optional(
+      z
+        .array(z.string().regex(/^([0-9]{1,2})$/))
+        .min(1)
+        .max(10)
+        .describe(
+          "A list of one or two character codes representing city council districts.",
+        ),
+    ),
     cbbrPolicyAreaId: z.optional(
       z.coerce
         .number()

@@ -8,6 +8,7 @@ get:
     - $ref: ../components/parameters/communityDistrictIdQueryParam.yaml
     - $ref: ../components/parameters/communityDistrictIdsQueryParam.yaml
     - $ref: ../components/parameters/cityCouncilDistrictIdQueryParam.yaml
+    - $ref: ../components/parameters/cityCouncilDistrictIdsQueryParam.yaml
     - $ref: ../components/parameters/cbbrPolicyAreaIdQueryParam.yaml
     - $ref: ../components/parameters/cbbrNeedGroupIdQueryParam.yaml
     - $ref: ../components/parameters/agencyInitialsQueryParam.yaml

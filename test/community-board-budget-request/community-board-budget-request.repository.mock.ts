@@ -292,6 +292,7 @@ export class CommunityBoardBudgetRequestRepositoryMock {
     communityDistrictId,
     communityDistrictIds,
     cityCouncilDistrictId,
+    cityCouncilDistrictIds,
     cbbrPolicyAreaId,
     cbbrNeedGroupId,
     agencyInitials,
@@ -306,6 +307,7 @@ export class CommunityBoardBudgetRequestRepositoryMock {
     communityDistrictId: string | null;
     communityDistrictIds: Array<string> | null;
     cityCouncilDistrictId: string | null;
+    cityCouncilDistrictIds: Array<string> | null;
     cbbrPolicyAreaId: number | null;
     cbbrNeedGroupId: number | null;
     agencyInitials: string | null;
@@ -337,6 +339,12 @@ export class CommunityBoardBudgetRequestRepositoryMock {
         if (
           cityCouncilDistrictId !== null &&
           criteria.cityCouncilDistrictId !== cityCouncilDistrictId
+        )
+          return false;
+
+        if (
+          cityCouncilDistrictIds !== null &&
+          !cityCouncilDistrictIds.includes(criteria.cityCouncilDistrictId)
         )
           return false;
 
@@ -410,6 +418,7 @@ export class CommunityBoardBudgetRequestRepositoryMock {
     communityDistrictId: string | null;
     communityDistrictIds: Array<string> | null;
     cityCouncilDistrictId: string | null;
+    cityCouncilDistrictIds: Array<string> | null;
     cbbrPolicyAreaId: number | null;
     cbbrNeedGroupId: number | null;
     agencyInitials: string | null;
@@ -430,6 +439,7 @@ export class CommunityBoardBudgetRequestRepositoryMock {
     communityDistrictId: string | null;
     communityDistrictIds: Array<string> | null;
     cityCouncilDistrictId: string | null;
+    cityCouncilDistrictIds: Array<string> | null;
     cbbrPolicyAreaId: number | null;
     cbbrNeedGroupId: number | null;
     agencyInitials: string | null;
@@ -535,6 +545,7 @@ export class CommunityBoardBudgetRequestRepositoryMock {
     communityDistrictId,
     communityDistrictIds,
     cityCouncilDistrictId,
+    cityCouncilDistrictIds,
     cbbrPolicyAreaId,
     cbbrNeedGroupId,
     agencyInitials,
@@ -547,6 +558,7 @@ export class CommunityBoardBudgetRequestRepositoryMock {
     communityDistrictId: string | null;
     communityDistrictIds: Array<string> | null;
     cityCouncilDistrictId: string | null;
+    cityCouncilDistrictIds: Array<string> | null;
     cbbrPolicyAreaId: number | null;
     cbbrNeedGroupId: number | null;
     agencyInitials: string | null;
@@ -576,6 +588,12 @@ export class CommunityBoardBudgetRequestRepositoryMock {
         if (
           cityCouncilDistrictId !== null &&
           criteria.cityCouncilDistrictId !== cityCouncilDistrictId
+        )
+          return false;
+
+        if (
+          cityCouncilDistrictIds !== null &&
+          !cityCouncilDistrictIds.includes(criteria.cityCouncilDistrictId)
         )
           return false;
 
@@ -627,6 +645,7 @@ export class CommunityBoardBudgetRequestRepositoryMock {
     communityDistrictId: string | null;
     communityDistrictIds: Array<string> | null;
     cityCouncilDistrictId: string | null;
+    cityCouncilDistrictIds: Array<string> | null;
     cbbrPolicyAreaId: number | null;
     cbbrNeedGroupId: number | null;
     agencyInitials: string | null;

@@ -45,6 +45,11 @@ export type FindCommunityBoardBudgetRequestsQueryParams = {
    */
   cityCouncilDistrictId?: string;
   /**
+   * @description A list of one or two character codes representing city council districts.
+   * @type array | undefined
+   */
+  cityCouncilDistrictIds?: string[];
+  /**
    * @description The number used to refer to the policy area.
    * @type integer | undefined
    */

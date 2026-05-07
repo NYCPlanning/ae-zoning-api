@@ -289,6 +289,7 @@ export class CommunityBoardBudgetRequestRepository {
     communityDistrictId,
     communityDistrictIds,
     cityCouncilDistrictId,
+    cityCouncilDistrictIds,
     cbbrPolicyAreaId,
     cbbrNeedGroupId,
     agencyInitials,
@@ -306,6 +307,7 @@ export class CommunityBoardBudgetRequestRepository {
     communityDistrictId: string | null;
     communityDistrictIds: Array<string> | null;
     cityCouncilDistrictId: string | null;
+    cityCouncilDistrictIds: Array<string> | null;
     cbbrPolicyAreaId: number | null;
     cbbrNeedGroupId: number | null;
     agencyInitials: string | null;
@@ -319,18 +321,18 @@ export class CommunityBoardBudgetRequestRepository {
     buffer: number;
   }): Promise<FindManyRepo> {
     try {
-      return await this.db
-        .select({
-          id: communityBoardBudgetRequest.id,
-          cbbrPolicyAreaId: communityBoardBudgetRequest.policyArea,
-          title: communityBoardBudgetRequest.title,
-          communityBoardId: sql<string>`${borough.abbr} || ${communityBoardBudgetRequest.communityDistrictId}`,
-          isMapped: sql<boolean>`${or(
-            isNotNull(communityBoardBudgetRequest.liFtMPnt),
-            isNotNull(communityBoardBudgetRequest.liFtMPoly),
-          )}`,
-          isContinuedSupport: communityBoardBudgetRequest.isContinuedSupport,
-        })
+      // The query we use to sort by distance in the `orderBy` cannot be used with `selectDistinct`
+      return await this.db[geom === null ? "selectDistinct" : "select"]({
+        id: communityBoardBudgetRequest.id,
+        cbbrPolicyAreaId: communityBoardBudgetRequest.policyArea,
+        title: communityBoardBudgetRequest.title,
+        communityBoardId: sql<string>`${borough.abbr} || ${communityBoardBudgetRequest.communityDistrictId}`,
+        isMapped: sql<boolean>`${or(
+          isNotNull(communityBoardBudgetRequest.liFtMPnt),
+          isNotNull(communityBoardBudgetRequest.liFtMPoly),
+        )}`,
+        isContinuedSupport: communityBoardBudgetRequest.isContinuedSupport,
+      })
         .from(communityBoardBudgetRequest)
         .leftJoin(
           borough,
@@ -339,7 +341,10 @@ export class CommunityBoardBudgetRequestRepository {
         .leftJoin(
           cityCouncilDistrict,
           and(
-            sql`${cityCouncilDistrictId !== null} IS TRUE`,
+            or(
+              sql`${cityCouncilDistrictId !== null} IS TRUE`,
+              sql`${cityCouncilDistrictIds !== null} IS TRUE`,
+            ),
             or(
               sql`ST_Intersects(${cityCouncilDistrict.liFt}, ${communityBoardBudgetRequest.liFtMPoly})`,
               sql`ST_Intersects(${cityCouncilDistrict.liFt}, ${communityBoardBudgetRequest.liFtMPnt})`,
@@ -351,6 +356,9 @@ export class CommunityBoardBudgetRequestRepository {
             boroughIds !== null ? inArray(borough.id, boroughIds) : undefined,
             cityCouncilDistrictId !== null
               ? eq(cityCouncilDistrict.id, cityCouncilDistrictId)
+              : undefined,
+            cityCouncilDistrictIds !== null
+              ? inArray(cityCouncilDistrict.id, cityCouncilDistrictIds)
               : undefined,
             boroughId !== null && communityDistrictId !== null
               ? and(
@@ -411,11 +419,12 @@ export class CommunityBoardBudgetRequestRepository {
         .limit(limit)
         .offset(offset)
         .orderBy(
-          sql`CASE
+          geom !== null
+            ? sql`CASE
                 WHEN ${geom !== null && isNotNull(communityBoardBudgetRequest.liFtMPnt)} THEN ${geom} <-> ${communityBoardBudgetRequest.liFtMPnt}
                 WHEN ${geom !== null && isNotNull(communityBoardBudgetRequest.liFtMPoly)} THEN ${geom} <-> ${communityBoardBudgetRequest.liFtMPoly}
-              END`,
-          communityBoardBudgetRequest.id,
+              END`
+            : communityBoardBudgetRequest.id,
         );
     } catch {
       throw new DataRetrievalException(
@@ -430,6 +439,7 @@ export class CommunityBoardBudgetRequestRepository {
     communityDistrictId,
     communityDistrictIds,
     cityCouncilDistrictId,
+    cityCouncilDistrictIds,
     cbbrPolicyAreaId,
     cbbrNeedGroupId,
     agencyInitials,
@@ -445,6 +455,7 @@ export class CommunityBoardBudgetRequestRepository {
     communityDistrictId: string | null;
     communityDistrictIds: Array<string> | null;
     cityCouncilDistrictId: string | null;
+    cityCouncilDistrictIds: Array<string> | null;
     cbbrPolicyAreaId: number | null;
     cbbrNeedGroupId: number | null;
     agencyInitials: string | null;
@@ -460,6 +471,7 @@ export class CommunityBoardBudgetRequestRepository {
       communityDistrictId,
       communityDistrictIds,
       cityCouncilDistrictId,
+      cityCouncilDistrictIds,
       cbbrPolicyAreaId,
       cbbrNeedGroupId,
       agencyInitials,
@@ -486,7 +498,10 @@ export class CommunityBoardBudgetRequestRepository {
         .leftJoin(
           cityCouncilDistrict,
           and(
-            sql`${cityCouncilDistrictId !== null} IS TRUE`,
+            or(
+              sql`${cityCouncilDistrictId !== null} IS TRUE`,
+              sql`${cityCouncilDistrictIds !== null} IS TRUE`,
+            ),
             or(
               sql`ST_Intersects(${cityCouncilDistrict.liFt}, ${communityBoardBudgetRequest.liFtMPoly})`,
               sql`ST_Intersects(${cityCouncilDistrict.liFt}, ${communityBoardBudgetRequest.liFtMPnt})`,
@@ -498,6 +513,9 @@ export class CommunityBoardBudgetRequestRepository {
             boroughIds !== null ? inArray(borough.id, boroughIds) : undefined,
             cityCouncilDistrictId !== null
               ? eq(cityCouncilDistrict.id, cityCouncilDistrictId)
+              : undefined,
+            cityCouncilDistrictIds !== null
+              ? inArray(cityCouncilDistrict.id, cityCouncilDistrictIds)
               : undefined,
             boroughId !== null && communityDistrictId !== null
               ? and(
@@ -587,6 +605,7 @@ export class CommunityBoardBudgetRequestRepository {
     communityDistrictId,
     communityDistrictIds,
     cityCouncilDistrictId,
+    cityCouncilDistrictIds,
     cbbrPolicyAreaId,
     cbbrNeedGroupId,
     agencyInitials,
@@ -602,6 +621,7 @@ export class CommunityBoardBudgetRequestRepository {
     communityDistrictId: string | null;
     communityDistrictIds: Array<string> | null;
     cityCouncilDistrictId: string | null;
+    cityCouncilDistrictIds: Array<string> | null;
     cbbrPolicyAreaId: number | null;
     cbbrNeedGroupId: number | null;
     agencyInitials: string | null;
@@ -613,30 +633,30 @@ export class CommunityBoardBudgetRequestRepository {
     buffer: number;
   }): Promise<FindCsvRepo> {
     try {
-      return await this.db
-        .select({
-          id: communityBoardBudgetRequest.id,
-          communityBoardId: sql<string>`${borough.abbr} || ${communityBoardBudgetRequest.communityDistrictId}`,
-          address: communityBoardBudgetRequest.address,
-          siteName: communityBoardBudgetRequest.siteName,
-          segmentOnStreet: communityBoardBudgetRequest.segmentOnStreet,
-          segmentCrossStreetOne:
-            communityBoardBudgetRequest.segmentCrossStreetOne,
-          segmentCrossStreetTwo:
-            communityBoardBudgetRequest.segmentCrossStreetTwo,
-          intersectionStreetOne:
-            communityBoardBudgetRequest.intersectionStreetOne,
-          intersectionStreetTwo:
-            communityBoardBudgetRequest.intersectionStreetTwo,
-          requestType: sql<string>`SUBSTRING(${communityBoardBudgetRequest.requestType}, 1, 1)`,
-          isContinuedSupport: communityBoardBudgetRequest.isContinuedSupport,
-          request: cbbrRequest.description,
-          explanation: communityBoardBudgetRequest.explanation,
-          agency: communityBoardBudgetRequest.agency,
-          priority: communityBoardBudgetRequest.priority,
-          agencyCategoryResponse: cbbrAgencyCategoryResponse.description,
-          agencyResponse: communityBoardBudgetRequest.agencyResponse,
-        })
+      // The query we use to sort by distance in the `orderBy` cannot be used with `selectDistinct`
+      return await this.db[geom === null ? "selectDistinct" : "select"]({
+        id: communityBoardBudgetRequest.id,
+        communityBoardId: sql<string>`${borough.abbr} || ${communityBoardBudgetRequest.communityDistrictId}`,
+        address: communityBoardBudgetRequest.address,
+        siteName: communityBoardBudgetRequest.siteName,
+        segmentOnStreet: communityBoardBudgetRequest.segmentOnStreet,
+        segmentCrossStreetOne:
+          communityBoardBudgetRequest.segmentCrossStreetOne,
+        segmentCrossStreetTwo:
+          communityBoardBudgetRequest.segmentCrossStreetTwo,
+        intersectionStreetOne:
+          communityBoardBudgetRequest.intersectionStreetOne,
+        intersectionStreetTwo:
+          communityBoardBudgetRequest.intersectionStreetTwo,
+        requestType: sql<string>`SUBSTRING(${communityBoardBudgetRequest.requestType}, 1, 1)`,
+        isContinuedSupport: communityBoardBudgetRequest.isContinuedSupport,
+        request: cbbrRequest.description,
+        explanation: communityBoardBudgetRequest.explanation,
+        agency: communityBoardBudgetRequest.agency,
+        priority: communityBoardBudgetRequest.priority,
+        agencyCategoryResponse: cbbrAgencyCategoryResponse.description,
+        agencyResponse: communityBoardBudgetRequest.agencyResponse,
+      })
         .from(communityBoardBudgetRequest)
         .leftJoin(
           borough,
@@ -645,7 +665,10 @@ export class CommunityBoardBudgetRequestRepository {
         .leftJoin(
           cityCouncilDistrict,
           and(
-            sql`${cityCouncilDistrictId !== null} IS TRUE`,
+            or(
+              sql`${cityCouncilDistrictId !== null} IS TRUE`,
+              sql`${cityCouncilDistrictIds !== null} IS TRUE`,
+            ),
             or(
               sql`ST_Intersects(${cityCouncilDistrict.liFt}, ${communityBoardBudgetRequest.liFtMPoly})`,
               sql`ST_Intersects(${cityCouncilDistrict.liFt}, ${communityBoardBudgetRequest.liFtMPnt})`,
@@ -668,6 +691,9 @@ export class CommunityBoardBudgetRequestRepository {
             boroughIds !== null ? inArray(borough.id, boroughIds) : undefined,
             cityCouncilDistrictId !== null
               ? eq(cityCouncilDistrict.id, cityCouncilDistrictId)
+              : undefined,
+            cityCouncilDistrictIds !== null
+              ? inArray(cityCouncilDistrict.id, cityCouncilDistrictIds)
               : undefined,
             boroughId !== null && communityDistrictId !== null
               ? and(
@@ -726,11 +752,12 @@ export class CommunityBoardBudgetRequestRepository {
           ),
         )
         .orderBy(
-          sql`CASE
+          geom !== null
+            ? sql`CASE
                 WHEN ${geom !== null && isNotNull(communityBoardBudgetRequest.liFtMPnt)} THEN ${geom} <-> ${communityBoardBudgetRequest.liFtMPnt}
                 WHEN ${geom !== null && isNotNull(communityBoardBudgetRequest.liFtMPoly)} THEN ${geom} <-> ${communityBoardBudgetRequest.liFtMPoly}
-              END`,
-          communityBoardBudgetRequest.id,
+              END`
+            : communityBoardBudgetRequest.id,
         );
     } catch {
       throw new DataRetrievalException(
