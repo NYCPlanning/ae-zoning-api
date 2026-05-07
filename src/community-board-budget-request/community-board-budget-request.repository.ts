@@ -35,6 +35,7 @@ import {
   FindCommunityBoardBudgetRequestNeedGroupsQueryParams,
   FindCommunityBoardBudgetRequestPolicyAreasQueryParams,
   FindCommunityBoardBudgetRequestTilesPathParams,
+  OversightLevelCategory,
 } from "src/gen";
 import { Cache } from "cache-manager";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
@@ -57,7 +58,7 @@ export class CommunityBoardBudgetRequestRepository {
       columns: {
         id: true,
       },
-      where: (cbbrAgencyCategoryResponse, { eq, sql }) =>
+      where: (cbbrAgencyCategoryResponse) =>
         eq(cbbrAgencyCategoryResponse.id, sql.placeholder("id")),
     })
     .prepare("#checkAgencyCategoryResponseById");
@@ -92,8 +93,7 @@ export class CommunityBoardBudgetRequestRepository {
       columns: {
         id: true,
       },
-      where: (cbbrNeedGroup, { eq, sql }) =>
-        eq(cbbrNeedGroup.id, sql.placeholder("id")),
+      where: (cbbrNeedGroup) => eq(cbbrNeedGroup.id, sql.placeholder("id")),
     })
     .prepare("#checkNeedGroupById");
 
@@ -123,8 +123,7 @@ export class CommunityBoardBudgetRequestRepository {
       columns: {
         id: true,
       },
-      where: (cbbrPolicyArea, { eq, sql }) =>
-        eq(cbbrPolicyArea.id, sql.placeholder("id")),
+      where: (cbbrPolicyArea) => eq(cbbrPolicyArea.id, sql.placeholder("id")),
     })
     .prepare("#checkPolicyAreaById");
 
@@ -158,6 +157,7 @@ export class CommunityBoardBudgetRequestRepository {
         .selectDistinct({
           initials: agency.initials,
           name: agency.name,
+          oversightLevel: sql<OversightLevelCategory>`${agency.oversightLevel}`,
         })
         .from(agency)
         .leftJoin(

@@ -10,8 +10,15 @@
       "type": "string",
       "description": "The full name of the agency.",
       "example": "Department of Transportation"
+    },
+    "oversightLevel": {
+      "nullable": true,
+      "type": "string",
+      "enum": ["City", "County", "State", "Federal"],
+      "description": "The type of Oversight Level.",
+      "x-readme-ref-name": "OversightLevelCategory"
     }
   },
-  "required": ["initials", "name"],
+  "required": ["initials", "name", "oversightLevel"],
   "x-readme-ref-name": "Agency"
 }

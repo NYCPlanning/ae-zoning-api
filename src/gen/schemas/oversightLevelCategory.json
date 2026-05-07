@@ -1,0 +1,7 @@
+{
+  "type": "string",
+  "nullable": true,
+  "enum": ["City", "County", "State", "Federal"],
+  "description": "The type of Oversight Level.",
+  "x-readme-ref-name": "OversightLevelCategory"
+}
