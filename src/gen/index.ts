@@ -418,6 +418,10 @@ export type {
 } from "./types/MultiPolygon";
 export type { MVT } from "./types/MVT";
 export type { NotFound } from "./types/NotFound";
+export type {
+  OversightLevelCategoryEnumKey,
+  OversightLevelCategory,
+} from "./types/OversightLevelCategory";
 export type { Page } from "./types/Page";
 export type { Position } from "./types/Position";
 export type { TaxLot } from "./types/TaxLot";
@@ -449,6 +453,7 @@ export { findCommunityBoardBudgetRequestsCsvQueryParamsGeometryEnum } from "./ty
 export { findTaxLotsQueryParamsGeometryEnum } from "./types/FindTaxLots";
 export { multiPointTypeEnum } from "./types/MultiPoint";
 export { multiPolygonTypeEnum } from "./types/MultiPolygon";
+export { oversightLevelCategoryEnum } from "./types/OversightLevelCategory";
 export { taxLotGeoJsonTypeEnum } from "./types/TaxLotGeoJson";
 export { zoningDistrictClassCategoryEnum } from "./types/ZoningDistrictClassCategory";
 export { agencyBudgetSchema } from "./zod/agencyBudgetSchema";
@@ -797,6 +802,7 @@ export { multiPointSchema } from "./zod/multiPointSchema";
 export { multiPolygonSchema } from "./zod/multiPolygonSchema";
 export { MVTSchema } from "./zod/MVTSchema";
 export { notFoundSchema } from "./zod/notFoundSchema";
+export { oversightLevelCategorySchema } from "./zod/oversightLevelCategorySchema";
 export { pageSchema } from "./zod/pageSchema";
 export { positionSchema } from "./zod/positionSchema";
 export { taxLotBasicPageSchema } from "./zod/taxLotBasicPageSchema";

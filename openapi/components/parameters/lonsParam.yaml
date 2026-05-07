@@ -7,7 +7,7 @@ schema:
     type: number
   minItems: 1
   maxItems: 5
-  example: '-74.010776,-74.010776,-74.010139,-74.010139,-74.010776'
+  example: [-74.010776,-74.010776,-74.010139,-74.010139,-74.010776]
 style: form
 explode: false
 description: >-

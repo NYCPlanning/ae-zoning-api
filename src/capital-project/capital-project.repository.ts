@@ -272,6 +272,7 @@ export class CapitalProjectRepository {
         .selectDistinct({
           initials: agency.initials,
           name: agency.name,
+          oversightLevel: agency.oversightLevel,
         })
         .from(agency)
         .leftJoin(
@@ -465,7 +466,7 @@ export class CapitalProjectRepository {
         managingCode: true,
         id: true,
       },
-      where: (capitalProject, { and, eq, sql }) =>
+      where: (capitalProject) =>
         and(
           eq(capitalProject.managingCode, sql.placeholder("managingCode")),
           eq(capitalProject.id, sql.placeholder("capitalProjectId")),

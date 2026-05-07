@@ -1,5 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { DB, DbType } from "src/global/providers/db.provider";
+import { eq, sql } from "drizzle-orm";
 import { DataRetrievalException } from "src/exception";
 import { CheckByInitialsRepo, FindManyRepo } from "./agency.repository.schema";
 import { Cache } from "cache-manager";
@@ -18,8 +19,7 @@ export class AgencyRepository {
       columns: {
         initials: true,
       },
-      where: (agency, { eq, sql }) =>
-        eq(agency.initials, sql.placeholder("initials")),
+      where: (agency) => eq(agency.initials, sql.placeholder("initials")),
     })
     .prepare("checkByInitials");
 

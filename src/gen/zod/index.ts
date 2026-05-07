@@ -344,6 +344,7 @@ export { multiPointSchema } from "./multiPointSchema";
 export { multiPolygonSchema } from "./multiPolygonSchema";
 export { MVTSchema } from "./MVTSchema";
 export { notFoundSchema } from "./notFoundSchema";
+export { oversightLevelCategorySchema } from "./oversightLevelCategorySchema";
 export { pageSchema } from "./pageSchema";
 export { positionSchema } from "./positionSchema";
 export { taxLotBasicPageSchema } from "./taxLotBasicPageSchema";

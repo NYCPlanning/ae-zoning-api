@@ -8,6 +8,6 @@ schema:
     pattern: ^([0-9]{3})$
   minItems: 1
   maxItems: 10
-  example: '101,204'
+  example: ['101','204']
 description: >-
   A list of three character numeric strings containing the concatenation of the borough and community district ids.
