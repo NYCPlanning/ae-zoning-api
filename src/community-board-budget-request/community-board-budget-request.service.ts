@@ -35,7 +35,7 @@ export class CommunityBoardBudgetRequestService {
     private readonly communityDistrictRepository: CommunityDistrictRepository,
     private readonly cityCouncilDistrictRepository: CityCouncilDistrictRepository,
     private readonly spatialRepository: SpatialRepository,
-  ) { }
+  ) {}
 
   async findAgencies({
     cbbrPolicyAreaId,
@@ -202,6 +202,7 @@ export class CommunityBoardBudgetRequestService {
     boroughIds = null,
     boroughId = null,
     communityDistrictId = null,
+    communityDistrictIds = null,
     cityCouncilDistrictId = null,
     cbbrPolicyAreaId = null,
     cbbrNeedGroupId = null,
@@ -213,6 +214,7 @@ export class CommunityBoardBudgetRequestService {
     boroughIds?: Array<string> | null;
     boroughId?: string | null;
     communityDistrictId?: string | null;
+    communityDistrictIds?: Array<string> | null;
     cityCouncilDistrictId?: string | null;
     cbbrPolicyAreaId?: number | null;
     cbbrNeedGroupId?: number | null;
@@ -276,6 +278,16 @@ export class CommunityBoardBudgetRequestService {
         ),
       );
 
+    const uniqueCommunityDistrictIds =
+      communityDistrictIds === null ? null : [...new Set(communityDistrictIds)];
+    if (uniqueCommunityDistrictIds !== null) {
+      checklist.push(
+        this.communityDistrictRepository.checkByBoroughIdCommunityDistrictIds(
+          uniqueCommunityDistrictIds,
+        ),
+      );
+    }
+
     if (cityCouncilDistrictId !== null)
       checklist.push(
         this.cityCouncilDistrictRepository.checkById(cityCouncilDistrictId),
@@ -293,6 +305,7 @@ export class CommunityBoardBudgetRequestService {
   async findMany({
     boroughIds = null,
     communityDistrictCombinedId = null,
+    communityDistrictIds = null,
     cityCouncilDistrictId = null,
     cbbrPolicyAreaId = null,
     cbbrNeedGroupId = null,
@@ -310,6 +323,7 @@ export class CommunityBoardBudgetRequestService {
   }: {
     boroughIds?: Array<string> | null;
     communityDistrictCombinedId?: string | null;
+    communityDistrictIds?: Array<string> | null;
     cityCouncilDistrictId?: string | null;
     cbbrPolicyAreaId?: number | null;
     cbbrNeedGroupId?: number | null;
@@ -342,10 +356,14 @@ export class CommunityBoardBudgetRequestService {
     const uniqueBoroughIds =
       boroughIds === null ? null : [...new Set(boroughIds)];
 
+    const uniqueCommunityDistrictIds =
+      communityDistrictIds === null ? null : [...new Set(communityDistrictIds)];
+
     await this.findManyParameterValidation({
       boroughIds: uniqueBoroughIds,
       boroughId,
       communityDistrictId,
+      communityDistrictIds: uniqueCommunityDistrictIds,
       cityCouncilDistrictId,
       cbbrPolicyAreaId,
       cbbrNeedGroupId,
@@ -368,6 +386,7 @@ export class CommunityBoardBudgetRequestService {
           : null,
       boroughId,
       communityDistrictId,
+      communityDistrictIds: uniqueCommunityDistrictIds,
       cityCouncilDistrictId,
       cbbrPolicyAreaId,
       cbbrNeedGroupId,
@@ -405,6 +424,7 @@ export class CommunityBoardBudgetRequestService {
   async findCsv({
     boroughIds = null,
     communityDistrictCombinedId = null,
+    communityDistrictIds = null,
     cityCouncilDistrictId = null,
     cbbrPolicyAreaId = null,
     cbbrNeedGroupId = null,
@@ -420,6 +440,7 @@ export class CommunityBoardBudgetRequestService {
   }: {
     boroughIds?: Array<string> | null;
     communityDistrictCombinedId?: string | null;
+    communityDistrictIds?: Array<string> | null;
     cityCouncilDistrictId?: string | null;
     cbbrPolicyAreaId?: number | null;
     cbbrNeedGroupId?: number | null;
@@ -450,10 +471,14 @@ export class CommunityBoardBudgetRequestService {
     const uniqueBoroughIds =
       boroughIds === null ? null : [...new Set(boroughIds)];
 
+    const uniqueCommunityDistrictIds =
+      communityDistrictIds === null ? null : [...new Set(communityDistrictIds)];
+
     await this.findManyParameterValidation({
       boroughIds: uniqueBoroughIds,
       boroughId,
       communityDistrictId,
+      communityDistrictIds: uniqueCommunityDistrictIds,
       cityCouncilDistrictId,
       cbbrPolicyAreaId,
       cbbrNeedGroupId,
@@ -475,6 +500,7 @@ export class CommunityBoardBudgetRequestService {
           : null,
       boroughId,
       communityDistrictId,
+      communityDistrictIds: uniqueCommunityDistrictIds,
       cityCouncilDistrictId,
       cbbrPolicyAreaId,
       cbbrNeedGroupId,

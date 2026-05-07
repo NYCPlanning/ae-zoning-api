@@ -290,6 +290,7 @@ export class CommunityBoardBudgetRequestRepositoryMock {
   async filterCommunityBoardBudgetRequests({
     boroughId,
     communityDistrictId,
+    communityDistrictIds,
     cityCouncilDistrictId,
     cbbrPolicyAreaId,
     cbbrNeedGroupId,
@@ -303,6 +304,7 @@ export class CommunityBoardBudgetRequestRepositoryMock {
   }: {
     boroughId: string | null;
     communityDistrictId: string | null;
+    communityDistrictIds: Array<string> | null;
     cityCouncilDistrictId: string | null;
     cbbrPolicyAreaId: number | null;
     cbbrNeedGroupId: number | null;
@@ -321,6 +323,14 @@ export class CommunityBoardBudgetRequestRepositoryMock {
           communityDistrictId !== null &&
           (boroughId !== criteria.boroughId ||
             communityDistrictId !== criteria.communityDistrictId)
+        )
+          return false;
+
+        if (
+          communityDistrictIds !== null &&
+          !communityDistrictIds.includes(
+            `${criteria.boroughId}${criteria.communityDistrictId}`,
+          )
         )
           return false;
 
@@ -398,6 +408,7 @@ export class CommunityBoardBudgetRequestRepositoryMock {
   async findMany(params: {
     boroughId: string | null;
     communityDistrictId: string | null;
+    communityDistrictIds: Array<string> | null;
     cityCouncilDistrictId: string | null;
     cbbrPolicyAreaId: number | null;
     cbbrNeedGroupId: number | null;
@@ -417,6 +428,7 @@ export class CommunityBoardBudgetRequestRepositoryMock {
   async findCount(params: {
     boroughId: string | null;
     communityDistrictId: string | null;
+    communityDistrictIds: Array<string> | null;
     cityCouncilDistrictId: string | null;
     cbbrPolicyAreaId: number | null;
     cbbrNeedGroupId: number | null;
@@ -521,6 +533,7 @@ export class CommunityBoardBudgetRequestRepositoryMock {
   async filterCommunityBoardBudgetCsvRequests({
     boroughId,
     communityDistrictId,
+    communityDistrictIds,
     cityCouncilDistrictId,
     cbbrPolicyAreaId,
     cbbrNeedGroupId,
@@ -532,6 +545,7 @@ export class CommunityBoardBudgetRequestRepositoryMock {
   }: {
     boroughId: string | null;
     communityDistrictId: string | null;
+    communityDistrictIds: Array<string> | null;
     cityCouncilDistrictId: string | null;
     cbbrPolicyAreaId: number | null;
     cbbrNeedGroupId: number | null;
@@ -548,6 +562,14 @@ export class CommunityBoardBudgetRequestRepositoryMock {
           communityDistrictId !== null &&
           (boroughId !== criteria.boroughId ||
             communityDistrictId !== criteria.communityDistrictId)
+        )
+          return false;
+
+        if (
+          communityDistrictIds !== null &&
+          !communityDistrictIds.includes(
+            `${criteria.boroughId}${criteria.communityDistrictId}`,
+          )
         )
           return false;
 
@@ -603,6 +625,7 @@ export class CommunityBoardBudgetRequestRepositoryMock {
   async findCsv(params: {
     boroughId: string | null;
     communityDistrictId: string | null;
+    communityDistrictIds: Array<string> | null;
     cityCouncilDistrictId: string | null;
     cbbrPolicyAreaId: number | null;
     cbbrNeedGroupId: number | null;

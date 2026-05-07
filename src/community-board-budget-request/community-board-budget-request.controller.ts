@@ -54,6 +54,7 @@ export class CommunityBoardBudgetRequestController {
     {
       boroughIds,
       communityDistrictId,
+      communityDistrictIds,
       cityCouncilDistrictId,
       cbbrAgencyCategoryResponseIds,
       cbbrNeedGroupId,
@@ -73,6 +74,7 @@ export class CommunityBoardBudgetRequestController {
     return await this.communityBoardBudgetRequestService.findMany({
       boroughIds,
       communityDistrictCombinedId: communityDistrictId,
+      communityDistrictIds,
       cityCouncilDistrictId,
       cbbrAgencyCategoryResponseIds,
       cbbrNeedGroupId,
@@ -99,6 +101,7 @@ export class CommunityBoardBudgetRequestController {
     {
       boroughIds,
       communityDistrictId,
+      communityDistrictIds,
       cityCouncilDistrictId,
       cbbrAgencyCategoryResponseIds,
       cbbrNeedGroupId,
@@ -116,6 +119,7 @@ export class CommunityBoardBudgetRequestController {
     const data = await this.communityBoardBudgetRequestService.findCsv({
       boroughIds,
       communityDistrictCombinedId: communityDistrictId,
+      communityDistrictIds,
       cityCouncilDistrictId,
       cbbrAgencyCategoryResponseIds,
       cbbrNeedGroupId,

@@ -529,6 +529,34 @@ describe("Community Board Budget Request e2e", () => {
       );
     });
 
+    it("should 200 when finding cbbrs by communityDistrictId", async () => {
+      const response = await request(app.getHttpServer())
+        .get(
+          `/community-board-budget-requests?communityDistrictIds=${communityDistrictRepositoryMock.districts[0].boroughId}${communityDistrictRepositoryMock.districts[0].id},${communityDistrictRepositoryMock.districts[1].boroughId}${communityDistrictRepositoryMock.districts[1].id}`,
+        )
+        .expect(200);
+
+      expect(() =>
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(
+          response.body,
+        ),
+      ).not.toThrow();
+
+      const parsedBody =
+        findCommunityBoardBudgetRequestsQueryResponseSchema.parse(
+          response.body,
+        );
+      expect(parsedBody.limit).toBe(20);
+      expect(parsedBody.offset).toBe(0);
+      expect(parsedBody.communityBoardBudgetRequests.length).toBeGreaterThan(0);
+      expect(parsedBody.total).toBe(
+        parsedBody.communityBoardBudgetRequests.length,
+      );
+      expect(parsedBody.totalBudgetRequests).toBe(
+        parsedBody.communityBoardBudgetRequests.length,
+      );
+    });
+
     it("should 200 when finding cbbrs by cityCouncilDistrictId", async () => {
       const cityCouncilDistrict =
         cityCouncilDistrictRepositoryMock.districts[0];
@@ -807,6 +835,36 @@ describe("Community Board Budget Request e2e", () => {
       const response = await request(app.getHttpServer())
         .get(
           `/community-board-budget-requests?communityDistrictId=${communityDistrictId}`,
+        )
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /one or more values for parameters do not exist/,
+      );
+    });
+
+    it("should 400 when finding cbbrs by invalid communityDistrictIds", async () => {
+      const communityDistrictIds = false;
+
+      const response = await request(app.getHttpServer())
+        .get(
+          `/community-board-budget-requests?communityDistrictIds=${communityDistrictIds}`,
+        )
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /Invalid request parameter: communityDistrictIds: Invalid/,
+      );
+    });
+
+    it("should 400 when finding cbbrs by missing communityDistrictIds", async () => {
+      const communityDistrictIds = "909,808";
+
+      const response = await request(app.getHttpServer())
+        .get(
+          `/community-board-budget-requests?communityDistrictIds=${communityDistrictIds}`,
         )
         .expect(400);
 
@@ -1259,6 +1317,14 @@ describe("Community Board Budget Request e2e", () => {
         .expect(200);
     });
 
+    it("should 200 when finding cbbrs by communityDistrictIds", async () => {
+      await request(app.getHttpServer())
+        .get(
+          `/community-board-budget-requests/csv?communityDistrictIds=${communityDistrictRepositoryMock.districts[0].boroughId}${communityDistrictRepositoryMock.districts[0].id},${communityDistrictRepositoryMock.districts[1].boroughId}${communityDistrictRepositoryMock.districts[1].id}`,
+        )
+        .expect(200);
+    });
+
     it("should 200 when finding cbbrs by cityCouncilDistrictId", async () => {
       const cityCouncilDistrict =
         cityCouncilDistrictRepositoryMock.districts[0];
@@ -1380,6 +1446,36 @@ describe("Community Board Budget Request e2e", () => {
       const response = await request(app.getHttpServer())
         .get(
           `/community-board-budget-requests/csv?communityDistrictId=${communityDistrictId}`,
+        )
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /one or more values for parameters do not exist/,
+      );
+    });
+
+    it("should 400 when finding cbbrs by invalid communityDistrictIds", async () => {
+      const communityDistrictIds = false;
+
+      const response = await request(app.getHttpServer())
+        .get(
+          `/community-board-budget-requests/csv?communityDistrictIds=${communityDistrictIds}`,
+        )
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /Invalid request parameter: communityDistrictIds: Invalid/,
+      );
+    });
+
+    it("should 400 when finding cbbrs by missing communityDistrictIds", async () => {
+      const communityDistrictIds = "909,808";
+
+      const response = await request(app.getHttpServer())
+        .get(
+          `/community-board-budget-requests/csv?communityDistrictIds=${communityDistrictIds}`,
         )
         .expect(400);
 
