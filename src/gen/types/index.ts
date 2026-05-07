@@ -415,6 +415,10 @@ export type { MultiPointTypeEnumKey, MultiPoint } from "./MultiPoint";
 export type { MultiPolygonTypeEnumKey, MultiPolygon } from "./MultiPolygon";
 export type { MVT } from "./MVT";
 export type { NotFound } from "./NotFound";
+export type {
+  OversightLevelCategoryEnumKey,
+  OversightLevelCategory,
+} from "./OversightLevelCategory";
 export type { Page } from "./Page";
 export type { Position } from "./Position";
 export type { TaxLot } from "./TaxLot";
@@ -443,5 +447,6 @@ export { findCommunityBoardBudgetRequestsCsvQueryParamsGeometryEnum } from "./Fi
 export { findTaxLotsQueryParamsGeometryEnum } from "./FindTaxLots";
 export { multiPointTypeEnum } from "./MultiPoint";
 export { multiPolygonTypeEnum } from "./MultiPolygon";
+export { oversightLevelCategoryEnum } from "./OversightLevelCategory";
 export { taxLotGeoJsonTypeEnum } from "./TaxLotGeoJson";
 export { zoningDistrictClassCategoryEnum } from "./ZoningDistrictClassCategory";

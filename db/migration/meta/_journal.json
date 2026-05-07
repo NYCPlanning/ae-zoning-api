@@ -253,6 +253,13 @@
       "when": 1778613108863,
       "tag": "0035_dear_serpent_society",
       "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1778697072203,
+      "tag": "0036_blushing_shadow_king",
+      "breakpoints": true
     }
   ]
 }
