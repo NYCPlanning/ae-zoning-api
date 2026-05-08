@@ -26,4 +26,4 @@ import { SpatialModule } from "src/spatial/spatial.module";
   ],
   controllers: [CommunityBoardBudgetRequestController],
 })
-export class CommunityBoardBudgetRequestModule { }
+export class CommunityBoardBudgetRequestModule {}
