@@ -19,6 +19,7 @@ import {
   FindCapitalProjectByManagingCodeCapitalProjectIdPathParams,
   FindCapitalProjectGeoJsonByManagingCodeCapitalProjectIdPathParams,
   FindCapitalProjectTilesPathParams,
+  OversightLevelCategory,
 } from "src/gen";
 import { DB, DbType } from "src/global/providers/db.provider";
 import {
@@ -272,7 +273,7 @@ export class CapitalProjectRepository {
         .selectDistinct({
           initials: agency.initials,
           name: agency.name,
-          oversightLevel: agency.oversightLevel,
+          oversightLevel: sql<OversightLevelCategory>`${agency.oversightLevel}`,
         })
         .from(agency)
         .leftJoin(

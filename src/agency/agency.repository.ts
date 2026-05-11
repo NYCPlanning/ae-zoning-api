@@ -1,10 +1,12 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { DB, DbType } from "src/global/providers/db.provider";
-import { eq, sql } from "drizzle-orm";
+import { eq, sql, asc } from "drizzle-orm";
 import { DataRetrievalException } from "src/exception";
 import { CheckByInitialsRepo, FindManyRepo } from "./agency.repository.schema";
 import { Cache } from "cache-manager";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
+import { agency } from "src/schema";
+import { OversightLevelCategory } from "src/gen";
 
 @Injectable()
 export class AgencyRepository {
@@ -45,9 +47,14 @@ export class AgencyRepository {
 
   async findMany(): Promise<FindManyRepo> {
     try {
-      return await this.db.query.agency.findMany({
-        orderBy: (agency, { asc }) => [asc(agency.initials)],
-      });
+      return await this.db
+        .select({
+          initials: agency.initials,
+          name: agency.name,
+          oversightLevel: sql<OversightLevelCategory>`${agency.oversightLevel}`,
+        })
+        .from(agency)
+        .orderBy(asc(agency.initials));
     } catch {
       throw new DataRetrievalException("cannot find agencies");
     }

@@ -1,21 +1,14 @@
 import { sql } from "drizzle-orm";
-import { check, pgEnum, pgTable, text } from "drizzle-orm/pg-core";
+import { check, pgTable, text } from "drizzle-orm/pg-core";
 import { oversightLevelCategorySchema } from "src/gen";
 import { z } from "zod";
-
-export const oversightLevelEnum = pgEnum("oversight_level_enum", [
-  "City",
-  "County",
-  "State",
-  "Federal",
-]);
 
 export const agency = pgTable(
   "agency",
   {
     initials: text("initials").primaryKey(),
     name: text("name").notNull(),
-    oversightLevel: oversightLevelEnum("oversight_level"),
+    oversightLevel: text("oversight_level"),
   },
   (table) => [
     check(

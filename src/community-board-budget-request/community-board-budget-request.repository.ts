@@ -35,6 +35,7 @@ import {
   FindCommunityBoardBudgetRequestNeedGroupsQueryParams,
   FindCommunityBoardBudgetRequestPolicyAreasQueryParams,
   FindCommunityBoardBudgetRequestTilesPathParams,
+  OversightLevelCategory,
 } from "src/gen";
 import { Cache } from "cache-manager";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
@@ -156,7 +157,7 @@ export class CommunityBoardBudgetRequestRepository {
         .selectDistinct({
           initials: agency.initials,
           name: agency.name,
-          oversightLevel: agency.oversightLevel,
+          oversightLevel: sql<OversightLevelCategory>`${agency.oversightLevel}`,
         })
         .from(agency)
         .leftJoin(
