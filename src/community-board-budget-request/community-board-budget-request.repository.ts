@@ -778,9 +778,12 @@ export class CommunityBoardBudgetRequestRepository {
           eq(communityBoardBudgetRequest.boroughId, borough.id),
         )
         .where(
-          or(
-            sql`${communityBoardBudgetRequest.mercatorFillMPnt} && ST_TileEnvelope(${z},${x},${y})`,
-            sql`${communityBoardBudgetRequest.mercatorFillMPoly} && ST_TileEnvelope(${z},${x},${y})`,
+          and(
+            or(
+              sql`${communityBoardBudgetRequest.mercatorFillMPnt} && ST_TileEnvelope(${z},${x},${y})`,
+              sql`${communityBoardBudgetRequest.mercatorFillMPoly} && ST_TileEnvelope(${z},${x},${y})`,
+            ),
+            eq(communityBoardBudgetRequest.requestType, "Capital"),
           ),
         )
         .as("tile");
