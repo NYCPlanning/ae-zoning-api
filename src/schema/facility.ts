@@ -9,7 +9,11 @@ import {
 import { multiPointGeom } from "src/drizzle-pgis";
 import z from "zod";
 import { sql } from "drizzle-orm";
-import { agency } from "./agency";
+import { agency, agencyEntitySchema } from "./agency";
+import {
+  facilityOperator,
+  facilityOperatorEntitySchema,
+} from "./facility-operator";
 
 export const facilityDomain = pgTable("facility_domain", {
   id: smallint("id").generatedByDefaultAsIdentity().primaryKey(),
@@ -97,7 +101,9 @@ export const facility = pgTable(
       .notNull()
       .references(() => facilityType.id),
     serviceArea: text("service_area"),
-    facilityOperatorInitials: text("facility_operator_initials"),
+    facilityOperatorId: text("facility_operator_initials").references(
+      () => facilityOperator.id,
+    ),
     overseeingAgencyInitials: text("overseeing_agency_initials").references(
       () => agency.initials,
     ),
@@ -107,7 +113,7 @@ export const facility = pgTable(
     bbl: char("bbl", { length: 10 }),
     liFt: multiPointGeom("li_ft", 2263),
     mercator: multiPointGeom("mercator", 3857),
-    dataSource: text("data_source"),
+    // dataSourceId: text("data_source_id").references(() => dataSource.id),
   },
   (table) => [
     index().using("GIST", table.liFt),
@@ -132,8 +138,9 @@ export const facilityEntitySchema = z.object({
   zipcode: z.string(),
   facilityTypeId: facilityTypeEntitySchema.shape.id,
   serviceArea: z.string(),
-  facilityOperatorInitials: z.string(),
-  overseeingAgencyInitials: z.string(),
+  facilityOperatorId: facilityOperatorEntitySchema.shape.id,
+  overseeingAgencyInitials: agencyEntitySchema.shape.initials,
+  overseeingLevel: z.string(),
   capacity: z.number().int(),
   capacityType: z.string(),
   bin: z.string().regex(RegExp("^([0-9]{7})$")),
