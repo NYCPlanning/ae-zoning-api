@@ -134,7 +134,6 @@ export const facilityEntitySchema = z.object({
   serviceArea: z.string(),
   facilityOperatorInitials: z.string(),
   overseeingAgencyInitials: z.string(),
-  overseeingLevel: z.string(),
   capacity: z.number().int(),
   capacityType: z.string(),
   bin: z.string().regex(RegExp("^([0-9]{7})$")),
