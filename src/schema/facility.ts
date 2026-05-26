@@ -70,7 +70,6 @@ export type FacilitySubgroupEntitySchema = z.infer<
 export const facilityType = pgTable("facility_type", {
   id: smallint("id").generatedByDefaultAsIdentity().primaryKey(),
   name: text("name"),
-  description: text("description"),
   facilitySubgroupId: smallint("facility_subgroup_id")
     .notNull()
     .references(() => facilitySubgroup.id),
@@ -79,7 +78,6 @@ export const facilityType = pgTable("facility_type", {
 export const facilityTypeEntitySchema = z.object({
   id: z.number().int(),
   name: z.string(),
-  description: z.string(),
   facilitySubgroupId: facilitySubgroupEntitySchema.shape.id,
 });
 
