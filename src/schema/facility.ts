@@ -12,7 +12,7 @@ import { sql } from "drizzle-orm";
 import { agency } from "./agency";
 
 export const facilityDomain = pgTable("facility_domain", {
-  id: smallint("id").generatedByDefaultAsIdentity(),
+  id: smallint("id").generatedByDefaultAsIdentity().primaryKey(),
   name: text("name"),
   description: text("description"),
 });
@@ -28,7 +28,7 @@ export type FacilityDomainEntitySchema = z.infer<
 >;
 
 export const facilityGroup = pgTable("facility_group", {
-  id: smallint("id").generatedByDefaultAsIdentity(),
+  id: smallint("id").generatedByDefaultAsIdentity().primaryKey(),
   name: text("name"),
   description: text("description"),
   facilityDomainId: smallint("facility_domain_id")
@@ -48,7 +48,7 @@ export type FacilityGroupEntitySchema = z.infer<
 >;
 
 export const facilitySubgroup = pgTable("facility_subgroup", {
-  id: smallint("id").generatedByDefaultAsIdentity(),
+  id: smallint("id").generatedByDefaultAsIdentity().primaryKey(),
   name: text("name"),
   description: text("description"),
   facilityGroupId: smallint("facility_group_id")
@@ -68,7 +68,7 @@ export type FacilitySubgroupEntitySchema = z.infer<
 >;
 
 export const facilityType = pgTable("facility_type", {
-  id: smallint("id").generatedByDefaultAsIdentity(),
+  id: smallint("id").generatedByDefaultAsIdentity().primaryKey(),
   name: text("name"),
   description: text("description"),
   facilitySubgroupId: smallint("facility_subgroup_id")
@@ -95,7 +95,9 @@ export const facility = pgTable(
     streetName: text("street_name"),
     city: text("city"),
     zipcode: text("zipcode"),
-    facilityType: text("facility_type").notNull(),
+    facilityTypeId: smallint("facility_type_id")
+      .notNull()
+      .references(() => facilityType.id),
     serviceArea: text("service_area"),
     facilityOperatorInitials: text("facility_operator_initials"),
     overseeingAgencyInitials: text("overseeing_agency_initials").references(
@@ -130,7 +132,7 @@ export const facilityEntitySchema = z.object({
   streetName: z.string(),
   city: z.string(),
   zipcode: z.string(),
-  facilityType: z.string(),
+  facilityTypeId: facilityTypeEntitySchema.shape.id,
   serviceArea: z.string(),
   facilityOperatorInitials: z.string(),
   overseeingAgencyInitials: z.string(),

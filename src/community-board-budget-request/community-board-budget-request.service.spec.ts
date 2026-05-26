@@ -659,7 +659,7 @@ describe("Community Board Budget Request service unit", () => {
         findCommunityBoardBudgetRequestsQueryResponseSchema.parse(allCbbrs);
       expect(
         continuedSupport.totalBudgetRequests +
-        nonContinuedSupport.totalBudgetRequests,
+          nonContinuedSupport.totalBudgetRequests,
       ).toBe(all.totalBudgetRequests);
     });
 
