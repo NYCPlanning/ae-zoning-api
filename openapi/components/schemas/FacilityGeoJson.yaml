@@ -1,0 +1,19 @@
+type: object
+properties:
+  id:
+    type: string
+    description: The id for the facility.
+    example: 1435f9fd9f0787a5038b15512bb9684f
+  type:
+    type: string
+    enum:
+      - Feature
+  geometry:
+    $ref: ./MultiPoint.yaml
+  properties:
+    $ref: ./Facility.yaml
+required:
+  - id
+  - type
+  - geometry
+  - properties

@@ -1,0 +1,12 @@
+name: facilityOperatorType
+required: false
+in: query
+schema:
+  type: string
+  enum:
+    - Public
+    - Non-public
+    - 'null'
+  example: Public
+description: >-
+  The operator type or facility type of the facility.

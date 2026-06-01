@@ -1,0 +1,78 @@
+type: object
+properties:
+  id:
+    type: string
+    description: The id for the facility or program.
+    example: 1435f9fd9f0787a5038b15512bb9684f
+  name:
+    type: string
+    description: The name of the facility or program.
+    example: 'QUEENSBORO OVAL'
+    nullable: true
+  oversightAgencyInitials:
+    type: string
+    description: The name of the agency overseeing the facility or program.
+    example: 'NYCDPR'
+    nullable: true
+  address:
+    type: string
+    description: The street address of the facility, including borough, state, and zip.
+    example: 405 EAST 59 STREET, NEW YORK, NY 10022
+    nullable: true
+  bbl:
+    type: string
+    description: The ten digit tax lot id of the facility.
+    example: '1014540001'
+    nullable: true
+  bin:
+    type: string
+    description: The seven digit building id of the facility.
+    example: '1045270'
+    nullable: true
+  facilityJurisdiction:
+    $ref: ./OversightLevelCategory.yaml
+  facilityOperatorType:
+    $ref: ./FacilityOperatorType.yaml
+  categoryId:
+    type: string
+    description: The category id of the facility
+    pattern: ^([0-9]{1,3})$
+    example: '1'
+  categoryGroupId:
+    type: string
+    description: The category group id of the facility
+    pattern: ^([0-9]{1,3})$
+    example: '1'
+  categorySubgroupId:
+    type: string
+    description: The category subgroup id of the facility
+    pattern: ^([0-9]{1,3})$
+    example: '1'
+  operatorName:
+    type: string
+    description: The name of the entity operating the facility or program.
+    example: 'NYC Department of Parks and Recreation'
+    nullable: true
+  dataSource:
+    $ref: ./DataSource.yaml
+  alsoAtLocation:
+    type: array
+    items:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The id for the facility or program.
+          example: 1435f9fd9f0787a5038b15512bb9684f
+        name:
+          type: string
+          description: The name of the facility or program.
+          example: 'QUEENSBORO OVAL'
+required:
+  - id
+  - categoryId
+  - categoryGroupId
+  - categorySubgroupId
+  - dataSource
+  - alsoAtLocation
+  

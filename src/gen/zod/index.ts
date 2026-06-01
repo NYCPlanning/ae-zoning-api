@@ -21,7 +21,15 @@ export { communityBoardBudgetRequestSchema } from "./communityBoardBudgetRequest
 export { communityBoardBudgetRequestTypeSchema } from "./communityBoardBudgetRequestTypeSchema";
 export { communityDistrictGeoJsonSchema } from "./communityDistrictGeoJsonSchema";
 export { communityDistrictSchema } from "./communityDistrictSchema";
+export { dataSourceSchema } from "./dataSourceSchema";
 export { errorSchema } from "./errorSchema";
+export { facilityCategoryGroupSchema } from "./facilityCategoryGroupSchema";
+export { facilityCategorySchema } from "./facilityCategorySchema";
+export { facilityCategorySubgroupSchema } from "./facilityCategorySubgroupSchema";
+export { facilityGeoJsonSchema } from "./facilityGeoJsonSchema";
+export { facilityOperatorTypeSchema } from "./facilityOperatorTypeSchema";
+export { facilityPageSchema } from "./facilityPageSchema";
+export { facilitySchema } from "./facilitySchema";
 export {
   findAgencies200Schema,
   findAgencies400Schema,
@@ -257,6 +265,48 @@ export {
   findCommunityDistrictTiles500Schema,
   findCommunityDistrictTilesQueryResponseSchema,
 } from "./findCommunityDistrictTilesSchema";
+export {
+  findFacilitiesQueryParamsSchema,
+  findFacilities200Schema,
+  findFacilities400Schema,
+  findFacilities500Schema,
+  findFacilitiesQueryResponseSchema,
+} from "./findFacilitiesSchema";
+export {
+  findFacilityAgencies200Schema,
+  findFacilityAgencies400Schema,
+  findFacilityAgencies500Schema,
+  findFacilityAgenciesQueryResponseSchema,
+} from "./findFacilityAgenciesSchema";
+export {
+  findFacilityByIdPathParamsSchema,
+  findFacilityById200Schema,
+  findFacilityById400Schema,
+  findFacilityById404Schema,
+  findFacilityById500Schema,
+  findFacilityByIdQueryResponseSchema,
+} from "./findFacilityByIdSchema";
+export {
+  findFacilityCategories200Schema,
+  findFacilityCategories400Schema,
+  findFacilityCategories500Schema,
+  findFacilityCategoriesQueryResponseSchema,
+} from "./findFacilityCategoriesSchema";
+export {
+  findFacilityGeoJsonByIdPathParamsSchema,
+  findFacilityGeoJsonById200Schema,
+  findFacilityGeoJsonById400Schema,
+  findFacilityGeoJsonById404Schema,
+  findFacilityGeoJsonById500Schema,
+  findFacilityGeoJsonByIdQueryResponseSchema,
+} from "./findFacilityGeoJsonByIdSchema";
+export {
+  findFacilityTilesPathParamsSchema,
+  findFacilityTiles200Schema,
+  findFacilityTiles400Schema,
+  findFacilityTiles500Schema,
+  findFacilityTilesQueryResponseSchema,
+} from "./findFacilityTilesSchema";
 export {
   findLandUses200Schema,
   findLandUses400Schema,

@@ -1,12 +1,9 @@
 get:
-  summary: Find community board budget request agencies
-  operationId: findCommunityBoardBudgetRequestAgencies
+  summary: Find facility agencies
+  operationId: findFacilityAgencies
   tags:
     - Agencies
-    - Community Board Budget Requests
-  parameters:
-    - $ref: ../components/parameters/cbbrNeedGroupIdQueryParam.yaml
-    - $ref: ../components/parameters/cbbrPolicyAreaIdQueryParam.yaml
+    - Facilities
   responses:
     '200':
       description: An object containing a list of agencies
@@ -15,12 +12,12 @@ get:
           schema:
             type: object
             properties:
-              cbbrAgencies:
+              facilityAgencies:
                 type: array
                 items:
                   $ref: ../components/schemas/Agency.yaml
             required:
-              - cbbrAgencies
+              - facilityAgencies
     '400':
       $ref: ../components/responses/BadRequest.yaml
     '500':

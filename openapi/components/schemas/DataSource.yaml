@@ -1,0 +1,25 @@
+type: object
+properties:
+  schemaName:
+    type: string
+    description: >-
+      The name of the schema of the dataset.
+    example: bpl_libraries
+  datasetName:
+    type: string
+    description: The name of the dataset.
+    example: BPL Libraries
+    nullable: true
+  version:
+    type: string
+    description: The version of the dataset.
+    example: '20260417'
+  retrieveDate:
+    type: string
+    description: The retrieval date of the version of the dataset.
+    example: 2026-04-17
+required:
+  - schemaName
+  - datasetName
+  - version
+  - retrieveDate

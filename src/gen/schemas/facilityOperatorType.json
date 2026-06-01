@@ -1,0 +1,7 @@
+{
+  "type": "string",
+  "nullable": true,
+  "enum": ["Public", "Non-public"],
+  "description": "The facility type or operator type.",
+  "x-readme-ref-name": "FacilityOperatorType"
+}
