@@ -7,6 +7,7 @@ import {
   text,
   uuid,
 } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
 import z from "zod";
 import {
   facilityOperator,
@@ -19,8 +20,8 @@ import { dataSource } from "./data-source";
 
 export const facilityDomain = pgTable("facility_domain", {
   id: smallint("id").generatedByDefaultAsIdentity().primaryKey(),
-  name: text("name"),
-  description: text("description"),
+  name: text("name").notNull(),
+  description: text("description").notNull(),
 });
 
 export const facilityDomainEntitySchema = z.object({
@@ -35,7 +36,7 @@ export type FacilityDomainEntitySchema = z.infer<
 
 export const facilityGroup = pgTable("facility_group", {
   id: smallint("id").generatedByDefaultAsIdentity().primaryKey(),
-  name: text("name"),
+  name: text("name").notNull(),
   description: text("description"),
   facilityDomainId: smallint("facility_domain_id")
     .notNull()
@@ -45,7 +46,7 @@ export const facilityGroup = pgTable("facility_group", {
 export const facilityGroupEntitySchema = z.object({
   id: z.number().int(),
   name: z.string(),
-  description: z.string(),
+  description: z.string().nullable(),
   facilityDomainId: facilityDomainEntitySchema.shape.id,
 });
 
@@ -150,3 +151,31 @@ export const facilityEntitySchema = z.object({
   bbl: z.string().regex(RegExp("^([0-9]{10})$")),
   dataSourceSchema: z.string(),
 });
+
+export const facilityDomainRelations = relations(
+  facilityDomain,
+  ({ many }) => ({
+    groups: many(facilityGroup),
+  }),
+);
+
+export const facilityGroupRelations = relations(
+  facilityGroup,
+  ({ one, many }) => ({
+    categories: one(facilityDomain, {
+      fields: [facilityGroup.facilityDomainId],
+      references: [facilityDomain.id],
+    }),
+    subgroups: many(facilitySubgroup),
+  }),
+);
+
+export const facilitySubgroupRelations = relations(
+  facilitySubgroup,
+  ({ one }) => ({
+    groups: one(facilityGroup, {
+      fields: [facilitySubgroup.facilityGroupId],
+      references: [facilityGroup.id],
+    }),
+  }),
+);

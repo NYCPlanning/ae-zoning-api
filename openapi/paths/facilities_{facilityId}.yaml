@@ -1,0 +1,20 @@
+get:
+  summary: Find details about a specific facility
+  operationId: findFacilityById
+  tags:
+    - Facilities
+  parameters:
+    - $ref: ../components/parameters/facilityIdParam.yaml
+  responses:
+    '200':
+      description: An object of facility or program details
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/Facility.yaml
+    '400':
+      $ref: ../components/responses/BadRequest.yaml
+    '404':
+      $ref: ../components/responses/NotFound.yaml
+    '500':
+      $ref: ../components/responses/InternalServerError.yaml

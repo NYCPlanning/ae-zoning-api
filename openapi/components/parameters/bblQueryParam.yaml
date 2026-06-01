@@ -1,0 +1,10 @@
+name: bbl
+required: false
+in: query
+schema:
+  type: string
+  pattern: ^([0-9]{10})$
+  example: '1000477501'
+description: >-
+  The ten character code comprised of a one character borough, five character
+  block, and four character lot codes.

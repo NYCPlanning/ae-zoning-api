@@ -1,0 +1,24 @@
+type: object
+properties:
+  id:
+    type: string
+    pattern: ^([0-9]{1,3})$
+    description: The id for the category.
+    example: '1'
+  name:
+    type: string
+    description: The name of the category.
+    example: Education, Child Welfare, and Youth
+  description:
+    type: string
+    description: The description of the category.
+    example: Education, Youth
+  groups:
+    type: array
+    items:
+      $ref: ./FacilityCategoryGroup.yaml
+required:
+  - id
+  - name
+  - description
+  - groups

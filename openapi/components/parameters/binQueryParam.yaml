@@ -1,0 +1,9 @@
+name: bin
+required: false
+in: query
+schema:
+  type: string
+  pattern: ^([0-9]{7})$
+  example: '1001026'
+description: >-
+  The seven character code representing the building id, with the first character representing the borough.

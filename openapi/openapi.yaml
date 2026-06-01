@@ -31,6 +31,8 @@ tags:
     description: >-
       An endpoint that returns or is otherwise related to NYC community
       districts
+  - name: Facilities
+    description: An endpoint that returns Facilities (FacDB) data
   - name: GeoJSON
     description: An endpoint that returns spatial data in a geojson format
   - name: Land Uses
@@ -115,6 +117,18 @@ paths:
     $ref: paths/community-board-budget-requests_{z}_{x}_{y}.pbf.yaml
   /community-districts/{z}/{x}/{y}.pbf:
     $ref: paths/community-districts_{z}_{x}_{y}.pbf.yaml
+  /facilities:
+    $ref: paths/facilities.yaml
+  /facilities/{facilityId}:
+    $ref: paths/facilities_{facilityId}.yaml
+  /facilities/{facilityId}/geojson:
+    $ref: paths/facilities_{facilityId}_geojson.yaml
+  /facilities/agencies:
+    $ref: paths/facilities_agencies.yaml
+  /facilities/categories:
+    $ref: paths/facilities_categories.yaml
+  /facilities/{z}/{x}/{y}.pbf:
+    $ref: paths/facilities_{z}_{x}_{y}.pbf.yaml
   /land-uses:
     $ref: paths/land-uses.yaml
   /tax-lots:

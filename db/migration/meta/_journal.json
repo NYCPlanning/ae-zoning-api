@@ -281,6 +281,13 @@
       "when": 1781015349438,
       "tag": "0039_unusual_silver_samurai",
       "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "7",
+      "when": 1781198954248,
+      "tag": "0040_spotty_lockjaw",
+      "breakpoints": true
     }
   ]
 }

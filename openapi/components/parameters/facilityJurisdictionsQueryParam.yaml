@@ -1,0 +1,17 @@
+name: facilityJurisdictions
+required: false
+in: query
+schema:
+  type: array
+  items:
+      enum:
+        - City
+        - County
+        - State
+        - Federal
+        - 'null'
+  minItems: 1
+  maxItems: 4
+  example: ['City', 'County']
+description: >-
+  The OVERLEVELS (Overseer Levels) / Jurisdictions of the facilities

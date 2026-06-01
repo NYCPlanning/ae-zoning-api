@@ -1,0 +1,168 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "The id for the facility.",
+      "example": "1435f9fd9f0787a5038b15512bb9684f"
+    },
+    "type": { "type": "string", "enum": ["Feature"] },
+    "geometry": {
+      "type": "object",
+      "description": "A geojson implementation of a MultiPoint Simple Feature",
+      "properties": {
+        "type": { "type": "string", "enum": ["MultiPoint"] },
+        "coordinates": {
+          "type": "array",
+          "description": "Array of position coordinate arrays.",
+          "items": {
+            "type": "array",
+            "description": "The fundamental spatial construct",
+            "minItems": 2,
+            "maxItems": 3,
+            "items": { "type": "number" },
+            "example": [-74.010835, 40.708442],
+            "x-readme-ref-name": "Position"
+          }
+        }
+      },
+      "required": ["type", "coordinates"],
+      "x-readme-ref-name": "MultiPoint"
+    },
+    "properties": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The id for the facility or program.",
+          "example": "1435f9fd9f0787a5038b15512bb9684f"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the facility or program.",
+          "example": "QUEENSBORO OVAL",
+          "nullable": true
+        },
+        "oversightAgencyInitials": {
+          "type": "string",
+          "description": "The name of the agency overseeing the facility or program.",
+          "example": "NYCDPR",
+          "nullable": true
+        },
+        "address": {
+          "type": "string",
+          "description": "The street address of the facility, including borough, state, and zip.",
+          "example": "405 EAST 59 STREET, NEW YORK, NY 10022",
+          "nullable": true
+        },
+        "bbl": {
+          "type": "string",
+          "description": "The ten digit tax lot id of the facility.",
+          "example": "1014540001",
+          "nullable": true
+        },
+        "bin": {
+          "type": "string",
+          "description": "The seven digit building id of the facility.",
+          "example": "1045270",
+          "nullable": true
+        },
+        "facilityJurisdiction": {
+          "type": "string",
+          "nullable": true,
+          "enum": ["City", "County", "State", "Federal"],
+          "description": "The type of Oversight Level.",
+          "x-readme-ref-name": "OversightLevelCategory"
+        },
+        "facilityOperatorType": {
+          "type": "string",
+          "nullable": true,
+          "enum": ["Public", "Non-public"],
+          "description": "The facility type or operator type.",
+          "x-readme-ref-name": "FacilityOperatorType"
+        },
+        "categoryId": {
+          "type": "string",
+          "description": "The category id of the facility",
+          "pattern": "^([0-9]{1,3})$",
+          "example": "1"
+        },
+        "categoryGroupId": {
+          "type": "string",
+          "description": "The category group id of the facility",
+          "pattern": "^([0-9]{1,3})$",
+          "example": "1"
+        },
+        "categorySubgroupId": {
+          "type": "string",
+          "description": "The category subgroup id of the facility",
+          "pattern": "^([0-9]{1,3})$",
+          "example": "1"
+        },
+        "operatorName": {
+          "type": "string",
+          "description": "The name of the entity operating the facility or program.",
+          "example": "NYC Department of Parks and Recreation",
+          "nullable": true
+        },
+        "dataSource": {
+          "type": "object",
+          "properties": {
+            "schemaName": {
+              "type": "string",
+              "description": "The name of the schema of the dataset.",
+              "example": "bpl_libraries"
+            },
+            "datasetName": {
+              "type": "string",
+              "description": "The name of the dataset.",
+              "example": "BPL Libraries",
+              "nullable": true
+            },
+            "version": {
+              "type": "string",
+              "description": "The version of the dataset.",
+              "example": "20260417"
+            },
+            "retrieveDate": {
+              "type": "string",
+              "description": "The retrieval date of the version of the dataset.",
+              "example": "2026-04-17"
+            }
+          },
+          "required": ["schemaName", "datasetName", "version", "retrieveDate"],
+          "x-readme-ref-name": "DataSource"
+        },
+        "alsoAtLocation": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "The id for the facility or program.",
+                "example": "1435f9fd9f0787a5038b15512bb9684f"
+              },
+              "name": {
+                "type": "string",
+                "description": "The name of the facility or program.",
+                "example": "QUEENSBORO OVAL"
+              }
+            }
+          }
+        }
+      },
+      "required": [
+        "id",
+        "categoryId",
+        "categoryGroupId",
+        "categorySubgroupId",
+        "dataSource",
+        "alsoAtLocation"
+      ],
+      "x-readme-ref-name": "Facility"
+    }
+  },
+  "required": ["id", "type", "geometry", "properties"],
+  "x-readme-ref-name": "FacilityGeoJson"
+}

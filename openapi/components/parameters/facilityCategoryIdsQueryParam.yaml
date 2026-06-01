@@ -1,0 +1,12 @@
+name: facilityCategoryIds
+required: false
+in: query
+schema:
+  type: array
+  items:
+    type: string
+    pattern: ^([0-9]{1,3})$
+  minItems: 1
+  example: ['1','2']
+description: >-
+  The ids of the FACDOMAINS (Domains) / Categories of the facilities

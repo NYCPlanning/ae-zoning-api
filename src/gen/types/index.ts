@@ -42,7 +42,21 @@ export type {
   CommunityDistrictGeoJsonTypeEnumKey,
   CommunityDistrictGeoJson,
 } from "./CommunityDistrictGeoJson";
+export type { DataSource } from "./DataSource";
 export type { Error } from "./Error";
+export type { Facility } from "./Facility";
+export type { FacilityCategory } from "./FacilityCategory";
+export type { FacilityCategoryGroup } from "./FacilityCategoryGroup";
+export type { FacilityCategorySubgroup } from "./FacilityCategorySubgroup";
+export type {
+  FacilityGeoJsonTypeEnumKey,
+  FacilityGeoJson,
+} from "./FacilityGeoJson";
+export type {
+  FacilityOperatorTypeEnumKey,
+  FacilityOperatorType,
+} from "./FacilityOperatorType";
+export type { FacilityPage } from "./FacilityPage";
 export type {
   FindAgencies200,
   FindAgencies400,
@@ -317,6 +331,57 @@ export type {
   FindCommunityDistrictTilesQuery,
 } from "./FindCommunityDistrictTiles";
 export type {
+  FindFacilitiesQueryParamsFacilityJurisdictionsEnumKey,
+  FindFacilitiesQueryParamsFacilityOperatorTypeEnumKey,
+  FindFacilitiesQueryParamsGeometryEnumKey,
+  FindFacilitiesQueryParams,
+  FindFacilities200,
+  FindFacilities400,
+  FindFacilities500,
+  FindFacilitiesQueryResponse,
+  FindFacilitiesQuery,
+} from "./FindFacilities";
+export type {
+  FindFacilityAgencies200,
+  FindFacilityAgencies400,
+  FindFacilityAgencies500,
+  FindFacilityAgenciesQueryResponse,
+  FindFacilityAgenciesQuery,
+} from "./FindFacilityAgencies";
+export type {
+  FindFacilityByIdPathParams,
+  FindFacilityById200,
+  FindFacilityById400,
+  FindFacilityById404,
+  FindFacilityById500,
+  FindFacilityByIdQueryResponse,
+  FindFacilityByIdQuery,
+} from "./FindFacilityById";
+export type {
+  FindFacilityCategories200,
+  FindFacilityCategories400,
+  FindFacilityCategories500,
+  FindFacilityCategoriesQueryResponse,
+  FindFacilityCategoriesQuery,
+} from "./FindFacilityCategories";
+export type {
+  FindFacilityGeoJsonByIdPathParams,
+  FindFacilityGeoJsonById200,
+  FindFacilityGeoJsonById400,
+  FindFacilityGeoJsonById404,
+  FindFacilityGeoJsonById500,
+  FindFacilityGeoJsonByIdQueryResponse,
+  FindFacilityGeoJsonByIdQuery,
+} from "./FindFacilityGeoJsonById";
+export type {
+  FindFacilityTilesPathParams,
+  FindFacilityTiles200,
+  FindFacilityTiles400,
+  FindFacilityTiles500,
+  FindFacilityTilesQueryResponse,
+  FindFacilityTilesQuery,
+} from "./FindFacilityTiles";
+export type {
   FindLandUses200,
   FindLandUses400,
   FindLandUses500,
@@ -439,11 +504,16 @@ export { cityCouncilDistrictGeoJsonTypeEnum } from "./CityCouncilDistrictGeoJson
 export { communityBoardBudgetRequestGeoJsonTypeEnum } from "./CommunityBoardBudgetRequestGeoJson";
 export { communityBoardBudgetRequestTypeEnum } from "./CommunityBoardBudgetRequestType";
 export { communityDistrictGeoJsonTypeEnum } from "./CommunityDistrictGeoJson";
+export { facilityGeoJsonTypeEnum } from "./FacilityGeoJson";
+export { facilityOperatorTypeEnum } from "./FacilityOperatorType";
 export { findCapitalProjectsQueryParamsGeometryEnum } from "./FindCapitalProjects";
 export { findCommunityBoardBudgetRequestsQueryParamsCbbrTypeEnum } from "./FindCommunityBoardBudgetRequests";
 export { findCommunityBoardBudgetRequestsQueryParamsGeometryEnum } from "./FindCommunityBoardBudgetRequests";
 export { findCommunityBoardBudgetRequestsCsvQueryParamsCbbrTypeEnum } from "./FindCommunityBoardBudgetRequestsCsv";
 export { findCommunityBoardBudgetRequestsCsvQueryParamsGeometryEnum } from "./FindCommunityBoardBudgetRequestsCsv";
+export { findFacilitiesQueryParamsFacilityJurisdictionsEnum } from "./FindFacilities";
+export { findFacilitiesQueryParamsFacilityOperatorTypeEnum } from "./FindFacilities";
+export { findFacilitiesQueryParamsGeometryEnum } from "./FindFacilities";
 export { findTaxLotsQueryParamsGeometryEnum } from "./FindTaxLots";
 export { multiPointTypeEnum } from "./MultiPoint";
 export { multiPolygonTypeEnum } from "./MultiPolygon";

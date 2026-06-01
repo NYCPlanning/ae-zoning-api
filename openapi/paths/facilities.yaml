@@ -1,0 +1,35 @@
+get:
+  summary: Find paginated facilities
+  operationId: findFacilities
+  tags:
+    - Facilities
+  parameters:
+    - $ref: ../components/parameters/boroughIdsQueryParam.yaml
+    - $ref: ../components/parameters/facilityJurisdictionsQueryParam.yaml
+    - $ref: ../components/parameters/facilityOperatorTypeQueryParam.yaml
+    - $ref: ../components/parameters/facilityOversightAgencyInitialsQueryParam.yaml
+    - $ref: ../components/parameters/facilityCategoryIdsQueryParam.yaml
+    - $ref: ../components/parameters/facilityCategoryGroupIdsQueryParam.yaml
+    - $ref: ../components/parameters/facilityCategorySubgroupIdsQueryParam.yaml
+    - $ref: ../components/parameters/communityDistrictIdsQueryParam.yaml
+    - $ref: ../components/parameters/cityCouncilDistrictIdsQueryParam.yaml
+    - $ref: ../components/parameters/bblQueryParam.yaml
+    - $ref: ../components/parameters/binQueryParam.yaml
+    - $ref: ../components/parameters/limitParam.yaml
+    - $ref: ../components/parameters/offsetParam.yaml
+    - $ref: ../components/parameters/geometryPointParam.yaml
+    - $ref: ../components/parameters/lonsPointParam.yaml
+    - $ref: ../components/parameters/latsPointParam.yaml
+    - $ref: ../components/parameters/bufferParam.yaml
+  responses:
+    '200':
+      description: >-
+        An object containing pagination metadata and an array of facilities
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/FacilityPage.yaml
+    '400':
+      $ref: ../components/responses/BadRequest.yaml
+    '500':
+      $ref: ../components/responses/InternalServerError.yaml

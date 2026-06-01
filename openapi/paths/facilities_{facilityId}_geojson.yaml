@@ -1,0 +1,21 @@
+get:
+  summary: Find details about a specific facility as a geojson feature
+  operationId: findFacilityGeoJsonById
+  tags:
+    - Facilities
+    - GeoJSON
+  parameters:
+    - $ref: ../components/parameters/facilityIdParam.yaml
+  responses:
+    '200':
+      description: A geojson object of facility details
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/FacilityGeoJson.yaml
+    '400':
+      $ref: ../components/responses/BadRequest.yaml
+    '404':
+      $ref: ../components/responses/NotFound.yaml
+    '500':
+      $ref: ../components/responses/InternalServerError.yaml

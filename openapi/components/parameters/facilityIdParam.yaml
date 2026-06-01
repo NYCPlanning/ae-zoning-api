@@ -1,0 +1,7 @@
+name: facilityId
+required: true
+in: path
+schema:
+  type: string
+  example: 00041e822a3da19f11cb931f6b25b13f
+description: The id for the facility or program

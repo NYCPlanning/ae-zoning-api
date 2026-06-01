@@ -1,0 +1,80 @@
+{
+  "allOf": [
+    {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "integer",
+          "description": "The limit used for the response. Defaults to 20 when the request does not specify one.",
+          "minimum": 1,
+          "maximum": 100,
+          "example": 20
+        },
+        "offset": {
+          "type": "integer",
+          "description": "The offset used for the response. Defaults to 0 when the request does not specify one.",
+          "minimum": 0,
+          "example": 0
+        },
+        "total": {
+          "type": "integer",
+          "description": "The number of rows returned in the response. If the total is less than the limit, the user is on the last page and no more results match the query.",
+          "minimum": 0,
+          "example": 10
+        },
+        "order": {
+          "type": "string",
+          "description": "The criteria used to sort the results. Defaults to the primary key of the table, ascending",
+          "example": "bbl"
+        }
+      },
+      "required": ["limit", "offset", "total", "order"],
+      "x-readme-ref-name": "Page"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "facilities": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "The id for the facility or program.",
+                "example": "1435f9fd9f0787a5038b15512bb9684f"
+              },
+              "name": {
+                "type": "string",
+                "description": "The name of the facility or program.",
+                "example": "QUEENSBORO OVAL",
+                "nullable": true
+              },
+              "oversightAgency": {
+                "type": "string",
+                "description": "The name of the agency overseeing the facility or program.",
+                "example": "NYC Department of Parks and Recreation",
+                "nullable": true
+              },
+              "categoryId": {
+                "type": "string",
+                "description": "The category id of the facility",
+                "pattern": "^([0-9]{1,3})$",
+                "example": "1"
+              }
+            },
+            "required": ["id", "categoryId"]
+          }
+        },
+        "totalFacilities": {
+          "type": "integer",
+          "description": "The total number of results matching the query parameters.",
+          "minimum": 0,
+          "example": 212
+        }
+      },
+      "required": ["facilities", "totalFacilities"]
+    }
+  ],
+  "x-readme-ref-name": "FacilityPage"
+}
