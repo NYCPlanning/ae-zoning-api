@@ -1,5 +1,21 @@
-import { pgTable, smallint, text } from "drizzle-orm/pg-core";
+import {
+  char,
+  check,
+  index,
+  pgTable,
+  smallint,
+  text,
+  uuid,
+} from "drizzle-orm/pg-core";
 import z from "zod";
+import {
+  facilityOperator,
+  facilityOperatorEntitySchema,
+} from "./facility-operator";
+import { agency, agencyEntitySchema } from "./agency";
+import { multiPointGeom } from "src/drizzle-pgis";
+import { sql } from "drizzle-orm";
+import { dataSource } from "./data-source";
 
 export const facilityDomain = pgTable("facility_domain", {
   id: smallint("id").generatedByDefaultAsIdentity().primaryKey(),
@@ -72,3 +88,65 @@ export const facilityTypeEntitySchema = z.object({
 });
 
 export type FacilityTypeEntitySchema = z.infer<typeof facilityTypeEntitySchema>;
+
+export const facility = pgTable(
+  "facility",
+  {
+    id: text("id").primaryKey(),
+    name: text("name"),
+    address: text("address"),
+    addressNumber: text("address_number"),
+    streetName: text("street_name"),
+    city: text("city"),
+    zipCode: text("zip_code"),
+    facilityTypeId: smallint("facility_type_id")
+      .notNull()
+      .references(() => facilityType.id),
+    serviceArea: text("service_area").notNull(),
+    facilityOperatorId: uuid("facility_operator_id").references(
+      () => facilityOperator.id,
+    ),
+    overseeingAgencyInitials: text("overseeing_agency_initials").references(
+      () => agency.initials,
+    ),
+    capacity: smallint("capacity"),
+    capacityType: text("capacity_type"),
+    bin: char("bin", { length: 7 }),
+    bbl: char("bbl", { length: 10 }),
+    liFt: multiPointGeom("li_ft", 2263),
+    mercator: multiPointGeom("mercator", 3857),
+    dataSourceSchema: text("data_source_schema").references(
+      () => dataSource.schemaName,
+    ),
+  },
+  (table) => [
+    index().using("GIST", table.liFt),
+    index().using("GIST", table.mercator),
+    check(
+      "facility_service_area_options",
+      sql`${table.serviceArea} IN (
+        'Local',
+        'Regional'
+      )`,
+    ),
+  ],
+);
+
+export const facilityEntitySchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  address: z.string(),
+  addressNumber: z.string(),
+  streetName: z.string(),
+  city: z.string(),
+  zipCode: z.string(),
+  facilityTypeId: facilityTypeEntitySchema.shape.id,
+  serviceArea: z.string(),
+  facilityOperatorId: facilityOperatorEntitySchema.shape.id,
+  overseeingAgencyInitials: agencyEntitySchema.shape.initials,
+  capacity: z.number().int(),
+  capacityType: z.string(),
+  bin: z.string().regex(RegExp("^([0-9]{7})$")),
+  bbl: z.string().regex(RegExp("^([0-9]{10})$")),
+  dataSourceSchema: z.string(),
+});
