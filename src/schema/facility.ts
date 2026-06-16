@@ -9,14 +9,11 @@ import {
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import z from "zod";
-import {
-  facilityOperator,
-  facilityOperatorEntitySchema,
-} from "./facility-operator";
+import { facilityOperator } from "./facility-operator";
 import { agency, agencyEntitySchema } from "./agency";
 import { multiPointGeom } from "src/drizzle-pgis";
 import { sql } from "drizzle-orm";
-import { dataSource } from "./data-source";
+import { dataSource, dataSourceEntitySchema } from "./data-source";
 
 export const facilityDomain = pgTable("facility_domain", {
   id: smallint("id").generatedByDefaultAsIdentity().primaryKey(),
@@ -139,25 +136,31 @@ export const facility = pgTable(
 
 export const facilityEntitySchema = z.object({
   id: z.string(),
-  name: z.string(),
+  name: z.string().nullable(),
   address: z.string(),
-  addressNumber: z.string(),
-  streetName: z.string(),
-  city: z.string(),
-  zipCode: z.string(),
-  facilityTypeId: facilityTypeEntitySchema.shape.id,
-  serviceArea: z.string(),
-  facilityOperatorId: facilityOperatorEntitySchema.shape.id,
-  overseeingAgencyInitials: agencyEntitySchema.shape.initials,
-  capacity: z.number().int(),
-  capacityType: z.string(),
-  sgrLtr: z.string().length(1),
-  sgrArcLtr: z.string().length(1),
-  sgrSysLtr: z.string().length(1),
-  sgrYear: z.number().int(),
-  bin: z.string().regex(RegExp("^([0-9]{7})$")),
-  bbl: z.string().regex(RegExp("^([0-9]{10})$")),
-  dataSourceSchema: z.string(),
+  bin: z.string().regex(RegExp("^([0-9]{7})$")).nullable(),
+  bbl: z.string().regex(RegExp("^([0-9]{10})$")).nullable(),
+  oversightAgencyInitials: agencyEntitySchema.shape.initials.nullable(),
+  facilityJurisdiction: z.string().nullable(),
+  facilityOperatorType: z.string().nullable(),
+  operatorName: z.string().nullable(),
+  categoryId: z.number().nullable(),
+  categoryGroupId: z.number().nullable(),
+  categorySubgroupId: z.number().nullable(),
+  dataSource: dataSourceEntitySchema,
+  alsoAtLocation: z.array(
+    z.object({
+      id: z.string(),
+      name: z.string().nullable(),
+    }),
+  ),
+});
+
+export const facilityPageItemEntitySchema = z.object({
+  id: z.string(),
+  name: z.string().nullable(),
+  oversightAgencyInitials: agencyEntitySchema.shape.name.nullable(),
+  categoryId: z.number().nullable(),
 });
 
 export const facilityDomainRelations = relations(
