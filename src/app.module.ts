@@ -24,6 +24,7 @@ import { CapitalProjectModule } from "./capital-project/capital-project.module";
 import { CommunityDistrictModule } from "./community-district/community-district.module";
 import { CapitalCommitmentTypeModule } from "./capital-commitment-type/capital-commitment-type.module";
 import { AgencyBudgetModule } from "./agency-budget/agency-budget.module";
+import { FacilityModule } from "./facility/facility.module";
 import { CacheModule } from "@nestjs/cache-manager";
 
 @Module({
@@ -61,6 +62,7 @@ import { CacheModule } from "@nestjs/cache-manager";
     CapitalProjectModule,
     CommunityBoardBudgetRequestModule,
     CommunityDistrictModule,
+    FacilityModule,
     LandUseModule,
     TaxLotModule,
     ZoningDistrictModule,
