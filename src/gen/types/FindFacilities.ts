@@ -11,20 +11,20 @@ export const findFacilitiesQueryParamsFacilityJurisdictionsEnum = {
   County: "County",
   State: "State",
   Federal: "Federal",
-  null: "null",
+  "Not specified": "Not specified",
 } as const;
 
 export type FindFacilitiesQueryParamsFacilityJurisdictionsEnumKey =
   (typeof findFacilitiesQueryParamsFacilityJurisdictionsEnum)[keyof typeof findFacilitiesQueryParamsFacilityJurisdictionsEnum];
 
-export const findFacilitiesQueryParamsFacilityOperatorTypeEnum = {
+export const findFacilitiesQueryParamsFacilityOperatorTypesEnum = {
   Public: "Public",
   "Non-public": "Non-public",
-  null: "null",
+  "Not specified": "Not specified",
 } as const;
 
-export type FindFacilitiesQueryParamsFacilityOperatorTypeEnumKey =
-  (typeof findFacilitiesQueryParamsFacilityOperatorTypeEnum)[keyof typeof findFacilitiesQueryParamsFacilityOperatorTypeEnum];
+export type FindFacilitiesQueryParamsFacilityOperatorTypesEnumKey =
+  (typeof findFacilitiesQueryParamsFacilityOperatorTypesEnum)[keyof typeof findFacilitiesQueryParamsFacilityOperatorTypesEnum];
 
 export const findFacilitiesQueryParamsGeometryEnum = {
   Point: "Point",
@@ -45,10 +45,10 @@ export type FindFacilitiesQueryParams = {
    */
   facilityJurisdictions?: FindFacilitiesQueryParamsFacilityJurisdictionsEnumKey[];
   /**
-   * @description The operator type or facility type of the facility.
-   * @type string | undefined
+   * @description The operator types or facility types of the facilities.
+   * @type array | undefined
    */
-  facilityOperatorType?: FindFacilitiesQueryParamsFacilityOperatorTypeEnumKey;
+  facilityOperatorTypes?: FindFacilitiesQueryParamsFacilityOperatorTypesEnumKey[];
   /**
    * @description A string of variable length containing the initials of the agency.
    * @type string | undefined
@@ -58,17 +58,17 @@ export type FindFacilitiesQueryParams = {
    * @description The ids of the FACDOMAINS (Domains) / Categories of the facilities
    * @type array | undefined
    */
-  facilityCategoryIds?: string[];
+  facilityCategoryIds?: number[];
   /**
    * @description The ids of the Facility Category Groups of the facilities
    * @type array | undefined
    */
-  facilityCategoryGroupIds?: string[];
+  facilityCategoryGroupIds?: number[];
   /**
    * @description The ids of the Facility Category Subgroups of the facilities
    * @type array | undefined
    */
-  facilityCategorySubgroupIds?: string[];
+  facilityCategorySubgroupIds?: number[];
   /**
    * @description A list of three character numeric strings containing the concatenation of the borough and community district ids.
    * @type array | undefined

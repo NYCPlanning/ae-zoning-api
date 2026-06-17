@@ -39,17 +39,14 @@ export const facilitySchema = z.object({
       .lazy(() => facilityOperatorTypeSchema)
       .describe("The facility type or operator type."),
   ),
-  categoryId: z
-    .string()
-    .regex(/^([0-9]{1,3})$/)
-    .describe("The category id of the facility"),
+  categoryId: z.number().int().describe("The category id of the facility"),
   categoryGroupId: z
-    .string()
-    .regex(/^([0-9]{1,3})$/)
+    .number()
+    .int()
     .describe("The category group id of the facility"),
   categorySubgroupId: z
-    .string()
-    .regex(/^([0-9]{1,3})$/)
+    .number()
+    .int()
     .describe("The category subgroup id of the facility"),
   operatorName: z
     .string()

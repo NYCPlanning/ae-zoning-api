@@ -4,9 +4,8 @@ in: query
 schema:
   type: array
   items:
-    type: string
-    pattern: ^([0-9]{1,3})$
+    type: integer
   minItems: 1
-  example: ['1','2']
+  example: [1, 2]
 description: >-
   The ids of the Facility Category Subgroups of the facilities

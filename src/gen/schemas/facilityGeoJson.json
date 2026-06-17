@@ -82,22 +82,19 @@
           "x-readme-ref-name": "FacilityOperatorType"
         },
         "categoryId": {
-          "type": "string",
+          "type": "integer",
           "description": "The category id of the facility",
-          "pattern": "^([0-9]{1,3})$",
-          "example": "1"
+          "example": 1
         },
         "categoryGroupId": {
-          "type": "string",
+          "type": "integer",
           "description": "The category group id of the facility",
-          "pattern": "^([0-9]{1,3})$",
-          "example": "1"
+          "example": 1
         },
         "categorySubgroupId": {
-          "type": "string",
+          "type": "integer",
           "description": "The category subgroup id of the facility",
-          "pattern": "^([0-9]{1,3})$",
-          "example": "1"
+          "example": 1
         },
         "operatorName": {
           "type": "string",

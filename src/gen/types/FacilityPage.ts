@@ -24,13 +24,12 @@ export type FacilityPage = Page & {
      * @description The name of the agency overseeing the facility or program.
      * @type string
      */
-    oversightAgency?: string | null;
+    oversightAgencyInitials?: string | null;
     /**
      * @description The category id of the facility
-     * @pattern ^([0-9]{1,3})$
-     * @type string
+     * @type integer
      */
-    categoryId: string;
+    categoryId: number;
   }[];
   /**
    * @description The total number of results matching the query parameters.

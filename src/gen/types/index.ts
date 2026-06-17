@@ -332,7 +332,7 @@ export type {
 } from "./FindCommunityDistrictTiles";
 export type {
   FindFacilitiesQueryParamsFacilityJurisdictionsEnumKey,
-  FindFacilitiesQueryParamsFacilityOperatorTypeEnumKey,
+  FindFacilitiesQueryParamsFacilityOperatorTypesEnumKey,
   FindFacilitiesQueryParamsGeometryEnumKey,
   FindFacilitiesQueryParams,
   FindFacilities200,
@@ -512,7 +512,7 @@ export { findCommunityBoardBudgetRequestsQueryParamsGeometryEnum } from "./FindC
 export { findCommunityBoardBudgetRequestsCsvQueryParamsCbbrTypeEnum } from "./FindCommunityBoardBudgetRequestsCsv";
 export { findCommunityBoardBudgetRequestsCsvQueryParamsGeometryEnum } from "./FindCommunityBoardBudgetRequestsCsv";
 export { findFacilitiesQueryParamsFacilityJurisdictionsEnum } from "./FindFacilities";
-export { findFacilitiesQueryParamsFacilityOperatorTypeEnum } from "./FindFacilities";
+export { findFacilitiesQueryParamsFacilityOperatorTypesEnum } from "./FindFacilities";
 export { findFacilitiesQueryParamsGeometryEnum } from "./FindFacilities";
 export { findTaxLotsQueryParamsGeometryEnum } from "./FindTaxLots";
 export { multiPointTypeEnum } from "./MultiPoint";
