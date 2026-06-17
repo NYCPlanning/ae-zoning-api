@@ -9,7 +9,7 @@ schema:
         - County
         - State
         - Federal
-        - 'null'
+        - Not specified
   minItems: 1
   maxItems: 4
   example: ['City', 'County']

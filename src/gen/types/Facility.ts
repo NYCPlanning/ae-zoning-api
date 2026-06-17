@@ -50,22 +50,19 @@ export type Facility = {
   facilityOperatorType?: FacilityOperatorType | null;
   /**
    * @description The category id of the facility
-   * @pattern ^([0-9]{1,3})$
-   * @type string
+   * @type integer
    */
-  categoryId: string;
+  categoryId: number;
   /**
    * @description The category group id of the facility
-   * @pattern ^([0-9]{1,3})$
-   * @type string
+   * @type integer
    */
-  categoryGroupId: string;
+  categoryGroupId: number;
   /**
    * @description The category subgroup id of the facility
-   * @pattern ^([0-9]{1,3})$
-   * @type string
+   * @type integer
    */
-  categorySubgroupId: string;
+  categorySubgroupId: number;
   /**
    * @description The name of the entity operating the facility or program.
    * @type string

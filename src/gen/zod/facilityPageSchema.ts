@@ -17,15 +17,15 @@ export const facilityPageSchema = z
             .string()
             .describe("The name of the facility or program.")
             .nullish(),
-          oversightAgency: z
+          oversightAgencyInitials: z
             .string()
             .describe(
               "The name of the agency overseeing the facility or program.",
             )
             .nullish(),
           categoryId: z
-            .string()
-            .regex(/^([0-9]{1,3})$/)
+            .number()
+            .int()
             .describe("The category id of the facility"),
         }),
       ),

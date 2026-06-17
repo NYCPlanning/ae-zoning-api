@@ -1,12 +1,16 @@
-name: facilityOperatorType
+name: facilityOperatorTypes
 required: false
 in: query
 schema:
-  type: string
-  enum:
-    - Public
-    - Non-public
-    - 'null'
-  example: Public
+  type: array
+  items:
+    type: string
+    enum:
+      - Public
+      - Non-public
+      - Not specified
+  minItems: 1
+  maxItems: 2
+  example: ['Public', 'Non-public']
 description: >-
-  The operator type or facility type of the facility.
+  The operator types or facility types of the facilities.

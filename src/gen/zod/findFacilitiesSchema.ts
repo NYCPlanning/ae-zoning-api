@@ -20,17 +20,19 @@ export const findFacilitiesQueryParamsSchema = z
     ),
     facilityJurisdictions: z.optional(
       z
-        .array(z.enum(["City", "County", "State", "Federal", "null"]))
+        .array(z.enum(["City", "County", "State", "Federal", "Not specified"]))
         .min(1)
         .max(4)
         .describe(
           "The OVERLEVELS (Overseer Levels) / Jurisdictions of the facilities",
         ),
     ),
-    facilityOperatorType: z.optional(
+    facilityOperatorTypes: z.optional(
       z
-        .enum(["Public", "Non-public", "null"])
-        .describe("The operator type or facility type of the facility."),
+        .array(z.enum(["Public", "Non-public", "Not specified"]))
+        .min(1)
+        .max(2)
+        .describe("The operator types or facility types of the facilities."),
     ),
     facilityOversightAgency: z.optional(
       z
@@ -41,7 +43,7 @@ export const findFacilitiesQueryParamsSchema = z
     ),
     facilityCategoryIds: z.optional(
       z
-        .array(z.string().regex(/^([0-9]{1,3})$/))
+        .array(z.coerce.number().int())
         .min(1)
         .describe(
           "The ids of the FACDOMAINS (Domains) / Categories of the facilities",
@@ -49,13 +51,13 @@ export const findFacilitiesQueryParamsSchema = z
     ),
     facilityCategoryGroupIds: z.optional(
       z
-        .array(z.string().regex(/^([0-9]{1,3})$/))
+        .array(z.coerce.number().int())
         .min(1)
         .describe("The ids of the Facility Category Groups of the facilities"),
     ),
     facilityCategorySubgroupIds: z.optional(
       z
-        .array(z.string().regex(/^([0-9]{1,3})$/))
+        .array(z.coerce.number().int())
         .min(1)
         .describe(
           "The ids of the Facility Category Subgroups of the facilities",

@@ -159,7 +159,7 @@ export const facilityEntitySchema = z.object({
 export const facilityPageItemEntitySchema = z.object({
   id: z.string(),
   name: z.string().nullable(),
-  oversightAgencyInitials: agencyEntitySchema.shape.name.nullable(),
+  oversightAgency: agencyEntitySchema.shape.name.nullable(),
   categoryId: z.number().nullable(),
 });
 
