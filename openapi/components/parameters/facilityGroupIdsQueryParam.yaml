@@ -1,4 +1,4 @@
-name: facilityCategoryGroupIds
+name: facilityGroupIds
 required: false
 in: query
 schema:

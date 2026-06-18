@@ -152,6 +152,7 @@ export const facilityEntitySchema = z.object({
     z.object({
       id: z.string(),
       name: z.string().nullable(),
+      categoryId: z.number().nullable(),
     }),
   ),
 });

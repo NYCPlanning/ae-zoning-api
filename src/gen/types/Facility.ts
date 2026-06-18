@@ -86,5 +86,10 @@ export type Facility = {
      * @type string | undefined
      */
     name?: string;
+    /**
+     * @description The category id of the facility
+     * @type integer | undefined
+     */
+    categoryId?: number;
   }[];
 };

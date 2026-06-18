@@ -9,7 +9,7 @@ export const findManyRepoSchema = z.array(facilityPageItemEntitySchema);
 
 export type FindManyRepo = z.infer<typeof findManyRepoSchema>;
 
-export const findByIdRepoSchema = facilityEntitySchema;
+export const findByIdRepoSchema = z.array(facilityEntitySchema);
 
 export type FindByIdRepo = z.infer<typeof findByIdRepoSchema>;
 

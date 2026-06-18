@@ -61,6 +61,9 @@ export const facilitySchema = z.object({
       name: z.optional(
         z.string().describe("The name of the facility or program."),
       ),
+      categoryId: z.optional(
+        z.number().int().describe("The category id of the facility"),
+      ),
     }),
   ),
 });
