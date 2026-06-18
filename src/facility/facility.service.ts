@@ -23,8 +23,8 @@ export class FacilityService {
     facilityOperatorTypes = null,
     facilityOversightAgency = null,
     facilityCategoryIds = null,
-    facilityCategoryGroupIds = null,
-    facilityCategorySubgroupIds = null,
+    facilityGroupIds = null,
+    facilitySubgroupIds = null,
     communityDistrictIds = null,
     cityCouncilDistrictIds = null,
     bbl = null,
@@ -45,8 +45,8 @@ export class FacilityService {
     > | null;
     facilityOversightAgency?: string | null;
     facilityCategoryIds?: Array<number> | null;
-    facilityCategoryGroupIds?: Array<number> | null;
-    facilityCategorySubgroupIds?: Array<number> | null;
+    facilityGroupIds?: Array<number> | null;
+    facilitySubgroupIds?: Array<number> | null;
     communityDistrictIds?: Array<string> | null;
     cityCouncilDistrictIds?: Array<string> | null;
     bbl?: string | null;
@@ -93,8 +93,8 @@ export class FacilityService {
       facilityOperatorTypes,
       facilityOversightAgency,
       facilityCategoryIds,
-      facilityCategoryGroupIds,
-      facilityCategorySubgroupIds,
+      facilityGroupIds,
+      facilitySubgroupIds,
       communityDistrictIds,
       cityCouncilDistrictIds,
       bbl,
@@ -111,8 +111,8 @@ export class FacilityService {
       facilityOperatorTypes,
       facilityOversightAgency,
       facilityCategoryIds,
-      facilityCategoryGroupIds,
-      facilityCategorySubgroupIds,
+      facilityGroupIds,
+      facilitySubgroupIds,
       communityDistrictIds,
       cityCouncilDistrictIds,
       bbl,
@@ -137,13 +137,13 @@ export class FacilityService {
   }
 
   async findById({ facilityId }: FindFacilityByIdPathParams) {
-    const facility = await this.facilityRepository.findById({ facilityId });
+    const facilities = await this.facilityRepository.findById({ facilityId });
 
-    if (facility === undefined) {
+    if (facilities.length < 1) {
       throw new ResourceNotFoundException("Cannot find Facility");
     }
 
-    return facility;
+    return facilities[0];
   }
 
   async findCategories() {

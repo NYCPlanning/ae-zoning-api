@@ -63,12 +63,12 @@ export type FindFacilitiesQueryParams = {
    * @description The ids of the Facility Category Groups of the facilities
    * @type array | undefined
    */
-  facilityCategoryGroupIds?: number[];
+  facilityGroupIds?: number[];
   /**
    * @description The ids of the Facility Category Subgroups of the facilities
    * @type array | undefined
    */
-  facilityCategorySubgroupIds?: number[];
+  facilitySubgroupIds?: number[];
   /**
    * @description A list of three character numeric strings containing the concatenation of the borough and community district ids.
    * @type array | undefined

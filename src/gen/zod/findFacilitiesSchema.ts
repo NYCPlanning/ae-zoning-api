@@ -49,13 +49,13 @@ export const findFacilitiesQueryParamsSchema = z
           "The ids of the FACDOMAINS (Domains) / Categories of the facilities",
         ),
     ),
-    facilityCategoryGroupIds: z.optional(
+    facilityGroupIds: z.optional(
       z
         .array(z.coerce.number().int())
         .min(1)
         .describe("The ids of the Facility Category Groups of the facilities"),
     ),
-    facilityCategorySubgroupIds: z.optional(
+    facilitySubgroupIds: z.optional(
       z
         .array(z.coerce.number().int())
         .min(1)

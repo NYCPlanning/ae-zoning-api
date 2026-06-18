@@ -40,8 +40,8 @@ export class FacilityRepository {
     facilityOperatorTypes,
     facilityOversightAgency,
     facilityCategoryIds,
-    facilityCategoryGroupIds,
-    facilityCategorySubgroupIds,
+    facilityGroupIds,
+    facilitySubgroupIds,
     communityDistrictIds,
     cityCouncilDistrictIds,
     bbl,
@@ -60,8 +60,8 @@ export class FacilityRepository {
     > | null;
     facilityOversightAgency: string | null;
     facilityCategoryIds: Array<number> | null;
-    facilityCategoryGroupIds: Array<number> | null;
-    facilityCategorySubgroupIds: Array<number> | null;
+    facilityGroupIds: Array<number> | null;
+    facilitySubgroupIds: Array<number> | null;
     communityDistrictIds: Array<string> | null;
     cityCouncilDistrictIds: Array<string> | null;
     bbl: string | null;
@@ -124,11 +124,11 @@ export class FacilityRepository {
               facilityCategoryIds !== null
                 ? inArray(facilityGroup.facilityDomainId, facilityCategoryIds)
                 : undefined,
-              facilityCategoryGroupIds !== null
-                ? inArray(facilityGroup.id, facilityCategoryGroupIds)
+              facilityGroupIds !== null
+                ? inArray(facilityGroup.id, facilityGroupIds)
                 : undefined,
-              facilityCategorySubgroupIds !== null
-                ? inArray(facilitySubgroup.id, facilityCategorySubgroupIds)
+              facilitySubgroupIds !== null
+                ? inArray(facilitySubgroup.id, facilitySubgroupIds)
                 : undefined,
             ),
             bbl !== null ? eq(facility.bbl, bbl) : undefined,
@@ -186,8 +186,8 @@ export class FacilityRepository {
     facilityOperatorTypes,
     facilityOversightAgency,
     facilityCategoryIds,
-    facilityCategoryGroupIds,
-    facilityCategorySubgroupIds,
+    facilityGroupIds,
+    facilitySubgroupIds,
     communityDistrictIds,
     cityCouncilDistrictIds,
     bbl,
@@ -204,8 +204,8 @@ export class FacilityRepository {
     > | null;
     facilityOversightAgency: string | null;
     facilityCategoryIds: Array<number> | null;
-    facilityCategoryGroupIds: Array<number> | null;
-    facilityCategorySubgroupIds: Array<number> | null;
+    facilityGroupIds: Array<number> | null;
+    facilitySubgroupIds: Array<number> | null;
     communityDistrictIds: Array<string> | null;
     cityCouncilDistrictIds: Array<string> | null;
     bbl: string | null;
@@ -263,11 +263,11 @@ export class FacilityRepository {
               facilityCategoryIds !== null
                 ? inArray(facilityGroup.facilityDomainId, facilityCategoryIds)
                 : undefined,
-              facilityCategoryGroupIds !== null
-                ? inArray(facilityGroup.id, facilityCategoryGroupIds)
+              facilityGroupIds !== null
+                ? inArray(facilityGroup.id, facilityGroupIds)
                 : undefined,
-              facilityCategorySubgroupIds !== null
-                ? inArray(facilitySubgroup.id, facilityCategorySubgroupIds)
+              facilitySubgroupIds !== null
+                ? inArray(facilitySubgroup.id, facilitySubgroupIds)
                 : undefined,
             ),
             bbl !== null ? eq(facility.bbl, bbl) : undefined,
@@ -314,11 +314,17 @@ export class FacilityRepository {
 
   async findById({
     facilityId,
-  }: FindFacilityByIdPathParams): Promise<FindByIdRepo | undefined> {
+  }: FindFacilityByIdPathParams): Promise<FindByIdRepo> {
     try {
       const alsoAtLocation = alias(facility, "alsoAtLocation");
+      const alsoAtLocationType = alias(facilityType, "alsoAtLocationType");
+      const alsoAtLocationSubgroup = alias(
+        facilitySubgroup,
+        "alsoAtLocationSubgroup",
+      );
+      const alsoAtLocationGroup = alias(facilityGroup, "alsoAtLocationGroup");
 
-      const result = await this.db
+      return await this.db
         .select({
           id: facility.id,
           name: facility.name,
@@ -349,7 +355,7 @@ export class FacilityRepository {
               'schemaName', ${dataSource.schemaName},
               'datasetName', ${dataSource.datasetName},
               'version', ${dataSource.version},
-              'retreiveDate', ${dataSource.retrieveDate}
+              'retrieveDate', ${dataSource.retrieveDate}
             )
           `.as("dataSource"),
           alsoAtLocation: sql<any[]>`
@@ -357,7 +363,8 @@ export class FacilityRepository {
               jsonb_agg(
                 jsonb_build_object(
                   'id', ${alsoAtLocation.id},
-                  'name', ${alsoAtLocation.name}
+                  'name', ${alsoAtLocation.name},
+                  'categoryId', ${alsoAtLocationGroup.facilityDomainId}
                 )
               ) FILTER (WHERE ${alsoAtLocation.id} <> ${facility.id}), 
               '[]'::jsonb
@@ -392,6 +399,18 @@ export class FacilityRepository {
             eq(facility.bbl, alsoAtLocation.bbl),
           ),
         )
+        .leftJoin(
+          alsoAtLocationType,
+          eq(alsoAtLocationType.id, alsoAtLocation.facilityTypeId),
+        )
+        .leftJoin(
+          alsoAtLocationSubgroup,
+          eq(alsoAtLocationSubgroup.id, alsoAtLocationType.facilitySubgroupId),
+        )
+        .leftJoin(
+          alsoAtLocationGroup,
+          eq(alsoAtLocationGroup.id, alsoAtLocationSubgroup.facilityGroupId),
+        )
         .where(eq(facility.id, facilityId))
         .limit(1)
         .groupBy(
@@ -411,8 +430,6 @@ export class FacilityRepository {
           dataSource.version,
           dataSource.retrieveDate,
         );
-
-      return result.length > 0 ? result[0] : undefined;
     } catch {
       throw new DataRetrievalException("Cannot find Facility with given id");
     }
@@ -430,7 +447,7 @@ export class FacilityRepository {
         },
       });
     } catch {
-      throw new DataRetrievalException("cannot find facilities");
+      throw new DataRetrievalException("Cannot find Facilities' categories");
     }
   }
 }
