@@ -149,4 +149,8 @@ export class FacilityService {
   async findCategories() {
     return await this.facilityRepository.findCategories();
   }
+
+  async findAgencies() {
+    return await this.facilityRepository.findAgencies();
+  }
 }

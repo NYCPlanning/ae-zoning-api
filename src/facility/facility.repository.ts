@@ -3,6 +3,7 @@ import { DB, DbType } from "src/global/providers/db.provider";
 import { and, eq, inArray, isNotNull, isNull, or, sql } from "drizzle-orm";
 import { DataRetrievalException } from "src/exception";
 import {
+  FindAgenciesRepo,
   FindByIdRepo,
   FindDomainRepo,
   FindManyRepo,
@@ -22,7 +23,7 @@ import {
   facilitySubgroup,
   facilityType,
 } from "src/schema";
-import { FindFacilityByIdPathParams } from "src/gen";
+import { FindFacilityByIdPathParams, OversightLevelCategory } from "src/gen";
 import { alias } from "drizzle-orm/pg-core";
 import { Geom } from "src/types";
 
@@ -448,6 +449,26 @@ export class FacilityRepository {
       });
     } catch {
       throw new DataRetrievalException("Cannot find Facilities' categories");
+    }
+  }
+
+  async findAgencies(): Promise<FindAgenciesRepo> {
+    try {
+      return await this.db
+        .selectDistinct({
+          initials: agency.initials,
+          name: agency.name,
+          oversightLevel: sql<OversightLevelCategory>`${agency.oversightLevel}`,
+        })
+        .from(agency)
+        .leftJoin(
+          facility,
+          eq(facility.overseeingAgencyInitials, agency.initials),
+        )
+        .where(isNotNull(facility.overseeingAgencyInitials))
+        .orderBy(agency.initials);
+    } catch {
+      throw new DataRetrievalException("Cannot find facilities' agencies");
     }
   }
 }

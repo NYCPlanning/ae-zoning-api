@@ -1,3 +1,4 @@
+import { agencyEntitySchema } from "src/schema";
 import {
   facilityDomainEntitySchema,
   facilityEntitySchema,
@@ -16,3 +17,7 @@ export type FindByIdRepo = z.infer<typeof findByIdRepoSchema>;
 export const findDomainRepoSchema = z.array(facilityDomainEntitySchema);
 
 export type FindDomainRepo = z.infer<typeof findDomainRepoSchema>;
+
+export const findAgenciesRepoSchema = z.array(agencyEntitySchema);
+
+export type FindAgenciesRepo = z.infer<typeof findAgenciesRepoSchema>;
