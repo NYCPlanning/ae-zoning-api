@@ -63,6 +63,11 @@ export class FacilityController {
     return this.facilityService.findCategories();
   }
 
+  @Get("/agencies")
+  async findAgencies() {
+    return this.facilityService.findAgencies();
+  }
+
   @Get("/:facilityId")
   async findById(
     @Param(new ZodTransformPipe(findFacilityByIdPathParamsSchema))
