@@ -7,6 +7,7 @@ import {
   FindByIdRepo,
   FindDomainRepo,
   FindManyRepo,
+  FindTilesRepo,
 } from "./facility.repository.schema";
 import { Cache } from "cache-manager";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
@@ -23,7 +24,11 @@ import {
   facilitySubgroup,
   facilityType,
 } from "src/schema";
-import { FindFacilityByIdPathParams, OversightLevelCategory } from "src/gen";
+import {
+  FindFacilityByIdPathParams,
+  FindFacilityTilesPathParams,
+  OversightLevelCategory,
+} from "src/gen";
 import { alias } from "drizzle-orm/pg-core";
 import { Geom } from "src/types";
 
@@ -469,6 +474,76 @@ export class FacilityRepository {
         .orderBy(agency.initials);
     } catch {
       throw new DataRetrievalException("Cannot find facilities' agencies");
+    }
+  }
+
+  async findTiles({
+    z,
+    x,
+    y,
+  }: FindFacilityTilesPathParams): Promise<FindTilesRepo> {
+    try {
+      const tile = this.db
+        .select({
+          id: sql`${facility.id}`.as("id"),
+          oversightAgencyInitials: sql`${facility.overseeingAgencyInitials}`.as(
+            "overseeingAgencyInitials",
+          ),
+          facilityJurisdiction: sql`${agency.oversightLevel}`.as(
+            "facilityJurisdiction",
+          ),
+          facilityOperatorType: sql`${facilityOperator.type}`.as(
+            "facilityOperatorType",
+          ),
+          categoryId: sql`${facilityGroup.facilityDomainId}`.as("categoryId"),
+          categoryGroupId: sql`${facilityGroup.id}`.as("categoryGroupId"),
+          categorySubgroupId: sql`${facilitySubgroup.id}`.as(
+            "categorySubgroupId",
+          ),
+          geom: sql<string>`
+            CASE
+              WHEN ${facility.mercator} && ST_TileEnvelope(${z},${x},${y})
+                THEN ST_AsMVTGeom(
+                  ${facility.mercator},
+                  ST_TileEnvelope(${z},${x},${y}),
+                  4096,
+                  64,
+                  true
+                )
+            END`.as("geom"),
+        })
+        .from(facility)
+        .leftJoin(
+          agency,
+          eq(agency.initials, facility.overseeingAgencyInitials),
+        )
+        .leftJoin(
+          facilityOperator,
+          eq(facilityOperator.id, facility.facilityOperatorId),
+        )
+        .leftJoin(facilityType, eq(facilityType.id, facility.facilityTypeId))
+        .leftJoin(
+          facilitySubgroup,
+          eq(facilitySubgroup.id, facilityType.facilitySubgroupId),
+        )
+        .leftJoin(
+          facilityGroup,
+          eq(facilityGroup.id, facilitySubgroup.facilityGroupId),
+        )
+        .where(sql`${facility.mercator} && ST_TileEnvelope(${z},${x},${y})`)
+        .as("tile");
+
+      const data = await this.db
+        .select({
+          mvt: sql<Buffer>`ST_AsMVT(tile, 'facility', 4096, 'geom')`,
+        })
+        .from(tile)
+        .where(isNotNull(tile.geom));
+
+      const mvt = data[0].mvt;
+      return mvt;
+    } catch {
+      throw new DataRetrievalException("Cannot generate Facility tiles");
     }
   }
 }

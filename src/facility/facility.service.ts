@@ -1,6 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { FacilityRepository } from "./facility.repository";
-import { FindFacilityByIdPathParams } from "src/gen";
+import {
+  FindFacilityByIdPathParams,
+  FindFacilityTilesPathParams,
+} from "src/gen";
 import {
   InvalidRequestParameterException,
   ResourceNotFoundException,
@@ -152,5 +155,9 @@ export class FacilityService {
 
   async findAgencies() {
     return await this.facilityRepository.findAgencies();
+  }
+
+  async findTiles(params: FindFacilityTilesPathParams) {
+    return await this.facilityRepository.findTiles(params);
   }
 }

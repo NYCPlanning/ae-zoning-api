@@ -1,4 +1,13 @@
-import { Controller, Get, Param, Query, UseFilters } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Param,
+  Query,
+  Res,
+  UseFilters,
+  UsePipes,
+} from "@nestjs/common";
+import { Response } from "express";
 import { FacilityService } from "./facility.service";
 import { InternalServerErrorExceptionFilter } from "src/filter";
 import { ZodTransformPipe } from "src/pipes/zod-transform-pipe";
@@ -7,6 +16,8 @@ import {
   findFacilitiesQueryParamsSchema,
   FindFacilityByIdPathParams,
   findFacilityByIdPathParamsSchema,
+  FindFacilityTilesPathParams,
+  findFacilityTilesPathParamsSchema,
 } from "src/gen";
 
 @UseFilters(InternalServerErrorExceptionFilter)
@@ -74,5 +85,16 @@ export class FacilityController {
     params: FindFacilityByIdPathParams,
   ) {
     return this.facilityService.findById(params);
+  }
+
+  @UsePipes(new ZodTransformPipe(findFacilityTilesPathParamsSchema))
+  @Get("/:z/:x/:y.pbf")
+  async findTiles(
+    @Param() params: FindFacilityTilesPathParams,
+    @Res() res: Response,
+  ) {
+    const tile = await this.facilityService.findTiles(params);
+    res.set("Content-Type", "application/x-protobuf");
+    res.send(tile);
   }
 }

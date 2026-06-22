@@ -3,7 +3,8 @@ import {
   facilityDomainEntitySchema,
   facilityEntitySchema,
   facilityPageItemEntitySchema,
-} from "src/schema/facility";
+  mvtEntitySchema,
+} from "src/schema";
 import { z } from "zod";
 
 export const findManyRepoSchema = z.array(facilityPageItemEntitySchema);
@@ -21,3 +22,7 @@ export type FindDomainRepo = z.infer<typeof findDomainRepoSchema>;
 export const findAgenciesRepoSchema = z.array(agencyEntitySchema);
 
 export type FindAgenciesRepo = z.infer<typeof findAgenciesRepoSchema>;
+
+export const findTilesRepoSchema = mvtEntitySchema;
+
+export type FindTilesRepo = z.infer<typeof findTilesRepoSchema>;
