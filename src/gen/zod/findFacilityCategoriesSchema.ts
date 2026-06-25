@@ -8,11 +8,11 @@ import { facilityCategorySchema } from "./facilityCategorySchema";
 import { z } from "zod";
 
 /**
- * @description An object containing a list of categories, groups, and subgroups
+ * @description A list of categories, groups, and subgroups
  */
-export const findFacilityCategories200Schema = z.object({
-  facilityCategories: z.array(z.lazy(() => facilityCategorySchema)),
-});
+export const findFacilityCategories200Schema = z.array(
+  z.lazy(() => facilityCategorySchema),
+);
 
 /**
  * @description Invalid client request

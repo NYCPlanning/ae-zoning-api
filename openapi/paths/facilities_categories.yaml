@@ -5,18 +5,13 @@ get:
     - Facilities
   responses:
     '200':
-      description: An object containing a list of categories, groups, and subgroups
+      description: A list of categories, groups, and subgroups
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              facilityCategories:
-                type: array
-                items:
-                  $ref: ../components/schemas/FacilityCategory.yaml
-            required:
-              - facilityCategories
+            type: array
+            items:
+              $ref: ../components/schemas/FacilityCategory.yaml
     '400':
       $ref: ../components/responses/BadRequest.yaml
     '500':

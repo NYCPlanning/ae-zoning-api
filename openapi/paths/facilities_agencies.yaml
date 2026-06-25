@@ -6,18 +6,13 @@ get:
     - Facilities
   responses:
     '200':
-      description: An object containing a list of agencies
+      description: An array of agencies
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              facilityAgencies:
-                type: array
-                items:
-                  $ref: ../components/schemas/Agency.yaml
-            required:
-              - facilityAgencies
+            type: array
+            items:
+              $ref: ../components/schemas/Agency.yaml
     '400':
       $ref: ../components/responses/BadRequest.yaml
     '500':
