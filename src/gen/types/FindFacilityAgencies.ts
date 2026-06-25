@@ -7,14 +7,9 @@ import type { Agency } from "./Agency";
 import type { Error } from "./Error";
 
 /**
- * @description An object containing a list of agencies
+ * @description An array of agencies
  */
-export type FindFacilityAgencies200 = {
-  /**
-   * @type array
-   */
-  facilityAgencies: Agency[];
-};
+export type FindFacilityAgencies200 = Agency[];
 
 /**
  * @description Invalid client request

@@ -7,14 +7,9 @@ import type { Error } from "./Error";
 import type { FacilityCategory } from "./FacilityCategory";
 
 /**
- * @description An object containing a list of categories, groups, and subgroups
+ * @description A list of categories, groups, and subgroups
  */
-export type FindFacilityCategories200 = {
-  /**
-   * @type array
-   */
-  facilityCategories: FacilityCategory[];
-};
+export type FindFacilityCategories200 = FacilityCategory[];
 
 /**
  * @description Invalid client request

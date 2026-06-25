@@ -8,11 +8,11 @@ import { errorSchema } from "./errorSchema";
 import { z } from "zod";
 
 /**
- * @description An object containing a list of agencies
+ * @description An array of agencies
  */
-export const findFacilityAgencies200Schema = z.object({
-  facilityAgencies: z.array(z.lazy(() => agencySchema)),
-});
+export const findFacilityAgencies200Schema = z.array(
+  z.lazy(() => agencySchema),
+);
 
 /**
  * @description Invalid client request
