@@ -1,0 +1,1 @@
+ALTER TABLE "facility_domain" ADD COLUMN "short_name" text;
