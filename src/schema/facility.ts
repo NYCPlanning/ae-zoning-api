@@ -18,12 +18,14 @@ import { dataSource, dataSourceEntitySchema } from "./data-source";
 export const facilityDomain = pgTable("facility_domain", {
   id: smallint("id").generatedByDefaultAsIdentity().primaryKey(),
   name: text("name").notNull(),
+  shortName: text("short_name"),
   description: text("description").notNull(),
 });
 
 export const facilityDomainEntitySchema = z.object({
   id: z.number().int(),
   name: z.string(),
+  shortName: z.string().nullable(),
   description: z.string(),
 });
 
