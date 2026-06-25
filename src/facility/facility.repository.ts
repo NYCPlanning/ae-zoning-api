@@ -486,6 +486,7 @@ export class FacilityRepository {
       const tile = this.db
         .select({
           id: sql`${facility.id}`.as("id"),
+          name: sql`${facility.name}`.as("name"),
           oversightAgencyInitials: sql`${facility.overseeingAgencyInitials}`.as(
             "overseeingAgencyInitials",
           ),
