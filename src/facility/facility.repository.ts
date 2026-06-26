@@ -375,6 +375,10 @@ export class FacilityRepository {
               ) FILTER (WHERE ${alsoAtLocation.id} <> ${facility.id}), 
               '[]'::jsonb
             )`.as("alsoAtLocation"),
+          sgrLtr: facility.sgrLtr,
+          sgrArcLtr: facility.sgrArcLtr,
+          sgrSysLtr: facility.sgrSysLtr,
+          sgrYear: facility.sgrYear,
         })
         .from(facility)
         .leftJoin(
