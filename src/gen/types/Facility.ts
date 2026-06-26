@@ -7,6 +7,39 @@ import type { DataSource } from "./DataSource";
 import type { FacilityOperatorType } from "./FacilityOperatorType";
 import type { OversightLevelCategory } from "./OversightLevelCategory";
 
+export const facilitySgrLtrEnum = {
+  A: "A",
+  B: "B",
+  C: "C",
+  D: "D",
+  F: "F",
+} as const;
+
+export type FacilitySgrLtrEnumKey =
+  (typeof facilitySgrLtrEnum)[keyof typeof facilitySgrLtrEnum];
+
+export const facilitySgrArcLtrEnum = {
+  A: "A",
+  B: "B",
+  C: "C",
+  D: "D",
+  F: "F",
+} as const;
+
+export type FacilitySgrArcLtrEnumKey =
+  (typeof facilitySgrArcLtrEnum)[keyof typeof facilitySgrArcLtrEnum];
+
+export const facilitySgrSysLtrEnum = {
+  A: "A",
+  B: "B",
+  C: "C",
+  D: "D",
+  F: "F",
+} as const;
+
+export type FacilitySgrSysLtrEnumKey =
+  (typeof facilitySgrSysLtrEnum)[keyof typeof facilitySgrSysLtrEnum];
+
 export type Facility = {
   /**
    * @description The id for the facility or program.
@@ -68,6 +101,26 @@ export type Facility = {
    * @type string
    */
   operatorName?: string | null;
+  /**
+   * @description The Overall Facility Grade.
+   * @type string
+   */
+  sgrLtr?: FacilitySgrLtrEnumKey | null;
+  /**
+   * @description The facility\'s Architecture grade.
+   * @type string
+   */
+  sgrArcLtr?: FacilitySgrArcLtrEnumKey | null;
+  /**
+   * @description The facility\'s Mechanical and Electrical Systems grade.
+   * @type string
+   */
+  sgrSysLtr?: FacilitySgrSysLtrEnumKey | null;
+  /**
+   * @description The year of the facility\'s State of Good Repair assessment.
+   * @type integer
+   */
+  sgrYear?: number | null;
   /**
    * @type object
    */

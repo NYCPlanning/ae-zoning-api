@@ -102,6 +102,30 @@
           "example": "NYC Department of Parks and Recreation",
           "nullable": true
         },
+        "sgrLtr": {
+          "type": "string",
+          "nullable": true,
+          "enum": ["A", "B", "C", "D", "F"],
+          "description": "The Overall Facility Grade."
+        },
+        "sgrArcLtr": {
+          "type": "string",
+          "nullable": true,
+          "enum": ["A", "B", "C", "D", "F"],
+          "description": "The facility's Architecture grade."
+        },
+        "sgrSysLtr": {
+          "type": "string",
+          "nullable": true,
+          "enum": ["A", "B", "C", "D", "F"],
+          "description": "The facility's Mechanical and Electrical Systems grade."
+        },
+        "sgrYear": {
+          "type": "integer",
+          "nullable": true,
+          "description": "The year of the facility's State of Good Repair assessment.",
+          "example": 2026
+        },
         "dataSource": {
           "type": "object",
           "properties": {
