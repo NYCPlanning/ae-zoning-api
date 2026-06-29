@@ -82,7 +82,7 @@ export class FacilityRepository {
         .select({
           id: facility.id,
           name: facility.name,
-          oversightAgency: agency.name,
+          oversightAgencyInitials: agency.initials,
           categoryId: facilityGroup.facilityDomainId,
           hasSogrData: sql<boolean>`${isNotNull(facility.sgrLtr)}`,
         })
