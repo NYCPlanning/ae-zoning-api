@@ -6,6 +6,7 @@ export const dataSource = pgTable("data_source", {
   datasetName: text("dataset_name"),
   version: text("version").notNull(),
   retrieveDate: date("retrieve_date").notNull(),
+  url: text("url"),
 });
 
 export const dataSourceEntitySchema = z.object({
@@ -13,6 +14,7 @@ export const dataSourceEntitySchema = z.object({
   datasetName: z.string(),
   version: z.string(),
   retrieveDate: z.string().date(),
+  url: z.string(),
 });
 
 export type DataSourceEntitySchema = z.infer<typeof dataSourceEntitySchema>;
