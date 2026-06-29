@@ -12,4 +12,5 @@ export const dataSourceSchema = z.object({
   retrieveDate: z
     .string()
     .describe("The retrieval date of the version of the dataset."),
+  url: z.string().describe("The URL at which users can find the dataset"),
 });

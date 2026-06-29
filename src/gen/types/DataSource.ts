@@ -24,4 +24,9 @@ export type DataSource = {
    * @type string
    */
   retrieveDate: string;
+  /**
+   * @description The URL at which users can find the dataset
+   * @type string
+   */
+  url: string;
 };
