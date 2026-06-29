@@ -60,9 +60,13 @@
                 "type": "integer",
                 "description": "The category id of the facility",
                 "example": 1
+              },
+              "hasSogrData": {
+                "type": "boolean",
+                "description": "If the facility has a State of Good Repair rating"
               }
             },
-            "required": ["id", "categoryId"]
+            "required": ["id", "categoryId", "hasSogrData"]
           }
         },
         "totalFacilities": {

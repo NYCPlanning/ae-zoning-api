@@ -27,6 +27,9 @@ export const facilityPageSchema = z
             .number()
             .int()
             .describe("The category id of the facility"),
+          hasSogrData: z
+            .boolean()
+            .describe("If the facility has a State of Good Repair rating"),
         }),
       ),
       totalFacilities: z

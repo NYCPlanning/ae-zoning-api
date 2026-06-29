@@ -30,6 +30,11 @@ export type FacilityPage = Page & {
      * @type integer
      */
     categoryId: number;
+    /**
+     * @description If the facility has a State of Good Repair rating
+     * @type boolean
+     */
+    hasSogrData: boolean;
   }[];
   /**
    * @description The total number of results matching the query parameters.
