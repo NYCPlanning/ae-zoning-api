@@ -362,7 +362,8 @@ export class FacilityRepository {
               'schemaName', ${dataSource.schemaName},
               'datasetName', ${dataSource.datasetName},
               'version', ${dataSource.version},
-              'retrieveDate', ${dataSource.retrieveDate}
+              'retrieveDate', ${dataSource.retrieveDate},
+              'url', ${dataSource.url}
             )
           `.as("dataSource"),
           alsoAtLocation: sql<any[]>`
@@ -440,6 +441,7 @@ export class FacilityRepository {
           dataSource.datasetName,
           dataSource.version,
           dataSource.retrieveDate,
+          dataSource.url,
         );
     } catch {
       throw new DataRetrievalException("Cannot find Facility with given id");

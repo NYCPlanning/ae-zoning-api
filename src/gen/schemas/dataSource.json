@@ -21,8 +21,13 @@
       "type": "string",
       "description": "The retrieval date of the version of the dataset.",
       "example": "2026-04-17"
+    },
+    "url": {
+      "type": "string",
+      "description": "The URL at which users can find the dataset",
+      "example": "https://data.cityofnewyork.us/Business/Legally-Operating-Businesses/w7w3-xahh"
     }
   },
-  "required": ["schemaName", "datasetName", "version", "retrieveDate"],
+  "required": ["schemaName", "datasetName", "version", "retrieveDate", "url"],
   "x-readme-ref-name": "DataSource"
 }
