@@ -84,6 +84,7 @@ export class FacilityRepository {
           name: facility.name,
           oversightAgency: agency.name,
           categoryId: facilityGroup.facilityDomainId,
+          hasSogrData: sql<boolean>`${isNotNull(facility.sgrLtr)}`,
         })
         .from(facility)
         .leftJoin(

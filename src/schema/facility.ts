@@ -168,6 +168,7 @@ export const facilityPageItemEntitySchema = z.object({
   name: z.string().nullable(),
   oversightAgency: agencyEntitySchema.shape.name.nullable(),
   categoryId: z.number().nullable(),
+  hasSogrData: z.boolean(),
 });
 
 export const facilityDomainRelations = relations(
