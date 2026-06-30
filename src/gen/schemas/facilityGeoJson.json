@@ -102,6 +102,15 @@
           "example": "NYC Department of Parks and Recreation",
           "nullable": true
         },
+        "position": {
+          "type": "array",
+          "description": "The fundamental spatial construct",
+          "minItems": 2,
+          "maxItems": 3,
+          "items": { "type": "number" },
+          "example": [-74.010835, 40.708442],
+          "x-readme-ref-name": "Position"
+        },
         "sgrLtr": {
           "type": "string",
           "nullable": true,
@@ -194,6 +203,7 @@
         "categoryId",
         "categoryGroupId",
         "categorySubgroupId",
+        "position",
         "dataSource",
         "alsoAtLocation"
       ],

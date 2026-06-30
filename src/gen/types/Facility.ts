@@ -6,6 +6,7 @@
 import type { DataSource } from "./DataSource";
 import type { FacilityOperatorType } from "./FacilityOperatorType";
 import type { OversightLevelCategory } from "./OversightLevelCategory";
+import type { Position } from "./Position";
 
 export const facilitySgrLtrEnum = {
   A: "A",
@@ -101,6 +102,11 @@ export type Facility = {
    * @type string
    */
   operatorName?: string | null;
+  /**
+   * @description The fundamental spatial construct
+   * @type array
+   */
+  position: Position;
   /**
    * @description The Overall Facility Grade.
    * @type string

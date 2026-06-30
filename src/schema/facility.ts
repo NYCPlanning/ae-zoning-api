@@ -149,6 +149,7 @@ export const facilityEntitySchema = z.object({
   categoryId: z.number().nullable(),
   categoryGroupId: z.number().nullable(),
   categorySubgroupId: z.number().nullable(),
+  position: z.array(z.number()),
   sgrLtr: z.string().nullable(),
   sgrArcLtr: z.string().nullable(),
   sgrSysLtr: z.string().nullable(),

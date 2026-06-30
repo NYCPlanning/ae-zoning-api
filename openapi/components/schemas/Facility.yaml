@@ -50,6 +50,8 @@ properties:
     description: The name of the entity operating the facility or program.
     example: 'NYC Department of Parks and Recreation'
     nullable: true
+  position:
+    $ref: ./Position.yaml
   sgrLtr:
     type: string
     nullable: true
@@ -109,6 +111,7 @@ required:
   - categoryId
   - categoryGroupId
   - categorySubgroupId
+  - position
   - dataSource
   - alsoAtLocation
   

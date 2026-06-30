@@ -357,6 +357,12 @@ export class FacilityRepository {
           categoryId: facilityGroup.facilityDomainId,
           categoryGroupId: facilityGroup.id,
           categorySubgroupId: facilitySubgroup.id,
+          position: sql<[number, number]>`
+            ARRAY[
+              ST_X(ST_Transform(ST_Centroid(${facility.liFt}), 4326)),
+              ST_Y(ST_Transform(ST_Centroid(${facility.liFt}), 4326))
+            ]
+          `,
           dataSource: sql<DataSourceEntitySchema>`
             json_build_object(
               'schemaName', ${dataSource.schemaName},

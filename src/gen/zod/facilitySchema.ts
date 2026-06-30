@@ -6,6 +6,7 @@
 import { dataSourceSchema } from "./dataSourceSchema";
 import { facilityOperatorTypeSchema } from "./facilityOperatorTypeSchema";
 import { oversightLevelCategorySchema } from "./oversightLevelCategorySchema";
+import { positionSchema } from "./positionSchema";
 import { z } from "zod";
 
 export const facilitySchema = z.object({
@@ -52,6 +53,9 @@ export const facilitySchema = z.object({
     .string()
     .describe("The name of the entity operating the facility or program.")
     .nullish(),
+  position: z
+    .lazy(() => positionSchema)
+    .describe("The fundamental spatial construct"),
   sgrLtr: z
     .enum(["A", "B", "C", "D", "F"])
     .describe("The Overall Facility Grade.")
