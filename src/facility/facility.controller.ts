@@ -16,6 +16,8 @@ import {
   findFacilitiesQueryParamsSchema,
   FindFacilityByIdPathParams,
   findFacilityByIdPathParamsSchema,
+  FindFacilityGeoJsonByIdPathParams,
+  findFacilityGeoJsonByIdPathParamsSchema,
   FindFacilityTilesPathParams,
   findFacilityTilesPathParamsSchema,
 } from "src/gen";
@@ -96,5 +98,13 @@ export class FacilityController {
     const tile = await this.facilityService.findTiles(params);
     res.set("Content-Type", "application/x-protobuf");
     res.send(tile);
+  }
+
+  @Get("/:facilityId/geojson")
+  async findGeoJsonById(
+    @Param(new ZodTransformPipe(findFacilityGeoJsonByIdPathParamsSchema))
+    params: FindFacilityGeoJsonByIdPathParams,
+  ) {
+    return this.facilityService.findGeoJsonById(params);
   }
 }

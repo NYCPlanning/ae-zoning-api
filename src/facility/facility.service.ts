@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { FacilityRepository } from "./facility.repository";
 import {
   FindFacilityByIdPathParams,
+  FindFacilityGeoJsonByIdPathParams,
   FindFacilityTilesPathParams,
 } from "src/gen";
 import {
@@ -10,8 +11,11 @@ import {
 } from "src/exception";
 import { Geom } from "src/types";
 import { SpatialRepository } from "src/spatial/spatial.repository";
-import { Geometry, Position } from "geojson";
+import { Geometry, MultiPoint, Position } from "geojson";
 import { SIX_DECIMAL_RESOLUTION_FT } from "src/constants";
+import { FacilityEntity } from "src/schema";
+import { FacilityGeometry } from "./facility.repository.schema";
+import { produce } from "immer";
 
 @Injectable()
 export class FacilityService {
@@ -159,5 +163,31 @@ export class FacilityService {
 
   async findTiles(params: FindFacilityTilesPathParams) {
     return await this.facilityRepository.findTiles(params);
+  }
+
+  async findGeoJsonById(params: FindFacilityGeoJsonByIdPathParams) {
+    const facilities = await this.facilityRepository.findGeoJsonById(params);
+    if (facilities.length < 1)
+      throw new ResourceNotFoundException("cannot find facility geojson");
+
+    const facilityGeoJson = facilities[0];
+    const geometry =
+      facilityGeoJson.geometry === null
+        ? null
+        : (JSON.parse(facilityGeoJson.geometry) as MultiPoint);
+
+    const properties = produce(
+      facilityGeoJson as Partial<FacilityGeometry>,
+      (draft) => {
+        delete draft["geometry"];
+      },
+    ) as FacilityEntity;
+
+    return {
+      id: facilityGeoJson.id,
+      type: "Feature",
+      properties,
+      geometry,
+    };
   }
 }

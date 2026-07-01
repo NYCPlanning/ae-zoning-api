@@ -1,4 +1,4 @@
-import { agencyEntitySchema } from "src/schema";
+import { agencyEntitySchema, multiPointJsonSchema } from "src/schema";
 import {
   facilityDomainEntitySchema,
   facilityEntitySchema,
@@ -26,3 +26,17 @@ export type FindAgenciesRepo = z.infer<typeof findAgenciesRepoSchema>;
 export const findTilesRepoSchema = mvtEntitySchema;
 
 export type FindTilesRepo = z.infer<typeof findTilesRepoSchema>;
+
+export const facilityGeometrySchema = facilityEntitySchema.extend({
+  geometry: multiPointJsonSchema,
+});
+
+export type FacilityGeometry = z.infer<typeof facilityGeometrySchema>;
+
+export const findGeoJsonByFacilityIdRepoSchema = z.array(
+  facilityGeometrySchema,
+);
+
+export type FindGeoJsonByFacilityIdRepo = z.infer<
+  typeof findGeoJsonByFacilityIdRepoSchema
+>;
