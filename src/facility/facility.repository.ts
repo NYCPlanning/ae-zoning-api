@@ -31,6 +31,7 @@ import {
 } from "src/gen";
 import { alias } from "drizzle-orm/pg-core";
 import { Geom } from "src/types";
+import { FindGeoJsonByFacilityIdRepo } from "src/facility/facility.repository.schema";
 
 @Injectable()
 export class FacilityRepository {
@@ -552,6 +553,141 @@ export class FacilityRepository {
       return mvt;
     } catch {
       throw new DataRetrievalException("Cannot generate Facility tiles");
+    }
+  }
+
+  async findGeoJsonById({
+    facilityId,
+  }: FindFacilityByIdPathParams): Promise<FindGeoJsonByFacilityIdRepo> {
+    try {
+      const alsoAtLocation = alias(facility, "alsoAtLocation");
+      const alsoAtLocationType = alias(facilityType, "alsoAtLocationType");
+      const alsoAtLocationSubgroup = alias(
+        facilitySubgroup,
+        "alsoAtLocationSubgroup",
+      );
+      const alsoAtLocationGroup = alias(facilityGroup, "alsoAtLocationGroup");
+
+      return await this.db
+        .select({
+          id: facility.id,
+          name: facility.name,
+          address: sql<string>`
+            CASE 
+              WHEN ${facility.address} IS NOT NULL AND ${facility.zipCode} IS NOT NULL 
+                THEN CONCAT(${facility.address}, ', ', ${facility.city}, ', NY ', ${facility.zipCode})
+              WHEN ${facility.address} IS NOT NULL 
+                THEN CONCAT(${facility.address}, ', ', ${facility.city}, ', NY')
+              WHEN ${facility.zipCode} IS NOT NULL 
+                THEN CONCAT(${facility.city}, ', NY ', ${facility.zipCode})
+              WHEN ${facility.city} IS NOT NULL 
+                THEN CONCAT(${facility.city}, ', NY')
+              ELSE 'NY'
+            END
+          `,
+          bin: facility.bin,
+          bbl: facility.bbl,
+          oversightAgencyInitials: facility.overseeingAgencyInitials,
+          facilityJurisdiction: agency.oversightLevel,
+          facilityOperatorType: facilityOperator.type,
+          operatorName: facilityOperator.name,
+          categoryId: facilityGroup.facilityDomainId,
+          categoryGroupId: facilityGroup.id,
+          categorySubgroupId: facilitySubgroup.id,
+          dataSource: sql<DataSourceEntitySchema>`
+            json_build_object(
+              'schemaName', ${dataSource.schemaName},
+              'datasetName', ${dataSource.datasetName},
+              'version', ${dataSource.version},
+              'retrieveDate', ${dataSource.retrieveDate},
+              'url', ${dataSource.url}
+            )
+          `.as("dataSource"),
+          alsoAtLocation: sql<any[]>`
+            COALESCE(
+              jsonb_agg(
+                jsonb_build_object(
+                  'id', ${alsoAtLocation.id},
+                  'name', ${alsoAtLocation.name},
+                  'categoryId', ${alsoAtLocationGroup.facilityDomainId}
+                )
+              ) FILTER (WHERE ${alsoAtLocation.id} <> ${facility.id}), 
+              '[]'::jsonb
+            )`.as("alsoAtLocation"),
+          sgrLtr: facility.sgrLtr,
+          sgrArcLtr: facility.sgrArcLtr,
+          sgrSysLtr: facility.sgrSysLtr,
+          sgrYear: facility.sgrYear,
+          geometry:
+            sql<string>`ST_AsGeoJSON(ST_Transform(${facility.liFt}, 4326), 6)`.as(
+              "geometry",
+            ),
+        })
+        .from(facility)
+        .leftJoin(
+          agency,
+          eq(agency.initials, facility.overseeingAgencyInitials),
+        )
+        .leftJoin(
+          facilityOperator,
+          eq(facilityOperator.id, facility.facilityOperatorId),
+        )
+        .leftJoin(facilityType, eq(facilityType.id, facility.facilityTypeId))
+        .leftJoin(
+          facilitySubgroup,
+          eq(facilitySubgroup.id, facilityType.facilitySubgroupId),
+        )
+        .leftJoin(
+          facilityGroup,
+          eq(facilityGroup.id, facilitySubgroup.facilityGroupId),
+        )
+        .leftJoin(
+          dataSource,
+          eq(dataSource.schemaName, facility.dataSourceSchema),
+        )
+        .leftJoin(
+          alsoAtLocation,
+          or(
+            eq(facility.bin, alsoAtLocation.bin),
+            eq(facility.bbl, alsoAtLocation.bbl),
+          ),
+        )
+        .leftJoin(
+          alsoAtLocationType,
+          eq(alsoAtLocationType.id, alsoAtLocation.facilityTypeId),
+        )
+        .leftJoin(
+          alsoAtLocationSubgroup,
+          eq(alsoAtLocationSubgroup.id, alsoAtLocationType.facilitySubgroupId),
+        )
+        .leftJoin(
+          alsoAtLocationGroup,
+          eq(alsoAtLocationGroup.id, alsoAtLocationSubgroup.facilityGroupId),
+        )
+        .where(eq(facility.id, facilityId))
+        .limit(1)
+        .groupBy(
+          facility.id,
+          facility.name,
+          facility.bbl,
+          facility.bin,
+          facility.overseeingAgencyInitials,
+          agency.oversightLevel,
+          facilityOperator.type,
+          facilityOperator.name,
+          facilityGroup.facilityDomainId,
+          facilityGroup.id,
+          facilitySubgroup.id,
+          dataSource.schemaName,
+          dataSource.datasetName,
+          dataSource.version,
+          dataSource.retrieveDate,
+          dataSource.url,
+        );
+    } catch {
+      throw new DataRetrievalException(
+        "Cannot find Facility geojson with given id",
+      );
     }
   }
 }

@@ -163,6 +163,8 @@ export const facilityEntitySchema = z.object({
   ),
 });
 
+export type FacilityEntity = z.infer<typeof facilityEntitySchema>;
+
 export const facilityPageItemEntitySchema = z.object({
   id: z.string(),
   name: z.string().nullable(),
