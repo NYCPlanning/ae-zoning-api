@@ -2,10 +2,9 @@
   "type": "object",
   "properties": {
     "id": {
-      "type": "string",
-      "pattern": "^([0-9]{1,3})$",
+      "type": "integer",
       "description": "The id for the group.",
-      "example": "1"
+      "example": 1
     },
     "name": {
       "type": "string",
@@ -24,10 +23,9 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string",
-            "pattern": "^([0-9]{1,3})$",
+            "type": "integer",
             "description": "The id for the subgroup.",
-            "example": "1"
+            "example": 1
           },
           "name": {
             "type": "string",
