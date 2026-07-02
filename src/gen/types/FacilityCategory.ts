@@ -18,6 +18,11 @@ export type FacilityCategory = {
    */
   name: string;
   /**
+   * @description The shortened name of the category.
+   * @type string
+   */
+  shortName: string;
+  /**
    * @description The description of the category.
    * @type string
    */

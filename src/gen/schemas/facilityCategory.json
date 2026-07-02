@@ -12,10 +12,15 @@
       "description": "The name of the category.",
       "example": "Education, Child Welfare, and Youth"
     },
+    "shortName": {
+      "type": "string",
+      "description": "The shortened name of the category.",
+      "example": "Education, Youth"
+    },
     "description": {
       "type": "string",
       "description": "The description of the category.",
-      "example": "Education, Youth"
+      "example": "Providers of children and youth services and all schools, including higher education facilities"
     },
     "groups": {
       "type": "array",
@@ -71,6 +76,6 @@
       }
     }
   },
-  "required": ["id", "name", "description", "groups"],
+  "required": ["id", "name", "shortName", "description", "groups"],
   "x-readme-ref-name": "FacilityCategory"
 }
