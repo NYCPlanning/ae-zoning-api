@@ -452,6 +452,7 @@ export class FacilityRepository {
   async findCategories(): Promise<FindDomainRepo> {
     try {
       return await this.db.query.facilityDomain.findMany({
+        orderBy: (t) => sql`${t.id} asc`,
         with: {
           groups: {
             with: {
