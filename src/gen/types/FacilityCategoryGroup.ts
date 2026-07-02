@@ -8,10 +8,9 @@ import type { FacilityCategorySubgroup } from "./FacilityCategorySubgroup";
 export type FacilityCategoryGroup = {
   /**
    * @description The id for the group.
-   * @pattern ^([0-9]{1,3})$
-   * @type string
+   * @type integer
    */
-  id: string;
+  id: number;
   /**
    * @description The name of the group.
    * @type string

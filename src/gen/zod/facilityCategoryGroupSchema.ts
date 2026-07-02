@@ -7,10 +7,7 @@ import { facilityCategorySubgroupSchema } from "./facilityCategorySubgroupSchema
 import { z } from "zod";
 
 export const facilityCategoryGroupSchema = z.object({
-  id: z
-    .string()
-    .regex(/^([0-9]{1,3})$/)
-    .describe("The id for the group."),
+  id: z.number().int().describe("The id for the group."),
   name: z.string().describe("The name of the group."),
   description: z.nullable(z.string().describe("The description of the group.")),
   subgroups: z.array(z.lazy(() => facilityCategorySubgroupSchema)),

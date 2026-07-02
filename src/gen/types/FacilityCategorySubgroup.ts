@@ -6,10 +6,9 @@
 export type FacilityCategorySubgroup = {
   /**
    * @description The id for the subgroup.
-   * @pattern ^([0-9]{1,3})$
-   * @type string
+   * @type integer
    */
-  id: string;
+  id: number;
   /**
    * @description The name of the subgroup.
    * @type string
