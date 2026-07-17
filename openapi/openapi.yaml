@@ -127,6 +127,8 @@ paths:
     $ref: paths/facilities_agencies.yaml
   /facilities/categories:
     $ref: paths/facilities_categories.yaml
+  /facilities/csv:
+    $ref: paths/facilities_csv.yaml
   /facilities/{z}/{x}/{y}.pbf:
     $ref: paths/facilities_{z}_{x}_{y}.pbf.yaml
   /land-uses:
