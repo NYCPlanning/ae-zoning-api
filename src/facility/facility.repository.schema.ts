@@ -40,3 +40,31 @@ export const findGeoJsonByFacilityIdRepoSchema = z.array(
 export type FindGeoJsonByFacilityIdRepo = z.infer<
   typeof findGeoJsonByFacilityIdRepoSchema
 >;
+
+export const facilityCsvRepoSchema = facilityEntitySchema
+  .pick({
+    id: true,
+    name: true,
+    address: true,
+    bin: true,
+    bbl: true,
+    facilityJurisdiction: true,
+    facilityOperatorType: true,
+    operatorName: true,
+    sgrLtr: true,
+    sgrArcLtr: true,
+    sgrSysLtr: true,
+    sgrYear: true,
+  })
+  .extend({
+    oversightAgency: agencyEntitySchema.shape.name.nullable(),
+    category: facilityDomainEntitySchema.shape.name.nullable(),
+    categoryGroup: facilityDomainEntitySchema.shape.name.nullable(),
+    categorySubgroup: facilityDomainEntitySchema.shape.name.nullable(),
+  });
+
+export type FacilityCsvRepoSchema = z.infer<typeof facilityCsvRepoSchema>;
+
+export const findCsvRepoSchema = z.array(facilityCsvRepoSchema);
+
+export type FindCsvRepo = z.infer<typeof findCsvRepoSchema>;

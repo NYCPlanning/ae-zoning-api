@@ -21,6 +21,7 @@ import {
   FindFacilityTilesPathParams,
   findFacilityTilesPathParamsSchema,
 } from "src/gen";
+import { unparse } from "papaparse";
 
 @UseFilters(InternalServerErrorExceptionFilter)
 @Controller("facilities")
@@ -69,6 +70,56 @@ export class FacilityController {
       limit,
       offset,
     });
+  }
+
+  @Get("/csv")
+  async findCsv(
+    @Res() res: Response,
+    @Query(new ZodTransformPipe(findFacilitiesQueryParamsSchema))
+    {
+      boroughIds,
+      facilityJurisdictions,
+      facilityOperatorTypes,
+      facilityOversightAgency,
+      facilityCategoryIds,
+      facilityGroupIds,
+      facilitySubgroupIds,
+      communityDistrictIds,
+      cityCouncilDistrictIds,
+      bbl,
+      bin,
+      geometry,
+      lons,
+      lats,
+      buffer,
+    }: FindFacilitiesQueryParams,
+  ) {
+    const data = await this.facilityService.findCsv({
+      boroughIds,
+      facilityJurisdictions,
+      facilityOperatorTypes,
+      facilityOversightAgency,
+      facilityCategoryIds,
+      facilityGroupIds,
+      facilitySubgroupIds,
+      communityDistrictIds,
+      cityCouncilDistrictIds,
+      bbl,
+      bin,
+      geometry,
+      lons,
+      lats,
+      buffer,
+    });
+
+    const csvData = `ID,Name,Address,BIN,BBL,Oversight Agency,Jurisdiction,Operator Type,Operator Name,Category,Category Group,Category Subgroup,sgrLtr,sgrArcLtr,sgrSysLtr,sgrYear\n${unparse(data, { header: false })}`;
+
+    res.set("Content-Type", "application/csv");
+    res.set(
+      "Content-Disposition",
+      `attachment; filename=CPP_Facility_Export_${String(new Date().getDate()).padStart(2, "0")}_${["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][new Date().getMonth()]}_${new Date().getFullYear()}.csv`,
+    );
+    res.send(csvData);
   }
 
   @Get("/categories")
