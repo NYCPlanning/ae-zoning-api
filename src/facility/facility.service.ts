@@ -5,23 +5,19 @@ import {
   FindFacilityGeoJsonByIdPathParams,
   FindFacilityTilesPathParams,
 } from "src/gen";
-import {
-  InvalidRequestParameterException,
-  ResourceNotFoundException,
-} from "src/exception";
-import { Geom } from "src/types";
-import { SpatialRepository } from "src/spatial/spatial.repository";
-import { Geometry, MultiPoint, Position } from "geojson";
+import { ResourceNotFoundException } from "src/exception";
+import { MultiPoint } from "geojson";
 import { SIX_DECIMAL_RESOLUTION_FT } from "src/constants";
 import { FacilityEntity } from "src/schema";
 import { FacilityGeometry } from "./facility.repository.schema";
 import { produce } from "immer";
+import { SpatialService } from "src/spatial/spatial.service";
 
 @Injectable()
 export class FacilityService {
   constructor(
     private readonly facilityRepository: FacilityRepository,
-    private readonly spatialRepository: SpatialRepository,
+    private readonly spatialService: SpatialService,
   ) {}
 
   async findMany({
@@ -65,33 +61,15 @@ export class FacilityService {
     limit?: number;
     offset?: number;
   }) {
-    let geom: Geom | null = null;
-    if (
-      (lons !== null || lats !== null || buffer !== null) &&
-      geometry === null
-    )
-      throw new InvalidRequestParameterException(
-        "must provide with geometry with lons, lats, and buffer parameters",
-      );
-    if (geometry !== null) {
-      if (lons == null || lats == null) {
-        throw new InvalidRequestParameterException(
-          "must provide latitude and longitude with geometry",
-        );
-      }
-      if (lons.length !== lats.length) {
-        throw new InvalidRequestParameterException(
-          "latitude and longitude must be same length",
-        );
-      }
-
-      const coordinates: Position = [lons[0], lats[0]];
-      const feature: Geometry = {
-        type: geometry,
-        coordinates,
-      };
-      geom = await this.spatialRepository.findGeomFromGeoJson(feature, 2263);
-    }
+    const geom: string | null =
+      lons !== null || lats !== null || buffer !== null || geometry !== null
+        ? await this.spatialService.createGeometryFromParams({
+            geometry,
+            lats,
+            lons,
+            buffer,
+          })
+        : null;
     const bufferFloor = buffer === null ? SIX_DECIMAL_RESOLUTION_FT : buffer;
 
     const facilitiesPromise = this.facilityRepository.findMany({

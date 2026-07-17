@@ -1,8 +1,9 @@
 import { Module } from "@nestjs/common";
 import { SpatialRepository } from "./spatial.repository";
+import { SpatialService } from "./spatial.service";
 
 @Module({
-  exports: [SpatialRepository],
-  providers: [SpatialRepository],
+  exports: [SpatialService, SpatialRepository],
+  providers: [SpatialService, SpatialRepository],
 })
 export class SpatialModule {}
