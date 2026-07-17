@@ -266,6 +266,13 @@ export {
   findCommunityDistrictTilesQueryResponseSchema,
 } from "./findCommunityDistrictTilesSchema";
 export {
+  findFacilitiesCsvQueryParamsSchema,
+  findFacilitiesCsv200Schema,
+  findFacilitiesCsv400Schema,
+  findFacilitiesCsv500Schema,
+  findFacilitiesCsvQueryResponseSchema,
+} from "./findFacilitiesCsvSchema";
+export {
   findFacilitiesQueryParamsSchema,
   findFacilities200Schema,
   findFacilities400Schema,

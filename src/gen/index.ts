@@ -347,6 +347,17 @@ export type {
   FindFacilitiesQuery,
 } from "./types/FindFacilities";
 export type {
+  FindFacilitiesCsvQueryParamsFacilityJurisdictionsEnumKey,
+  FindFacilitiesCsvQueryParamsFacilityOperatorTypesEnumKey,
+  FindFacilitiesCsvQueryParamsGeometryEnumKey,
+  FindFacilitiesCsvQueryParams,
+  FindFacilitiesCsv200,
+  FindFacilitiesCsv400,
+  FindFacilitiesCsv500,
+  FindFacilitiesCsvQueryResponse,
+  FindFacilitiesCsvQuery,
+} from "./types/FindFacilitiesCsv";
+export type {
   FindFacilityAgencies200,
   FindFacilityAgencies400,
   FindFacilityAgencies500,
@@ -528,6 +539,9 @@ export { findCommunityBoardBudgetRequestsCsvQueryParamsGeometryEnum } from "./ty
 export { findFacilitiesQueryParamsFacilityJurisdictionsEnum } from "./types/FindFacilities";
 export { findFacilitiesQueryParamsFacilityOperatorTypesEnum } from "./types/FindFacilities";
 export { findFacilitiesQueryParamsGeometryEnum } from "./types/FindFacilities";
+export { findFacilitiesCsvQueryParamsFacilityJurisdictionsEnum } from "./types/FindFacilitiesCsv";
+export { findFacilitiesCsvQueryParamsFacilityOperatorTypesEnum } from "./types/FindFacilitiesCsv";
+export { findFacilitiesCsvQueryParamsGeometryEnum } from "./types/FindFacilitiesCsv";
 export { findTaxLotsQueryParamsGeometryEnum } from "./types/FindTaxLots";
 export { multiPointTypeEnum } from "./types/MultiPoint";
 export { multiPolygonTypeEnum } from "./types/MultiPolygon";
@@ -801,6 +815,13 @@ export {
   findCommunityDistrictTiles500Schema,
   findCommunityDistrictTilesQueryResponseSchema,
 } from "./zod/findCommunityDistrictTilesSchema";
+export {
+  findFacilitiesCsvQueryParamsSchema,
+  findFacilitiesCsv200Schema,
+  findFacilitiesCsv400Schema,
+  findFacilitiesCsv500Schema,
+  findFacilitiesCsvQueryResponseSchema,
+} from "./zod/findFacilitiesCsvSchema";
 export {
   findFacilitiesQueryParamsSchema,
   findFacilities200Schema,
