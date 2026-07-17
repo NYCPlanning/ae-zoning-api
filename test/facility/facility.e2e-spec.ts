@@ -1,0 +1,191 @@
+import * as request from "supertest";
+import { INestApplication } from "@nestjs/common";
+import { Test } from "@nestjs/testing";
+import { DataRetrievalException } from "src/exception";
+import { HttpName } from "src/filter";
+import { FacilityRepositoryMock } from "./facility.repository.mock";
+import { AgencyRepositoryMock } from "test/agency/agency.repository.mock";
+import { AgencyRepository } from "src/agency/agency.repository";
+import { CommunityDistrictRepositoryMock } from "test/community-district/community-district.repository.mock";
+import { CityCouncilDistrictRepositoryMock } from "test/city-council-district/city-council-district.repository.mock";
+import { CityCouncilDistrictRepository } from "src/city-council-district/city-council-district.repository";
+import { CommunityDistrictRepository } from "src/community-district/community-district.repository";
+import { BoroughRepositoryMock } from "test/borough/borough.repository.mock";
+import { BoroughRepository } from "src/borough/borough.repository";
+import { SpatialRepositoryMock } from "test/spatial/spatial.repository.mock";
+import { SpatialRepository } from "src/spatial/spatial.repository";
+import { FacilityModule } from "src/facility/facility.module";
+import { FacilityRepository } from "src/facility/facility.repository";
+
+describe("Facility e2e", () => {
+  let app: INestApplication;
+
+  const agencyRepositoryMock = new AgencyRepositoryMock();
+  const boroughRepositoryMock = new BoroughRepositoryMock();
+  const cityCouncilDistrictRepositoryMock =
+    new CityCouncilDistrictRepositoryMock();
+  const communityDistrictRepositoryMock = new CommunityDistrictRepositoryMock();
+  const facilityRepositoryMock = new FacilityRepositoryMock(
+    agencyRepositoryMock,
+    cityCouncilDistrictRepositoryMock,
+    communityDistrictRepositoryMock,
+  );
+  const spatialRepositoryMock = new SpatialRepositoryMock();
+
+  beforeAll(async () => {
+    const moduleRef = await Test.createTestingModule({
+      imports: [FacilityModule],
+    })
+      .overrideProvider(FacilityRepository)
+      .useValue(facilityRepositoryMock)
+      .overrideProvider(AgencyRepository)
+      .useValue(agencyRepositoryMock)
+      .overrideProvider(BoroughRepository)
+      .useValue(boroughRepositoryMock)
+      .overrideProvider(CityCouncilDistrictRepository)
+      .useValue(cityCouncilDistrictRepositoryMock)
+      .overrideProvider(CommunityDistrictRepository)
+      .useValue(communityDistrictRepositoryMock)
+      .overrideProvider(SpatialRepository)
+      .useValue(spatialRepositoryMock)
+      .compile();
+    app = moduleRef.createNestApplication();
+    await app.init();
+  });
+
+  describe("findCsv", () => {
+    it("should 200 and return a csv", async () => {
+      await request(app.getHttpServer()).get(`/facilities/csv`).expect(200);
+    });
+
+    it("should 200 when finding facilities by boroughIds", async () => {
+      const borough = boroughRepositoryMock.boroughs[0];
+      await request(app.getHttpServer())
+        .get(`/facilities/csv?boroughIds=${borough.id}`)
+        .expect(200);
+    });
+
+    it("should 200 when finding facilities by communityDistrictIds", async () => {
+      await request(app.getHttpServer())
+        .get(
+          `/facilities/csv?communityDistrictIds=${communityDistrictRepositoryMock.districts[0].boroughId}${communityDistrictRepositoryMock.districts[0].id},${communityDistrictRepositoryMock.districts[1].boroughId}${communityDistrictRepositoryMock.districts[1].id}`,
+        )
+        .expect(200);
+    });
+
+    it("should 200 when finding facilities by cityCouncilDistrictIds", async () => {
+      await request(app.getHttpServer())
+        .get(
+          `/facilities/csv?cityCouncilDistrictIds=${cityCouncilDistrictRepositoryMock.districts[0].id},${cityCouncilDistrictRepositoryMock.districts[1].id}`,
+        )
+        .expect(200);
+    });
+
+    it("should 200 when finding facilities by oversight agency", async () => {
+      const agency = agencyRepositoryMock.agencies[0];
+
+      await request(app.getHttpServer())
+        .get(`/facilities/csv?facilityOversightAgency=${agency.initials}`)
+        .expect(200);
+    });
+
+    // Uncomment these when adding parameter validation in issue #644
+    // https://github.com/NYCPlanning/ae-zoning-api/issues/644
+
+    // it("should 400 when finding facilities by invalid communityDistrictIds", async () => {
+    //   const communityDistrictIds = false;
+
+    //   const response = await request(app.getHttpServer())
+    //     .get(
+    //       `/facilities/csv?communityDistrictIds=${communityDistrictIds}`,
+    //     )
+    //     .expect(400);
+
+    //   expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    //   expect(response.body.message).toMatch(
+    //     /Invalid request parameter: communityDistrictIds: Invalid/,
+    //   );
+    // });
+
+    // it("should 400 when finding facilities by missing communityDistrictIds", async () => {
+    //   const communityDistrictIds = "909,808";
+
+    //   const response = await request(app.getHttpServer())
+    //     .get(
+    //       `/facilities/csv?communityDistrictIds=${communityDistrictIds}`,
+    //     )
+    //     .expect(400);
+
+    //   expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    //   expect(response.body.message).toMatch(
+    //     /one or more values for parameters do not exist/,
+    //   );
+    // });
+
+    // it("should 400 when finding facilities by invalid cityCouncilDistrictIds", async () => {
+    //   const cityCouncilDistrictIds = false;
+
+    //   const response = await request(app.getHttpServer())
+    //     .get(
+    //       `/facilities/csv?cityCouncilDistrictIds=${cityCouncilDistrictIds}`,
+    //     )
+    //     .expect(400);
+
+    //   expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    //   expect(response.body.message).toMatch(
+    //     /Invalid request parameter: cityCouncilDistrictIds: Invalid/,
+    //   );
+    // });
+
+    // it("should 400 when finding facilities by missing cityCouncilDistrictIds", async () => {
+    //   const cityCouncilDistrictIds = "90,91";
+
+    //   const response = await request(app.getHttpServer())
+    //     .get(
+    //       `/facilities/csv?cityCouncilDistrictIds=${cityCouncilDistrictIds}`,
+    //     )
+    //     .expect(400);
+
+    //   expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    //   expect(response.body.message).toMatch(
+    //     /one or more values for parameters do not exist/,
+    //   );
+    // });
+
+    // it("should 400 when finding facilities by an invalid/missing oversight agency", async () => {
+    //   const agencyInitials = false;
+
+    //   const response = await request(app.getHttpServer())
+    //     .get(
+    //       `/facilities/csv?facilityOversightAgency=${agencyInitials}`,
+    //     )
+    //     .expect(400);
+
+    //   expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    //   expect(response.body.message).toMatch(
+    //     /one or more values for parameters do not exist/,
+    //   );
+    // });
+
+    it("should 500 when the database errors", async () => {
+      const dataRetrievalException = new DataRetrievalException(
+        "cannot find data",
+      );
+      jest
+        .spyOn(facilityRepositoryMock, "findCsv")
+        .mockImplementationOnce(() => {
+          throw dataRetrievalException;
+        });
+
+      const response = await request(app.getHttpServer())
+        .get(`/facilities/csv`)
+        .expect(500);
+      expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);
+      expect(response.body.message).toBe(dataRetrievalException.message);
+    });
+  });
+
+  afterAll(async () => {
+    await app.close();
+  });
+});
