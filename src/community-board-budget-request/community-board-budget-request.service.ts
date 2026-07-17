@@ -21,9 +21,8 @@ import {
   CommunityBoardBudgetRequestRepo,
 } from "./community-board-budget-request.repository.schema";
 import { produce } from "immer";
-import { Geom } from "src/types";
 import { SpatialRepository } from "src/spatial/spatial.repository";
-import { Geometry, Position } from "geojson";
+import { SpatialService } from "src/spatial/spatial.service";
 import { SIX_DECIMAL_RESOLUTION_FT } from "src/constants";
 
 @Injectable()
@@ -35,6 +34,7 @@ export class CommunityBoardBudgetRequestService {
     private readonly communityDistrictRepository: CommunityDistrictRepository,
     private readonly cityCouncilDistrictRepository: CityCouncilDistrictRepository,
     private readonly spatialRepository: SpatialRepository,
+    private readonly spatialService: SpatialService,
   ) {}
 
   async findAgencies({
@@ -154,48 +154,6 @@ export class CommunityBoardBudgetRequestService {
     }
 
     return communityBoardBudgetRequests[0];
-  }
-
-  async createGeometryFromParams({
-    geometry = null,
-    lats = null,
-    lons = null,
-    buffer = null,
-  }: {
-    geometry?: "Point" | null;
-    lats?: Array<number> | null;
-    lons?: Array<number> | null;
-    buffer?: number | null;
-  }) {
-    let geom: Geom | null = null;
-    if (
-      (lons !== null || lats !== null || buffer !== null) &&
-      geometry === null
-    )
-      throw new InvalidRequestParameterException(
-        "must provide with geometry with lons, lats, and buffer parameters",
-      );
-    if (geometry !== null) {
-      if (lons == null || lats == null) {
-        throw new InvalidRequestParameterException(
-          "must provide latitude and longitude with geometry",
-        );
-      }
-      if (lons.length !== lats.length) {
-        throw new InvalidRequestParameterException(
-          "latitude and longitude must be same length",
-        );
-      }
-
-      const coordinates: Position = [lons[0], lats[0]];
-      const feature: Geometry = {
-        type: geometry,
-        coordinates,
-      };
-      geom = await this.spatialRepository.findGeomFromGeoJson(feature, 2263);
-    }
-
-    return geom;
   }
 
   async findManyParameterValidation({
@@ -367,7 +325,12 @@ export class CommunityBoardBudgetRequestService {
 
     const geom: string | null =
       lons !== null || lats !== null || buffer !== null || geometry !== null
-        ? await this.createGeometryFromParams({ geometry, lats, lons, buffer })
+        ? await this.spatialService.createGeometryFromParams({
+            geometry,
+            lats,
+            lons,
+            buffer,
+          })
         : null;
 
     const uniqueBoroughIds =
@@ -491,7 +454,12 @@ export class CommunityBoardBudgetRequestService {
 
     const geom: string | null =
       lons !== null || lats !== null || buffer !== null || geometry !== null
-        ? await this.createGeometryFromParams({ geometry, lats, lons, buffer })
+        ? await this.spatialService.createGeometryFromParams({
+            geometry,
+            lats,
+            lons,
+            buffer,
+          })
         : null;
 
     const uniqueBoroughIds =
