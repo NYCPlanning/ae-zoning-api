@@ -121,6 +121,71 @@ export class FacilityService {
     };
   }
 
+  async findCsv({
+    boroughIds = null,
+    facilityJurisdictions = null,
+    facilityOperatorTypes = null,
+    facilityOversightAgency = null,
+    facilityCategoryIds = null,
+    facilityGroupIds = null,
+    facilitySubgroupIds = null,
+    communityDistrictIds = null,
+    cityCouncilDistrictIds = null,
+    bbl = null,
+    bin = null,
+    geometry = null,
+    lons = null,
+    lats = null,
+    buffer = null,
+  }: {
+    boroughIds?: Array<string> | null;
+    facilityJurisdictions?: Array<
+      "City" | "County" | "State" | "Federal" | "Not specified"
+    > | null;
+    facilityOperatorTypes?: Array<
+      "Public" | "Non-public" | "Not specified"
+    > | null;
+    facilityOversightAgency?: string | null;
+    facilityCategoryIds?: Array<number> | null;
+    facilityGroupIds?: Array<number> | null;
+    facilitySubgroupIds?: Array<number> | null;
+    communityDistrictIds?: Array<string> | null;
+    cityCouncilDistrictIds?: Array<string> | null;
+    bbl?: string | null;
+    bin?: string | null;
+    geometry?: "Point" | null;
+    lons?: Array<number> | null;
+    lats?: Array<number> | null;
+    buffer?: number | null;
+  }) {
+    const geom: string | null =
+      lons !== null || lats !== null || buffer !== null || geometry !== null
+        ? await this.spatialService.createGeometryFromParams({
+            geometry,
+            lats,
+            lons,
+            buffer,
+          })
+        : null;
+    const bufferFloor = buffer === null ? SIX_DECIMAL_RESOLUTION_FT : buffer;
+
+    return await this.facilityRepository.findCsv({
+      boroughIds,
+      facilityJurisdictions,
+      facilityOperatorTypes,
+      facilityOversightAgency,
+      facilityCategoryIds,
+      facilityGroupIds,
+      facilitySubgroupIds,
+      communityDistrictIds,
+      cityCouncilDistrictIds,
+      bbl,
+      bin,
+      geom,
+      buffer: bufferFloor,
+    });
+  }
+
   async findById({ facilityId }: FindFacilityByIdPathParams) {
     const facilities = await this.facilityRepository.findById({ facilityId });
 

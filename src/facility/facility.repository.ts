@@ -5,6 +5,7 @@ import { DataRetrievalException } from "src/exception";
 import {
   FindAgenciesRepo,
   FindByIdRepo,
+  FindCsvRepo,
   FindDomainRepo,
   FindManyRepo,
   FindTilesRepo,
@@ -19,6 +20,7 @@ import {
   dataSource,
   DataSourceEntitySchema,
   facility,
+  facilityDomain,
   facilityGroup,
   facilityOperator,
   facilitySubgroup,
@@ -317,6 +319,174 @@ export class FacilityRepository {
       return results[0].total;
     } catch {
       throw new DataRetrievalException("Cannot find Facilities count");
+    }
+  }
+
+  async findCsv({
+    boroughIds,
+    facilityJurisdictions,
+    facilityOperatorTypes,
+    facilityOversightAgency,
+    facilityCategoryIds,
+    facilityGroupIds,
+    facilitySubgroupIds,
+    communityDistrictIds,
+    cityCouncilDistrictIds,
+    bbl,
+    bin,
+    geom,
+    buffer,
+  }: {
+    boroughIds: Array<string> | null;
+    facilityJurisdictions: Array<
+      "City" | "County" | "State" | "Federal" | "Not specified"
+    > | null;
+    facilityOperatorTypes: Array<
+      "Public" | "Non-public" | "Not specified"
+    > | null;
+    facilityOversightAgency: string | null;
+    facilityCategoryIds: Array<number> | null;
+    facilityGroupIds: Array<number> | null;
+    facilitySubgroupIds: Array<number> | null;
+    communityDistrictIds: Array<string> | null;
+    cityCouncilDistrictIds: Array<string> | null;
+    bbl: string | null;
+    bin: string | null;
+    geom: Geom | null;
+    buffer: number;
+  }): Promise<FindCsvRepo> {
+    try {
+      return await this.db
+        .select({
+          id: facility.id,
+          name: facility.name,
+          address: sql<string>`
+            CASE 
+              WHEN ${facility.address} IS NOT NULL AND ${facility.zipCode} IS NOT NULL 
+                THEN CONCAT(${facility.address}, ', ', ${facility.city}, ', NY ', ${facility.zipCode})
+              WHEN ${facility.address} IS NOT NULL 
+                THEN CONCAT(${facility.address}, ', ', ${facility.city}, ', NY')
+              WHEN ${facility.zipCode} IS NOT NULL 
+                THEN CONCAT(${facility.city}, ', NY ', ${facility.zipCode})
+              WHEN ${facility.city} IS NOT NULL 
+                THEN CONCAT(${facility.city}, ', NY')
+              ELSE 'NY'
+            END
+          `,
+          bin: facility.bin,
+          bbl: facility.bbl,
+          oversightAgency: agency.name,
+          facilityJurisdiction: agency.oversightLevel,
+          facilityOperatorType: facilityOperator.type,
+          operatorName: facilityOperator.name,
+          category: facilityDomain.name,
+          categoryGroup: facilityGroup.name,
+          categorySubgroup: facilitySubgroup.name,
+          sgrLtr: facility.sgrLtr,
+          sgrArcLtr: facility.sgrArcLtr,
+          sgrSysLtr: facility.sgrSysLtr,
+          sgrYear: facility.sgrYear,
+        })
+        .from(facility)
+        .leftJoin(
+          agency,
+          eq(agency.initials, facility.overseeingAgencyInitials),
+        )
+        .leftJoin(
+          facilityOperator,
+          eq(facilityOperator.id, facility.facilityOperatorId),
+        )
+        .leftJoin(facilityType, eq(facilityType.id, facility.facilityTypeId))
+        .leftJoin(
+          facilitySubgroup,
+          eq(facilitySubgroup.id, facilityType.facilitySubgroupId),
+        )
+        .leftJoin(
+          facilityGroup,
+          eq(facilityGroup.id, facilitySubgroup.facilityGroupId),
+        )
+        .leftJoin(
+          facilityDomain,
+          eq(facilityDomain.id, facilityGroup.facilityDomainId),
+        )
+        .leftJoin(
+          borough,
+          and(
+            sql`${boroughIds !== null} IS TRUE`,
+            sql`ST_Intersects(${borough.liFt}, ${facility.liFt})`,
+          ),
+        )
+        .leftJoin(
+          communityDistrict,
+          and(
+            sql`${communityDistrictIds !== null} IS TRUE`,
+            sql`ST_Intersects(${communityDistrict.liFt}, ${facility.liFt})`,
+          ),
+        )
+        .leftJoin(
+          cityCouncilDistrict,
+          and(
+            sql`${cityCouncilDistrictIds !== null} IS TRUE`,
+            sql`ST_Intersects(${cityCouncilDistrict.liFt}, ${facility.liFt})`,
+          ),
+        )
+        .where(
+          and(
+            or(
+              facilityCategoryIds !== null
+                ? inArray(facilityGroup.facilityDomainId, facilityCategoryIds)
+                : undefined,
+              facilityGroupIds !== null
+                ? inArray(facilityGroup.id, facilityGroupIds)
+                : undefined,
+              facilitySubgroupIds !== null
+                ? inArray(facilitySubgroup.id, facilitySubgroupIds)
+                : undefined,
+            ),
+            bbl !== null ? eq(facility.bbl, bbl) : undefined,
+            bin !== null ? eq(facility.bin, bin) : undefined,
+            facilityJurisdictions !== null
+              ? or(
+                  inArray(agency.oversightLevel, facilityJurisdictions),
+                  facilityJurisdictions.includes("Not specified")
+                    ? isNull(agency.oversightLevel)
+                    : undefined,
+                )
+              : undefined,
+            facilityOperatorTypes !== null
+              ? or(
+                  inArray(facilityOperator.type, facilityOperatorTypes),
+                  facilityOperatorTypes.includes("Not specified")
+                    ? isNull(facilityOperator.type)
+                    : undefined,
+                )
+              : undefined,
+            facilityOversightAgency !== null
+              ? eq(facility.overseeingAgencyInitials, facilityOversightAgency)
+              : undefined,
+            boroughIds !== null ? inArray(borough.id, boroughIds) : undefined,
+            communityDistrictIds !== null
+              ? inArray(
+                  sql<string>`${communityDistrict.boroughId}||${communityDistrict.id}`,
+                  communityDistrictIds,
+                )
+              : undefined,
+            cityCouncilDistrictIds !== null
+              ? inArray(cityCouncilDistrict.id, cityCouncilDistrictIds)
+              : undefined,
+            geom !== null
+              ? sql`ST_DWithin(${geom}, ${facility.liFt}, ${buffer})`
+              : undefined,
+          ),
+        )
+        .orderBy(
+          sql`CASE
+              WHEN ${geom !== null && isNotNull(facility.liFt)} THEN ${geom} <-> ${facility.liFt}
+            END`,
+          facility.id,
+        );
+    } catch {
+      throw new DataRetrievalException("Cannot find facilities");
     }
   }
 
