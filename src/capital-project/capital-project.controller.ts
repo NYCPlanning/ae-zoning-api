@@ -27,6 +27,7 @@ import {
 } from "src/filter";
 import { ZodTransformPipe } from "src/pipes/zod-transform-pipe";
 import { findCapitalProjectsQueryParamsSchema } from "src/gen/zod/findCapitalProjectsSchema";
+import { unparse } from "papaparse";
 @UseFilters(
   BadRequestExceptionFilter,
   InternalServerErrorExceptionFilter,
@@ -59,6 +60,39 @@ export class CapitalProjectController {
       lons: queryParams.lons,
       buffer: queryParams.buffer,
     });
+  }
+
+  @Get("/csv")
+  async findCsv(
+    @Res() res: Response,
+    @Query(new ZodTransformPipe(findCapitalProjectsQueryParamsSchema))
+    queryParams: FindCapitalProjectsQueryParams,
+  ) {
+    const data = await this.capitalProjectService.findCsv({
+      cityCouncilDistrictId: queryParams.cityCouncilDistrictId,
+      cityCouncilDistrictIds: queryParams.cityCouncilDistrictIds,
+      communityDistrictCombinedId: queryParams.communityDistrictId,
+      communityDistrictCombinedIds: queryParams.communityDistrictIds,
+      managingAgency: queryParams.managingAgency,
+      agencyBudget: queryParams.agencyBudget,
+      isMapped: queryParams.isMapped,
+      commitmentsTotalMin: queryParams.commitmentsTotalMin,
+      commitmentsTotalMax: queryParams.commitmentsTotalMax,
+      boroughIds: queryParams.boroughIds,
+      geometry: queryParams.geometry,
+      lats: queryParams.lats,
+      lons: queryParams.lons,
+      buffer: queryParams.buffer,
+    });
+
+    const csvData = `ID,Managing Code,Managing Agency,Description,Min Date,Max Date,Category,Commitments Total\n${unparse(data, { header: false })}`;
+
+    res.set("Content-Type", "application/csv");
+    res.set(
+      "Content-Disposition",
+      `attachment; filename=CPP_Capital_Projects_Export_${String(new Date().getDate()).padStart(2, "0")}_${["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][new Date().getMonth()]}_${new Date().getFullYear()}.csv`,
+    );
+    res.send(csvData);
   }
 
   @Get("/managing-agencies")

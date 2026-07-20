@@ -97,3 +97,15 @@ export const findCapitalCommitmentsByManagingCodeCapitalProjectIdRepoSchema =
 export type FindCapitalCommitmentsByManagingCodeCapitalProjectIdRepo = z.infer<
   typeof findCapitalCommitmentsByManagingCodeCapitalProjectIdRepoSchema
 >;
+
+export const capitalProjectCsvRepoSchema = capitalProjectEntitySchema.extend({
+  commitmentsTotal: capitalCommitmentFundEntitySchema.shape.value,
+});
+
+export type CapitalProjectCsvRepoSchema = z.infer<
+  typeof capitalProjectCsvRepoSchema
+>;
+
+export const findCsvRepoSchema = z.array(capitalProjectCsvRepoSchema);
+
+export type FindCsvRepo = z.infer<typeof findCsvRepoSchema>;

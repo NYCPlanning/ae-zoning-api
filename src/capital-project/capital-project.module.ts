@@ -8,6 +8,7 @@ import { BoroughModule } from "src/borough/borough.module";
 import { CityCouncilDistrictModule } from "src/city-council-district/city-council-district.module";
 import { CommunityDistrictModule } from "src/community-district/community-district.module";
 import { SpatialModule } from "src/spatial/spatial.module";
+import { SpatialService } from "src/spatial/spatial.service";
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { SpatialModule } from "src/spatial/spatial.module";
     SpatialModule,
   ],
   exports: [CapitalProjectService],
-  providers: [CapitalProjectService, CapitalProjectRepository],
+  providers: [CapitalProjectService, CapitalProjectRepository, SpatialService],
   controllers: [CapitalProjectController],
 })
 export class CapitalProjectModule {}
