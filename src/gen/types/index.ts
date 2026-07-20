@@ -169,6 +169,15 @@ export type {
   FindCapitalProjectsByCityCouncilIdQuery,
 } from "./FindCapitalProjectsByCityCouncilId";
 export type {
+  FindCapitalProjectsCsvQueryParamsGeometryEnumKey,
+  FindCapitalProjectsCsvQueryParams,
+  FindCapitalProjectsCsv200,
+  FindCapitalProjectsCsv400,
+  FindCapitalProjectsCsv500,
+  FindCapitalProjectsCsvQueryResponse,
+  FindCapitalProjectsCsvQuery,
+} from "./FindCapitalProjectsCsv";
+export type {
   FindCapitalProjectTilesPathParams,
   FindCapitalProjectTiles200,
   FindCapitalProjectTiles400,
@@ -526,6 +535,7 @@ export { facilitySgrSysLtrEnum } from "./Facility";
 export { facilityGeoJsonTypeEnum } from "./FacilityGeoJson";
 export { facilityOperatorTypeEnum } from "./FacilityOperatorType";
 export { findCapitalProjectsQueryParamsGeometryEnum } from "./FindCapitalProjects";
+export { findCapitalProjectsCsvQueryParamsGeometryEnum } from "./FindCapitalProjectsCsv";
 export { findCommunityBoardBudgetRequestsQueryParamsCbbrTypeEnum } from "./FindCommunityBoardBudgetRequests";
 export { findCommunityBoardBudgetRequestsQueryParamsGeometryEnum } from "./FindCommunityBoardBudgetRequests";
 export { findCommunityBoardBudgetRequestsCsvQueryParamsCbbrTypeEnum } from "./FindCommunityBoardBudgetRequestsCsv";

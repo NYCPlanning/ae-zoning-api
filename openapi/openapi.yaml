@@ -72,6 +72,8 @@ paths:
     $ref: paths/capital-commitment-types.yaml
   /capital-projects:
     $ref: paths/capital-projects.yaml
+  /capital-projects/csv:
+    $ref: paths/capital-projects_csv.yaml
   /capital-projects/{managingCode}/{capitalProjectId}/capital-commitments:
     $ref: >-
       paths/capital-projects_{managingCode}_{capitalProjectId}_capital-commitments.yaml
