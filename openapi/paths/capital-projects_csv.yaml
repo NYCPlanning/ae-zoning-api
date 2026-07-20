@@ -1,0 +1,36 @@
+get:
+  summary: Download a CSV of capital projects with the selected filters.
+  operationId: findCapitalProjectsCsv
+  tags:
+    - Capital Projects
+  parameters:
+    - $ref: ../components/parameters/boroughIdsQueryParam.yaml
+    - $ref: ../components/parameters/communityDistrictIdQueryParam.yaml
+    - $ref: ../components/parameters/communityDistrictIdsQueryParam.yaml
+    - $ref: ../components/parameters/cityCouncilDistrictIdQueryParam.yaml
+    - $ref: ../components/parameters/cityCouncilDistrictIdsQueryParam.yaml
+    - $ref: ../components/parameters/managingAgencyQueryParam.yaml
+    - $ref: ../components/parameters/agencyBudgetParam.yaml
+    - $ref: ../components/parameters/commitmentsTotalMinQueryParam.yaml
+    - $ref: ../components/parameters/commitmentsTotalMaxQueryParam.yaml
+    - $ref: ../components/parameters/isMappedQueryParam.yaml
+    - $ref: ../components/parameters/geometryPointParam.yaml
+    - $ref: ../components/parameters/lonsPointParam.yaml
+    - $ref: ../components/parameters/latsPointParam.yaml
+    - $ref: ../components/parameters/bufferParam.yaml
+  responses:
+    '200':
+      description: >-
+        A CSV download of capital
+        projects
+      content:
+        text/csv:
+            schema:
+              type: string
+            example: |
+              ID,Managing Code,Managing Agency,Description,Min Date,Max Date,Category,Commitments Total
+              HWCSCHPMN,850,DDC,"SAFE ROUTES TO SCHOOLS- MANHATTAN, MED683",2018-10-01,2029-06-01,Lump Sum,34357000
+    '400':
+      $ref: ../components/responses/BadRequest.yaml
+    '500':
+      $ref: ../components/responses/InternalServerError.yaml
