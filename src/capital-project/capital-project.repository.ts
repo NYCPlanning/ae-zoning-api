@@ -39,6 +39,7 @@ import {
   FindByManagingCodeCapitalProjectIdRepo,
   FindCapitalCommitmentsByManagingCodeCapitalProjectIdRepo,
   FindCountRepo,
+  FindCsvRepo,
   FindGeoJsonByManagingCodeCapitalProjectIdRepo,
   FindManagingAgenciesRepo,
   FindManyRepo,
@@ -261,6 +262,184 @@ export class CapitalProjectRepository {
           capitalProject.maxDate,
           capitalProject.minDate,
           capitalProject.category,
+        );
+    } catch {
+      throw new DataRetrievalException("cannot find capital projects");
+    }
+  }
+
+  async findCsv({
+    cityCouncilDistrictId,
+    cityCouncilDistrictIds,
+    communityDistrictId,
+    communityDistrictCombinedIds,
+    boroughId,
+    boroughIds,
+    managingAgency,
+    agencyBudget,
+    commitmentsTotalMin,
+    commitmentsTotalMax,
+    isMapped,
+    geom,
+    buffer,
+  }: {
+    cityCouncilDistrictId: string | null;
+    cityCouncilDistrictIds: Array<string> | null;
+    communityDistrictId: string | null;
+    communityDistrictCombinedIds: Array<string> | null;
+    boroughId: string | null;
+    boroughIds: Array<string> | null;
+    managingAgency: string | null;
+    agencyBudget: string | null;
+    commitmentsTotalMin: number | null;
+    commitmentsTotalMax: number | null;
+    isMapped: boolean | null;
+    geom: Geom | null;
+    buffer: number;
+  }): Promise<FindCsvRepo> {
+    try {
+      const commitmentsTotalByCapitalProject =
+        this.#commitmentsTotalByCapitalProject;
+      return await this.db
+        .with(commitmentsTotalByCapitalProject)
+        .select({
+          id: capitalProject.id,
+          managingCode: capitalProject.managingCode,
+          managingAgency: capitalProject.managingAgency,
+          description: capitalProject.description,
+          minDate: capitalProject.minDate,
+          maxDate: capitalProject.maxDate,
+          category: sql<CapitalProjectCategory>`${capitalProject.category}`,
+          commitmentsTotal: commitmentsTotalByCapitalProject.value,
+        })
+        .from(capitalProject)
+        .leftJoin(
+          borough,
+          and(
+            sql`${boroughIds !== null} IS TRUE`,
+            or(
+              sql`ST_Intersects(${borough.liFt}, ${capitalProject.liFtMPoly})`,
+              sql`ST_Intersects(${borough.liFt}, ${capitalProject.liFtMPnt})`,
+            ),
+          ),
+        )
+        .leftJoin(
+          cityCouncilDistrict,
+          and(
+            or(
+              sql`${cityCouncilDistrictId !== null} IS TRUE`,
+              sql`${cityCouncilDistrictIds !== null} IS TRUE`,
+            ),
+            or(
+              sql`ST_Intersects(${cityCouncilDistrict.liFt}, ${capitalProject.liFtMPoly})`,
+              sql`ST_Intersects(${cityCouncilDistrict.liFt}, ${capitalProject.liFtMPnt})`,
+            ),
+          ),
+        )
+        .leftJoin(
+          communityDistrict,
+          and(
+            or(
+              sql`${communityDistrictId !== null && boroughId !== null} IS TRUE`,
+              sql`${communityDistrictCombinedIds !== null} IS TRUE`,
+            ),
+            or(
+              sql`ST_Intersects(${communityDistrict.liFt}, ${capitalProject.liFtMPoly})`,
+              sql`ST_Intersects(${communityDistrict.liFt}, ${capitalProject.liFtMPnt})`,
+            ),
+          ),
+        )
+        .leftJoin(
+          capitalCommitment,
+          and(
+            sql`${agencyBudget !== null} IS TRUE`,
+            eq(capitalProject.managingCode, capitalCommitment.managingCode),
+            eq(capitalProject.id, capitalCommitment.capitalProjectId),
+          ),
+        )
+        .leftJoin(
+          commitmentsTotalByCapitalProject,
+          and(
+            eq(
+              commitmentsTotalByCapitalProject.capitalProjectId,
+              capitalProject.id,
+            ),
+            eq(
+              commitmentsTotalByCapitalProject.managingCode,
+              capitalProject.managingCode,
+            ),
+          ),
+        )
+        .where(
+          and(
+            boroughIds !== null ? inArray(borough.id, boroughIds) : undefined,
+            communityDistrictCombinedIds !== null
+              ? inArray(
+                  sql<string>`${communityDistrict.boroughId}||${communityDistrict.id}`,
+                  communityDistrictCombinedIds,
+                )
+              : undefined,
+            cityCouncilDistrictId !== null
+              ? eq(cityCouncilDistrict.id, cityCouncilDistrictId)
+              : undefined,
+            cityCouncilDistrictIds !== null
+              ? inArray(cityCouncilDistrict.id, cityCouncilDistrictIds)
+              : undefined,
+            communityDistrictId !== null && boroughId !== null
+              ? and(
+                  eq(communityDistrict.boroughId, boroughId),
+                  eq(communityDistrict.id, communityDistrictId),
+                )
+              : undefined,
+            managingAgency !== null
+              ? eq(capitalProject.managingAgency, managingAgency)
+              : undefined,
+            agencyBudget !== null
+              ? eq(capitalCommitment.budgetLineCode, agencyBudget)
+              : undefined,
+            commitmentsTotalMin !== null
+              ? gte(commitmentsTotalByCapitalProject.value, commitmentsTotalMin)
+              : undefined,
+            commitmentsTotalMax !== null
+              ? lte(commitmentsTotalByCapitalProject.value, commitmentsTotalMax)
+              : undefined,
+            isMapped === true
+              ? or(
+                  isNotNull(capitalProject.liFtMPoly),
+                  isNotNull(capitalProject.liFtMPnt),
+                )
+              : undefined,
+            isMapped === false
+              ? and(
+                  isNull(capitalProject.liFtMPoly),
+                  isNull(capitalProject.liFtMPnt),
+                )
+              : undefined,
+            geom !== null
+              ? or(
+                  sql`ST_DWithin(${geom}, ${capitalProject.liFtMPnt}, ${buffer})`,
+                  sql`ST_DWithin(${geom}, ${capitalProject.liFtMPoly}, ${buffer})`,
+                )
+              : undefined,
+          ),
+        )
+        .orderBy(
+          sql`CASE
+                WHEN ${geom !== null && isNotNull(capitalProject.liFtMPnt)} THEN ${geom} <-> ${capitalProject.liFtMPnt}
+                WHEN ${geom !== null && isNotNull(capitalProject.liFtMPoly)} THEN ${geom} <-> ${capitalProject.liFtMPoly}
+              END`,
+          capitalProject.managingCode,
+          capitalProject.id,
+        )
+        .groupBy(
+          capitalProject.id,
+          capitalProject.managingCode,
+          capitalProject.managingAgency,
+          capitalProject.description,
+          capitalProject.minDate,
+          capitalProject.maxDate,
+          capitalProject.category,
+          commitmentsTotalByCapitalProject.value,
         );
     } catch {
       throw new DataRetrievalException("cannot find capital projects");
