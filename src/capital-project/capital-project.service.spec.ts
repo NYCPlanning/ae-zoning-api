@@ -22,10 +22,15 @@ import {
   InvalidRequestParameterException,
   ResourceNotFoundException,
 } from "src/exception";
-import { findTilesRepoSchema } from "./capital-project.repository.schema";
+import {
+  capitalProjectCsvRepoSchema,
+  findTilesRepoSchema,
+  findCsvRepoSchema,
+} from "./capital-project.repository.schema";
 import { BoroughRepository } from "src/borough/borough.repository";
 import { SpatialRepositoryMock } from "test/spatial/spatial.repository.mock";
 import { SpatialRepository } from "src/spatial/spatial.repository";
+import { SpatialService } from "src/spatial/spatial.service";
 
 describe("CapitalProjectService", () => {
   let capitalProjectService: CapitalProjectService;
@@ -56,6 +61,7 @@ describe("CapitalProjectService", () => {
         AgencyBudgetRepository,
         BoroughRepository,
         SpatialRepository,
+        SpatialService,
       ],
     })
       .overrideProvider(CapitalProjectRepository)
@@ -665,6 +671,368 @@ describe("CapitalProjectService", () => {
           },
         ),
       ).rejects.toThrow(ResourceNotFoundException);
+    });
+  });
+
+  describe("findCsv", () => {
+    it("should return a list of capital projects for download", async () => {
+      const csv = await capitalProjectService.findCsv({});
+      expect(() => findCsvRepoSchema.parse(csv)).not.toThrow();
+      expect(csv.length).toBe(9);
+      const firstItem = csv[0];
+      expect(() =>
+        capitalProjectCsvRepoSchema.strict().parse(firstItem),
+      ).not.toThrow();
+    });
+
+    it("should return a list of capital projects filtered by borough ids", async () => {
+      const { id } = boroughRepositoryMock.boroughs[0];
+
+      const csv = await capitalProjectService.findCsv({
+        boroughIds: [id],
+      });
+
+      expect(() => findCsvRepoSchema.parse(csv)).not.toThrow();
+      expect(csv.length).toBe(5);
+      const firstItem = csv[0];
+      expect(() =>
+        capitalProjectCsvRepoSchema.strict().parse(firstItem),
+      ).not.toThrow();
+    });
+
+    it("should still return a list of capital projects when passing borough duplicate ids", async () => {
+      const { id } = boroughRepositoryMock.boroughs[0];
+
+      const csv = await capitalProjectService.findCsv({
+        boroughIds: [id, id],
+      });
+
+      expect(() => findCsvRepoSchema.parse(csv)).not.toThrow();
+      expect(csv.length).toBe(5);
+      const firstItem = csv[0];
+      expect(() =>
+        capitalProjectCsvRepoSchema.strict().parse(firstItem),
+      ).not.toThrow();
+    });
+
+    it("should return an InvalidRequestParameterException when a provided borough id cannot be found", async () => {
+      const id = "6";
+
+      expect(
+        capitalProjectService.findCsv({
+          boroughIds: [id],
+        }),
+      ).rejects.toThrow(InvalidRequestParameterException);
+    });
+
+    it("should return a list of capital projects for download filtered by community district", async () => {
+      const communityDistrict = communityDistrictRepositoryMock.districts[0];
+      const csv = await capitalProjectService.findCsv({
+        communityDistrictCombinedId: `${communityDistrict.boroughId}${communityDistrict.id}`,
+      });
+
+      expect(() => findCsvRepoSchema.parse(csv)).not.toThrow();
+      expect(csv.length).toBe(2);
+      const firstItem = csv[0];
+      expect(() =>
+        capitalProjectCsvRepoSchema.strict().parse(firstItem),
+      ).not.toThrow();
+    });
+
+    it("should return a InvalidRequestParameterException error when a community district with the given id cannot be found", async () => {
+      const id = "999";
+
+      expect(
+        capitalProjectService.findCsv({
+          communityDistrictCombinedId: id,
+        }),
+      ).rejects.toThrow(InvalidRequestParameterException);
+    });
+
+    it("should return a list of capital projects for download filtered by community districts", async () => {
+      const csv = await capitalProjectService.findCsv({
+        communityDistrictCombinedIds: [
+          `${communityDistrictRepositoryMock.districts[0].boroughId}${communityDistrictRepositoryMock.districts[0].id}`,
+          `${communityDistrictRepositoryMock.districts[1].boroughId}${communityDistrictRepositoryMock.districts[1].id}`,
+        ],
+      });
+
+      expect(() => findCsvRepoSchema.parse(csv)).not.toThrow();
+      expect(csv.length).toBe(9);
+      const firstItem = csv[0];
+      expect(() =>
+        capitalProjectCsvRepoSchema.strict().parse(firstItem),
+      ).not.toThrow();
+    });
+
+    it("should return a list of capital projects for download filtered by city council district", async () => {
+      const cityCouncilDistrictId =
+        cityCouncilDistrictRepositoryMock.districts[0].id;
+      const csv = await capitalProjectService.findCsv({
+        cityCouncilDistrictId,
+      });
+
+      expect(() => findCsvRepoSchema.parse(csv)).not.toThrow();
+      expect(csv.length).toBe(5);
+      const firstItem = csv[0];
+      expect(() =>
+        capitalProjectCsvRepoSchema.strict().parse(firstItem),
+      ).not.toThrow();
+    });
+
+    it("should return a InvalidRequestParameterException error when a city council district with the given id cannot be found", async () => {
+      const id = "60";
+
+      expect(
+        capitalProjectService.findCsv({
+          cityCouncilDistrictId: id,
+        }),
+      ).rejects.toThrow(InvalidRequestParameterException);
+    });
+
+    it("should return a list of capital projects for download filtered by city council districts", async () => {
+      const csv = await capitalProjectService.findCsv({
+        cityCouncilDistrictIds: [
+          cityCouncilDistrictRepositoryMock.districts[0].id,
+          cityCouncilDistrictRepositoryMock.districts[1].id,
+        ],
+      });
+
+      expect(() => findCsvRepoSchema.parse(csv)).not.toThrow();
+      expect(csv.length).toBe(9);
+      const firstItem = csv[0];
+      expect(() =>
+        capitalProjectCsvRepoSchema.strict().parse(firstItem),
+      ).not.toThrow();
+    });
+
+    it("should filter by an agency budget code", async () => {
+      const agencyBudget =
+        capitalProjectRepository.agencyBudgetRepositoryMock.agencyBudgets[1]
+          .code;
+      const csv = await capitalProjectService.findCsv({
+        agencyBudget: agencyBudget,
+      });
+      expect(() => findCsvRepoSchema.parse(csv)).not.toThrow();
+
+      expect(csv.length).toBe(7);
+      const firstItem = csv[0];
+      expect(() =>
+        capitalProjectCsvRepoSchema.strict().parse(firstItem),
+      ).not.toThrow();
+    });
+
+    it("should filter by geometry", async () => {
+      const geometry = "Point";
+      const lons = [-74.010521];
+      const lats = [40.708219];
+
+      const csv = await capitalProjectService.findCsv({
+        geometry,
+        lons,
+        lats,
+      });
+      expect(() => findCsvRepoSchema.parse(csv)).not.toThrow();
+
+      expect(csv.length).toBe(0);
+    });
+
+    it("should filter by geometry and buffer", async () => {
+      const geometry = "Point";
+      const lons = [-74.010521];
+      const lats = [40.708219];
+      const buffer = 1e6;
+
+      const csv = await capitalProjectService.findCsv({
+        geometry,
+        lons,
+        lats,
+        buffer,
+      });
+      expect(() => findCsvRepoSchema.parse(csv)).not.toThrow();
+
+      expect(csv.length).toBe(3);
+      const firstItem = csv[0];
+      expect(() =>
+        capitalProjectCsvRepoSchema.strict().parse(firstItem),
+      ).not.toThrow();
+    });
+
+    it("should return an InvalidRequestParameterException a geometry is provided without coordinates", async () => {
+      const geometry = "Point";
+
+      expect(
+        capitalProjectService.findCsv({
+          geometry,
+        }),
+      ).rejects.toThrow(InvalidRequestParameterException);
+    });
+
+    it("should return an InvalidRequestParameterException when coordinates are provided without a geometry", async () => {
+      const lons = [-74.010521];
+      const lats = [40.708219];
+
+      expect(
+        capitalProjectService.findCsv({
+          lons,
+          lats,
+        }),
+      ).rejects.toThrow(InvalidRequestParameterException);
+    });
+
+    it("should return an InvalidRequestParameterException when a buffer is provided without a geometry", async () => {
+      const buffer = 1e6;
+
+      expect(
+        capitalProjectService.findCsv({
+          buffer,
+        }),
+      ).rejects.toThrow(InvalidRequestParameterException);
+    });
+
+    it("should return an InvalidRequestParameterException when the lon and lat lengths differ", async () => {
+      const geometry = "Point";
+      const lons = [-74.010521, -74.010521];
+      const lats = [40.708219];
+
+      expect(
+        capitalProjectService.findCsv({
+          geometry,
+          lons,
+          lats,
+        }),
+      ).rejects.toThrow(InvalidRequestParameterException);
+    });
+
+    it("should return a list of capital projects for download by managing agency", async () => {
+      const { initials } = capitalProjectRepository.agencyRepoMock.agencies[0];
+      const csv = await capitalProjectService.findCsv({
+        managingAgency: initials,
+      });
+
+      expect(() => findCsvRepoSchema.parse(csv)).not.toThrow();
+
+      expect(csv.length).toBe(2);
+      const firstItem = csv[0];
+      expect(() =>
+        capitalProjectCsvRepoSchema.strict().parse(firstItem),
+      ).not.toThrow();
+    });
+
+    it("should return a InvalidRequestParameterException error when a managing agency with the given id cannot be found", async () => {
+      const managingAgency = "DNE";
+
+      expect(
+        capitalProjectService.findCsv({
+          managingAgency,
+        }),
+      ).rejects.toThrow(InvalidRequestParameterException);
+    });
+
+    it("should return a list of capital projects for download with total commitments above the minimum", async () => {
+      const commitmentsTotalMin = "0";
+      const csv = await capitalProjectService.findCsv({
+        commitmentsTotalMin,
+      });
+
+      expect(() => findCsvRepoSchema.parse(csv)).not.toThrow();
+
+      expect(csv.length).toBe(9);
+      const firstItem = csv[0];
+      expect(() =>
+        capitalProjectCsvRepoSchema.strict().parse(firstItem),
+      ).not.toThrow();
+    });
+
+    it("should return a list of capital projects for download with total commitments below the maximum", async () => {
+      const commitmentsTotalMax = "10000000000";
+      const csv = await capitalProjectService.findCsv({
+        commitmentsTotalMax,
+      });
+
+      expect(() => findCsvRepoSchema.parse(csv)).not.toThrow();
+
+      expect(csv.length).toBe(9);
+      const firstItem = csv[0];
+      expect(() =>
+        capitalProjectCsvRepoSchema.strict().parse(firstItem),
+      ).not.toThrow();
+    });
+
+    it("should return a InvalidRequestParameterException error when the maximum total commitments is less than the minimum", async () => {
+      const commitmentsTotalMin = "10000000000";
+      const commitmentsTotalMax = "0";
+
+      expect(
+        capitalProjectService.findCsv({
+          commitmentsTotalMin,
+          commitmentsTotalMax,
+        }),
+      ).rejects.toThrow(InvalidRequestParameterException);
+    });
+
+    it("should throw an error when requesting an agency budget that does not exist", async () => {
+      const missingAgencyBudget = "hr";
+
+      expect(() =>
+        capitalProjectService.findCsv({
+          agencyBudget: missingAgencyBudget,
+        }),
+      ).rejects.toThrow(InvalidRequestParameterException);
+    });
+
+    it("should return only capital projects with non-null geometries when isMapped is true", async () => {
+      const csv = await capitalProjectService.findCsv({
+        isMapped: true,
+      });
+      expect(() => findCsvRepoSchema.parse(csv)).not.toThrow();
+
+      expect(csv.length).toBe(4);
+      const firstItem = csv[0];
+      expect(() =>
+        capitalProjectCsvRepoSchema.strict().parse(firstItem),
+      ).not.toThrow();
+    });
+
+    it("should return only capital projects with null geometries when isMapped is false", async () => {
+      const csv = await capitalProjectService.findCsv({
+        isMapped: false,
+      });
+      expect(() => findCsvRepoSchema.parse(csv)).not.toThrow();
+
+      expect(csv.length).toBe(5);
+      const firstItem = csv[0];
+      expect(() =>
+        capitalProjectCsvRepoSchema.strict().parse(firstItem),
+      ).not.toThrow();
+    });
+
+    it("should return an InvalidRequestParameterException when both boroughIds and isMapped are provided", async () => {
+      const { id } = boroughRepositoryMock.boroughs[0];
+      expect(
+        capitalProjectService.findCsv({
+          boroughIds: [id],
+          isMapped: true,
+        }),
+      ).rejects.toThrow(InvalidRequestParameterException);
+    });
+
+    it("should return a InvalidRequestParameterException error when both a city council district id and isMapped are provided", async () => {
+      expect(
+        capitalProjectService.findCsv({
+          cityCouncilDistrictId: "50",
+          isMapped: true,
+        }),
+      ).rejects.toThrow(InvalidRequestParameterException);
+    });
+
+    it("should return a InvalidRequestParameterException error when a borough id, a community district id, and isMapped are provided", async () => {
+      expect(
+        capitalProjectService.findCsv({
+          communityDistrictCombinedId: "101",
+          isMapped: true,
+        }),
+      ).rejects.toThrow(InvalidRequestParameterException);
     });
   });
 });
