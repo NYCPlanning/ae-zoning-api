@@ -1,11 +1,13 @@
 import { generateMock } from "@anatine/zod-mock";
 import {
+  capitalProjectCsvRepoSchema,
   CheckByManagingCodeCapitalProjectIdRepo,
   FindByManagingCodeCapitalProjectIdRepo,
   findByManagingCodeCapitalProjectIdRepoSchema,
   FindCapitalCommitmentsByManagingCodeCapitalProjectIdRepo,
   findCapitalCommitmentsByManagingCodeCapitalProjectIdRepoSchema,
   FindCountRepo,
+  FindCsvRepo,
   FindGeoJsonByManagingCodeCapitalProjectIdRepo,
   findGeoJsonByManagingCodeCapitalProjectIdRepoSchema,
   FindManyRepo,
@@ -493,5 +495,274 @@ export class CapitalProjectRepositoryMock {
    */
   async findTiles(): Promise<FindTilesRepo> {
     return this.findTilesMock;
+  }
+
+  findCsvMocks = Array.from(Array(3), (_, i) =>
+    Array.from(Array(i + 2), (_, j) =>
+      generateMock(capitalProjectCsvRepoSchema, {
+        seed: j + 1,
+        stringMap: {
+          minDate: () => "2018-01-01",
+          maxDate: () => "2045-12-31",
+        },
+      }),
+    ),
+  );
+
+  get capitalProjectsCsvCriteria(): Array<
+    [
+      {
+        managingAgency: string;
+        cityCouncilDistrictId: string;
+        boroughId: string;
+        boroughIds: Array<string>;
+        communityDistrictId: string;
+        agencyBudget: string;
+        commitmentsTotal: number;
+        liFtMPoly: GeomMock | null;
+        liFtMPnt: GeomMock | null;
+      },
+      FindCsvRepo,
+    ]
+  > {
+    const agencyMocks = this.agencyRepoMock.agencies;
+    const cityCouncilDistrictIdMocks =
+      this.cityCouncilDistrictRepoMock.districts;
+    const communityDistrictIdMocks = this.communityDistrictRepoMock.districts;
+    const agencyBudgetMocks = this.agencyBudgetRepositoryMock.agencyBudgets;
+    const boroughMocks = this.boroughRepositoryMock.boroughs;
+    return [
+      [
+        {
+          managingAgency: agencyMocks[0].initials,
+          cityCouncilDistrictId: cityCouncilDistrictIdMocks[0].id,
+          boroughId: communityDistrictIdMocks[0].boroughId,
+          boroughIds: [boroughMocks[0].id],
+          communityDistrictId: communityDistrictIdMocks[0].id,
+          agencyBudget: agencyBudgetMocks[0].code,
+          commitmentsTotal: 100,
+          liFtMPnt: {
+            shape: {
+              type: "MultiPoint",
+              coordinates: [[1002498.935363667, 248080.477954167]],
+            },
+            pattern: "feature",
+            srid: 2263,
+          },
+          liFtMPoly: null,
+        },
+        this.findCsvMocks[0],
+      ],
+      [
+        {
+          managingAgency: agencyMocks[1].initials,
+          cityCouncilDistrictId: cityCouncilDistrictIdMocks[0].id,
+          boroughId: communityDistrictIdMocks[1].boroughId,
+          boroughIds: [boroughMocks[0].id],
+          communityDistrictId: communityDistrictIdMocks[1].id,
+          agencyBudget: agencyBudgetMocks[1].code,
+          commitmentsTotal: 200,
+          liFtMPnt: null,
+          liFtMPoly: {
+            shape: {
+              type: "MultiPolygon",
+              coordinates: [
+                [
+                  [
+                    [989061.185599992, 214004.513999928],
+                    [988842.069599996, 213608.409799921],
+                    [988455.415199992, 213822.003799943],
+                    [988674.530799997, 214218.108399932],
+                    [989061.185599992, 214004.513999928],
+                  ],
+                ],
+              ],
+            },
+            pattern: "feature",
+            srid: 2263,
+          },
+        },
+        this.findCsvMocks[1],
+      ],
+      [
+        {
+          managingAgency: agencyMocks[1].initials,
+          cityCouncilDistrictId: cityCouncilDistrictIdMocks[1].id,
+          boroughId: communityDistrictIdMocks[1].boroughId,
+          boroughIds: [],
+          communityDistrictId: communityDistrictIdMocks[1].id,
+          agencyBudget: agencyBudgetMocks[1].code,
+          commitmentsTotal: 300,
+          liFtMPnt: null,
+          liFtMPoly: null,
+        },
+        this.findCsvMocks[2],
+      ],
+    ];
+  }
+
+  async filterCapitalProjectsCsv({
+    managingAgency,
+    boroughId,
+    boroughIds,
+    communityDistrictId,
+    communityDistrictCombinedIds,
+    cityCouncilDistrictId,
+    cityCouncilDistrictIds,
+    agencyBudget,
+    commitmentsTotalMin,
+    commitmentsTotalMax,
+    isMapped,
+    geom,
+    buffer,
+  }: {
+    managingAgency: string | null;
+    cityCouncilDistrictId: string | null;
+    cityCouncilDistrictIds: Array<string> | null;
+    communityDistrictId: string | null;
+    communityDistrictCombinedIds: Array<string> | null;
+    boroughId: string | null;
+    boroughIds: Array<string> | null;
+    agencyBudget: string | null;
+    commitmentsTotalMin: number | null;
+    commitmentsTotalMax: number | null;
+    isMapped: boolean | null;
+    geom: string | null;
+    buffer: number;
+  }) {
+    return this.capitalProjectsCsvCriteria.reduce(
+      (acc: FindCsvRepo, [criteria, capitalProjects]) => {
+        if (
+          managingAgency !== null &&
+          criteria.managingAgency !== managingAgency
+        )
+          return acc;
+
+        if (
+          cityCouncilDistrictId !== null &&
+          criteria.cityCouncilDistrictId !== cityCouncilDistrictId
+        )
+          return acc;
+
+        if (
+          cityCouncilDistrictIds !== null &&
+          !cityCouncilDistrictIds.includes(criteria.cityCouncilDistrictId)
+        )
+          return acc;
+
+        if (boroughId !== null && criteria.boroughId !== boroughId) return acc;
+        if (
+          boroughIds !== null &&
+          !boroughIds.some((id) => criteria.boroughIds.includes(id))
+        )
+          return acc;
+
+        if (
+          communityDistrictId !== null &&
+          criteria.communityDistrictId !== communityDistrictId
+        )
+          return acc;
+
+        if (
+          communityDistrictCombinedIds !== null &&
+          !communityDistrictCombinedIds.includes(
+            `${criteria.boroughId}${criteria.communityDistrictId}`,
+          )
+        )
+          return acc;
+
+        if (agencyBudget !== null && criteria.agencyBudget !== agencyBudget)
+          return acc;
+
+        if (
+          commitmentsTotalMin !== null &&
+          criteria.commitmentsTotal <= commitmentsTotalMin
+        )
+          return acc;
+        if (
+          commitmentsTotalMax !== null &&
+          criteria.commitmentsTotal >= commitmentsTotalMax
+        )
+          return acc;
+        if (
+          (isMapped === true &&
+            (criteria.liFtMPoly !== null || criteria.liFtMPnt !== null)) ||
+          (isMapped === false &&
+            criteria.liFtMPoly === null &&
+            criteria.liFtMPnt === null)
+        )
+          return acc;
+        if (geom !== null) {
+          const { shape } = JSON.parse(geom) as GeomMock;
+          if (shape.type !== "Point") throw new Error("invalid geometry type");
+          const geomLon = shape.coordinates[0];
+          let singleLon: number | null = null;
+          if (criteria.liFtMPnt?.shape.type === "MultiPoint") {
+            singleLon = criteria.liFtMPnt.shape.coordinates[0][0];
+          }
+          if (criteria.liFtMPoly?.shape.type === "MultiPolygon") {
+            singleLon = criteria.liFtMPoly.shape.coordinates[0][0][0][0];
+          }
+          // unmapped projects never match
+          if (singleLon === null) return acc;
+          // The mock is helpful for creating a test environment for the services and controllers
+          // It helps test that the correct parameters are sent to the repository
+          // However, it does not test the repository and doesn't need to reproduce the full logic.
+          // Consequently, the mock distance check only does a naive check of a single value.
+          if (Math.abs(geomLon - singleLon) > buffer) {
+            return acc;
+          }
+        }
+
+        return acc.concat(capitalProjects);
+      },
+      [],
+    );
+  }
+
+  async findCsv({
+    managingAgency,
+    boroughId,
+    boroughIds,
+    communityDistrictId,
+    communityDistrictCombinedIds,
+    cityCouncilDistrictId,
+    cityCouncilDistrictIds,
+    agencyBudget,
+    commitmentsTotalMin,
+    commitmentsTotalMax,
+    isMapped,
+    geom,
+    buffer,
+  }: {
+    managingAgency: string | null;
+    cityCouncilDistrictId: string | null;
+    cityCouncilDistrictIds: Array<string> | null;
+    communityDistrictId: string | null;
+    communityDistrictCombinedIds: Array<string> | null;
+    boroughId: string | null;
+    boroughIds: Array<string> | null;
+    agencyBudget: string | null;
+    commitmentsTotalMin: number | null;
+    commitmentsTotalMax: number | null;
+    isMapped: boolean | null;
+    geom: string | null;
+    buffer: number;
+  }): Promise<FindCsvRepo> {
+    return await this.filterCapitalProjectsCsv({
+      managingAgency,
+      boroughId,
+      boroughIds,
+      communityDistrictId,
+      communityDistrictCombinedIds,
+      cityCouncilDistrictId,
+      cityCouncilDistrictIds,
+      agencyBudget,
+      commitmentsTotalMin,
+      commitmentsTotalMax,
+      isMapped,
+      geom,
+      buffer,
+    });
   }
 }

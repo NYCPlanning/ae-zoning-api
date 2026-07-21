@@ -955,4 +955,359 @@ describe("Capital Projects", () => {
       expect(response.body.message).toBe(dataRetrievalException.message);
     });
   });
+
+  describe("findCsv", () => {
+    it("should 200 and return a csv", async () => {
+      await request(app.getHttpServer())
+        .get("/capital-projects/csv")
+        .expect(200);
+    });
+    it("should 200 and return a csv when specifying a valid agency budget code", async () => {
+      const agencyBudget =
+        capitalProjectRepositoryMock.agencyBudgetRepositoryMock
+          .agencyBudgets[0];
+      await request(app.getHttpServer())
+        .get(`/capital-projects/csv?agencyBudget=${agencyBudget.code}`)
+        .expect(200);
+    });
+
+    it("should 400 when finding by an agency budget code that does not exist", async () => {
+      const agencyBudgetCode = "DNE";
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects/csv?agencyBudget=${agencyBudgetCode}`,
+      );
+
+      expect(response.body.message).toMatch(/could not check/);
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 200 and return a csv from specified boroughs", async () => {
+      const { id } = boroughRepositoryMock.boroughs[0];
+      await request(app.getHttpServer())
+        .get(`/capital-projects/csv?boroughIds=${id}`)
+        .expect(200);
+    });
+
+    it("should 400 when finding by an invalid borough id", async () => {
+      const id = "123";
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects/csv?boroughIds=${id}`,
+      );
+      expect(response.body.message).toMatch(/boroughIds: Invalid/);
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 when finding by a missing borough id", async () => {
+      const ids = "1,9";
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects/csv?boroughIds=${ids}`,
+      );
+      expect(response.body.message).toMatch(
+        /could not check one or more of the parameters/,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 200 and return a csv from a specified city council district", async () => {
+      const { id } =
+        capitalProjectRepositoryMock.cityCouncilDistrictRepoMock.districts[0];
+      await request(app.getHttpServer())
+        .get(`/capital-projects/csv?cityCouncilDistrictId=${id}`)
+        .expect(200);
+    });
+
+    it("should 400 when finding by invalid city council district id", async () => {
+      const id = "123";
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects/csv?cityCouncilDistrictId=${id}`,
+      );
+      expect(response.body.message).toMatch(/cityCouncilDistrictId: Invalid/);
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 200 and return a csv from a set of specified city council districts", async () => {
+      const mockCCDs =
+        capitalProjectRepositoryMock.cityCouncilDistrictRepoMock.districts;
+      await request(app.getHttpServer())
+        .get(
+          `/capital-projects/csv?cityCouncilDistrictIds=${mockCCDs[0].id},${mockCCDs[1].id}`,
+        )
+        .expect(200);
+    });
+
+    it("should 400 when finding by a set of city council district ids which contains an invalid city council district id", async () => {
+      const id = "123";
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects/csv?cityCouncilDistrictIds=${id}`,
+      );
+      expect(response.body.message).toMatch(/cityCouncilDistrictIds: Invalid/);
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 200 and return a csv from a specified community district", async () => {
+      const { boroughId, id: communityDistrictId } =
+        capitalProjectRepositoryMock.communityDistrictRepoMock.districts[1];
+      await request(app.getHttpServer())
+        .get(
+          `/capital-projects/csv?communityDistrictId=${boroughId}${communityDistrictId}`,
+        )
+        .expect(200);
+    });
+
+    it("should 400 when finding by invalid community district id", async () => {
+      const id = "1234";
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects/csv?communityDistrictId=${id}`,
+      );
+      expect(response.body.message).toMatch(/communityDistrictId: Invalid/);
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 200 and return a csv from a set of specified community districts", async () => {
+      const mockCDs =
+        capitalProjectRepositoryMock.communityDistrictRepoMock.districts;
+      await request(app.getHttpServer())
+        .get(
+          `/capital-projects/csv?communityDistrictIds=${mockCDs[0].boroughId}${mockCDs[0].id},${mockCDs[1].boroughId}${mockCDs[1].id}`,
+        )
+        .expect(200);
+    });
+
+    it("should 400 when finding by a set of community district ids which contains an invalid community district id", async () => {
+      const id = "1234";
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects/csv?communityDistrictIds=${id}`,
+      );
+      expect(response.body.message).toMatch(/communityDistrictIds: Invalid/);
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 200 and return a csv from a specified managing agency", async () => {
+      const managingAgency =
+        capitalProjectRepositoryMock.agencyRepoMock.agencies[0];
+      await request(app.getHttpServer())
+        .get(`/capital-projects/csv?managingAgency=${managingAgency.initials}`)
+        .expect(200);
+    });
+
+    it("should 400 when finding by managing agency for agency that does not exist", async () => {
+      const managingAgency = "DNE";
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects/csv?managingAgency=${managingAgency}`,
+      );
+      expect(response.body.message).toMatch(/could not check/);
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 200 and return a csv with total capital commitments above a specified minimum", async () => {
+      const commitmentsTotalMin = "0";
+      await request(app.getHttpServer())
+        .get(`/capital-projects/csv?commitmentsTotalMin=${commitmentsTotalMin}`)
+        .expect(200);
+    });
+
+    it("should 400 when filtering with an invalid commitmentsTotalMin", async () => {
+      const commitmentsTotalMin = "01,0.0001";
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects/csv?commitmentsTotalMin=${commitmentsTotalMin}`,
+      );
+      expect(response.body.message).toMatch(/commitmentsTotalMin: Invalid/);
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 200 and return a csv with total capital commitments below a specified maximum", async () => {
+      const commitmentsTotalMax = "100000000";
+      await request(app.getHttpServer())
+        .get(`/capital-projects/csv?commitmentsTotalMax=${commitmentsTotalMax}`)
+        .expect(200);
+    });
+
+    it("should 400 when filtering with an invalid commitmentsTotalMax", async () => {
+      const commitmentsTotalMax = "99,99";
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects/csv?commitmentsTotalMax=${commitmentsTotalMax}`,
+      );
+      expect(response.body.message).toMatch(/commitmentsTotalMax: Invalid/);
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 when the specified maximum is less than the specified minimum", async () => {
+      const commitmentsTotalMin = "100000000";
+      const commitmentsTotalMax = "10";
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects/csv?commitmentsTotalMin=${commitmentsTotalMin}&commitmentsTotalMax=${commitmentsTotalMax}`,
+      );
+      expect(response.body.message).toMatch(/min amount should be/);
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 500 when there is a data retrieval error", async () => {
+      const dataRetrievalException = new DataRetrievalException(
+        "cannot find data",
+      );
+      jest
+        .spyOn(capitalProjectRepositoryMock, "findMany")
+        .mockImplementationOnce(() => {
+          throw dataRetrievalException;
+        });
+
+      const response = await request(app.getHttpServer())
+        .get("/capital-projects")
+        .expect(500);
+
+      expect(response.body.message).toBe(dataRetrievalException.message);
+      expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);
+    });
+
+    it("should 200 and return both mapped and unmapped capital projects when no isMapped value is provided", async () => {
+      await request(app.getHttpServer()).get(`/capital-projects`).expect(200);
+    });
+
+    it("should 200 and return only capital projects with non-null geometries when isMapped is true", async () => {
+      await request(app.getHttpServer())
+        .get(`/capital-projects/csv?isMapped=true`)
+        .expect(200);
+    });
+
+    it("should 200 and return only capital projects in a geometry when a valid point is provided", async () => {
+      const geometry = "Point";
+      const lons = -74.010521;
+      const lats = 40.708219;
+      await request(app.getHttpServer())
+        .get(
+          `/capital-projects/csv?geometry=${geometry}&lons=${lons}&lats=${lats}`,
+        )
+        .expect(200);
+    });
+
+    it("should 200 and return only capital projects in a geometry when a valid point and buffer are provided", async () => {
+      const geometry = "Point";
+      const lons = -74.010521;
+      const lats = 40.708219;
+      const buffer = 1e6;
+      await request(app.getHttpServer())
+        .get(
+          `/capital-projects/csv?geometry=${geometry}&lons=${lons}&lats=${lats}&buffer=${buffer}`,
+        )
+        .expect(200);
+    });
+
+    it("should 400 when an invalid geometry type is provided", async () => {
+      const geometry = "Pretzel";
+      const lons = -74.010521;
+      const lats = 40.708219;
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects/csv?geometry=${geometry}&lons=${lons}&lats=${lats}`,
+      );
+      expect(response.body.message).toMatch(/geometry: Invalid enum value/);
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 when a geometry is provided without coordinates", async () => {
+      const geometry = "Point";
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects/csv?geometry=${geometry}`,
+      );
+      expect(response.body.message).toMatch(
+        /must provide latitude and longitude with geometry/,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 when coordinates are provided without a geometry", async () => {
+      const lons = -74.010521;
+      const lats = 40.708219;
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects/csv?lons=${lons}&lats=${lats}`,
+      );
+      expect(response.body.message).toMatch(
+        /must provide with geometry with lons, lats, and buffer parameters/,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 when a buffer is provided without a geometry", async () => {
+      const buffer = 1e6;
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects/csv?buffer=${buffer}`,
+      );
+      expect(response.body.message).toMatch(
+        /must provide with geometry with lons, lats, and buffer parameters/,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 when a point is provided with more than one coordinate", async () => {
+      const geometry = "Point";
+      const lons = "-74.010521,-74.010521";
+      const lats = "40.708219,40.708219";
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects/csv?geometry=${geometry}&lons=${lons}&lats=${lats}`,
+      );
+      expect(response.body.message).toMatch(
+        /lons: Array must contain at most 1 element/,
+      );
+      expect(response.body.message).toMatch(
+        /lats: Array must contain at most 1 element/,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 200 and return only capital projects with null geometries when isMapped is false", async () => {
+      await request(app.getHttpServer())
+        .get(`/capital-projects/csv?isMapped=false`)
+        .expect(200);
+    });
+
+    it("should 400 when isMapped is a non-boolean value", async () => {
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects/csv?isMapped=123`,
+      );
+      expect(response.body.message).toMatch(/invalid value for boolean/);
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 when both borough ids and isMapped are provided", async () => {
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects/csv?boroughIds=1&isMapped=true`,
+      );
+      expect(response.body.message).toMatch(
+        /cannot have isMapped filter in conjunction/,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 when both a city council district id and isMapped are provided", async () => {
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects/csv?cityCouncilDistrictId=50&isMapped=true`,
+      );
+      expect(response.body.message).toMatch(
+        /cannot have isMapped filter in conjunction/,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 when both a community district id and isMapped are provided", async () => {
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects/csv?communityDistrictId=101&isMapped=true`,
+      );
+      expect(response.body.message).toMatch(
+        /cannot have isMapped filter in conjunction/,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 400 when both a geometry and isMapped are provided", async () => {
+      const geometry = "Point";
+      const lons = "-74.010521";
+      const lats = "40.708219";
+      const response = await request(app.getHttpServer()).get(
+        `/capital-projects/csv?geometry=${geometry}&lons=${lons}&lats=${lats}&isMapped=false`,
+      );
+      expect(response.body.message).toMatch(
+        /cannot have isMapped filter in conjunction with other geographic filter/,
+      );
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+  });
 });
