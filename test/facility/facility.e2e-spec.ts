@@ -16,6 +16,7 @@ import { SpatialRepositoryMock } from "test/spatial/spatial.repository.mock";
 import { SpatialRepository } from "src/spatial/spatial.repository";
 import { FacilityModule } from "src/facility/facility.module";
 import { FacilityRepository } from "src/facility/facility.repository";
+import { findFacilityByIdQueryResponseSchema } from "src/gen";
 
 describe("Facility e2e", () => {
   let app: INestApplication;
@@ -51,6 +52,55 @@ describe("Facility e2e", () => {
       .compile();
     app = moduleRef.createNestApplication();
     await app.init();
+  });
+
+  describe("findById", () => {
+    it("should 200 and return a facility", async () => {
+      const facilityMock = facilityRepositoryMock.findByIdMocks[0];
+      const response = await request(app.getHttpServer())
+        .get(`/facilities/${facilityMock.id}`)
+        .expect(200);
+
+      expect(() =>
+        findFacilityByIdQueryResponseSchema.parse(response.body),
+      ).not.toThrow();
+    });
+
+    it("should 400 when finding by a non-valid string", async () => {
+      const facilityId = "%%";
+      const response = await request(app.getHttpServer())
+        .get(`/facilities/${facilityId}`)
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+    });
+
+    it("should 404 when finding by non-existent facility id", async () => {
+      const facilityId = "1234XYZ";
+      const response = await request(app.getHttpServer())
+        .get(`/facilities/${facilityId}`)
+        .expect(404);
+
+      expect(response.body.message).toMatch(/Cannot find Facility/);
+    });
+
+    it("should 500 when the database errors", async () => {
+      const dataRetrievalException = new DataRetrievalException(
+        "cannot find data",
+      );
+      jest
+        .spyOn(facilityRepositoryMock, "findById")
+        .mockImplementationOnce(() => {
+          throw dataRetrievalException;
+        });
+
+      const facilityMock = facilityRepositoryMock.findByIdMocks[0];
+      const response = await request(app.getHttpServer())
+        .get(`/facilities/${facilityMock.id}`)
+        .expect(500);
+      expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);
+      expect(response.body.message).toBe(dataRetrievalException.message);
+    });
   });
 
   describe("findCsv", () => {
