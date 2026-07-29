@@ -17,6 +17,8 @@ import {
   facilityCsvRepoSchema,
   findCsvRepoSchema,
 } from "./facility.repository.schema";
+import { findFacilityByIdQueryResponseSchema } from "src/gen/zod";
+import { ResourceNotFoundException } from "src/exception/resource-not-found";
 
 describe("Facility service unit", () => {
   let facilityService: FacilityService;
@@ -52,6 +54,25 @@ describe("Facility service unit", () => {
       .compile();
 
     facilityService = moduleRef.get<FacilityService>(FacilityService);
+  });
+
+  describe("findById", () => {
+    it("should return a findFacilityByIdResponseSchema compliant object", async () => {
+      const facilityMock = facilityRepositoryMock.findByIdMocks[0];
+      const facility = await facilityService.findById({
+        facilityId: facilityMock.id,
+      });
+      expect(() =>
+        findFacilityByIdQueryResponseSchema.parse(facility),
+      ).not.toThrow();
+    });
+
+    it("should throw a ResourceNotFoundException if the facility is not found", async () => {
+      const facilityId = "non-existent-facility-id";
+      await expect(facilityService.findById({ facilityId })).rejects.toThrow(
+        ResourceNotFoundException,
+      );
+    });
   });
 
   describe("findCsv", () => {

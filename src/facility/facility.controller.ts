@@ -9,7 +9,11 @@ import {
 } from "@nestjs/common";
 import { Response } from "express";
 import { FacilityService } from "./facility.service";
-import { InternalServerErrorExceptionFilter } from "src/filter";
+import {
+  InternalServerErrorExceptionFilter,
+  NotFoundExceptionFilter,
+  BadRequestExceptionFilter,
+} from "src/filter";
 import { ZodTransformPipe } from "src/pipes/zod-transform-pipe";
 import {
   FindFacilitiesQueryParams,
@@ -23,7 +27,11 @@ import {
 } from "src/gen";
 import { unparse } from "papaparse";
 
-@UseFilters(InternalServerErrorExceptionFilter)
+@UseFilters(
+  InternalServerErrorExceptionFilter,
+  NotFoundExceptionFilter,
+  BadRequestExceptionFilter,
+)
 @Controller("facilities")
 export class FacilityController {
   constructor(private readonly facilityService: FacilityService) {}

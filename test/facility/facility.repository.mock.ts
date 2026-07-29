@@ -3,6 +3,8 @@ import {
   FindCsvRepo,
   facilityCsvRepoSchema,
   FacilityCsvRepoSchema,
+  findByIdRepoSchema,
+  FindByIdRepo,
 } from "src/facility/facility.repository.schema";
 import { AgencyRepositoryMock } from "test/agency/agency.repository.mock";
 import { CityCouncilDistrictRepositoryMock } from "test/city-council-district/city-council-district.repository.mock";
@@ -21,6 +23,26 @@ export class FacilityRepositoryMock {
     this.agencyRepoMock = agencyRepoMock;
     this.cityCouncilDistrictRepoMock = cityCouncilDistrictRepoMock;
     this.communityDistrictRepoMock = communityDistrictRepoMock;
+  }
+
+  findByIdMocks = generateMock(findByIdRepoSchema, {
+    seed: 1,
+    stringMap: {
+      facilityJurisdiction: () => "City",
+      facilityOperatorType: () => "Public",
+      sgrLtr: () => "A",
+      sgrArcLtr: () => "B",
+      sgrSysLtr: () => "C",
+    },
+  });
+
+  async findById({
+    facilityId,
+  }: {
+    facilityId: string;
+  }): Promise<FindByIdRepo> {
+    const facility = this.findByIdMocks.find((f) => f.id === facilityId);
+    return facility === undefined ? [] : [facility];
   }
 
   findCsvMocks = Array.from(Array(8), (_, i) =>
