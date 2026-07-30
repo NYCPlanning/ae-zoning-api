@@ -64,7 +64,7 @@ export const communityBoardBudgetRequestRepoSchema =
       cbbrType: communityBoardBudgetRequestEntitySchema.shape.requestType,
       isMapped: z.boolean(),
       cbbrAgencyCategoryResponseId:
-        communityBoardBudgetRequestEntitySchema.shape.agencyCategoryReponse,
+        communityBoardBudgetRequestEntitySchema.shape.agencyCategoryResponse,
       cbbrAgencyResponse:
         communityBoardBudgetRequestEntitySchema.shape.agencyResponse,
     });

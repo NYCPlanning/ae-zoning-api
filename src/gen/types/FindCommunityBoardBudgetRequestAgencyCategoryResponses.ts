@@ -7,7 +7,7 @@ import type { CommunityBoardBudgetRequestAgencyCategoryResponse } from "./Commun
 import type { Error } from "./Error";
 
 /**
- * @description An object containing a list of agency reponse categories
+ * @description An object containing a list of agency response categories
  */
 export type FindCommunityBoardBudgetRequestAgencyCategoryResponses200 = {
   /**

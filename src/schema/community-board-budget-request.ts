@@ -192,7 +192,7 @@ export const communityBoardBudgetRequestEntitySchema = z.object({
   communityDistrictId: communityDistrictEntitySchema.shape.id,
   agency: agencyEntitySchema.shape.initials,
   managingCode: managingCodeEntitySchema.shape.id,
-  agencyCategoryReponse:
+  agencyCategoryResponse:
     cbbrAgencyCategoryResponseEntitySchema.shape.id.nullable(),
   agencyResponse: z.string().nullable(),
   requestType: cbbrRequestTypeEntitySchema,
