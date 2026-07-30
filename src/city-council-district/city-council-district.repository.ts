@@ -248,9 +248,9 @@ export class CityCouncilDistrictRepository {
           agencyInitials: sql`${communityBoardBudgetRequest.agency}`.as(
             "agencyInitials",
           ),
-          agencyCategoryReponseId:
+          agencyCategoryResponseId:
             sql`${communityBoardBudgetRequest.agencyCategoryResponse}`.as(
-              "agencyCategoryReponseId",
+              "agencyCategoryResponseId",
             ),
           communityBoardId:
             sql`${borough.abbr} || ${communityBoardBudgetRequest.communityDistrictId}`.as(

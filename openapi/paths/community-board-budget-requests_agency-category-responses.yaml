@@ -1,11 +1,11 @@
 get:
-  summary: Find community board budget request agency reponse categories 
+  summary: Find community board budget request agency response categories 
   operationId: findCommunityBoardBudgetRequestAgencyCategoryResponses
   tags:
     - Community Board Budget Requests
   responses:
     '200':
-      description: An object containing a list of agency reponse categories
+      description: An object containing a list of agency response categories
       content:
         application/json:
           schema:
