@@ -145,6 +145,7 @@ export class CommunityBoardBudgetRequestController {
       "Content-Disposition",
       `attachment; filename=CPP_CBBR_Export_${String(new Date().getDate()).padStart(2, "0")}_${["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][new Date().getMonth()]}_${new Date().getFullYear()}.csv`,
     );
+    res.set("Access-Control-Expose-Headers", "Content-Disposition");
     res.send(csvData);
   }
 
