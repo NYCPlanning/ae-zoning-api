@@ -134,7 +134,7 @@ describe("Facility service unit", () => {
     });
 
     it("should return a list of facilities for download filtered by oversight agency", async () => {
-      const agency = agencyRepositoryMock.agencies[0].name;
+      const agency = agencyRepositoryMock.agencies[0].initials;
       const csv = await facilityService.findCsv({
         facilityOversightAgency: agency,
       });
