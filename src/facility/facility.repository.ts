@@ -43,6 +43,93 @@ export class FacilityRepository {
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
   ) {}
 
+  // the ids must be deduplicated before passing them to this function
+  // the count & length comparisons assume that every id is unique
+  async checkByFacilityCategoryIds(ids: Array<number>): Promise<boolean> {
+    const orderedIds = [...ids].sort(); // sort a copy to avoid side effects on the original
+
+    const key = JSON.stringify({
+      orderedIds,
+      domain: "facility",
+      function: "checkFacilityCategoryIds",
+    });
+
+    const cachedValue = await this.cacheManager.get<boolean>(key);
+    if (cachedValue !== undefined) return cachedValue;
+
+    try {
+      const facilityCategoryIds = await this.db
+        .select({ count: sql<number>`count(${facilityDomain.id})::int` })
+        .from(facilityDomain)
+        .where(inArray(facilityDomain.id, ids));
+      const value = facilityCategoryIds[0].count == ids.length;
+      this.cacheManager.set(key, value);
+      return value;
+    } catch {
+      throw new DataRetrievalException(
+        "cannot check facility category ids based on multiple ids",
+      );
+    }
+  }
+
+  // the ids must be deduplicated before passing them to this function
+  // the count & length comparisons assume that every id is unique
+  async checkByFacilityGroupIds(ids: Array<number>): Promise<boolean> {
+    const orderedIds = [...ids].sort(); // sort a copy to avoid side effects on the original
+
+    const key = JSON.stringify({
+      orderedIds,
+      group: "facility",
+      function: "checkFacilityGroupIds",
+    });
+
+    const cachedValue = await this.cacheManager.get<boolean>(key);
+    if (cachedValue !== undefined) return cachedValue;
+
+    try {
+      const facilityGroupIds = await this.db
+        .select({ count: sql<number>`count(${facilityGroup.id})::int` })
+        .from(facilityGroup)
+        .where(inArray(facilityGroup.id, ids));
+      const value = facilityGroupIds[0].count == ids.length;
+      this.cacheManager.set(key, value);
+      return value;
+    } catch {
+      throw new DataRetrievalException(
+        "cannot check facility group ids based on multiple ids",
+      );
+    }
+  }
+
+  // the ids must be deduplicated before passing them to this function
+  // the count & length comparisons assume that every id is unique
+  async checkByFacilitySubgroupIds(ids: Array<number>): Promise<boolean> {
+    const orderedIds = [...ids].sort(); // sort a copy to avoid side effects on the original
+
+    const key = JSON.stringify({
+      orderedIds,
+      group: "facility",
+      function: "checkFacilitySubgroupIds",
+    });
+
+    const cachedValue = await this.cacheManager.get<boolean>(key);
+    if (cachedValue !== undefined) return cachedValue;
+
+    try {
+      const facilitySubgroupIds = await this.db
+        .select({ count: sql<number>`count(${facilitySubgroup.id})::int` })
+        .from(facilitySubgroup)
+        .where(inArray(facilitySubgroup.id, ids));
+      const value = facilitySubgroupIds[0].count == ids.length;
+      this.cacheManager.set(key, value);
+      return value;
+    } catch {
+      throw new DataRetrievalException(
+        "cannot check facility subgroup ids based on multiple ids",
+      );
+    }
+  }
+
   async findMany({
     boroughIds,
     facilityJurisdictions,
@@ -223,6 +310,29 @@ export class FacilityRepository {
     geom: Geom | null;
     buffer: number;
   }): Promise<number> {
+    const key = JSON.stringify({
+      boroughIds,
+      facilityJurisdictions,
+      facilityOperatorTypes,
+      facilityOversightAgency,
+      facilityCategoryIds,
+      facilityGroupIds,
+      facilitySubgroupIds,
+      communityDistrictIds,
+      cityCouncilDistrictIds,
+      bbl,
+      bin,
+      geom,
+      buffer,
+      domain: "facility",
+      function: "findCount",
+    });
+
+    const value = await this.cacheManager.get<number>(key);
+    if (value !== undefined) {
+      return value;
+    }
+
     try {
       const results = await this.db
         .select({
@@ -316,7 +426,9 @@ export class FacilityRepository {
               : undefined,
           ),
         );
-      return results[0].total;
+      const { total } = results[0];
+      this.cacheManager.set(key, total);
+      return total;
     } catch {
       throw new DataRetrievalException("Cannot find Facilities count");
     }

@@ -103,6 +103,125 @@ describe("Facility e2e", () => {
     });
   });
 
+  describe("findMany", () => {
+    it("should 200 and return facilities", async () => {
+      await request(app.getHttpServer()).get(`/facilities`).expect(200);
+    });
+
+    it("should 200 when finding facilities by boroughIds", async () => {
+      const borough = boroughRepositoryMock.boroughs[0];
+      await request(app.getHttpServer())
+        .get(`/facilities?boroughIds=${borough.id}`)
+        .expect(200);
+    });
+
+    it("should 200 when finding facilities by communityDistrictIds", async () => {
+      await request(app.getHttpServer())
+        .get(
+          `/facilities?communityDistrictIds=${communityDistrictRepositoryMock.districts[0].boroughId}${communityDistrictRepositoryMock.districts[0].id},${communityDistrictRepositoryMock.districts[1].boroughId}${communityDistrictRepositoryMock.districts[1].id}`,
+        )
+        .expect(200);
+    });
+
+    it("should 200 when finding facilities by cityCouncilDistrictIds", async () => {
+      await request(app.getHttpServer())
+        .get(
+          `/facilities?cityCouncilDistrictIds=${cityCouncilDistrictRepositoryMock.districts[0].id},${cityCouncilDistrictRepositoryMock.districts[1].id}`,
+        )
+        .expect(200);
+    });
+
+    it("should 200 when finding facilities by oversight agency", async () => {
+      const agency = agencyRepositoryMock.agencies[0];
+
+      await request(app.getHttpServer())
+        .get(`/facilities?facilityOversightAgency=${agency.initials}`)
+        .expect(200);
+    });
+
+    it("should 400 when finding facilities by invalid communityDistrictIds", async () => {
+      const communityDistrictIds = false;
+
+      const response = await request(app.getHttpServer())
+        .get(`/facilities?communityDistrictIds=${communityDistrictIds}`)
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /Invalid request parameter: communityDistrictIds: Invalid/,
+      );
+    });
+
+    it("should 400 when finding facilities by missing communityDistrictIds", async () => {
+      const communityDistrictIds = "909,808";
+
+      const response = await request(app.getHttpServer())
+        .get(`/facilities?communityDistrictIds=${communityDistrictIds}`)
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /could not check one or more of the parameters/,
+      );
+    });
+
+    it("should 400 when finding facilities by invalid cityCouncilDistrictIds", async () => {
+      const cityCouncilDistrictIds = false;
+
+      const response = await request(app.getHttpServer())
+        .get(`/facilities?cityCouncilDistrictIds=${cityCouncilDistrictIds}`)
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /Invalid request parameter: cityCouncilDistrictIds: Invalid/,
+      );
+    });
+
+    it("should 400 when finding facilities by missing cityCouncilDistrictIds", async () => {
+      const cityCouncilDistrictIds = "90,91";
+
+      const response = await request(app.getHttpServer())
+        .get(`/facilities?cityCouncilDistrictIds=${cityCouncilDistrictIds}`)
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /could not check one or more of the parameters/,
+      );
+    });
+
+    it("should 400 when finding facilities by an invalid/missing oversight agency", async () => {
+      const agencyInitials = false;
+
+      const response = await request(app.getHttpServer())
+        .get(`/facilities?facilityOversightAgency=${agencyInitials}`)
+        .expect(400);
+
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /could not check one or more of the parameters/,
+      );
+    });
+
+    it("should 500 when the database errors", async () => {
+      const dataRetrievalException = new DataRetrievalException(
+        "cannot find data",
+      );
+      jest
+        .spyOn(facilityRepositoryMock, "findMany")
+        .mockImplementationOnce(() => {
+          throw dataRetrievalException;
+        });
+
+      const response = await request(app.getHttpServer())
+        .get(`/facilities`)
+        .expect(500);
+      expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);
+      expect(response.body.message).toBe(dataRetrievalException.message);
+    });
+  });
+
   describe("findCsv", () => {
     it("should 200 and return a csv", async () => {
       await request(app.getHttpServer()).get(`/facilities/csv`).expect(200);
@@ -139,83 +258,70 @@ describe("Facility e2e", () => {
         .expect(200);
     });
 
-    // Uncomment these when adding parameter validation in issue #644
-    // https://github.com/NYCPlanning/ae-zoning-api/issues/644
+    it("should 400 when finding facilities by invalid communityDistrictIds", async () => {
+      const communityDistrictIds = false;
 
-    // it("should 400 when finding facilities by invalid communityDistrictIds", async () => {
-    //   const communityDistrictIds = false;
+      const response = await request(app.getHttpServer())
+        .get(`/facilities/csv?communityDistrictIds=${communityDistrictIds}`)
+        .expect(400);
 
-    //   const response = await request(app.getHttpServer())
-    //     .get(
-    //       `/facilities/csv?communityDistrictIds=${communityDistrictIds}`,
-    //     )
-    //     .expect(400);
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /Invalid request parameter: communityDistrictIds: Invalid/,
+      );
+    });
 
-    //   expect(response.body.error).toBe(HttpName.BAD_REQUEST);
-    //   expect(response.body.message).toMatch(
-    //     /Invalid request parameter: communityDistrictIds: Invalid/,
-    //   );
-    // });
+    it("should 400 when finding facilities by missing communityDistrictIds", async () => {
+      const communityDistrictIds = "909,808";
 
-    // it("should 400 when finding facilities by missing communityDistrictIds", async () => {
-    //   const communityDistrictIds = "909,808";
+      const response = await request(app.getHttpServer())
+        .get(`/facilities/csv?communityDistrictIds=${communityDistrictIds}`)
+        .expect(400);
 
-    //   const response = await request(app.getHttpServer())
-    //     .get(
-    //       `/facilities/csv?communityDistrictIds=${communityDistrictIds}`,
-    //     )
-    //     .expect(400);
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /could not check one or more of the parameters/,
+      );
+    });
 
-    //   expect(response.body.error).toBe(HttpName.BAD_REQUEST);
-    //   expect(response.body.message).toMatch(
-    //     /one or more values for parameters do not exist/,
-    //   );
-    // });
+    it("should 400 when finding facilities by invalid cityCouncilDistrictIds", async () => {
+      const cityCouncilDistrictIds = false;
 
-    // it("should 400 when finding facilities by invalid cityCouncilDistrictIds", async () => {
-    //   const cityCouncilDistrictIds = false;
+      const response = await request(app.getHttpServer())
+        .get(`/facilities/csv?cityCouncilDistrictIds=${cityCouncilDistrictIds}`)
+        .expect(400);
 
-    //   const response = await request(app.getHttpServer())
-    //     .get(
-    //       `/facilities/csv?cityCouncilDistrictIds=${cityCouncilDistrictIds}`,
-    //     )
-    //     .expect(400);
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /Invalid request parameter: cityCouncilDistrictIds: Invalid/,
+      );
+    });
 
-    //   expect(response.body.error).toBe(HttpName.BAD_REQUEST);
-    //   expect(response.body.message).toMatch(
-    //     /Invalid request parameter: cityCouncilDistrictIds: Invalid/,
-    //   );
-    // });
+    it("should 400 when finding facilities by missing cityCouncilDistrictIds", async () => {
+      const cityCouncilDistrictIds = "90,91";
 
-    // it("should 400 when finding facilities by missing cityCouncilDistrictIds", async () => {
-    //   const cityCouncilDistrictIds = "90,91";
+      const response = await request(app.getHttpServer())
+        .get(`/facilities/csv?cityCouncilDistrictIds=${cityCouncilDistrictIds}`)
+        .expect(400);
 
-    //   const response = await request(app.getHttpServer())
-    //     .get(
-    //       `/facilities/csv?cityCouncilDistrictIds=${cityCouncilDistrictIds}`,
-    //     )
-    //     .expect(400);
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /could not check one or more of the parameters/,
+      );
+    });
 
-    //   expect(response.body.error).toBe(HttpName.BAD_REQUEST);
-    //   expect(response.body.message).toMatch(
-    //     /one or more values for parameters do not exist/,
-    //   );
-    // });
+    it("should 400 when finding facilities by an invalid/missing oversight agency", async () => {
+      const agencyInitials = false;
 
-    // it("should 400 when finding facilities by an invalid/missing oversight agency", async () => {
-    //   const agencyInitials = false;
+      const response = await request(app.getHttpServer())
+        .get(`/facilities/csv?facilityOversightAgency=${agencyInitials}`)
+        .expect(400);
 
-    //   const response = await request(app.getHttpServer())
-    //     .get(
-    //       `/facilities/csv?facilityOversightAgency=${agencyInitials}`,
-    //     )
-    //     .expect(400);
-
-    //   expect(response.body.error).toBe(HttpName.BAD_REQUEST);
-    //   expect(response.body.message).toMatch(
-    //     /one or more values for parameters do not exist/,
-    //   );
-    // });
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /could not check one or more of the parameters/,
+      );
+    });
 
     it("should 500 when the database errors", async () => {
       const dataRetrievalException = new DataRetrievalException(
