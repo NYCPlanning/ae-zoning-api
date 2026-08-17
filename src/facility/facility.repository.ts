@@ -310,6 +310,29 @@ export class FacilityRepository {
     geom: Geom | null;
     buffer: number;
   }): Promise<number> {
+    const key = JSON.stringify({
+      boroughIds,
+      facilityJurisdictions,
+      facilityOperatorTypes,
+      facilityOversightAgency,
+      facilityCategoryIds,
+      facilityGroupIds,
+      facilitySubgroupIds,
+      communityDistrictIds,
+      cityCouncilDistrictIds,
+      bbl,
+      bin,
+      geom,
+      buffer,
+      domain: "facility",
+      function: "findCount",
+    });
+
+    const value = await this.cacheManager.get<number>(key);
+    if (value !== undefined) {
+      return value;
+    }
+
     try {
       const results = await this.db
         .select({
@@ -403,7 +426,9 @@ export class FacilityRepository {
               : undefined,
           ),
         );
-      return results[0].total;
+      const { total } = results[0];
+      this.cacheManager.set(key, total);
+      return total;
     } catch {
       throw new DataRetrievalException("Cannot find Facilities count");
     }
