@@ -139,83 +139,70 @@ describe("Facility e2e", () => {
         .expect(200);
     });
 
-    // Uncomment these when adding parameter validation in issue #644
-    // https://github.com/NYCPlanning/ae-zoning-api/issues/644
+    it("should 400 when finding facilities by invalid communityDistrictIds", async () => {
+      const communityDistrictIds = false;
 
-    // it("should 400 when finding facilities by invalid communityDistrictIds", async () => {
-    //   const communityDistrictIds = false;
+      const response = await request(app.getHttpServer())
+        .get(`/facilities/csv?communityDistrictIds=${communityDistrictIds}`)
+        .expect(400);
 
-    //   const response = await request(app.getHttpServer())
-    //     .get(
-    //       `/facilities/csv?communityDistrictIds=${communityDistrictIds}`,
-    //     )
-    //     .expect(400);
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /Invalid request parameter: communityDistrictIds: Invalid/,
+      );
+    });
 
-    //   expect(response.body.error).toBe(HttpName.BAD_REQUEST);
-    //   expect(response.body.message).toMatch(
-    //     /Invalid request parameter: communityDistrictIds: Invalid/,
-    //   );
-    // });
+    it("should 400 when finding facilities by missing communityDistrictIds", async () => {
+      const communityDistrictIds = "909,808";
 
-    // it("should 400 when finding facilities by missing communityDistrictIds", async () => {
-    //   const communityDistrictIds = "909,808";
+      const response = await request(app.getHttpServer())
+        .get(`/facilities/csv?communityDistrictIds=${communityDistrictIds}`)
+        .expect(400);
 
-    //   const response = await request(app.getHttpServer())
-    //     .get(
-    //       `/facilities/csv?communityDistrictIds=${communityDistrictIds}`,
-    //     )
-    //     .expect(400);
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /could not check one or more of the parameters/,
+      );
+    });
 
-    //   expect(response.body.error).toBe(HttpName.BAD_REQUEST);
-    //   expect(response.body.message).toMatch(
-    //     /one or more values for parameters do not exist/,
-    //   );
-    // });
+    it("should 400 when finding facilities by invalid cityCouncilDistrictIds", async () => {
+      const cityCouncilDistrictIds = false;
 
-    // it("should 400 when finding facilities by invalid cityCouncilDistrictIds", async () => {
-    //   const cityCouncilDistrictIds = false;
+      const response = await request(app.getHttpServer())
+        .get(`/facilities/csv?cityCouncilDistrictIds=${cityCouncilDistrictIds}`)
+        .expect(400);
 
-    //   const response = await request(app.getHttpServer())
-    //     .get(
-    //       `/facilities/csv?cityCouncilDistrictIds=${cityCouncilDistrictIds}`,
-    //     )
-    //     .expect(400);
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /Invalid request parameter: cityCouncilDistrictIds: Invalid/,
+      );
+    });
 
-    //   expect(response.body.error).toBe(HttpName.BAD_REQUEST);
-    //   expect(response.body.message).toMatch(
-    //     /Invalid request parameter: cityCouncilDistrictIds: Invalid/,
-    //   );
-    // });
+    it("should 400 when finding facilities by missing cityCouncilDistrictIds", async () => {
+      const cityCouncilDistrictIds = "90,91";
 
-    // it("should 400 when finding facilities by missing cityCouncilDistrictIds", async () => {
-    //   const cityCouncilDistrictIds = "90,91";
+      const response = await request(app.getHttpServer())
+        .get(`/facilities/csv?cityCouncilDistrictIds=${cityCouncilDistrictIds}`)
+        .expect(400);
 
-    //   const response = await request(app.getHttpServer())
-    //     .get(
-    //       `/facilities/csv?cityCouncilDistrictIds=${cityCouncilDistrictIds}`,
-    //     )
-    //     .expect(400);
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /could not check one or more of the parameters/,
+      );
+    });
 
-    //   expect(response.body.error).toBe(HttpName.BAD_REQUEST);
-    //   expect(response.body.message).toMatch(
-    //     /one or more values for parameters do not exist/,
-    //   );
-    // });
+    it("should 400 when finding facilities by an invalid/missing oversight agency", async () => {
+      const agencyInitials = false;
 
-    // it("should 400 when finding facilities by an invalid/missing oversight agency", async () => {
-    //   const agencyInitials = false;
+      const response = await request(app.getHttpServer())
+        .get(`/facilities/csv?facilityOversightAgency=${agencyInitials}`)
+        .expect(400);
 
-    //   const response = await request(app.getHttpServer())
-    //     .get(
-    //       `/facilities/csv?facilityOversightAgency=${agencyInitials}`,
-    //     )
-    //     .expect(400);
-
-    //   expect(response.body.error).toBe(HttpName.BAD_REQUEST);
-    //   expect(response.body.message).toMatch(
-    //     /one or more values for parameters do not exist/,
-    //   );
-    // });
+      expect(response.body.error).toBe(HttpName.BAD_REQUEST);
+      expect(response.body.message).toMatch(
+        /could not check one or more of the parameters/,
+      );
+    });
 
     it("should 500 when the database errors", async () => {
       const dataRetrievalException = new DataRetrievalException(

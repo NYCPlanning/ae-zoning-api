@@ -79,7 +79,7 @@ export class FacilityRepositoryMock {
         boroughId: communityDistricts[i % 2].boroughId,
         facilityJurisdiction: mockFacilityCsvResponse.facilityJurisdiction,
         facilityOperatorType: mockFacilityCsvResponse.facilityOperatorType,
-        facilityOversightAgency: agencies[i % 2].name,
+        facilityOversightAgency: agencies[i % 2].initials,
         facilityCategoryId: i,
         facilityGroupId: i,
         facilitySubgroupId: i,

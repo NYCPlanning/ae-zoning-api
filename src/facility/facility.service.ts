@@ -5,19 +5,32 @@ import {
   FindFacilityGeoJsonByIdPathParams,
   FindFacilityTilesPathParams,
 } from "src/gen";
-import { ResourceNotFoundException } from "src/exception";
+import {
+  InvalidRequestParameterException,
+  ResourceNotFoundException,
+} from "src/exception";
 import { MultiPoint } from "geojson";
 import { SIX_DECIMAL_RESOLUTION_FT } from "src/constants";
 import { FacilityEntity } from "src/schema";
 import { FacilityGeometry } from "./facility.repository.schema";
 import { produce } from "immer";
 import { SpatialService } from "src/spatial/spatial.service";
+import { SpatialRepository } from "src/spatial/spatial.repository";
+import { CityCouncilDistrictRepository } from "src/city-council-district/city-council-district.repository";
+import { CommunityDistrictRepository } from "src/community-district/community-district.repository";
+import { BoroughRepository } from "src/borough/borough.repository";
+import { AgencyRepository } from "src/agency/agency.repository";
 
 @Injectable()
 export class FacilityService {
   constructor(
     private readonly facilityRepository: FacilityRepository,
     private readonly spatialService: SpatialService,
+    private readonly spatialRepository: SpatialRepository,
+    private readonly boroughRepository: BoroughRepository,
+    private readonly cityCouncilDistrictRepository: CityCouncilDistrictRepository,
+    private readonly communityDistrictRepository: CommunityDistrictRepository,
+    private readonly agencyRepository: AgencyRepository,
   ) {}
 
   async findMany({
@@ -71,6 +84,70 @@ export class FacilityService {
           })
         : null;
     const bufferFloor = buffer === null ? SIX_DECIMAL_RESOLUTION_FT : buffer;
+
+    const checklist: Array<Promise<boolean>> = [];
+    if (geom !== null) {
+      checklist.push(this.spatialRepository.checkGeomIsValid(geom));
+    }
+
+    const uniqueCityCouncilDistrictIds =
+      cityCouncilDistrictIds === null
+        ? null
+        : [...new Set(cityCouncilDistrictIds)];
+    if (uniqueCityCouncilDistrictIds !== null) {
+      checklist.push(
+        this.cityCouncilDistrictRepository.checkByIds(
+          uniqueCityCouncilDistrictIds,
+        ),
+      );
+    }
+
+    const uniqueBoroughIds =
+      boroughIds === null ? null : [...new Set(boroughIds)];
+    if (uniqueBoroughIds !== null) {
+      checklist.push(this.boroughRepository.checkByIds(uniqueBoroughIds));
+    }
+
+    const uniqueCommunityDistrictIds =
+      communityDistrictIds === null ? null : [...new Set(communityDistrictIds)];
+    if (uniqueCommunityDistrictIds !== null) {
+      checklist.push(
+        this.communityDistrictRepository.checkByBoroughIdCommunityDistrictIds(
+          uniqueCommunityDistrictIds,
+        ),
+      );
+    }
+
+    if (facilityOversightAgency !== null) {
+      checklist.push(
+        this.agencyRepository.checkByInitials(facilityOversightAgency),
+      );
+    }
+
+    if (facilityCategoryIds !== null) {
+      checklist.push(
+        this.facilityRepository.checkByFacilityCategoryIds(facilityCategoryIds),
+      );
+    }
+
+    if (facilityGroupIds !== null) {
+      checklist.push(
+        this.facilityRepository.checkByFacilityGroupIds(facilityGroupIds),
+      );
+    }
+
+    if (facilitySubgroupIds !== null) {
+      checklist.push(
+        this.facilityRepository.checkByFacilitySubgroupIds(facilitySubgroupIds),
+      );
+    }
+
+    const checkedList = await Promise.all(checklist);
+
+    if (checkedList.some((result) => result === false))
+      throw new InvalidRequestParameterException(
+        "could not check one or more of the parameters",
+      );
 
     const facilitiesPromise = this.facilityRepository.findMany({
       boroughIds,
@@ -168,6 +245,70 @@ export class FacilityService {
           })
         : null;
     const bufferFloor = buffer === null ? SIX_DECIMAL_RESOLUTION_FT : buffer;
+
+    const checklist: Array<Promise<boolean>> = [];
+    if (geom !== null) {
+      checklist.push(this.spatialRepository.checkGeomIsValid(geom));
+    }
+
+    const uniqueCityCouncilDistrictIds =
+      cityCouncilDistrictIds === null
+        ? null
+        : [...new Set(cityCouncilDistrictIds)];
+    if (uniqueCityCouncilDistrictIds !== null) {
+      checklist.push(
+        this.cityCouncilDistrictRepository.checkByIds(
+          uniqueCityCouncilDistrictIds,
+        ),
+      );
+    }
+
+    const uniqueBoroughIds =
+      boroughIds === null ? null : [...new Set(boroughIds)];
+    if (uniqueBoroughIds !== null) {
+      checklist.push(this.boroughRepository.checkByIds(uniqueBoroughIds));
+    }
+
+    const uniqueCommunityDistrictIds =
+      communityDistrictIds === null ? null : [...new Set(communityDistrictIds)];
+    if (uniqueCommunityDistrictIds !== null) {
+      checklist.push(
+        this.communityDistrictRepository.checkByBoroughIdCommunityDistrictIds(
+          uniqueCommunityDistrictIds,
+        ),
+      );
+    }
+
+    if (facilityOversightAgency !== null) {
+      checklist.push(
+        this.agencyRepository.checkByInitials(facilityOversightAgency),
+      );
+    }
+
+    if (facilityCategoryIds !== null) {
+      checklist.push(
+        this.facilityRepository.checkByFacilityCategoryIds(facilityCategoryIds),
+      );
+    }
+
+    if (facilityGroupIds !== null) {
+      checklist.push(
+        this.facilityRepository.checkByFacilityGroupIds(facilityGroupIds),
+      );
+    }
+
+    if (facilitySubgroupIds !== null) {
+      checklist.push(
+        this.facilityRepository.checkByFacilitySubgroupIds(facilitySubgroupIds),
+      );
+    }
+
+    const checkedList = await Promise.all(checklist);
+
+    if (checkedList.some((result) => result === false))
+      throw new InvalidRequestParameterException(
+        "could not check one or more of the parameters",
+      );
 
     return await this.facilityRepository.findCsv({
       boroughIds,
