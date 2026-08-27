@@ -120,7 +120,7 @@ export class FacilityController {
       buffer,
     });
 
-    const csvData = `ID,Name,Address,BIN,BBL,Oversight Agency,Jurisdiction,Operator Type,Operator Name,Category,Category Group,Category Subgroup,SGR Letter Grade - Total,SGR Letter Grade - Architectural,SGR Letter Grade - Systems / M&E,SGR Assessment Year\n${unparse(data, { header: false })}`;
+    const csvData = `ID,Facility Name,Address,BIN,BBL,Oversight Agency,Service Area / Jurisdiction,Operator Type,Operator Name,Facility Domain,Facility Group,Facility Subgroup,SGR Letter Grade - Total,SGR Letter Grade - Architectural,SGR Letter Grade - Systems / M&E,SGR Assessment Year\n${unparse(data, { header: false })}`;
 
     res.set("Content-Type", "application/csv");
     res.set(
