@@ -16,7 +16,11 @@ import { SpatialRepositoryMock } from "test/spatial/spatial.repository.mock";
 import { SpatialRepository } from "src/spatial/spatial.repository";
 import { FacilityModule } from "src/facility/facility.module";
 import { FacilityRepository } from "src/facility/facility.repository";
-import { findFacilityByIdQueryResponseSchema } from "src/gen";
+import {
+  findFacilityAgenciesQueryResponseSchema,
+  findFacilityByIdQueryResponseSchema,
+  findFacilityCategoriesQueryResponseSchema,
+} from "src/gen";
 
 describe("Facility e2e", () => {
   let app: INestApplication;
@@ -343,5 +347,65 @@ describe("Facility e2e", () => {
 
   afterAll(async () => {
     await app.close();
+  });
+
+  describe("findCategories", () => {
+    it("should 200 and return facility categories", async () => {
+      const response = await request(app.getHttpServer())
+        .get(`/facilities/categories`)
+        .expect(200);
+      expect(() =>
+        findFacilityCategoriesQueryResponseSchema.parse(response.body),
+      ).not.toThrow();
+    });
+
+    it("should 500 when the database errors", async () => {
+      const dataRetrievalException = new DataRetrievalException(
+        "cannot find data",
+      );
+
+      jest
+        .spyOn(facilityRepositoryMock, "findCategories")
+        .mockImplementationOnce(() => {
+          throw dataRetrievalException;
+        });
+
+      const response = await request(app.getHttpServer())
+        .get(`/facilities/categories`)
+        .expect(500);
+
+      expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);
+      expect(response.body.message).toBe(dataRetrievalException.message);
+    });
+  });
+
+  describe("findAgencies", () => {
+    it("should 200 and return facility agencies", async () => {
+      const response = await request(app.getHttpServer())
+        .get(`/facilities/agencies`)
+        .expect(200);
+      expect(() =>
+        findFacilityAgenciesQueryResponseSchema.parse(response.body),
+      ).not.toThrow();
+    });
+
+    it("should 500 when the database errors", async () => {
+      const dataRetrievalException = new DataRetrievalException(
+        "cannot find data",
+      );
+
+      jest
+        .spyOn(facilityRepositoryMock, "findAgencies")
+        .mockImplementationOnce(() => {
+          throw dataRetrievalException;
+        });
+
+      const response = await request(app.getHttpServer())
+        .get(`/facilities/agencies`)
+        .expect(500);
+
+      expect(response.body.error).toBe(HttpName.INTERNAL_SEVER_ERROR);
+      expect(response.body.message).toBe(dataRetrievalException.message);
+    });
   });
 });
