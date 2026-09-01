@@ -473,14 +473,14 @@ export class FacilityRepository {
           id: facility.id,
           name: facility.name,
           address: sql<string>`
-            CASE 
-              WHEN ${facility.address} IS NOT NULL AND ${facility.zipCode} IS NOT NULL 
+            CASE
+              WHEN ${facility.address} IS NOT NULL AND ${facility.zipCode} IS NOT NULL
                 THEN CONCAT(${facility.address}, ', ', ${facility.city}, ', NY ', ${facility.zipCode})
-              WHEN ${facility.address} IS NOT NULL 
+              WHEN ${facility.address} IS NOT NULL
                 THEN CONCAT(${facility.address}, ', ', ${facility.city}, ', NY')
-              WHEN ${facility.zipCode} IS NOT NULL 
+              WHEN ${facility.zipCode} IS NOT NULL
                 THEN CONCAT(${facility.city}, ', NY ', ${facility.zipCode})
-              WHEN ${facility.city} IS NOT NULL 
+              WHEN ${facility.city} IS NOT NULL
                 THEN CONCAT(${facility.city}, ', NY')
               ELSE 'NY'
             END
@@ -619,14 +619,14 @@ export class FacilityRepository {
           id: facility.id,
           name: facility.name,
           address: sql<string>`
-            CASE 
-              WHEN ${facility.address} IS NOT NULL AND ${facility.zipCode} IS NOT NULL 
+            CASE
+              WHEN ${facility.address} IS NOT NULL AND ${facility.zipCode} IS NOT NULL
                 THEN CONCAT(${facility.address}, ', ', ${facility.city}, ', NY ', ${facility.zipCode})
-              WHEN ${facility.address} IS NOT NULL 
+              WHEN ${facility.address} IS NOT NULL
                 THEN CONCAT(${facility.address}, ', ', ${facility.city}, ', NY')
-              WHEN ${facility.zipCode} IS NOT NULL 
+              WHEN ${facility.zipCode} IS NOT NULL
                 THEN CONCAT(${facility.city}, ', NY ', ${facility.zipCode})
-              WHEN ${facility.city} IS NOT NULL 
+              WHEN ${facility.city} IS NOT NULL
                 THEN CONCAT(${facility.city}, ', NY')
               ELSE 'NY'
             END
@@ -657,7 +657,7 @@ export class FacilityRepository {
                   'name', ${alsoAtLocation.name},
                   'categoryId', ${alsoAtLocationGroup.facilityDomainId}
                 )
-              ) FILTER (WHERE ${alsoAtLocation.id} <> ${facility.id}), 
+              ) FILTER (WHERE ${alsoAtLocation.id} <> ${facility.id}),
               '[]'::jsonb
             )`.as("alsoAtLocation"),
           sgrLtr: facility.sgrLtr,
@@ -728,43 +728,6 @@ export class FacilityRepository {
         );
     } catch {
       throw new DataRetrievalException("Cannot find Facility with given id");
-    }
-  }
-
-  async findCategories(): Promise<FindDomainRepo> {
-    try {
-      return await this.db.query.facilityDomain.findMany({
-        orderBy: (t) => sql`${t.id} asc`,
-        with: {
-          groups: {
-            with: {
-              subgroups: true,
-            },
-          },
-        },
-      });
-    } catch {
-      throw new DataRetrievalException("Cannot find Facilities' categories");
-    }
-  }
-
-  async findAgencies(): Promise<FindAgenciesRepo> {
-    try {
-      return await this.db
-        .selectDistinct({
-          initials: agency.initials,
-          name: agency.name,
-          oversightLevel: sql<OversightLevelCategory>`${agency.oversightLevel}`,
-        })
-        .from(agency)
-        .leftJoin(
-          facility,
-          eq(facility.overseeingAgencyInitials, agency.initials),
-        )
-        .where(isNotNull(facility.overseeingAgencyInitials))
-        .orderBy(agency.initials);
-    } catch {
-      throw new DataRetrievalException("Cannot find facilities' agencies");
     }
   }
 
@@ -856,14 +819,14 @@ export class FacilityRepository {
           id: facility.id,
           name: facility.name,
           address: sql<string>`
-            CASE 
-              WHEN ${facility.address} IS NOT NULL AND ${facility.zipCode} IS NOT NULL 
+            CASE
+              WHEN ${facility.address} IS NOT NULL AND ${facility.zipCode} IS NOT NULL
                 THEN CONCAT(${facility.address}, ', ', ${facility.city}, ', NY ', ${facility.zipCode})
-              WHEN ${facility.address} IS NOT NULL 
+              WHEN ${facility.address} IS NOT NULL
                 THEN CONCAT(${facility.address}, ', ', ${facility.city}, ', NY')
-              WHEN ${facility.zipCode} IS NOT NULL 
+              WHEN ${facility.zipCode} IS NOT NULL
                 THEN CONCAT(${facility.city}, ', NY ', ${facility.zipCode})
-              WHEN ${facility.city} IS NOT NULL 
+              WHEN ${facility.city} IS NOT NULL
                 THEN CONCAT(${facility.city}, ', NY')
               ELSE 'NY'
             END
@@ -894,7 +857,7 @@ export class FacilityRepository {
                   'name', ${alsoAtLocation.name},
                   'categoryId', ${alsoAtLocationGroup.facilityDomainId}
                 )
-              ) FILTER (WHERE ${alsoAtLocation.id} <> ${facility.id}), 
+              ) FILTER (WHERE ${alsoAtLocation.id} <> ${facility.id}),
               '[]'::jsonb
             )`.as("alsoAtLocation"),
           sgrLtr: facility.sgrLtr,
@@ -971,6 +934,67 @@ export class FacilityRepository {
       throw new DataRetrievalException(
         "Cannot find Facility geojson with given id",
       );
+    }
+  }
+
+  async findCategories(): Promise<FindDomainRepo> {
+    const key = JSON.stringify({
+      domain: "facility",
+      function: "findCategories",
+    });
+
+    const cachedValue = await this.cacheManager.get<FindDomainRepo>(key);
+    if (cachedValue !== undefined) return cachedValue;
+
+    try {
+      const value = await this.db.query.facilityDomain.findMany({
+        orderBy: (t) => sql`${t.id} asc`,
+        with: {
+          groups: {
+            with: {
+              subgroups: true,
+            },
+          },
+        },
+      });
+
+      this.cacheManager.set(key, value);
+
+      return value;
+    } catch {
+      throw new DataRetrievalException("Cannot find Facilities' categories");
+    }
+  }
+
+  async findAgencies(): Promise<FindAgenciesRepo> {
+    const key = JSON.stringify({
+      domain: "facility",
+      function: "findAgencies",
+    });
+
+    const cachedValue = await this.cacheManager.get<FindAgenciesRepo>(key);
+    if (cachedValue !== undefined) return cachedValue;
+
+    try {
+      const value = await this.db
+        .selectDistinct({
+          initials: agency.initials,
+          name: agency.name,
+          oversightLevel: sql<OversightLevelCategory>`${agency.oversightLevel}`,
+        })
+        .from(agency)
+        .leftJoin(
+          facility,
+          eq(facility.overseeingAgencyInitials, agency.initials),
+        )
+        .where(isNotNull(facility.overseeingAgencyInitials))
+        .orderBy(agency.initials);
+
+      this.cacheManager.set(key, value);
+
+      return value;
+    } catch {
+      throw new DataRetrievalException("Cannot find facilities' agencies");
     }
   }
 }

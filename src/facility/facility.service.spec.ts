@@ -372,4 +372,26 @@ describe("Facility service unit", () => {
       ).not.toThrow();
     });
   });
+
+  describe("findCategories", () => {
+    it("should return a list of facility categories", async () => {
+      const categories = await facilityService.findCategories();
+
+      expect(categories.length).toBe(
+        facilityRepositoryMock.findCategoriesMocks.length,
+      );
+      expect(categories.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe("findAgencies", () => {
+    it("should return a list of facility agencies", async () => {
+      const agencies = await facilityService.findAgencies();
+
+      expect(agencies.length).toBe(
+        facilityRepositoryMock.findAgenciesMocks.length,
+      );
+      expect(agencies.length).toBeGreaterThan(0);
+    });
+  });
 });

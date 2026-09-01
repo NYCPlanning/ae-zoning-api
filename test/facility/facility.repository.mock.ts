@@ -6,10 +6,13 @@ import {
   findByIdRepoSchema,
   FindByIdRepo,
   FindManyRepo,
+  FindAgenciesRepo,
+  FindDomainRepo,
 } from "src/facility/facility.repository.schema";
 import { AgencyRepositoryMock } from "test/agency/agency.repository.mock";
 import { CityCouncilDistrictRepositoryMock } from "test/city-council-district/city-council-district.repository.mock";
 import { CommunityDistrictRepositoryMock } from "test/community-district/community-district.repository.mock";
+import { facilityCategorySchema } from "src/gen/zod";
 
 export class FacilityRepositoryMock {
   agencyRepoMock: AgencyRepositoryMock;
@@ -36,6 +39,28 @@ export class FacilityRepositoryMock {
       sgrSysLtr: () => "C",
     },
   });
+
+  findCategoriesMocks = Array.from(Array(2), (_, index) =>
+    generateMock(facilityCategorySchema, {
+      seed: index + 1,
+    }),
+  );
+
+  async findCategories(): Promise<FindDomainRepo> {
+    return this.findCategoriesMocks;
+  }
+
+  get findAgenciesMocks(): FindAgenciesRepo {
+    return this.agencyRepoMock.agencies.map((agency) => ({
+      initials: agency.initials,
+      name: agency.name,
+      oversightLevel: agency.oversightLevel,
+    }));
+  }
+
+  async findAgencies(): Promise<FindAgenciesRepo> {
+    return this.findAgenciesMocks;
+  }
 
   async findById({
     facilityId,
