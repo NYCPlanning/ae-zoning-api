@@ -1,4 +1,4 @@
-import * as request from "supertest";
+import request = require("supertest");
 import { INestApplication } from "@nestjs/common";
 import { AgencyBudgetRepositoryMock } from "./agency-budget.repository.mock";
 import { Test } from "@nestjs/testing";
