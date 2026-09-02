@@ -736,6 +736,17 @@ export class FacilityRepository {
     x,
     y,
   }: FindFacilityTilesPathParams): Promise<FindTilesRepo> {
+    const key = JSON.stringify({
+      z,
+      x,
+      y,
+      domain: "facility",
+      function: "findTiles",
+    });
+
+    const cachedValue = await this.cacheManager.get<FindTilesRepo>(key);
+    if (cachedValue !== undefined) return cachedValue;
+
     try {
       const tile = this.db
         .select({
@@ -756,16 +767,16 @@ export class FacilityRepository {
             "categorySubgroupId",
           ),
           geom: sql<string>`
-            CASE
-              WHEN ${facility.mercator} && ST_TileEnvelope(${z},${x},${y})
-                THEN ST_AsMVTGeom(
-                  ${facility.mercator},
-                  ST_TileEnvelope(${z},${x},${y}),
-                  4096,
-                  64,
-                  true
-                )
-            END`.as("geom"),
+          CASE
+            WHEN ${facility.mercator} && ST_TileEnvelope(${z},${x},${y})
+              THEN ST_AsMVTGeom(
+                ${facility.mercator},
+                ST_TileEnvelope(${z},${x},${y}),
+                4096,
+                64,
+                true
+              )
+          END`.as("geom"),
         })
         .from(facility)
         .leftJoin(
@@ -796,6 +807,9 @@ export class FacilityRepository {
         .where(isNotNull(tile.geom));
 
       const mvt = data[0].mvt;
+
+      this.cacheManager.set(key, mvt);
+
       return mvt;
     } catch {
       throw new DataRetrievalException("Cannot generate Facility tiles");
