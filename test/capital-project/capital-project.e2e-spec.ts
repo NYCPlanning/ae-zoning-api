@@ -1,3 +1,4 @@
+import request = require("supertest");
 import { INestApplication } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import { CapitalProjectModule } from "src/capital-project/capital-project.module";
@@ -10,7 +11,6 @@ import { CommunityDistrictRepositoryMock } from "test/community-district/communi
 import { AgencyRepository } from "src/agency/agency.repository";
 import { AgencyRepositoryMock } from "test/agency/agency.repository.mock";
 import { AgencyBudgetRepositoryMock } from "test/agency-budget/agency-budget.repository.mock";
-import * as request from "supertest";
 import { HttpName } from "src/filter";
 import { DataRetrievalException } from "src/exception";
 import {

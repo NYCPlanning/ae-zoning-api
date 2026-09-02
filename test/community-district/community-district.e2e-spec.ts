@@ -1,9 +1,9 @@
+import request = require("supertest");
 import { INestApplication } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import { CommunityDistrictModule } from "src/community-district/community-district.module";
 import { CommunityDistrictRepository } from "src/community-district/community-district.repository";
 import { CommunityDistrictRepositoryMock } from "./community-district.repository.mock";
-import * as request from "supertest";
 import { HttpName } from "src/filter";
 import { DataRetrievalException } from "src/exception";
 
