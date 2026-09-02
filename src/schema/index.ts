@@ -15,6 +15,7 @@ export * from "./data-source";
 export * from "./facility";
 export * from "./facility-operator";
 export * from "./geometry";
+export * from "./housing-growth";
 export * from "./land-use";
 export * from "./managing-code";
 export * from "./mvt";
