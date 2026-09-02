@@ -16,6 +16,7 @@ import { FacilityRepository } from "./facility.repository";
 import {
   facilityCsvRepoSchema,
   findCsvRepoSchema,
+  findTilesRepoSchema,
 } from "./facility.repository.schema";
 import {
   findFacilitiesQueryResponseSchema,
@@ -392,6 +393,19 @@ describe("Facility service unit", () => {
         facilityRepositoryMock.findAgenciesMocks.length,
       );
       expect(agencies.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe("findTiles", () => {
+    it("should return a map vector tile", async () => {
+      const tile = await facilityService.findTiles({
+        z: 1,
+        x: 1,
+        y: 1,
+      });
+
+      expect(() => findTilesRepoSchema.parse(tile)).not.toThrow();
+      expect(tile).toBe(facilityRepositoryMock.findTilesMock);
     });
   });
 });

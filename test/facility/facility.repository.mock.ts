@@ -13,6 +13,7 @@ import { AgencyRepositoryMock } from "test/agency/agency.repository.mock";
 import { CityCouncilDistrictRepositoryMock } from "test/city-council-district/city-council-district.repository.mock";
 import { CommunityDistrictRepositoryMock } from "test/community-district/community-district.repository.mock";
 import { facilityCategorySchema } from "src/gen/zod";
+import { generateMockMvt } from "test/utils";
 
 export class FacilityRepositoryMock {
   agencyRepoMock: AgencyRepositoryMock;
@@ -399,5 +400,22 @@ export class FacilityRepositoryMock {
     bin: string | null;
   }): Promise<FindCsvRepo> {
     return await this.filterFacilitiesCsv(params);
+  }
+
+  findTilesMock = generateMockMvt();
+
+  /**
+   * The database will always return tiles,
+   * even when the view is outside the extents.
+   * These would merely be empty tiles.
+   *
+   * To reflect this behavior in the mock,
+   * we disregard any viewport parameters and
+   * always return something.
+   *
+   * This applies to all mvt-related mocks
+   */
+  async findTiles() {
+    return this.findTilesMock;
   }
 }
