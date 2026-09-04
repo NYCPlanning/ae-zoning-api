@@ -2,37 +2,37 @@ import { pgTable, char, integer } from "drizzle-orm/pg-core";
 import { z } from "zod";
 
 export const housingGrowthCd = pgTable("housing_growth_cd", {
-  geography_id: char("geography_id", { length: 3 }).primaryKey(),
-  units_2020_census: integer("units_2020_census").notNull(),
-  units_2020: integer("units_2020").notNull(),
-  completed_units_previous_10_years: integer(
+  id: char("geography_id", { length: 3 }).primaryKey(),
+  units2020Census: integer("units_2020_census").notNull(),
+  units2020: integer("units_2020").notNull(),
+  completedUnitsPrevious10Years: integer(
     "completed_units_previous_10_years",
   ).notNull(),
-  completed_units_since_census: integer(
+  completedUnitsSinceCensus: integer(
     "completed_units_since_census",
   ).notNull(),
-  units_current: integer("units_current").notNull(),
-  projected_completed_units_next_10_years: integer(
+  unitsCurrent: integer("units_current").notNull(),
+  projectedCompletedUnitsNext10Years: integer(
     "projected_completed_units_next_10_years",
   ).notNull(),
-  projected_units_in_10_years: integer("projected_units_in_10_years").notNull(),
+  projectedUnitsIn10Years: integer("projected_units_in_10_years").notNull(),
 });
 
 export const housingGrowthNta = pgTable("housing_growth_nta", {
-  geography_id: char("geography_id", { length: 6 }).primaryKey(),
-  units_2020_census: integer("units_2020_census").notNull(),
-  units_2020: integer("units_2020").notNull(),
-  completed_units_previous_10_years: integer(
+  id: char("geography_id", { length: 6 }).primaryKey(),
+  units2020Census: integer("units_2020_census").notNull(),
+  units2020: integer("units_2020").notNull(),
+  completedUnitsPrevious10Years: integer(
     "completed_units_previous_10_years",
   ).notNull(),
-  completed_units_since_census: integer(
+  completedUnitsSinceCensus: integer(
     "completed_units_since_census",
   ).notNull(),
-  units_current: integer("units_current").notNull(),
-  projected_completed_units_next_10_years: integer(
+  unitsCurrent: integer("units_current").notNull(),
+  projectedCompletedUnitsNext10Years: integer(
     "projected_completed_units_next_10_years",
   ).notNull(),
-  projected_units_in_10_years: integer("projected_units_in_10_years").notNull(),
+  projectedUnitsIn10Years: integer("projected_units_in_10_years").notNull(),
 });
 
 const housingGrowthEntitySchema = {
