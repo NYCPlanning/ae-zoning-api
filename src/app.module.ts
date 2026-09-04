@@ -25,6 +25,7 @@ import { CommunityDistrictModule } from "./community-district/community-district
 import { CapitalCommitmentTypeModule } from "./capital-commitment-type/capital-commitment-type.module";
 import { AgencyBudgetModule } from "./agency-budget/agency-budget.module";
 import { FacilityModule } from "./facility/facility.module";
+import { HousingGrowthModule } from "./housing-growth/housing-growth.module";
 import { CacheModule } from "@nestjs/cache-manager";
 
 @Module({
@@ -63,6 +64,7 @@ import { CacheModule } from "@nestjs/cache-manager";
     CommunityBoardBudgetRequestModule,
     CommunityDistrictModule,
     FacilityModule,
+    HousingGrowthModule,
     LandUseModule,
     TaxLotModule,
     ZoningDistrictModule,
@@ -71,4 +73,4 @@ import { CacheModule } from "@nestjs/cache-manager";
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

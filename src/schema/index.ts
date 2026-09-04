@@ -19,6 +19,7 @@ export * from "./housing-growth";
 export * from "./land-use";
 export * from "./managing-code";
 export * from "./mvt";
+export * from "./neighborhood-tabulation-area";
 export * from "./tax-lot";
 export * from "./zoning-district";
 export * from "./zoning-district-class";

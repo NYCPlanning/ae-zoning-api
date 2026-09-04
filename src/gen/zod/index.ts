@@ -322,6 +322,27 @@ export {
   findFacilityTilesQueryResponseSchema,
 } from "./findFacilityTilesSchema";
 export {
+  findHousingGrowthByBoroughTilesPathParamsSchema,
+  findHousingGrowthByBoroughTiles200Schema,
+  findHousingGrowthByBoroughTiles400Schema,
+  findHousingGrowthByBoroughTiles500Schema,
+  findHousingGrowthByBoroughTilesQueryResponseSchema,
+} from "./findHousingGrowthByBoroughTilesSchema";
+export {
+  findHousingGrowthByCommunityDistrictTilesPathParamsSchema,
+  findHousingGrowthByCommunityDistrictTiles200Schema,
+  findHousingGrowthByCommunityDistrictTiles400Schema,
+  findHousingGrowthByCommunityDistrictTiles500Schema,
+  findHousingGrowthByCommunityDistrictTilesQueryResponseSchema,
+} from "./findHousingGrowthByCommunityDistrictTilesSchema";
+export {
+  findHousingGrowthByNeighborhoodTabulationAreaTilesPathParamsSchema,
+  findHousingGrowthByNeighborhoodTabulationAreaTiles200Schema,
+  findHousingGrowthByNeighborhoodTabulationAreaTiles400Schema,
+  findHousingGrowthByNeighborhoodTabulationAreaTiles500Schema,
+  findHousingGrowthByNeighborhoodTabulationAreaTilesQueryResponseSchema,
+} from "./findHousingGrowthByNeighborhoodTabulationAreaTilesSchema";
+export {
   findLandUses200Schema,
   findLandUses400Schema,
   findLandUses500Schema,
