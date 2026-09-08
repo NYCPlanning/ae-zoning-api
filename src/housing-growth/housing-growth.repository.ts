@@ -24,7 +24,7 @@ export class HousingGrowthRepository {
     @Inject(DB)
     private readonly db: DbType,
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
-  ) {}
+  ) { }
 
   async findBoroughsTiles(
     params: FindHousingGrowthByBoroughTilesPathParams,
@@ -171,9 +171,9 @@ export class HousingGrowthRepository {
 
       const tileLabel = this.db
         .select({
-          boroughIdCommunityDistrictId:
+          id:
             sql`${communityDistrict.boroughId}||${communityDistrict.id}`.as(
-              "boroughIdCommunityDistrictId",
+              "id",
             ),
           label: sql`${borough.abbr}||' '||${communityDistrict.id}`.as("label"),
           unitsCurrent: sql`${housingGrowthCd.unitsCurrent}`.as("unitsCurrent"),
