@@ -283,7 +283,7 @@ export class HousingGrowthRepository {
 
       const tileLabel = this.db
         .select({
-          label: sql`${neighborhoodTabluationArea.name}`.as("label"),
+          label: sql`${neighborhoodTabluationArea.code}`.as("label"),
           geomLabel: sql`ST_AsMVTGeom(
     		  ST_Transform((ST_MaximumInscribedCircle(mercator_fill)).center, 3857),
     		  ST_TileEnvelope(${z}, ${x}, ${y}),
@@ -291,7 +291,10 @@ export class HousingGrowthRepository {
         })
         .from(neighborhoodTabluationArea)
         .where(
-          sql`ST_Transform((ST_MaximumInscribedCircle(mercator_fill)).center, 3857) && ST_TileEnvelope(${z},${x},${y})`,
+          and(
+            sql`ST_Transform((ST_MaximumInscribedCircle(mercator_fill)).center, 3857) && ST_TileEnvelope(${z},${x},${y})`,
+            eq(neighborhoodTabluationArea.year, 2020),
+          )
         )
         .as("tile");
 
