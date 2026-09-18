@@ -494,10 +494,6 @@ export class FacilityRepository {
           category: facilityDomain.name,
           categoryGroup: facilityGroup.name,
           categorySubgroup: facilitySubgroup.name,
-          sgrLtr: facility.sgrLtr,
-          sgrArcLtr: facility.sgrArcLtr,
-          sgrSysLtr: facility.sgrSysLtr,
-          sgrYear: facility.sgrYear,
         })
         .from(facility)
         .leftJoin(

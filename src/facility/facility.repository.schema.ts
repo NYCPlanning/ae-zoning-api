@@ -51,10 +51,6 @@ export const facilityCsvRepoSchema = facilityEntitySchema
     facilityJurisdiction: true,
     facilityOperatorType: true,
     operatorName: true,
-    sgrLtr: true,
-    sgrArcLtr: true,
-    sgrSysLtr: true,
-    sgrYear: true,
   })
   .extend({
     oversightAgency: agencyEntitySchema.shape.name.nullable(),
