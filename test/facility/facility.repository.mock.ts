@@ -258,7 +258,7 @@ export class FacilityRepositoryMock {
           name: facility.name,
           oversightAgencyInitials: facility.oversightAgency,
           categoryId: criteria.facilityCategoryId,
-          hasSogrData: facility.sgrLtr !== null,
+          hasSogrData: false,
         };
       });
   }
