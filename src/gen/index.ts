@@ -407,6 +407,30 @@ export type {
   FindFacilityTilesQuery,
 } from "./types/FindFacilityTiles";
 export type {
+  FindHousingGrowthByBoroughTilesPathParams,
+  FindHousingGrowthByBoroughTiles200,
+  FindHousingGrowthByBoroughTiles400,
+  FindHousingGrowthByBoroughTiles500,
+  FindHousingGrowthByBoroughTilesQueryResponse,
+  FindHousingGrowthByBoroughTilesQuery,
+} from "./types/FindHousingGrowthByBoroughTiles";
+export type {
+  FindHousingGrowthByCommunityDistrictTilesPathParams,
+  FindHousingGrowthByCommunityDistrictTiles200,
+  FindHousingGrowthByCommunityDistrictTiles400,
+  FindHousingGrowthByCommunityDistrictTiles500,
+  FindHousingGrowthByCommunityDistrictTilesQueryResponse,
+  FindHousingGrowthByCommunityDistrictTilesQuery,
+} from "./types/FindHousingGrowthByCommunityDistrictTiles";
+export type {
+  FindHousingGrowthByNeighborhoodTabulationAreaTilesPathParams,
+  FindHousingGrowthByNeighborhoodTabulationAreaTiles200,
+  FindHousingGrowthByNeighborhoodTabulationAreaTiles400,
+  FindHousingGrowthByNeighborhoodTabulationAreaTiles500,
+  FindHousingGrowthByNeighborhoodTabulationAreaTilesQueryResponse,
+  FindHousingGrowthByNeighborhoodTabulationAreaTilesQuery,
+} from "./types/FindHousingGrowthByNeighborhoodTabulationAreaTiles";
+export type {
   FindLandUses200,
   FindLandUses400,
   FindLandUses500,
@@ -881,6 +905,27 @@ export {
   findFacilityTiles500Schema,
   findFacilityTilesQueryResponseSchema,
 } from "./zod/findFacilityTilesSchema";
+export {
+  findHousingGrowthByBoroughTilesPathParamsSchema,
+  findHousingGrowthByBoroughTiles200Schema,
+  findHousingGrowthByBoroughTiles400Schema,
+  findHousingGrowthByBoroughTiles500Schema,
+  findHousingGrowthByBoroughTilesQueryResponseSchema,
+} from "./zod/findHousingGrowthByBoroughTilesSchema";
+export {
+  findHousingGrowthByCommunityDistrictTilesPathParamsSchema,
+  findHousingGrowthByCommunityDistrictTiles200Schema,
+  findHousingGrowthByCommunityDistrictTiles400Schema,
+  findHousingGrowthByCommunityDistrictTiles500Schema,
+  findHousingGrowthByCommunityDistrictTilesQueryResponseSchema,
+} from "./zod/findHousingGrowthByCommunityDistrictTilesSchema";
+export {
+  findHousingGrowthByNeighborhoodTabulationAreaTilesPathParamsSchema,
+  findHousingGrowthByNeighborhoodTabulationAreaTiles200Schema,
+  findHousingGrowthByNeighborhoodTabulationAreaTiles400Schema,
+  findHousingGrowthByNeighborhoodTabulationAreaTiles500Schema,
+  findHousingGrowthByNeighborhoodTabulationAreaTilesQueryResponseSchema,
+} from "./zod/findHousingGrowthByNeighborhoodTabulationAreaTilesSchema";
 export {
   findLandUses200Schema,
   findLandUses400Schema,

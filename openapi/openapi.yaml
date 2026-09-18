@@ -133,6 +133,12 @@ paths:
     $ref: paths/facilities_csv.yaml
   /facilities/{z}/{x}/{y}.pbf:
     $ref: paths/facilities_{z}_{x}_{y}.pbf.yaml
+  /housing-growth/boroughs/{z}/{x}/{y}.pbf:
+    $ref: paths/housing-growth_boroughs_{z}_{x}_{y}.pbf.yaml
+  /housing-growth/community-districts/{z}/{x}/{y}.pbf:
+    $ref: paths/housing-growth_community-districts_{z}_{x}_{y}.pbf.yaml
+  /housing-growth/neighborhood-tabulation-areas/{z}/{x}/{y}.pbf:
+    $ref: paths/housing-growth_neighborhood-tabluation-areas_{z}_{x}_{y}.pbf.yaml
   /land-uses:
     $ref: paths/land-uses.yaml
   /tax-lots:
