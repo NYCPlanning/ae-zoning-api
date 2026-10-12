@@ -64,3 +64,15 @@ export type FacilityCsvRepoSchema = z.infer<typeof facilityCsvRepoSchema>;
 export const findCsvRepoSchema = z.array(facilityCsvRepoSchema);
 
 export type FindCsvRepo = z.infer<typeof findCsvRepoSchema>;
+
+export const facilityShapefileRepoSchema = facilityCsvRepoSchema.extend({
+  geoJsonString: z.string(),
+});
+
+export type FacilityShapefileRepoSchema = z.infer<
+  typeof facilityShapefileRepoSchema
+>;
+
+export const findShapefileRepoSchema = z.array(facilityShapefileRepoSchema);
+
+export type FindShapefileRepo = z.infer<typeof findShapefileRepoSchema>;

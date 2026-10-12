@@ -26,6 +26,8 @@ import {
   findFacilityTilesPathParamsSchema,
 } from "src/gen";
 import { unparse } from "papaparse";
+import * as shpwrite from "@mapbox/shp-write";
+import { Compression, OutputType } from "@mapbox/shp-write";
 
 @UseFilters(
   InternalServerErrorExceptionFilter,
@@ -129,6 +131,71 @@ export class FacilityController {
     );
     res.set("Access-Control-Expose-Headers", "Content-Disposition");
     res.send(csvData);
+  }
+
+  @Get("/shapefile")
+  async findShapefile(
+    @Res() res: Response,
+    @Query(new ZodTransformPipe(findFacilitiesQueryParamsSchema))
+    {
+      boroughIds,
+      facilityJurisdictions,
+      facilityOperatorTypes,
+      facilityOversightAgency,
+      facilityCategoryIds,
+      facilityGroupIds,
+      facilitySubgroupIds,
+      communityDistrictIds,
+      cityCouncilDistrictIds,
+      bbl,
+      bin,
+      geometry,
+      lons,
+      lats,
+      buffer,
+    }: FindFacilitiesQueryParams,
+  ) {
+    try {
+      const geoJSON = await this.facilityService.findShapefile({
+        boroughIds,
+        facilityJurisdictions,
+        facilityOperatorTypes,
+        facilityOversightAgency,
+        facilityCategoryIds,
+        facilityGroupIds,
+        facilitySubgroupIds,
+        communityDistrictIds,
+        cityCouncilDistrictIds,
+        bbl,
+        bin,
+        geometry,
+        lons,
+        lats,
+        buffer,
+      });
+
+      const options = {
+        filename: `CPP_Facility_Export_${String(new Date().getDate()).padStart(2, "0")}_${["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][new Date().getMonth()]}_${new Date().getFullYear()}.zip`,
+        outputType: <OutputType>"nodebuffer",
+        compression: <Compression>"STORE",
+      };
+      const zipData = await shpwrite.zip(geoJSON, options);
+
+      res.set("Content-Type", "application/zip");
+      res.set(
+        "Content-Disposition",
+        `attachment; filename=CPP_Facility_Export_${String(
+          new Date().getDate(),
+        ).padStart(
+          2,
+          "0",
+        )}_${["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][new Date().getMonth()]}_${new Date().getFullYear()}.zip`,
+      );
+      res.set("Access-Control-Expose-Headers", "Content-Disposition");
+      res.send(zipData);
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   @Get("/categories")

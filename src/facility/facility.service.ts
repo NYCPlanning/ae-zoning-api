@@ -327,6 +327,165 @@ export class FacilityService {
     });
   }
 
+  async findShapefile({
+    boroughIds = null,
+    facilityJurisdictions = null,
+    facilityOperatorTypes = null,
+    facilityOversightAgency = null,
+    facilityCategoryIds = null,
+    facilityGroupIds = null,
+    facilitySubgroupIds = null,
+    communityDistrictIds = null,
+    cityCouncilDistrictIds = null,
+    bbl = null,
+    bin = null,
+    geometry = null,
+    lons = null,
+    lats = null,
+    buffer = null,
+  }: {
+    boroughIds?: Array<string> | null;
+    facilityJurisdictions?: Array<
+      "City" | "County" | "State" | "Federal" | "Not specified"
+    > | null;
+    facilityOperatorTypes?: Array<
+      "Public" | "Non-public" | "Not specified"
+    > | null;
+    facilityOversightAgency?: string | null;
+    facilityCategoryIds?: Array<number> | null;
+    facilityGroupIds?: Array<number> | null;
+    facilitySubgroupIds?: Array<number> | null;
+    communityDistrictIds?: Array<string> | null;
+    cityCouncilDistrictIds?: Array<string> | null;
+    bbl?: string | null;
+    bin?: string | null;
+    geometry?: "Point" | null;
+    lons?: Array<number> | null;
+    lats?: Array<number> | null;
+    buffer?: number | null;
+  }) {
+    const geom: string | null =
+      lons !== null || lats !== null || buffer !== null || geometry !== null
+        ? await this.spatialService.createGeometryFromParams({
+            geometry,
+            lats,
+            lons,
+            buffer,
+          })
+        : null;
+    const bufferFloor = buffer === null ? SIX_DECIMAL_RESOLUTION_FT : buffer;
+
+    const checklist: Array<Promise<boolean>> = [];
+    if (geom !== null) {
+      checklist.push(this.spatialRepository.checkGeomIsValid(geom));
+    }
+
+    const uniqueCityCouncilDistrictIds =
+      cityCouncilDistrictIds === null
+        ? null
+        : [...new Set(cityCouncilDistrictIds)];
+    if (uniqueCityCouncilDistrictIds !== null) {
+      checklist.push(
+        this.cityCouncilDistrictRepository.checkByIds(
+          uniqueCityCouncilDistrictIds,
+        ),
+      );
+    }
+
+    const uniqueBoroughIds =
+      boroughIds === null ? null : [...new Set(boroughIds)];
+    if (uniqueBoroughIds !== null) {
+      checklist.push(this.boroughRepository.checkByIds(uniqueBoroughIds));
+    }
+
+    const uniqueCommunityDistrictIds =
+      communityDistrictIds === null ? null : [...new Set(communityDistrictIds)];
+    if (uniqueCommunityDistrictIds !== null) {
+      checklist.push(
+        this.communityDistrictRepository.checkByBoroughIdCommunityDistrictIds(
+          uniqueCommunityDistrictIds,
+        ),
+      );
+    }
+
+    if (facilityOversightAgency !== null) {
+      checklist.push(
+        this.agencyRepository.checkByInitials(facilityOversightAgency),
+      );
+    }
+
+    if (facilityCategoryIds !== null) {
+      checklist.push(
+        this.facilityRepository.checkByFacilityCategoryIds(facilityCategoryIds),
+      );
+    }
+
+    if (facilityGroupIds !== null) {
+      checklist.push(
+        this.facilityRepository.checkByFacilityGroupIds(facilityGroupIds),
+      );
+    }
+
+    if (facilitySubgroupIds !== null) {
+      checklist.push(
+        this.facilityRepository.checkByFacilitySubgroupIds(facilitySubgroupIds),
+      );
+    }
+
+    const checkedList = await Promise.all(checklist);
+
+    if (checkedList.some((result) => result === false))
+      throw new InvalidRequestParameterException(
+        "could not check one or more of the parameters",
+      );
+
+    const facilities = await this.facilityRepository.findShapefile({
+      boroughIds,
+      facilityJurisdictions,
+      facilityOperatorTypes,
+      facilityOversightAgency,
+      facilityCategoryIds,
+      facilityGroupIds,
+      facilitySubgroupIds,
+      communityDistrictIds,
+      cityCouncilDistrictIds,
+      bbl,
+      bin,
+      geom,
+      buffer: bufferFloor,
+    });
+
+    const features = facilities.map((facility) => {
+      const geom = JSON.parse(facility.geoJsonString);
+
+      return {
+        type: "Feature",
+        geometry: { type: "Point", coordinates: geom.coordinates[0] },
+        properties: {
+          id: facility.id,
+          name: facility.name,
+          address: facility.address,
+          bin: facility.bin,
+          bbl: facility.bbl,
+          oversight: facility.oversightAgency,
+          fac_jur: facility.facilityJurisdiction,
+          fac_op_typ: facility.facilityOperatorType,
+          op_name: facility.operatorName,
+          cat: facility.category,
+          cat_grp: facility.categoryGroup,
+          cat_sgrp: facility.categorySubgroup,
+        },
+      };
+    });
+
+    const featureCollection = {
+      type: <string>"FeatureCollection",
+      features,
+    } as GeoJSON.FeatureCollection;
+
+    return featureCollection;
+  }
+
   async findById({ facilityId }: FindFacilityByIdPathParams) {
     const facilities = await this.facilityRepository.findById({ facilityId });
 
