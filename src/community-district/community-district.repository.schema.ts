@@ -16,3 +16,19 @@ export const checkByBoroughIdCommunityDistrictIdsRepoSchema = z.boolean();
 export type CheckByBoroughIdCommunityDistrictIdsRepo = z.infer<
   typeof checkByBoroughIdCommunityDistrictIdsRepoSchema
 >;
+
+export const communityDistrictShapefileRepoSchema = z.object({
+  boroughId: z.string(),
+  id: z.string(),
+  geoJsonString: z.string(),
+});
+
+export type communityDistrictShapefileRepoSchema = z.infer<
+  typeof communityDistrictShapefileRepoSchema
+>;
+
+export const findShapefileRepoSchema = z.array(
+  communityDistrictShapefileRepoSchema,
+);
+
+export type FindShapefileRepo = z.infer<typeof findShapefileRepoSchema>;

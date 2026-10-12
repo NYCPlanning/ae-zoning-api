@@ -5,6 +5,7 @@ import {
   FindTilesRepo,
   CheckByBoroughIdCommunityDistrictIdRepo,
   CheckByBoroughIdCommunityDistrictIdsRepo,
+  FindShapefileRepo,
 } from "./community-district.repository.schema";
 import { borough, communityDistrict } from "src/schema";
 import { sql, isNotNull, eq, and, inArray } from "drizzle-orm";
@@ -160,6 +161,25 @@ export class CommunityDistrictRepository {
       return Buffer.concat([fill[0].mvt, label[0].mvt]);
     } catch {
       throw new DataRetrievalException("cannot find community district tiles");
+    }
+  }
+
+  async findShapefile(): Promise<FindShapefileRepo> {
+    try {
+      return await this.db
+        .select({
+          boroughId: communityDistrict.boroughId,
+          id: communityDistrict.id,
+          geoJsonString:
+            sql<string>`ST_AsGeoJSON(ST_Transform(${communityDistrict.liFt}, 4326), 6)`.as(
+              "geomJsonString",
+            ),
+        })
+        .from(communityDistrict);
+    } catch {
+      throw new DataRetrievalException(
+        "cannot find community district shapefiles",
+      );
     }
   }
 }
