@@ -50,7 +50,7 @@ properties:
     description: The name of the entity operating the facility or program.
     example: 'NYC Department of Parks and Recreation'
     nullable: true
-  sgrLtr:
+  fcsLetterGradeTotal:
     type: string
     nullable: true
     enum:
@@ -58,9 +58,8 @@ properties:
       - B
       - C
       - D
-      - F
     description: The Overall Facility Grade.
-  sgrArcLtr:
+  fcsLetterGradeArchitectural:
     type: string
     nullable: true
     enum:
@@ -68,9 +67,8 @@ properties:
       - B
       - C
       - D
-      - F
     description: The facility's Architecture grade.
-  sgrSysLtr:
+  fcsLetterGradeSystems:
     type: string
     nullable: true
     enum:
@@ -80,10 +78,10 @@ properties:
       - D
       - F
     description: The facility's Mechanical and Electrical Systems grade.
-  sgrYear:
+  fcsAssessmentYear:
     type: integer
     nullable: true
-    description: The year of the facility's State of Good Repair assessment.
+    description: The year of the facility's FCS (Facility Condition Score) assessment.
     example: 2026
   dataSource:
     $ref: ./DataSource.yaml

@@ -25,13 +25,13 @@ allOf:
               type: integer
               description: The category id of the facility
               example: 1
-            hasSogrData:
+            hasFcsData:
               type: boolean
-              description: If the facility has a State of Good Repair rating
+              description: If the facility has a FCS (Facility Condition Score) rating
           required:
             - id
             - categoryId
-            - hasSogrData
+            - hasFcsData
       totalFacilities:
         type: integer
         description: >-
