@@ -174,7 +174,7 @@ export class FacilityRepository {
           name: facility.name,
           oversightAgencyInitials: agency.initials,
           categoryId: facilityGroup.facilityDomainId,
-          hasSogrData: sql<boolean>`${isNotNull(facility.sgrLtr)}`,
+          hasFcsData: sql<boolean>`${isNotNull(facility.fcsLetterGradeTotal)}`,
         })
         .from(facility)
         .leftJoin(
@@ -656,10 +656,10 @@ export class FacilityRepository {
               ) FILTER (WHERE ${alsoAtLocation.id} <> ${facility.id}),
               '[]'::jsonb
             )`.as("alsoAtLocation"),
-          sgrLtr: facility.sgrLtr,
-          sgrArcLtr: facility.sgrArcLtr,
-          sgrSysLtr: facility.sgrSysLtr,
-          sgrYear: facility.sgrYear,
+          fcsLetterGradeTotal: facility.fcsLetterGradeTotal,
+          fcsLetterGradeArchitectural: facility.fcsLetterGradeArchitectural,
+          fcsLetterGradeSystems: facility.fcsLetterGradeSystems,
+          fcsAssessmentYear: facility.fcsAssessmentYear,
         })
         .from(facility)
         .leftJoin(
@@ -870,10 +870,10 @@ export class FacilityRepository {
               ) FILTER (WHERE ${alsoAtLocation.id} <> ${facility.id}),
               '[]'::jsonb
             )`.as("alsoAtLocation"),
-          sgrLtr: facility.sgrLtr,
-          sgrArcLtr: facility.sgrArcLtr,
-          sgrSysLtr: facility.sgrSysLtr,
-          sgrYear: facility.sgrYear,
+          fcsLetterGradeTotal: facility.fcsLetterGradeTotal,
+          fcsLetterGradeArchitectural: facility.fcsLetterGradeArchitectural,
+          fcsLetterGradeSystems: facility.fcsLetterGradeSystems,
+          fcsAssessmentYear: facility.fcsAssessmentYear,
           geometry:
             sql<string>`ST_AsGeoJSON(ST_Transform(${facility.liFt}, 4326), 6)`.as(
               "geometry",

@@ -35,9 +35,9 @@ export class FacilityRepositoryMock {
     stringMap: {
       facilityJurisdiction: () => "City",
       facilityOperatorType: () => "Public",
-      sgrLtr: () => "A",
-      sgrArcLtr: () => "B",
-      sgrSysLtr: () => "C",
+      fcsLetterGradeTotal: () => "A",
+      fcsLetterGradeArchitectural: () => "B",
+      fcsLetterGradeSystems: () => "C",
     },
   });
 
@@ -258,7 +258,7 @@ export class FacilityRepositoryMock {
           name: facility.name,
           oversightAgencyInitials: facility.oversightAgency,
           categoryId: criteria.facilityCategoryId,
-          hasSogrData: false,
+          hasFcsData: false,
         };
       });
   }
