@@ -111,10 +111,15 @@ export const facility = pgTable(
     ),
     capacity: smallint("capacity"),
     capacityType: text("capacity_type"),
-    sgrLtr: char("sgr_ltr", { length: 1 }),
-    sgrArcLtr: char("sgr_arc_ltr", { length: 1 }),
-    sgrSysLtr: char("sgr_sys_ltr", { length: 1 }),
-    sgrYear: smallint("sgr_year"),
+    fcsScoreTotal: smallint("fcs_score_total"),
+    fcsLetterGradeTotal: char("fcs_letter_grade_total", { length: 1 }),
+    fcsScoreArchitectural: smallint("fcs_score_architectural"),
+    fcsLetterGradeArchitectural: char("fcs_letter_grade_architectural", {
+      length: 1,
+    }),
+    fcsScoreSystems: smallint("fcs_score_systems"),
+    fcsLetterGradeSystems: char("fcs_letter_grade_systems", { length: 1 }),
+    fcsAssessmentYear: smallint("fcs_assessment_year"),
     bin: char("bin", { length: 7 }),
     bbl: char("bbl", { length: 10 }),
     liFt: multiPointGeom("li_ft", 2263),
@@ -149,10 +154,9 @@ export const facilityEntitySchema = z.object({
   categoryId: z.number().nullable(),
   categoryGroupId: z.number().nullable(),
   categorySubgroupId: z.number().nullable(),
-  sgrLtr: z.string().nullable(),
-  sgrArcLtr: z.string().nullable(),
-  sgrSysLtr: z.string().nullable(),
-  sgrYear: z.number().nullable(),
+  fcsLetterGradeTotal: z.string().nullable(),
+  fcsLetterGradeArchitectural: z.string().nullable(),
+  fcsLetterGradeSystems: z.string().nullable(),
   dataSource: dataSourceEntitySchema,
   alsoAtLocation: z.array(
     z.object({
@@ -170,7 +174,7 @@ export const facilityPageItemEntitySchema = z.object({
   name: z.string().nullable(),
   oversightAgencyInitials: agencyEntitySchema.shape.initials.nullable(),
   categoryId: z.number().nullable(),
-  hasSogrData: z.boolean(),
+  hasFcsData: z.boolean(),
 });
 
 export const facilityDomainRelations = relations(
