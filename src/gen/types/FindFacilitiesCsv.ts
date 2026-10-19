@@ -114,7 +114,7 @@ export type FindFacilitiesCsvQueryParams = {
 };
 
 /**
- * @description A CSV download of community board budget requests
+ * @description A CSV download of facilities
  */
 export type FindFacilitiesCsv200 = string;
 

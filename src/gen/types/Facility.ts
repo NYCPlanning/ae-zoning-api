@@ -7,7 +7,27 @@ import type { DataSource } from "./DataSource";
 import type { FacilityOperatorType } from "./FacilityOperatorType";
 import type { OversightLevelCategory } from "./OversightLevelCategory";
 
-export const facilitySgrLtrEnum = {
+export const facilityFcsLetterGradeTotalEnum = {
+  A: "A",
+  B: "B",
+  C: "C",
+  D: "D",
+} as const;
+
+export type FacilityFcsLetterGradeTotalEnumKey =
+  (typeof facilityFcsLetterGradeTotalEnum)[keyof typeof facilityFcsLetterGradeTotalEnum];
+
+export const facilityFcsLetterGradeArchitecturalEnum = {
+  A: "A",
+  B: "B",
+  C: "C",
+  D: "D",
+} as const;
+
+export type FacilityFcsLetterGradeArchitecturalEnumKey =
+  (typeof facilityFcsLetterGradeArchitecturalEnum)[keyof typeof facilityFcsLetterGradeArchitecturalEnum];
+
+export const facilityFcsLetterGradeSystemsEnum = {
   A: "A",
   B: "B",
   C: "C",
@@ -15,30 +35,8 @@ export const facilitySgrLtrEnum = {
   F: "F",
 } as const;
 
-export type FacilitySgrLtrEnumKey =
-  (typeof facilitySgrLtrEnum)[keyof typeof facilitySgrLtrEnum];
-
-export const facilitySgrArcLtrEnum = {
-  A: "A",
-  B: "B",
-  C: "C",
-  D: "D",
-  F: "F",
-} as const;
-
-export type FacilitySgrArcLtrEnumKey =
-  (typeof facilitySgrArcLtrEnum)[keyof typeof facilitySgrArcLtrEnum];
-
-export const facilitySgrSysLtrEnum = {
-  A: "A",
-  B: "B",
-  C: "C",
-  D: "D",
-  F: "F",
-} as const;
-
-export type FacilitySgrSysLtrEnumKey =
-  (typeof facilitySgrSysLtrEnum)[keyof typeof facilitySgrSysLtrEnum];
+export type FacilityFcsLetterGradeSystemsEnumKey =
+  (typeof facilityFcsLetterGradeSystemsEnum)[keyof typeof facilityFcsLetterGradeSystemsEnum];
 
 export type Facility = {
   /**
@@ -105,22 +103,22 @@ export type Facility = {
    * @description The Overall Facility Grade.
    * @type string
    */
-  sgrLtr?: FacilitySgrLtrEnumKey | null;
+  fcsLetterGradeTotal?: FacilityFcsLetterGradeTotalEnumKey | null;
   /**
    * @description The facility\'s Architecture grade.
    * @type string
    */
-  sgrArcLtr?: FacilitySgrArcLtrEnumKey | null;
+  fcsLetterGradeArchitectural?: FacilityFcsLetterGradeArchitecturalEnumKey | null;
   /**
    * @description The facility\'s Mechanical and Electrical Systems grade.
    * @type string
    */
-  sgrSysLtr?: FacilitySgrSysLtrEnumKey | null;
+  fcsLetterGradeSystems?: FacilityFcsLetterGradeSystemsEnumKey | null;
   /**
-   * @description The year of the facility\'s State of Good Repair assessment.
+   * @description The year of the facility\'s FCS (Facility Condition Score) assessment.
    * @type integer
    */
-  sgrYear?: number | null;
+  fcsAssessmentYear?: number | null;
   /**
    * @type object
    */

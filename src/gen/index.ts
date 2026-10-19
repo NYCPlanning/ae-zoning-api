@@ -45,9 +45,9 @@ export type {
 export type { DataSource } from "./types/DataSource";
 export type { Error } from "./types/Error";
 export type {
-  FacilitySgrLtrEnumKey,
-  FacilitySgrArcLtrEnumKey,
-  FacilitySgrSysLtrEnumKey,
+  FacilityFcsLetterGradeTotalEnumKey,
+  FacilityFcsLetterGradeArchitecturalEnumKey,
+  FacilityFcsLetterGradeSystemsEnumKey,
   Facility,
 } from "./types/Facility";
 export type { FacilityCategory } from "./types/FacilityCategory";
@@ -559,9 +559,9 @@ export { cityCouncilDistrictGeoJsonTypeEnum } from "./types/CityCouncilDistrictG
 export { communityBoardBudgetRequestGeoJsonTypeEnum } from "./types/CommunityBoardBudgetRequestGeoJson";
 export { communityBoardBudgetRequestTypeEnum } from "./types/CommunityBoardBudgetRequestType";
 export { communityDistrictGeoJsonTypeEnum } from "./types/CommunityDistrictGeoJson";
-export { facilitySgrLtrEnum } from "./types/Facility";
-export { facilitySgrArcLtrEnum } from "./types/Facility";
-export { facilitySgrSysLtrEnum } from "./types/Facility";
+export { facilityFcsLetterGradeTotalEnum } from "./types/Facility";
+export { facilityFcsLetterGradeArchitecturalEnum } from "./types/Facility";
+export { facilityFcsLetterGradeSystemsEnum } from "./types/Facility";
 export { facilityGeoJsonTypeEnum } from "./types/FacilityGeoJson";
 export { facilityOperatorTypeEnum } from "./types/FacilityOperatorType";
 export { findCapitalProjectsQueryParamsGeometryEnum } from "./types/FindCapitalProjects";

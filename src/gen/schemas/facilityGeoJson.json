@@ -102,28 +102,28 @@
           "example": "NYC Department of Parks and Recreation",
           "nullable": true
         },
-        "sgrLtr": {
+        "fcsLetterGradeTotal": {
           "type": "string",
           "nullable": true,
-          "enum": ["A", "B", "C", "D", "F"],
+          "enum": ["A", "B", "C", "D"],
           "description": "The Overall Facility Grade."
         },
-        "sgrArcLtr": {
+        "fcsLetterGradeArchitectural": {
           "type": "string",
           "nullable": true,
-          "enum": ["A", "B", "C", "D", "F"],
+          "enum": ["A", "B", "C", "D"],
           "description": "The facility's Architecture grade."
         },
-        "sgrSysLtr": {
+        "fcsLetterGradeSystems": {
           "type": "string",
           "nullable": true,
           "enum": ["A", "B", "C", "D", "F"],
           "description": "The facility's Mechanical and Electrical Systems grade."
         },
-        "sgrYear": {
+        "fcsAssessmentYear": {
           "type": "integer",
           "nullable": true,
-          "description": "The year of the facility's State of Good Repair assessment.",
+          "description": "The year of the facility's FCS (Facility Condition Score) assessment.",
           "example": 2026
         },
         "dataSource": {
