@@ -31,10 +31,10 @@ export type FacilityPage = Page & {
      */
     categoryId: number;
     /**
-     * @description If the facility has a State of Good Repair rating
+     * @description If the facility has a FCS (Facility Condition Score) rating
      * @type boolean
      */
-    hasSogrData: boolean;
+    hasFcsData: boolean;
   }[];
   /**
    * @description The total number of results matching the query parameters.

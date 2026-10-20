@@ -133,7 +133,7 @@ export const findFacilitiesCsvQueryParamsSchema = z
   .optional();
 
 /**
- * @description A CSV download of community board budget requests
+ * @description A CSV download of facilities
  */
 export const findFacilitiesCsv200Schema = z.string();
 

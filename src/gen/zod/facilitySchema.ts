@@ -52,22 +52,24 @@ export const facilitySchema = z.object({
     .string()
     .describe("The name of the entity operating the facility or program.")
     .nullish(),
-  sgrLtr: z
-    .enum(["A", "B", "C", "D", "F"])
+  fcsLetterGradeTotal: z
+    .enum(["A", "B", "C", "D"])
     .describe("The Overall Facility Grade.")
     .nullish(),
-  sgrArcLtr: z
-    .enum(["A", "B", "C", "D", "F"])
+  fcsLetterGradeArchitectural: z
+    .enum(["A", "B", "C", "D"])
     .describe("The facility's Architecture grade.")
     .nullish(),
-  sgrSysLtr: z
+  fcsLetterGradeSystems: z
     .enum(["A", "B", "C", "D", "F"])
     .describe("The facility's Mechanical and Electrical Systems grade.")
     .nullish(),
-  sgrYear: z
+  fcsAssessmentYear: z
     .number()
     .int()
-    .describe("The year of the facility's State of Good Repair assessment.")
+    .describe(
+      "The year of the facility's FCS (Facility Condition Score) assessment.",
+    )
     .nullish(),
   dataSource: z.lazy(() => dataSourceSchema),
   alsoAtLocation: z.array(

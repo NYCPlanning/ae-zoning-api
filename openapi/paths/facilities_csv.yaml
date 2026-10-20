@@ -22,13 +22,13 @@ get:
   responses:
     '200':
       description: >-
-        A CSV download of community board budget requests
+        A CSV download of facilities
       content:
         text/csv:
             schema:
               type: string
             example: |
-              ID,Name,Address,BIN,BBL,Oversight Agency,Jurisdiction,Operator Type,Operator Name,Category,Category Group,Category Subgroup,sgrLtr,sgrArcLtr,sgrSysLtr,sgrYear
+              ID,Name,Address,BIN,BBL,Oversight Agency,Jurisdiction,Operator Type,Operator Name,Category,Category Group,Category Subgroup,fcsLetterGradeTotal,fcsLetterGradeArchitectural,fcsLetterGradeSystems,fcsAssessmentYear
               00041e822a3da19f11cb931f6b25b13f,560 W 43RD STREET PARKING CORP,"555 WEST 42 STREET, NEW YORK, NY 10036",1026911,1010710001,NYC Department of Consumer Affairs,City,Non-public,560 W 43rd Street Parking Corp,Core Infrastructure and Transportation,Transportation,Parking Lots and Garages,F,F,C,2021
               0004a8532521d7d9879f82f67f7fb2e5,SIXTEEN SYCAMORES PLAYGROUND,"358 SCHERMERHORN STREET, BROOKLYN, NY 11217",3000575,3001730023,NYC Department of Parks and Recreation,City,Public,NYC Department of Parks and Recreation,"Parks, Gardens, and Historical Sites",Parks and Plazas,Recreation and Waterfront Sites,B,A,C,2013
     '400':
