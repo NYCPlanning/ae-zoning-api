@@ -174,7 +174,10 @@ export class HousingGrowthRepository {
           id: sql`${communityDistrict.boroughId}||${communityDistrict.id}`.as(
             "id",
           ),
-          label: sql`${borough.abbr}||' '||${communityDistrict.id}`.as("label"),
+          label:
+            sql`${borough.abbr}||' '||LTRIM(${communityDistrict.id}, '0')`.as(
+              "label",
+            ),
           unitsCurrent: sql`${housingGrowthCd.unitsCurrent}`.as("unitsCurrent"),
           completedUnitsPrevious10Years:
             sql`${housingGrowthCd.completedUnitsPrevious10Years}`.as(
